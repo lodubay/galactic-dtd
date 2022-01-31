@@ -1,0 +1,11 @@
+# Don't track anything...
+*
+
+# ... except the following:
+!.gitignore
+!*.py
+!*.ipynb
+!matplotlibrc
+
+# ... except except checkpoints:
+.ipynb_checkpoints/*
