@@ -4,6 +4,7 @@ functions.
 """
 
 import math as m
+from utils import Gaussian
 
 class Bimodal:
     """
@@ -182,62 +183,6 @@ class Exponential:
     def __call__(self, time):
         norm = (self.coeff / self.timescale)
         return norm * m.exp(-time / self.timescale)
-
-    
-# class DoubleExponential:
-#     def __init__(self, rise_timescale=1, tail_timescale=3, coeff=1e-9):
-#         self.rise = Exponential(timescale=rise_timescale, coeff=1)
-#         self.tail = Exponential(timescale=tail_timescale, coeff=coeff)
-#         self.norm = 1 / (1 - 1 / (rise_timescale + tail_timescale))
-    
-#     def __call__(self, time):
-#         return self.norm * (1 - self.rise(time)) * self.tail(time)
-
-
-# class LinearExponential:
-#     def __init__(self, timescale=1.5, coeff=1e-9):
-#         self.exponential = Exponential(timescale=timescale, coeff=coeff)
-        
-#     def __call__(self, time):
-#         return (time / self.exponential.timescale) * self.exponential(time)
-
-    
-class Gaussian:
-    """
-    A generic normalized Gaussian function of time.
-
-    Attributes
-    ----------
-    center : float
-        The location of the peak of the Gaussian function.
-    stdev : float
-        The standard deviation of the Gaussian function.
-    norm : float
-        The normalization of the Gaussian function.
-
-    """
-    def __init__(self, center=1, stdev=1, coeff=1):
-        """
-        Initialize the Gaussian.
-
-        Parameters
-        ----------
-        center : float [default: 1]
-            The location of the peak of the Gaussian function.
-        stdev : float [default: 1]
-            The standard deviation of the Gaussian function.
-        norm : float [default: 1]
-            The normalization pre-factor.
-
-        """
-        self.center = center
-        self.stdev = stdev
-        self.coeff = coeff
-        self.norm = 1 / (stdev * m.sqrt(2 * m.pi))
-
-    def __call__(self, time):
-        C = self.coeff * self.norm
-        return C * m.exp(-(time-self.center)**2 / (2*self.stdev**2))
 
 
 class PowerLaw:
