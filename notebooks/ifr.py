@@ -80,7 +80,7 @@ class LateBurst(InsideOut):
     A modification to the Inside-Out IFR with the addition of a late,
     Gaussian infall rate burst.
     """
-    def __init__(self, burst_strength=1.5, burst_time=10.5, burst_stdev=1,
+    def __init__(self, burst_strength=1.8, burst_time=10, burst_stdev=1,
                  **kwargs):
         self.burst = Gaussian(center=burst_time, stdev=burst_stdev, 
                               coeff=burst_strength)
