@@ -1,2 +1,16 @@
 # Enforce a non-interactive backend
 backend: agg
+# Default figure size and resolution
+figure.figsize: 4, 4
+figure.dpi: 140
+# Ticks on all axes pointing in
+xtick.direction: in
+ytick.direction: in
+xtick.top: True
+ytick.right: True
+xtick.major.pad: 8
+# LATEX-style font
+font.family: STIXgeneral
+mathtext.fontset: cm
+# Font size
+legend.fontsize: 8
