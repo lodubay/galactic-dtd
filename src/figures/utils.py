@@ -7,15 +7,27 @@ from numpy.random import default_rng
 import pandas as pd
 import vice
 
-def migration_stars(output_name, data_dir='.'):
+def multioutput_to_pandas(output_name, data_dir='../data/migration_outputs'):
     """
-    Convert VICE milkyway stars output to pandas DataFrame.
-    Includes z-height from analogdata.
-    Takes a few seconds to run.
+    Convert VICE multizone stars output to pandas DataFrame (slow).
+
+    Parameters
+    ----------
+    output_name : str
+        Path to the .vice directory containing the migration simulation output
+    data_dir : str, optional
+        Path to the parent directory of all migration outputs. The default is
+        '../data/migration_outputs'.
+
+    Returns
+    -------
+    pandas DataFrame
+        Parameters of simulated stellar populations including galactic z-height
     """
-    output = vice.output(Path(data_dir) / output_name)
+    full_path = Path(data_dir) / output_name
+    output = vice.output(str(full_path))
     stars = pd.DataFrame(dict(output.stars))
-    analogdata = pd.read_csv('%s_analogdata.out' % output_name, sep='\t')
+    analogdata = pd.read_csv('%s_analogdata.out' % full_path, sep='\t')
     # Limit analogdata to same max time as stars data
     tmax = max(output.stars['formation_time'])
     analogdata = analogdata[analogdata['time_origin'] <= tmax]
@@ -25,9 +37,11 @@ def migration_stars(output_name, data_dir='.'):
     stars = stars[stars['mass'] > 0]
     return stars
 
-def galactic_region(stars, galr_lim=(0, 20), absz_lim=(0, 5), zone_width=0.1):
+def filter_multioutput_stars(stars, galr_lim=(0, 20), absz_lim=(0, 5),
+                             zone_width=0.1):
     """
-    Slice DataFrame of stars within a given Galactic region of radius and z-height.
+    Slice DataFrame of stars within a given Galactic region of radius and
+    z-height.
 
     Parameters
     ----------
@@ -58,24 +72,27 @@ def galactic_region(stars, galr_lim=(0, 20), absz_lim=(0, 5), zone_width=0.1):
     subset.reset_index(inplace=True)
     return subset
 
-def sample_stars(stars, n):
+def sample_dataframe(df, n):
     """
-    Randomly sample n stars from VICE output.
+    Randomly sample n unique rows from a pandas DataFrame.
 
     Parameters
     ----------
-    stars : pandas DataFrame
-        Output of stars_dataframe()
-    n : Number of random samples
+    df : pandas DataFrame
+    n : int
+        Number of random samples to draw
 
     Returns
     -------
     pandas DataFrame
-        Re-indexed DataFrame of stellar parameters
+        Re-indexed DataFrame of n sampled rows
     """
-    # Initialize default numpy random number generator
-    rng = default_rng()
-    # Randomly sample without replacement
-    rand_indices = rng.choice(stars.index, size=n, replace=False)
-    sample = stars.loc[rand_indices]
-    return sample.reset_index()
+    if isinstance(df, pd.DataFrame):
+        # Initialize default numpy random number generator
+        rng = default_rng()
+        # Randomly sample without replacement
+        rand_indices = rng.choice(df.index, size=n, replace=False)
+        sample = df.loc[rand_indices]
+        return sample.reset_index()
+    else:
+        raise TypeError('Expected pandas DataFrame.')
