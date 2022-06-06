@@ -4,6 +4,9 @@
 % Filler text
 \usepackage{blindtext}
 
+% Units in equations
+% \usepackage{siunitx}
+
 % Begin!
 \begin{document}
 
@@ -27,5 +30,31 @@
 \subsection{Accuracy of astroNN}
 
 For $19784$ stars, or $\sim3.5\%$ of the sample, the astroNN [Fe/H] abundance estimate is $\gtrsim0.5$ dex lower than the value provided by ASPCAP. The vast majority of these stars are on the lower-main sequence according to \textit{Gaia} photometry, so we exclude stars with $\log(g) > 4$ in ASPCAP. In addition, 197 or $\sim3\%$ of stars with APOKASC-2 asteroseismic ages are reported to be $>5$ Gyr younger by astroNN. The APOKASC-2 age is unphysically high for many of these stars, often exceeding 15 Gyr. We identify prior mass loss as the cause of this discrepancy, so the astroNN ages are likely closer to the truth.
+
+\subsection{Measurements of the Type Ia Supernova Delay Time Distribution}
+
+\citet{Schonrich2009-RadialMixing} take their DTD to be an exponential with a 1.5 Gyr timescale, though this isn't strictly observationally motivated.
+
+\citet{Maoz2017-CosmicDTD} compare volumetric SN Ia rates to the cosmic star formation history. They get a power law with a slope of $-1.13\pm 0.06$ for field galaxies, and a slope of $-1.39^{+0.32}_{-0.05}$ for galaxy clusters.
+
+\citet{Heringer2019-FieldGalaxyDTD} study the distribution of SNe Ia in field galaxies and get a power-law index of $-1.34^{+0.19}_{-0.17}$ which is closer to Maoz's cluster DTD.
+
+\citet{Stolger2020-ExponentialDTD} perform maximum likelihood estimations based on the cosmic star formation history and the star formation histories of individual galaxies. In both cases their best fit functions were approximately exponential, though they started with a skew-normal function so could not have ended up with a power law even if they wanted to. They don't actually report the timescale of this exponential, but based on the plots I'd say it's about 1.5 - 2 (1.7?) Gyr. Their best fit parameters make no sense to me as they don't report their units.
+
+\citet{Wiseman2021-DESRates} measure the SN Ia rate in the redshift range $0.2 < z < 0.6$ and get a similar power law to \citet{Maoz2017-CosmicDTD} with a slope of $-1.13 \pm 0.05$. They also find that slower-declining SNe have a steeper DTD slope.
+
+\begin{deluxetable}{lCl}
+\tablecaption{Sources of the various forms of delay time distribution.}
+\tablehead{
+\colhead{Name} & \colhead{Form} & \colhead{Source}
+}
+\startdata
+Field Galaxy Power-Law      & t^{-1.1}              & \citet{Maoz2017-CosmicDTD} \\   
+Galaxy Cluster Power-Law    & t^{-1.4}              & \citet{Maoz2017-CosmicDTD} \\
+Short Exponential           & e^{-t/1.5\,\rm{Gyr}}  & \citet{Schonrich2009-RadialMixing} \\
+\enddata
+\end{deluxetable}
+
+\bibliography{bib}
 
 \end{document}
