@@ -15,18 +15,27 @@ from ofe_feh_grid import plot_ofe_feh_stars, plot_post_process_track
 from ofe_feh_grid import GALR_BINS, ABSZ_BINS
 
 def main(output_name, migration_dir='../data/migration_outputs',
-         cmap_name='winter', apogee_path='../data/APOGEE/dr17_cut_data.csv'):
+         stars_cmap='winter', apogee_path='../data/APOGEE/dr17_cut_data.csv',
+         apogee_cmap='magma'):
     """
     Parameters
     ----------
-    output_name : string
-        Path to the
+    output_name : str
+        Path to the VICE multizone output
+    migration_dir : str, optional
+        Directory containing all VICE multizone outputs
+    stars_cmap : str, optional [default: 'winter']
+        Name of colormap to use for VICE stars output
+    apogee_path : str, optional
+        Path to APOGEE data
+    apogee_cmap : str, optional [default: 'magma']
+        Name of colormap to use for APOGEE data contours
     """
     # Import multioutput stars data
     stars = multioutput_to_pandas(output_name, migration_dir)
     # Plot simulation output
-    fig, axs = plot_ofe_feh_stars(stars, cmap_name)
-    axs = plot_apogee_contours(axs, apogee_path)
+    fig, axs = plot_ofe_feh_stars(stars, stars_cmap)
+    axs = plot_apogee_contours(axs, apogee_path, apogee_cmap)
     plot_post_process_track(output_name, axs, galr=8, data_dir=migration_dir)
     plt.savefig('ofe_feh_grid_contour.pdf', dpi=300)
     plt.close()
