@@ -5,7 +5,7 @@ Plot a grid of [O/Fe] vs [Fe/H] at varying Galactic radii and z-heights.
 import sys
 from pathlib import Path
 import matplotlib.pyplot as plt
-from matplotlib.ticker import MultipleLocator, NullLocator
+from matplotlib.ticker import MultipleLocator
 from matplotlib.colors import Normalize
 from matplotlib.cm import ScalarMappable
 import vice
@@ -46,8 +46,8 @@ def plot_ofe_feh_stars(stars, cmap):
     fig, axs = setup_axes(len(ABSZ_BINS)-1, len(GALR_BINS)-1,
                                xlim=FEH_LIM, ylim=OFE_LIM)
     norm = normalize_colorbar(stars)
-    setup_colorbar(fig, cmap, norm, label=r'Birth $R_{\rm{Gal}}$ [kpc]',
-                   minor_tick_locator=MultipleLocator(0.5))
+    cax = setup_colorbar(fig, cmap, norm, label=r'Birth $R_{\rm{Gal}}$ [kpc]')
+    cax.yaxis.set_minor_locator(MultipleLocator(0.5))
     for i, row in enumerate(axs):
         absz_lim = (ABSZ_BINS[-(i+2)], ABSZ_BINS[-(i+1)])
         for j, ax in enumerate(row):
@@ -121,22 +121,27 @@ def normalize_colorbar(stars):
     return norm
 
 
-def setup_colorbar(fig, cmap, norm, label='', minor_tick_locator=NullLocator()):
+def setup_colorbar(fig, cmap, norm, label=''):
     """
     Configure colorbar given a colormap and a normalization.
 
     Parameters
     ----------
+    fig
     cmap
     norm
+
+    Returns
+    -------
+    cax : colorbar axis
     """
     # Colorbar axis
     plt.subplots_adjust(right=0.9, wspace=0.05, hspace=0.05)
     cax = plt.axes([0.91, 0.11, 0.02, 0.755])
     # Add colorbar
     cbar = fig.colorbar(ScalarMappable(norm, cmap), cax)
-    cax.yaxis.set_minor_locator(minor_tick_locator)
     cbar.set_label(label)
+    return cax
 
 
 def setup_axes(rows, cols, xlim=None, ylim=None):

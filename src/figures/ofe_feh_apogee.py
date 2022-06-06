@@ -7,7 +7,6 @@ import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
 from matplotlib.colors import Normalize, LogNorm
-from matplotlib.ticker import LogLocator
 from sklearn.neighbors import KernelDensity
 from ofe_feh_vice import GALR_BINS, ABSZ_BINS, FEH_LIM, OFE_LIM
 from ofe_feh_vice import setup_axes, setup_colorbar
@@ -32,8 +31,7 @@ def plot_scatter_hist_grid(data, contour_cmap='magma'):
     fig, axs = setup_axes(len(ABSZ_BINS)-1, len(GALR_BINS)-1,
                           xlim=FEH_LIM, ylim=OFE_LIM)
     norm = normalize_colorbar(data)
-    setup_colorbar(fig, 'gray', norm, label='Number of stars',
-                   minor_tick_locator=LogLocator())
+    setup_colorbar(fig, 'gray', norm, label='Number of stars')
     for i, row in enumerate(axs):
         absz_lim = (ABSZ_BINS[-(i+2)], ABSZ_BINS[-(i+1)])
         for j, ax in enumerate(row):
