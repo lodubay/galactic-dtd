@@ -57,7 +57,8 @@ fig, ax = plt.subplots(figsize=(10, 10), tight_layout=True)
 time = [0.001*i for i in range(40, 13201)]
 for dtd in dtds:
     func = dtd['func']
-    ax.plot(time, [func(t) for t in time], label=dtd['label'], c=dtd['color'], ls=dtd['line'])
+    ax.plot(time, [func(t) for t in time], label=dtd['label'], c=dtd['color'],
+            ls=dtd['line'])
 ax.set_xscale('log')
 ax.set_yscale('log')
 ax.set_ylim((1e-12, 3e-8))
