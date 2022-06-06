@@ -5,9 +5,9 @@ Plot a grid of [O/Fe] vs [Fe/H] at varying Galactic radii and z-heights.
 import sys
 from pathlib import Path
 import matplotlib.pyplot as plt
-from matplotlib.ticker import MultipleLocator
+from matplotlib.ticker import MultipleLocator, NullLocator
 from matplotlib.colors import Normalize
-from matplotlib.cm import get_cmap, ScalarMappable
+from matplotlib.cm import ScalarMappable
 import vice
 from utils import multioutput_to_pandas, filter_multioutput_stars, \
     sample_dataframe
@@ -24,7 +24,7 @@ GALR_BINS = [3, 5, 7, 9, 11, 13] # kpc
 ABSZ_BINS = [0, 0.5, 1, 2] # kpc
 ZONE_WIDTH = 0.1 # kpc
 
-def main(output_name, data_dir='../data/migration_outputs', cmap_name='winter'):
+def main(output_name, data_dir='../data/migration_outputs', cmap='winter'):
     """
     Parameters
     ----------
@@ -33,21 +33,21 @@ def main(output_name, data_dir='../data/migration_outputs', cmap_name='winter'):
     """
     # Import multioutput stars data
     stars = multioutput_to_pandas(output_name, data_dir)
-    fig, axs = plot_ofe_feh_stars(stars, cmap_name)
+    fig, axs = plot_ofe_feh_stars(stars, cmap)
     plot_post_process_track(output_name, axs, galr=8, data_dir=data_dir)
     plt.savefig('ofe_feh_vice.pdf', dpi=300)
     plt.close()
 
 
-def plot_ofe_feh_stars(stars, cmap_name):
+def plot_ofe_feh_stars(stars, cmap):
     """
     Plot just the VICE multizone stars data
     """
     fig, axs = setup_axes(len(ABSZ_BINS)-1, len(GALR_BINS)-1,
                                xlim=FEH_LIM, ylim=OFE_LIM)
-    cmap = get_cmap(cmap_name)
     norm = normalize_colorbar(stars)
-    setup_colorbar(fig, cmap, norm)
+    setup_colorbar(fig, cmap, norm, label=r'Birth $R_{\rm{Gal}}$ [kpc]',
+                   minor_tick_locator=MultipleLocator(0.5))
     for i, row in enumerate(axs):
         absz_lim = (ABSZ_BINS[-(i+2)], ABSZ_BINS[-(i+1)])
         for j, ax in enumerate(row):
@@ -121,7 +121,7 @@ def normalize_colorbar(stars):
     return norm
 
 
-def setup_colorbar(fig, cmap, norm):
+def setup_colorbar(fig, cmap, norm, label='', minor_tick_locator=NullLocator()):
     """
     Configure colorbar given a colormap and a normalization.
 
@@ -135,8 +135,8 @@ def setup_colorbar(fig, cmap, norm):
     cax = plt.axes([0.91, 0.11, 0.02, 0.755])
     # Add colorbar
     cbar = fig.colorbar(ScalarMappable(norm, cmap), cax)
-    cax.yaxis.set_minor_locator(MultipleLocator(0.5))
-    cbar.set_label(r'Birth $R_{\rm{Gal}}$ [kpc]')
+    cax.yaxis.set_minor_locator(minor_tick_locator)
+    cbar.set_label(label)
 
 
 def setup_axes(rows, cols, xlim=None, ylim=None):
