@@ -11,8 +11,8 @@ import matplotlib.pyplot as plt
 from matplotlib.cm import get_cmap
 from sklearn.neighbors import KernelDensity
 from utils import multioutput_to_pandas
-from ofe_feh_grid import plot_ofe_feh_stars, plot_post_process_track
-from ofe_feh_grid import GALR_BINS, ABSZ_BINS
+from ofe_feh_vice import plot_ofe_feh_stars, plot_post_process_track
+from ofe_feh_vice import GALR_BINS, ABSZ_BINS
 
 def main(output_name, migration_dir='../data/migration_outputs',
          stars_cmap='winter', apogee_path='../data/APOGEE/dr17_cut_data.csv',
@@ -37,7 +37,7 @@ def main(output_name, migration_dir='../data/migration_outputs',
     fig, axs = plot_ofe_feh_stars(stars, stars_cmap)
     axs = plot_apogee_contours(axs, apogee_path, apogee_cmap)
     plot_post_process_track(output_name, axs, galr=8, data_dir=migration_dir)
-    plt.savefig('ofe_feh_grid_contour.pdf', dpi=300)
+    plt.savefig('ofe_feh_compare.pdf', dpi=300)
     plt.close()
 
 

@@ -35,7 +35,7 @@ def main(output_name, data_dir='../data/migration_outputs', cmap_name='winter'):
     stars = multioutput_to_pandas(output_name, data_dir)
     fig, axs = plot_ofe_feh_stars(stars, cmap_name)
     plot_post_process_track(output_name, axs, galr=8, data_dir=data_dir)
-    plt.savefig('ofe_feh_grid.pdf', dpi=300)
+    plt.savefig('ofe_feh_vice.pdf', dpi=300)
     plt.close()
 
 
