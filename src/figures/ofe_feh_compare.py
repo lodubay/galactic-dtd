@@ -39,7 +39,8 @@ def main(output_name, migration_dir='../data/migration_outputs',
     plot_apogee_contours(axs, apogee_data, apogee_cmap)
     # Add post-process abundance track
     plot_post_process_track(output_name, axs, galr=8, data_dir=migration_dir)
-    plt.savefig('ofe_feh_compare.pdf', dpi=300)
+    fig.suptitle(output_name)
+    plt.savefig('ofe_feh_compare_%s.pdf' % output_name.split('/')[-1], dpi=300)
     plt.close()
 
 
@@ -60,8 +61,12 @@ def plot_apogee_contours(axs, data, cmap='magma'):
         for j, ax in enumerate(row):
             galr_lim = (GALR_BINS[j], GALR_BINS[j+1])
             subset = apogee_region(data, galr_lim, absz_lim)
-            x, y, z = kde2D(subset['FE_H'], subset['O_FE'], 0.05)
-            ax.contour(x, y, z, cmap=cmap)
+            x, y, logz = kde2D(subset['FE_H'], subset['O_FE'], 0.03)
+            # Scale by total number of stars in region
+            logz += np.log(subset.shape[0])
+            # Contour levels in log-likelihood space
+            levels = np.arange(10, 14, 0.5)
+            ax.contour(x, y, logz, levels, cmap=cmap)
 
 
 if __name__ == '__main__':

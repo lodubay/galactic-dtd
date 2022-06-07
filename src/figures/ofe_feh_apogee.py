@@ -12,7 +12,7 @@ from ofe_feh_vice import GALR_BINS, ABSZ_BINS, FEH_LIM, OFE_LIM
 from ofe_feh_vice import setup_axes, setup_colorbar
 
 global NBINS
-NBINS = 20
+NBINS = 50
 
 def main(filename='../data/APOGEE/dr17_cut_data.csv', cmap_name='magma'):
     print('Importing data')
@@ -46,8 +46,12 @@ def plot_scatter_hist_grid(data, contour_cmap='magma'):
                          vmin=norm.vmin, vmax=norm.vmax)
             # Contour plot
             print('\t\tContourPlot')
-            x, y, z = kde2D(subset['FE_H'], subset['O_FE'], 0.05)
-            ax.contour(x, y, z, cmap=contour_cmap)
+            x, y, logz = kde2D(subset['FE_H'], subset['O_FE'], 0.02)
+            # Scale by total number of stars in region
+            logz += np.log(subset.shape[0])
+            # Contour levels in log-likelihood space
+            levels = np.arange(10, 14, 0.5)
+            ax.contour(x, y, logz, levels, cmap=contour_cmap)
             # Label axes
             if i == len(axs)-1:
                 ax.set_xlabel('[Fe/H]')
@@ -60,7 +64,7 @@ def plot_scatter_hist_grid(data, contour_cmap='magma'):
     return fig, axs
 
 
-def kde2D(x, y, bandwidth, xbins=50j, ybins=50j, **kwargs):
+def kde2D(x, y, bandwidth, xbins=100j, ybins=100j, **kwargs):
     """Build 2D kernel density estimate (KDE)."""
 
     # create grid of sample locations (default: 100x100)
@@ -74,7 +78,7 @@ def kde2D(x, y, bandwidth, xbins=50j, ybins=50j, **kwargs):
     kde_skl.fit(xy_train)
 
     # score_samples() returns the log-likelihood of the samples
-    z = np.exp(kde_skl.score_samples(xy_sample))
+    z = kde_skl.score_samples(xy_sample)
     return xx, yy, np.reshape(z, xx.shape)
 
 
@@ -176,7 +180,7 @@ def scatter_hist(ax, x, y, xlim=None, ylim=None, log_norm=True, cmap='gray',
         norm = Normalize(vmin=vmin, vmax=vmax)
     # Plot
     ax.scatter(x, y, c=color, s=0.5, rasterized=rasterized)
-    ax.hist2d(x, y, bins=[xbins, ybins], cmap=cmap, norm=norm, cmin=cmin)
+    return ax.hist2d(x, y, bins=[xbins, ybins], cmap=cmap, norm=norm, cmin=cmin)
 
 
 if __name__ == '__main__':

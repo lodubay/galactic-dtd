@@ -137,7 +137,7 @@ def setup_colorbar(fig, cmap, norm, label=''):
     """
     # Colorbar axis
     plt.subplots_adjust(right=0.9, wspace=0.05, hspace=0.05)
-    cax = plt.axes([0.91, 0.11, 0.02, 0.755])
+    cax = plt.axes([0.91, 0.11, 0.02, 0.77])
     # Add colorbar
     cbar = fig.colorbar(ScalarMappable(norm, cmap), cax)
     cbar.set_label(label)
