@@ -1,5 +1,5 @@
 """
-Plot a grid of [O/Fe] vs [Fe/H] panels for APOGEE data
+Plot a grid of [O/Fe] vs [Fe/H] panels for APOGEE data. Takes a minute to run.
 """
 
 from pathlib import Path
@@ -14,16 +14,15 @@ from ofe_feh_vice import setup_axes, setup_colorbar
 global NBINS
 NBINS = 50
 
-def main(filename='../data/APOGEE/dr17_cut_data.csv', cmap_name='magma'):
-    print('Importing data')
+def main(filename='../data/APOGEE/dr17_cut_data.csv', cmap='RdPu'):
     data = pd.read_csv(Path(filename))
-    print('Scatterplots and histograms')
-    fig, axs = plot_scatter_hist_grid(data, contour_cmap=cmap_name)
+    fig, axs = plot_scatter_hist_grid(data)
+    plot_contours(axs, data, cmap=cmap)
     plt.savefig('ofe_feh_apogee.pdf', dpi=300)
     plt.close()
 
 
-def plot_scatter_hist_grid(data, contour_cmap='magma'):
+def plot_scatter_hist_grid(data):
     """
     Setup a grid of panels and plot a hybrid scatterplot/2D histogram
     of APOGEE data.
@@ -36,22 +35,11 @@ def plot_scatter_hist_grid(data, contour_cmap='magma'):
         absz_lim = (ABSZ_BINS[-(i+2)], ABSZ_BINS[-(i+1)])
         for j, ax in enumerate(row):
             galr_lim = (GALR_BINS[j], GALR_BINS[j+1])
-            print('\tPanel %s, %s' % (i, j))
-            print('\t\tSlicing data')
             subset = apogee_region(data, galr_lim, absz_lim)
             # Scatter plot / 2D histogram
-            print('\t\tScatter plot')
             scatter_hist(ax, subset['FE_H'], subset['O_FE'],
                          xlim=FEH_LIM, ylim=OFE_LIM, nbins=NBINS,
                          vmin=norm.vmin, vmax=norm.vmax)
-            # Contour plot
-            print('\t\tContourPlot')
-            x, y, logz = kde2D(subset['FE_H'], subset['O_FE'], 0.02)
-            # Scale by total number of stars in region
-            logz += np.log(subset.shape[0])
-            # Contour levels in log-likelihood space
-            levels = np.arange(10, 14, 0.5)
-            ax.contour(x, y, logz, levels, cmap=contour_cmap)
             # Label axes
             if i == len(axs)-1:
                 ax.set_xlabel('[Fe/H]')
@@ -62,6 +50,31 @@ def plot_scatter_hist_grid(data, contour_cmap='magma'):
             if i == 0:
                 ax.set_title(r'$%s\leq R_{\rm{Gal}} < %s$ kpc'% galr_lim)
     return fig, axs
+
+
+def plot_contours(axs, data, cmap='Greys', linewidths=1):
+    """
+    Add contours of APOGEE abundances to axes.
+
+    Parameters
+    ----------
+    axs : list of axes
+    filename : str
+        Path to APOGEE data file
+    cmap_name : str
+        Name of colormap to apply to contours
+    """
+    for i, row in enumerate(axs):
+        absz_lim = (ABSZ_BINS[-(i+2)], ABSZ_BINS[-(i+1)])
+        for j, ax in enumerate(row):
+            galr_lim = (GALR_BINS[j], GALR_BINS[j+1])
+            subset = apogee_region(data, galr_lim, absz_lim)
+            x, y, logz = kde2D(subset['FE_H'], subset['O_FE'], 0.03)
+            # Scale by total number of stars in region
+            logz += np.log(subset.shape[0])
+            # Contour levels in log-likelihood space
+            levels = np.arange(10, 14, 0.5)
+            ax.contour(x, y, logz, levels, cmap=cmap, linewidths=linewidths)
 
 
 def kde2D(x, y, bandwidth, xbins=100j, ybins=100j, **kwargs):

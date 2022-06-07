@@ -1,6 +1,6 @@
 """
 Plot a grid of [O/Fe] vs [Fe/H] at varying Galactic radii and z-heights with
-additional contours of APOGEE abundances.
+overlayed contours of APOGEE abundances. Takes a couple minutes to run.
 """
 
 import sys
@@ -9,9 +9,9 @@ import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
 from utils import multioutput_to_pandas
-from ofe_feh_vice import plot_ofe_feh_stars, plot_post_process_track
-from ofe_feh_vice import GALR_BINS, ABSZ_BINS
-from ofe_feh_apogee import kde2D, apogee_region
+from ofe_feh_vice import plot_ofe_feh_stars, plot_post_process_track, \
+    plot_post_process_tracks
+from ofe_feh_apogee import plot_contours
 
 def main(output_name, migration_dir='../data/migration_outputs',
          stars_cmap='winter', apogee_path='../data/APOGEE/dr17_cut_data.csv',
@@ -36,37 +36,15 @@ def main(output_name, migration_dir='../data/migration_outputs',
     fig, axs = plot_ofe_feh_stars(stars, stars_cmap)
     # Import APOGEE data
     apogee_data = pd.read_csv(Path(apogee_path))
-    plot_apogee_contours(axs, apogee_data, apogee_cmap)
+    plot_contours(axs, apogee_data, apogee_cmap, linewidths=0.5)
     # Add post-process abundance track
     plot_post_process_track(output_name, axs, galr=8, data_dir=migration_dir)
+    plot_post_process_tracks(output_name, axs, data_dir=migration_dir)
     fig.suptitle(output_name)
-    plt.savefig('ofe_feh_compare_%s.pdf' % output_name.split('/')[-1], dpi=300)
+    evolution, RIa = output_name.split('/')[-2:]
+    plt.savefig('ofe_feh_%s_%s.png' % (evolution, RIa), dpi=300)
+    plt.savefig('ofe_feh_%s_%s.pdf' % (evolution, RIa), dpi=300)
     plt.close()
-
-
-def plot_apogee_contours(axs, data, cmap='magma'):
-    """
-    Add contours of APOGEE abundances to axes.
-
-    Parameters
-    ----------
-    axs : list of axes
-    filename : str
-        Path to APOGEE data file
-    cmap_name : str
-        Name of colormap to apply to contours
-    """
-    for i, row in enumerate(axs):
-        absz_lim = (ABSZ_BINS[-(i+2)], ABSZ_BINS[-(i+1)])
-        for j, ax in enumerate(row):
-            galr_lim = (GALR_BINS[j], GALR_BINS[j+1])
-            subset = apogee_region(data, galr_lim, absz_lim)
-            x, y, logz = kde2D(subset['FE_H'], subset['O_FE'], 0.03)
-            # Scale by total number of stars in region
-            logz += np.log(subset.shape[0])
-            # Contour levels in log-likelihood space
-            levels = np.arange(10, 14, 0.5)
-            ax.contour(x, y, logz, levels, cmap=cmap)
 
 
 if __name__ == '__main__':

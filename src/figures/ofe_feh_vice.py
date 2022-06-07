@@ -35,6 +35,7 @@ def main(output_name, data_dir='../data/migration_outputs', cmap='winter'):
     stars = multioutput_to_pandas(output_name, data_dir)
     fig, axs = plot_ofe_feh_stars(stars, cmap)
     plot_post_process_track(output_name, axs, galr=8, data_dir=data_dir)
+    plot_post_process_tracks(output_name, axs, data_dir=data_dir)
     plt.savefig('ofe_feh_vice.pdf', dpi=300)
     plt.close()
 
@@ -95,7 +96,35 @@ def plot_post_process_track(output_name, axs, galr=8,
     post_process_hist = vice.history(str(post_process_path))
     # Plot abundance track on all panels
     for ax in axs.flatten():
-        ax.plot(post_process_hist['[fe/h]'], post_process_hist['[o/fe]'], c='k')
+        ax.plot(post_process_hist['[fe/h]'], post_process_hist['[o/fe]'],
+                c='k', ls='-', linewidth=1)
+
+
+def plot_post_process_tracks(output_name, axs,
+                             data_dir='../data/migration_outputs'):
+    """
+    Plot post-process abundance track for the mean annulus in each panel.
+
+    Parameters
+    ----------
+    output_name : str
+        Path to the VICE output directory
+    axs : list of axes
+    data_dir : str, optional
+        Parent directory for all migration outputs
+    """
+    # Convert annulus from kpc to zone number
+    nzones = len(GALR_BINS)-1
+    mean_galr = [(GALR_BINS[i] + GALR_BINS[i+1]) / 2 for i in range(nzones)]
+    zones = [int(mean_galr[i] / ZONE_WIDTH) for i in range(nzones)]
+    for i, zone in enumerate(zones):
+        # Import post-processed output for the given annulus
+        post_process_path = Path(data_dir) / Path(output_name.replace(
+            'diffusion', 'post-process') + '.vice') / Path('zone%d' % zone)
+        post_process_hist = vice.history(str(post_process_path))
+        for ax in axs[:,i].flatten():
+            ax.plot(post_process_hist['[fe/h]'], post_process_hist['[o/fe]'],
+                    c='k', ls='--', linewidth=1)
 
 
 def normalize_colorbar(stars):
