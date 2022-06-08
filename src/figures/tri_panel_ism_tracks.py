@@ -10,51 +10,47 @@ import matplotlib.pyplot as plt
 from matplotlib.ticker import MultipleLocator
 import vice
 
-plaw = {
+standard = {
     'name': 'powerlaw',
-    'label': r'Power-Law ($\alpha=-1.1$)',
+    'label': r'$\alpha=-1.1$, $\tau_{\rm{min}}=40$ Myr',
     'color': 'k',
     'line': '-',
 }
-plaw_steep = {
+steep = {
     'name': 'powerlaw_steep',
-    'label': r'Power-Law ($\alpha=-1.4$)',
-    'color': '#aa3377',
+    'label': r'$\alpha=-1.4$, $\tau_{\rm{min}}=40$ Myr',
+    'color': '#4477aa',
     'line': '--',
 }
-long_delay = {
+standard_delayed = {
     'name': 'long_delay',
-    'label': r'Power-Law with $\tau_{\rm{min}}=150$ Myr',
+    'label': r'$\alpha=-1.1$, $\tau_{\rm{min}}=150$ Myr',
     'color': '#ee6677',
     'line': '-.',
+}
+steep_delayed = {
+    'name': 'powerlaw_steep_delayed',
+    'label': r'$\alpha=-1.4$, $\tau_{\rm{min}}=150$ Myr',
+    'color': '#ccbb44',
+    'line': ':',
 }
 exp = {
     'name': 'exponential',
     'label': r'Exponential ($\tau=1.5$ Gyr)',
-    'color': '#66ccee',
-    'line': '-',
-}
-exp_long = {
-    'name': 'exponential_long',
-    'label': r'Exponential ($\tau=3$ Gyr)',
-    'color': '#4477aa',
-    'line': '--',
-}
-bimodal = {
-    'name': 'bimodal',
-    'label': 'Bimodal',
     'color': '#228833',
-    'line': '-.',
+    'line': '-',
 }
 
 def main():
     fig, axs = setup_axes()
-    dtds = [plaw, plaw_steep, long_delay, exp, bimodal]
+    dtds = [standard, steep, standard_delayed, steep_delayed, exp]
     for dtd in dtds:
         plot_tracks(axs, dtd)
     axs[0].legend(fontsize=10, frameon=False)
+    fig.suptitle('Power-Law DTD Variants')
     plt.savefig('tri_panel_ism_tracks.pdf', dpi=300)
     plt.close()
+
 
 def plot_tracks(axs, dtd, zone=80,
                 parent_dir='../data/migration_outputs/post-process/insideout'):
