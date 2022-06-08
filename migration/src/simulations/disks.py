@@ -208,7 +208,7 @@ class delay_time_distribution:
 	def __init__(self, dist="powerlaw"):
 		self.model = {
 			"powerlaw": PowerLaw(),
-            "powerlaw_steep": PowerLaw(slope=-1.4),
+			"powerlaw_steep": PowerLaw(slope=-1.4),
 			"exponential": Exponential(),
 			"bimodal": Bimodal()
 		}[dist.lower()]
