@@ -33,12 +33,11 @@ def multioutput_to_pandas(output_name, data_dir='../data/migration_outputs'):
     analogdata = analogdata[analogdata['time_origin'] <= tmax]
     # Combine relevant data
     stars[['analog_id', 'zfinal']] = analogdata[['analog_id', 'zfinal']]
-    # Remove massless particles
-    stars = stars[stars['mass'] > 0]
+    stars.dropna(how='any', inplace=True)
     return stars
 
 def filter_multioutput_stars(stars, galr_lim=(0, 20), absz_lim=(0, 5),
-                             zone_width=0.1):
+                             zone_width=0.1, min_mass=1.0):
     """
     Slice DataFrame of stars within a given Galactic region of radius and
     z-height.
@@ -68,7 +67,8 @@ def filter_multioutput_stars(stars, galr_lim=(0, 20), absz_lim=(0, 5),
     subset = stars[(stars['zone_final'] >= zone_min) &
                    (stars['zone_final'] < zone_max) &
                    (stars['zfinal'].abs() >= absz_min) &
-                   (stars['zfinal'].abs() < absz_max)]
+                   (stars['zfinal'].abs() < absz_max) &
+                   (stars['mass'] >= min_mass)]
     subset.reset_index(inplace=True)
     return subset
 

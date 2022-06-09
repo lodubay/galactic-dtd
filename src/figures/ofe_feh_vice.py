@@ -97,7 +97,7 @@ def plot_post_process_track(output_name, axs, galr=8,
     # Plot abundance track on all panels
     for ax in axs.flatten():
         ax.plot(post_process_hist['[fe/h]'], post_process_hist['[o/fe]'],
-                c='k', ls='-', linewidth=1)
+                c='k', ls='--', linewidth=1)
 
 
 def plot_post_process_tracks(output_name, axs,
@@ -124,7 +124,7 @@ def plot_post_process_tracks(output_name, axs,
         post_process_hist = vice.history(str(post_process_path))
         for ax in axs[:,i].flatten():
             ax.plot(post_process_hist['[fe/h]'], post_process_hist['[o/fe]'],
-                    c='k', ls='--', linewidth=1)
+                    c='k', ls='-', linewidth=1)
 
 
 def normalize_colorbar(stars):

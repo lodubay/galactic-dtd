@@ -31,13 +31,18 @@ def main(output_name, migration_dir='../data/migration_outputs',
         Name of colormap to use for APOGEE data contours
     """
     # Import multioutput stars data
+    print('Importing VICE')
     stars = multioutput_to_pandas(output_name, migration_dir)
     # Plot simulation output
+    print('Plotting VICE stars')
     fig, axs = plot_ofe_feh_stars(stars, stars_cmap)
     # Import APOGEE data
+    print('Importing APOGEE')
     apogee_data = pd.read_csv(Path(apogee_path))
+    print('Plotting APOGEE contours')
     plot_contours(axs, apogee_data, apogee_cmap, linewidths=0.5)
     # Add post-process abundance track
+    print('Plotting abundance tracks')
     plot_post_process_track(output_name, axs, galr=8, data_dir=migration_dir)
     plot_post_process_tracks(output_name, axs, data_dir=migration_dir)
     fig.suptitle(output_name)
