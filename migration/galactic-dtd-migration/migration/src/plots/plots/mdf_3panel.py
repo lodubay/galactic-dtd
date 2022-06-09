@@ -122,9 +122,9 @@ def main(element, outputs, stem, radial_bins = [3, 5, 7, 9, 11, 13, 15],
 		"handlelength": 	0
 	}
 	axes[0][1].legend(**legend_kwargs)
-	for i in range(len(radial_bins) - 1):
-		leg.get_texts()[i].set_color(colors[i])
-		leg.legendHandles[i].set_visible(False)
+# 	for i in range(len(radial_bins) - 1):
+# 		leg.get_texts()[i].set_color(colors[i])
+# 		leg.legendHandles[i].set_visible(False)
 	plt.tight_layout()
 	plt.subplots_adjust(wspace = 0, hspace = 0, bottom = 0.1, left = 0.08)
 	plt.savefig("%s.png" % (stem))
