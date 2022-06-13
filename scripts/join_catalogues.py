@@ -57,6 +57,10 @@ aspcap_df = decode(aspcap_table[cols].to_pandas())
 aspcap_df.replace(99.999, np.nan, inplace=True)
 # Replace '' with 'none' in columns of type 'object'
 aspcap_df.replace('', 'none', inplace=True)
+# Weed out bad flags
+fatal_flags = (2**23) # STAR_BAD
+aspcap_df = aspcap_df[aspcap_df["ASPCAPFLAG"] & fatal_flags == 0]
+aspcap_df.reset_index(inplace=True)
 
 print('Importing astroNN catalog...')
 # Import astroNN data
