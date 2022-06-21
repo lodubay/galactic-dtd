@@ -4,6 +4,8 @@ Johnson et al. (2021).
 """
 
 from ..._globals import MAX_SF_RADIUS, END_TIME, M_STAR_MW
+import vice
+from vice.toolkit import J21_sf_law
 import math as m
 
 
@@ -62,3 +64,23 @@ def normalize(time_dependence, radial_gradient, radius, dt = 0.01, dr = 0.5,
 
 	return M_STAR_MW / ((1 - recycling) * radial_integral * time_integral)
 
+
+def normalize_ifrmode(time_dependence, radial_gradient, radius, dt = 0.01,
+	dr = 0.1, recycling = 0.4):
+	area = m.pi * ((radius + dr)**2 - radius**2)
+	tau_star = J21_sf_law(area)
+	eta = vice.milkyway.default_mass_loading(radius)
+	mgas = 0
+	time = 0
+	sfh = []
+	times = []
+	while time < END_TIME:
+		sfr = mgas / tau_star(time, mgas) # msun / Gyr
+		mgas += time_dependence(time) * dt * 1.e9 # yr-Gyr conversion
+		mgas -= sfr * dt * (1 + eta - recycling)
+		sfh.append(1.e-9 * sfr)
+		times.append(time)
+		time += dt
+	sfh = vice.toolkit.interpolation.interp_scheme_1d(times, sfh)
+	return normalize(sfh, radial_gradient, radius, dt = dt, dr = dr,
+		recycling = recycling)
