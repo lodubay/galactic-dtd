@@ -12,6 +12,7 @@ import sys
 _MIGRATION_MODELS_ = ["diffusion", "linear", "post-process", "sudden"]
 _EVOLUTION_MODELS_ = ["static", "insideout", "lateburst", "outerburst"]
 _DELAY_MODELS_ = ["powerlaw", "powerlaw_steep", "exponential", "bimodal"]
+_SFE_MODELS_ = ["johnson21", "conroy22"]
 
 def parse():
 	r"""
@@ -33,6 +34,11 @@ def parse():
 		help = "The evolutionary history to assume (Default: insideout)",
 		type = str,
 		default = "insideout")
+
+	parser.add_argument("--sfe",
+		help = "The star formation efficiency to assume (Default: johnson21)",
+		type = str,
+		default = "johnson21")
 
 	parser.add_argument("--RIa",
 		help = "The SN Ia delay-time distribution to assume (Default: powerlaw)",
@@ -92,6 +98,7 @@ def model(args):
 	kwargs = dict(
 		name = args.name,
 		spec = args.evolution,
+		sfe_model = args.sfe,
 		RIa = args.RIa,
 		delay = args.minimum_delay
 	)
