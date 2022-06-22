@@ -15,11 +15,12 @@ if vice.version[:2] < (1, 2):
 Johnson et al. (2021) figures. Current: %s""" % (vice.__version__))
 else: pass
 from vice.yields.presets import JW20
-from vice.toolkit import hydrodisk
+from vice.toolkit import hydrodisk, J21_sf_law
 vice.yields.sneia.settings['fe'] *= 10**0.1
 from .._globals import END_TIME, MAX_SF_RADIUS, ZONE_WIDTH
 from . import migration
 from . import models
+from . import sfe
 from .dtd import PowerLaw, BrokenPowerLaw, Exponential, Bimodal
 from .models.utils import get_bin_number, interpolate
 from .models.gradient import gradient
@@ -48,6 +49,14 @@ class diskmodel(vice.milkyway):
 		- "lateburst"
 		- "outerburst"
 
+	sfe_model : ``str`` [default : "johnson21"]
+		A keyword denoting the time-dependence of the star formation efficiency.
+		Allowed values:
+
+		- "johnson21"
+		- "conroy22"
+		- "hybrid"
+
 	verbose : ``bool`` [default : True]
 		Whether or not the run the models with verbose output.
 	migration_mode : ``str`` [default : "diffusion"]
@@ -66,7 +75,7 @@ class diskmodel(vice.milkyway):
 		Allowed values:
 
 		- "powerlaw"
-        - "powerlaw_steep"
+		- "powerlaw_steep"
 		- "exponential"
 		- "bimodal"
 
@@ -77,8 +86,8 @@ class diskmodel(vice.milkyway):
 	"""
 
 	def __init__(self, zone_width = 0.1, name = "diskmodel", spec = "static",
-		verbose = True, migration_mode = "diffusion", delay = 0.04,
-		RIa = "powerlaw", **kwargs):
+		sfe_model = "johnson21", verbose = True, migration_mode = "diffusion",
+		delay = 0.04, RIa = "powerlaw", **kwargs):
 		super().__init__(zone_width = zone_width, name = name,
 			verbose = verbose, **kwargs)
 		if self.zone_width <= 0.2 and self.dt <= 0.02 and self.n_stars >= 6:
@@ -92,9 +101,19 @@ class diskmodel(vice.milkyway):
 		self.evolution = star_formation_history(spec = spec,
 			zone_width = zone_width)
 		self.mode = "sfr"
-		for zone in self.zones:
-			zone.delay = delay
-			zone.RIa = delay_time_distribution(dist=RIa)
+		dtd = delay_time_distribution(dist = RIa)
+		for i in range(self.n_zones):
+			# set the delay time distribution and minimum Type Ia delay time
+			self.zones[i].delay = delay
+			self.zones[i].RIa = dtd
+			# set the entrainment to zero beyond 15.5 kpc
+			if (self.annuli[i] + self.annuli[i + 1]) / 2 > MAX_SF_RADIUS:
+				self.zones[i].tau_star = 1.e6
+			else:
+				self.zones[i].tau_star = star_formation_efficiency(
+ 					m.pi * (self.annuli[i + 1]**2 - self.annuli[i]**2),
+ 					sfe_model = sfe_model
+				)
 
 
 	def run(self, *args, **kwargs):
@@ -186,6 +205,29 @@ class star_formation_history:
 					radius)
 
 
+class star_formation_efficiency:
+	r"""
+	The star formation efficiency (SFE) of the model galaxy. This object will
+	be used as the ``tau_star`` attribute of each zone in the ``diskmodel``.
+
+	Parameters
+	----------
+	area : float
+		The area in kpc^2 of the zone. Not used in the conroy22 model.
+	sfe_model : str [default: "johnson21"]
+		A keyword denoting the star formation efficiency model.
+	"""
+
+	def __init__(self, area, sfe_model = "johnson21"):
+		self._sfe = {
+			"johnson21": J21_sf_law(area, mode = "sfr"),
+			"conroy22": sfe.conroy22()
+		}[sfe_model.lower()]
+
+	def __call__(self, time, arg2):
+		return self._sfe(time, arg2)
+
+
 class delay_time_distribution:
 	"""
 	The delay time distribution (DTD) of Type Ia supernovae (SNe Ia) in the
@@ -205,8 +247,8 @@ class delay_time_distribution:
 			Simulation time in Gyr.
 	"""
 
-	def __init__(self, dist="powerlaw"):
-		self.model = {
+	def __init__(self, dist = "powerlaw"):
+		self._dtd = {
 			"powerlaw": PowerLaw(),
 			"powerlaw_steep": PowerLaw(slope=-1.4),
 			"exponential": Exponential(),
@@ -214,5 +256,5 @@ class delay_time_distribution:
 		}[dist.lower()]
 
 	def __call__(self, time):
-		return self.model(time)
+		return self._dtd(time)
 

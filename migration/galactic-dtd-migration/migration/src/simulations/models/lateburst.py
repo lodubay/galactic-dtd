@@ -6,7 +6,7 @@ given radius in the lateburst model from Johnson et al. (2021).
 from ..._globals import END_TIME
 from .utils import modified_exponential, gaussian
 from .insideout import _TAU_RISE_, insideout
-from .normalize import normalize
+from .normalize import normalize, normalize_ifrmode
 from .gradient import gradient
 import math as m
 import os
@@ -45,3 +45,28 @@ class lateburst(modified_exponential, gaussian):
 			1 + gaussian.__call__(self, time)
 		)
 
+
+class lateburst_ifrmode(lateburst):
+
+	r"""
+	A modification of the late-burst SFH model which controls infall rate (IFR)
+	instead of star formation rate (SFR).
+
+	Parameters
+	----------
+	radius : float
+		The galactocentric radius in kpc of a given annulus in the model.
+	dt : float [default : 0.01]
+		The timestep size of the model in Gyr.
+	dr : float [default : 0.1]
+		The width of the annulus in kpc.
+
+	All attributes and functionality are inherited from ``lateburst``.
+	"""
+
+	def __init__(self, radius, dt = 0.01, dr = 0.1):
+		super().__init__(self, radius, dt=dt, dr=dr)
+		self._prefactor = normalize_ifrmode(self, gradient, radius, dt=dt, dr=dr)
+
+	def __call__(self, time):
+		return super().__call__(time)
