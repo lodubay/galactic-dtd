@@ -3,7 +3,15 @@ This file declares the time-dependence of the star formation efficiency
 timescale from Conroy et al. (2022)
 """
 
-class conroy22:
+from ..._globals import END_TIME
+from .normalize import normalize
+from .utils import constant, exponential
+from .gradient import gradient
+from .insideout import insideout
+import vice
+import math as m
+
+class conroy22_tau_star:
 	r"""
 	The piecewise time-dependent star formation efficiency (SFE) timescale model
 	from Conroy et al. (2022).
@@ -43,3 +51,30 @@ class conroy22:
 			return self.tau_star_init / ((1 + self.slope * (time - self.t1))**2)
 		else:
 			return self.tau_star_final
+
+
+class insideout_conroy22(insideout):
+	def __init__(self, radius, dt = 0.01, dr = 0.01):
+		super().__init__(radius, dt = dt, dr = dr)
+		self.norm = normalize_conroy22(self, gradient, radius, dt = dt, dr = dr)
+
+
+def normalize_conroy22(time_dependence, radial_gradient, radius, dt = 0.01,
+	dr = 0.1, recycling = 0.4):
+	"""A modified version of normalize.normalize_ifrmode()."""
+	tau_star = conroy22_tau_star()
+	eta = vice.milkyway.default_mass_loading(radius)
+	mgas = 0
+	time = 0
+	sfh = []
+	times = []
+	while time < END_TIME:
+		sfr = mgas / tau_star(time, mgas) # msun / Gyr
+		mgas += time_dependence(time) * dt * 1.e9 # yr-Gyr conversion
+		mgas -= sfr * dt * (1 + eta - recycling)
+		sfh.append(1.e-9 * sfr)
+		times.append(time)
+		time += dt
+	sfh = vice.toolkit.interpolation.interp_scheme_1d(times, sfh)
+	return normalize(sfh, radial_gradient, radius, dt = dt, dr = dr,
+		recycling = recycling)
