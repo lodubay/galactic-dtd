@@ -14,9 +14,7 @@ if vice.version[:2] < (1, 2):
 	raise RuntimeError("""VICE version >= 1.2.0 is required to produce \
 Johnson et al. (2021) figures. Current: %s""" % (vice.__version__))
 else: pass
-from vice.yields.presets import JW20
 from vice.toolkit import hydrodisk, J21_sf_law
-vice.yields.sneia.settings['fe'] *= 10**0.1
 from .._globals import END_TIME, MAX_SF_RADIUS, ZONE_WIDTH
 from . import migration
 from . import models
@@ -93,8 +91,11 @@ class diskmodel(vice.milkyway):
 		self.evolution = star_formation_history(spec = spec,
 			zone_width = zone_width)
 		if spec.lower() == "conroy22":
+			from .yields import C22
 			self.mode = "ifr"
 		else:
+			from vice.yields.presets import JW20
+			vice.yields.sneia.settings['fe'] *= 10**0.1
 			self.mode = "sfr"
 		dtd = delay_time_distribution(dist = RIa)
 		for i in range(self.n_zones):
