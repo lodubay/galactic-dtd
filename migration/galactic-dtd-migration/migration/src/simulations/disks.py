@@ -20,7 +20,6 @@ vice.yields.sneia.settings['fe'] *= 10**0.1
 from .._globals import END_TIME, MAX_SF_RADIUS, ZONE_WIDTH
 from . import migration
 from . import models
-from . import sfe
 from .dtd import PowerLaw, BrokenPowerLaw, Exponential, Bimodal
 from .models.utils import get_bin_number, interpolate
 from .models.gradient import gradient
@@ -48,14 +47,7 @@ class diskmodel(vice.milkyway):
 		- "insideout"
 		- "lateburst"
 		- "outerburst"
-
-	sfe_model : ``str`` [default : "johnson21"]
-		A keyword denoting the time-dependence of the star formation efficiency.
-		Allowed values:
-
-		- "johnson21"
 		- "conroy22"
-		- "hybrid"
 
 	verbose : ``bool`` [default : True]
 		Whether or not the run the models with verbose output.
@@ -86,7 +78,7 @@ class diskmodel(vice.milkyway):
 	"""
 
 	def __init__(self, zone_width = 0.1, name = "diskmodel", spec = "static",
-		sfe_model = "johnson21", verbose = True, migration_mode = "diffusion",
+		verbose = True, migration_mode = "diffusion",
 		delay = 0.04, RIa = "powerlaw", **kwargs):
 		super().__init__(zone_width = zone_width, name = name,
 			verbose = verbose, **kwargs)
@@ -100,7 +92,10 @@ class diskmodel(vice.milkyway):
 			filename = "%s_analogdata.out" % (name))
 		self.evolution = star_formation_history(spec = spec,
 			zone_width = zone_width)
-		self.mode = "sfr"
+		if spec.lower() == "conroy22":
+			self.mode = "ifr"
+		else:
+			self.mode = "sfr"
 		dtd = delay_time_distribution(dist = RIa)
 		for i in range(self.n_zones):
 			# set the delay time distribution and minimum Type Ia delay time
@@ -110,11 +105,12 @@ class diskmodel(vice.milkyway):
 			if (self.annuli[i] + self.annuli[i + 1]) / 2 > MAX_SF_RADIUS:
 				self.zones[i].tau_star = 1.e6
 			else:
-				self.zones[i].tau_star = star_formation_efficiency(
- 					m.pi * (self.annuli[i + 1]**2 - self.annuli[i]**2),
- 					sfe_model = sfe_model
-				)
-
+				if spec.lower() == "conroy22":
+					self.zones[i].tau_star = models.conroy22_tau_star()
+				else:
+					self.zones[i].tau_star = J21_sf_law(
+						m.pi * (self.annuli[i + 1]**2 - self.annuli[i]**2)
+					)
 
 	def run(self, *args, **kwargs):
 		out = super().run(*args, **kwargs)
@@ -184,7 +180,8 @@ class star_formation_history:
 					"static": 		models.static,
 					"insideout": 	models.insideout,
 					"lateburst": 	models.lateburst,
-					"outerburst": 	models.outerburst
+					"outerburst": 	models.outerburst,
+					"conroy22": models.insideout_conroy22
 				}[spec.lower()]((i + 0.5) * zone_width))
 			i += 1
 
@@ -203,29 +200,6 @@ class star_formation_history:
 				return gradient(radius) * interpolate(self._radii[-2],
 					self._evol[-2](time), self._radii[-1], self._evol[-1](time),
 					radius)
-
-
-class star_formation_efficiency:
-	r"""
-	The star formation efficiency (SFE) of the model galaxy. This object will
-	be used as the ``tau_star`` attribute of each zone in the ``diskmodel``.
-
-	Parameters
-	----------
-	area : float
-		The area in kpc^2 of the zone. Not used in the conroy22 model.
-	sfe_model : str [default: "johnson21"]
-		A keyword denoting the star formation efficiency model.
-	"""
-
-	def __init__(self, area, sfe_model = "johnson21"):
-		self._sfe = {
-			"johnson21": J21_sf_law(area, mode = "sfr"),
-			"conroy22": sfe.conroy22()
-		}[sfe_model.lower()]
-
-	def __call__(self, time, arg2):
-		return self._sfe(time, arg2)
 
 
 class delay_time_distribution:

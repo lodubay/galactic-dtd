@@ -44,29 +44,3 @@ class lateburst(modified_exponential, gaussian):
 		return self._prefactor * modified_exponential.__call__(self, time) * (
 			1 + gaussian.__call__(self, time)
 		)
-
-
-class lateburst_ifrmode(lateburst):
-
-	r"""
-	A modification of the late-burst SFH model which controls infall rate (IFR)
-	instead of star formation rate (SFR).
-
-	Parameters
-	----------
-	radius : float
-		The galactocentric radius in kpc of a given annulus in the model.
-	dt : float [default : 0.01]
-		The timestep size of the model in Gyr.
-	dr : float [default : 0.1]
-		The width of the annulus in kpc.
-
-	All attributes and functionality are inherited from ``lateburst``.
-	"""
-
-	def __init__(self, radius, dt = 0.01, dr = 0.1):
-		super().__init__(self, radius, dt=dt, dr=dr)
-		self._prefactor = normalize_ifrmode(self, gradient, radius, dt=dt, dr=dr)
-
-	def __call__(self, time):
-		return super().__call__(time)
