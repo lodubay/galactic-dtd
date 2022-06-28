@@ -7,6 +7,3 @@
 *.tiff
 *.gif
 *.svg
-
-# Don't track Python cache
-__pycache__
