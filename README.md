@@ -4,8 +4,8 @@
 </a>
 <br>
 <br>
-<a href="https://github.com/lodubay/galactic-dtd/actions/workflows/showyourwork.yml">
-<img src="https://github.com/lodubay/galactic-dtd/actions/workflows/showyourwork.yml/badge.svg" alt="Article status"/>
+<a href="https://github.com/lodubay/galactic-dtd/actions/workflows/build.yml">
+<img src="https://github.com/lodubay/galactic-dtd/actions/workflows/build.yml/badge.svg" alt="Article status"/>
 </a>
 <a href="https://github.com/lodubay/galactic-dtd/raw/main-pdf/arxiv.tar.gz">
 <img src="https://img.shields.io/badge/article-tarball-blue.svg?style=flat" alt="Article tarball"/>
