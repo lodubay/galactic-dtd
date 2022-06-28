@@ -10,22 +10,22 @@ import vice
 
 def main():
     fig, axs = setup_axes()
-    plot_history('../data/migration_outputs/post-process/insideout/powerlaw', 80, axs)
-    plot_history('../data/migration_outputs/post-process/conroy22_insideout/powerlaw', 80, axs)
+    plot_history(axs, '../data/migration_outputs/post-process/insideout/powerlaw', 80)
+    plot_history(axs, '../data/migration_outputs/post-process/conroy22_insideout/powerlaw', 80)
     plt.show()
 
-def plot_history(output, zone, axs):
+def plot_history(axs, output, zone):
     r"""
     Plot IFR, SFR, Mgas, and SFE timescale for the given VICE multioutput and
     zone.
 
     Parameters
     ----------
+axs : list of Axes
     output : str
         Path to multioutput directory.
     zone : int
         Index of zone to plot.
-    axs : list of Axes
 
     """
     history = vice.history(str(Path(output + '.vice') / ('zone%i' % zone)))
@@ -45,6 +45,7 @@ def setup_axes():
     axs[0,1].set_title(r'Star Formation Rate [$M_{\odot}\,\rm{yr}^{-1}$]')
     axs[1,0].set_title(r'Gas Mass [$M_{\odot}$]')
     axs[1,1].set_title(r'SFE Timescale [Gyr]')
+    axs[1,1].set_yscale('log')
 
     return fig, axs
 
