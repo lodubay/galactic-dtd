@@ -1,7 +1,9 @@
-# Don't track anything...
-*
-
-# ... except the following:
-!.gitignore
-!*.py
-!matplotlibrc
+# Don't track figure output
+*.pdf
+*.eps
+*.png
+*.jpeg
+*.jpg
+*.tiff
+*.gif
+*.svg
