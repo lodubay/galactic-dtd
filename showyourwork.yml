@@ -1,2 +1,11 @@
 # User configuration; see the docs for details!
 verbose: true
+
+overleaf:
+    id: 62bcadcac05eed1de5fdc9b6
+    push:
+        - src/tex/figures
+        - src/tex/output
+    pull:
+        - src/tex/ms.tex
+        - src/tex/bib.bib
