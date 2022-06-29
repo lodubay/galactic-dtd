@@ -4,6 +4,26 @@ This file contains utility classes and functions for the DTD models
 
 import math as m
 
+class exponential:
+    """
+    A generic normalized exponential function of time
+
+    Attributes
+    ----------
+    timescale : float [default: 1]
+        The exponential timescale in units of time.
+    coeff : float [default: 1]
+        The post-normalization coefficient.
+
+    """
+    def __init__(self, timescale=1, coeff = 1):
+        self.timescale = timescale
+        self.coeff = coeff
+        self.norm = coeff / timescale
+
+    def __call__(self, time):
+        return self.norm * m.exp(-time / self.timescale)
+
 class gaussian:
     """
     A generic normalized Gaussian function of time.

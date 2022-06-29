@@ -99,7 +99,7 @@ class diskmodel(vice.milkyway):
             from vice.yields.presets import JW20
             vice.yields.sneia.settings['fe'] *= 10**0.1
             self.mode = "sfr"
-        dtd = delay_time_distribution(dist = RIa)
+        dtd = delay_time_distribution(dist = RIa, tmin = delay)
         for i in range(self.n_zones):
             # set the delay time distribution and minimum Type Ia delay time
             self.zones[i].delay = delay
@@ -215,6 +215,10 @@ class delay_time_distribution:
     ----------'
     dist : str [default: "powerlaw"]
         A keyword denoting the delay-time distribution of SNe Ia.
+    tmin : float [default: 0.04]
+        The minimum SN Ia delay time in Gyr.
+    tmax : float [default: 13.2]
+        The maximum SN Ia delay time in Gyr.
 
     Calling
     -------
@@ -224,15 +228,21 @@ class delay_time_distribution:
             Simulation time in Gyr.
     """
 
-    def __init__(self, dist = "powerlaw"):
+    def __init__(self, dist = "powerlaw", tmin = 0.04, tmax = END_TIME):
+        self.tmin = tmin
+        self.tmax = tmax
+        kwargs = {'tmin': self.tmin, 'tmax': self.tmax}
         self._dtd = {
-            "powerlaw": dtds.powerlaw(),
-            "powerlaw_steep": dtds.powerlaw(slope=-1.4),
-            "powerlaw_broken": dtds.powerlaw_broken(),
-            "exponential": dtds.exponential(),
-            "exponential_long": dtds.exponential(timescale=3),
-            "bimodal": dtds.bimodal()
+            "powerlaw": dtds.powerlaw(**kwargs),
+            "powerlaw_steep": dtds.powerlaw(slope=-1.4, **kwargs),
+            "powerlaw_broken": dtds.powerlaw_broken(**kwargs),
+            "exponential": dtds.exponential(**kwargs),
+            "exponential_long": dtds.exponential(timescale=3, **kwargs),
+            "bimodal": dtds.bimodal(**kwargs)
         }[dist.lower()]
 
     def __call__(self, time):
-        return self._dtd(time)
+        if time >= self.tmin and time <= self.tmax:
+            return self._dtd(time)
+        else:
+            return 0.

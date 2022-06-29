@@ -3,8 +3,7 @@ This file defines the bimodal delay-time distribution (DTD) of Type Ia
 supernovae.
 """
 
-from .exponential import exponential
-from .utils import gaussian
+from .utils import gaussian, exponential
 from ..._globals import END_TIME
 
 class bimodal:
