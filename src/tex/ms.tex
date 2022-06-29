@@ -30,7 +30,11 @@
 
 \section{Methods}
 
-\subsection{Delay Time Distributions}
+\subsection{Accuracy of astroNN}
+
+For $19784$ stars, or $\sim3.5\%$ of the sample, the astroNN [Fe/H] abundance estimate is $\gtrsim0.5$ dex lower than the value provided by ASPCAP. The vast majority of these stars are on the lower-main sequence according to \textit{Gaia} photometry, so we exclude stars with $\log(g) > 4$ in ASPCAP. In addition, 197 or $\sim3\%$ of stars with APOKASC-2 asteroseismic ages are reported to be $>5$ Gyr younger by astroNN. The APOKASC-2 age is unphysically high for many of these stars, often exceeding 15 Gyr. We identify prior mass loss as the cause of this discrepancy, so the astroNN ages are likely closer to the truth.
+
+\subsection{Measurements of the Type Ia Supernova Delay Time Distribution}
 
 \begin{figure}
     \centering
@@ -38,12 +42,6 @@
     \caption{Delay time distribution functions}
     \label{fig:dtds}
 \end{figure}
-
-\subsection{Accuracy of astroNN}
-
-For $19784$ stars, or $\sim3.5\%$ of the sample, the astroNN [Fe/H] abundance estimate is $\gtrsim0.5$ dex lower than the value provided by ASPCAP. The vast majority of these stars are on the lower-main sequence according to \textit{Gaia} photometry, so we exclude stars with $\log(g) > 4$ in ASPCAP. In addition, 197 or $\sim3\%$ of stars with APOKASC-2 asteroseismic ages are reported to be $>5$ Gyr younger by astroNN. The APOKASC-2 age is unphysically high for many of these stars, often exceeding 15 Gyr. We identify prior mass loss as the cause of this discrepancy, so the astroNN ages are likely closer to the truth.
-
-\subsection{Measurements of the Type Ia Supernova Delay Time Distribution}
 
 \citet{Schonrich2009-RadialMixing} take their DTD to be an exponential with a 1.5 Gyr timescale, though this isn't strictly observationally motivated.
 
