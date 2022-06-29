@@ -10,8 +10,10 @@ from vice import milkyway
 import sys
 
 _MIGRATION_MODELS_ = ["diffusion", "linear", "post-process", "sudden"]
-_EVOLUTION_MODELS_ = ["static", "insideout", "lateburst", "outerburst", "conroy22"]
-_DELAY_MODELS_ = ["powerlaw", "powerlaw_steep", "exponential", "bimodal"]
+_EVOLUTION_MODELS_ = ["static", "insideout", "lateburst", "outerburst",
+                      "conroy22"]
+_DELAY_MODELS_ = ["powerlaw", "powerlaw_steep", "powerlaw_broken",
+                  "exponential", "exponential_long", "bimodal"]
 
 def parse():
 	r"""
