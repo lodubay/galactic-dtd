@@ -3,47 +3,49 @@ Plot the Type Ia supernova delay time distributions (DTDs) as a function of time
 """
 
 import sys
-import os
-import pickle
-sys.path.append(os.path.abspath(
-    '/mnt/c/Users/dubay.11/Repos/galactic-dtd-migration/'))
 import matplotlib.pyplot as plt
 import paths
-
-PARENT_DIR = paths.data / 'migration' / 'diffusion' / 'insideout'
+sys.path.append(str(paths.root))
+from migration.src.simulations import dtds
 
 plaw = {
     'name': 'powerlaw',
+    'func': dtds.powerlaw(),
     'label': r'Power-Law ($\alpha=-1.1$)',
     'color': 'k',
     'line': '-',
 }
 plaw_steep = {
     'name': 'powerlaw_steep',
+    'func': dtds.powerlaw(slope=-1.4),
     'label': r'Power-Law ($\alpha=-1.4$)',
     'color': '#aa3377',
     'line': '--',
 }
 plaw_broken = {
     'name': 'powerlaw_broken',
+    'func': dtds.powerlaw_broken(),
     'label': 'Broken Power-Law',
     'color': '#ee6677',
     'line': '-.',
 }
 exp = {
     'name': 'exponential',
+    'func': dtds.exponential(),
     'label': r'Exponential ($\tau=1.5$ Gyr)',
     'color': '#66ccee',
     'line': '-',
 }
 exp_long = {
     'name': 'exponential_long',
+    'func': dtds.exponential(timescale=3),
     'label': r'Exponential ($\tau=3$ Gyr)',
     'color': '#4477aa',
     'line': '--',
 }
 bimodal = {
     'name': 'bimodal',
+    'func': dtds.bimodal(),
     'label': 'Bimodal',
     'color': '#228833',
     'line': '-.',
@@ -51,12 +53,11 @@ bimodal = {
 
 dtds = [bimodal, plaw_steep, plaw, plaw_broken, exp, exp_long]
 
-
 def main():
     fig, ax = plt.subplots(figsize=(3.25, 3.25), tight_layout=True)
     time = [0.001*i for i in range(40, 13200)]
     for dtd in dtds:
-        func = import_dtd(dtd['name'])
+        func = dtd['func']
         ax.plot(time, [func(t) for t in time], label=dtd['label'],
                 c=dtd['color'], ls=dtd['line'], lw=1)
     ax.set_xscale('log')
@@ -67,15 +68,6 @@ def main():
     ax.legend(frameon=False, loc='upper right', fontsize=7)
     fig.savefig(paths.figures / 'delay_time_distributions.pdf')
     plt.close()
-
-
-def import_dtd(name, zone=0):
-    output = PARENT_DIR / ('%s.vice' % name)
-    attributes_path = output / ('zone%s.vice' % zone) / 'attributes'
-    with open(attributes_path / 'RIa.obj', 'rb') as f:
-        RIa = pickle.load(f)
-    return RIa
-
 
 if __name__ == '__main__':
     main()
