@@ -7,6 +7,8 @@ import matplotlib.pyplot as plt
 import paths
 sys.path.append(str(paths.root))
 from migration.src.simulations import dtds
+from colormaps import paultol
+plt.rcParams['axes.prop_cycle'] = plt.cycler('color', paultol.bright.colors)
 
 plaw = {
     'name': 'powerlaw',
@@ -19,35 +21,35 @@ plaw_steep = {
     'name': 'powerlaw_steep',
     'func': dtds.powerlaw(slope=-1.4),
     'label': r'Power-Law ($\alpha=-1.4$)',
-    'color': '#aa3377',
+    'color': paultol.bright.colors[5],
     'line': '--',
 }
 plaw_broken = {
     'name': 'powerlaw_broken',
     'func': dtds.powerlaw_broken(),
     'label': 'Broken Power-Law',
-    'color': '#ee6677',
+    'color': paultol.bright.colors[4],
     'line': '-.',
 }
 exp = {
     'name': 'exponential',
     'func': dtds.exponential(),
     'label': r'Exponential ($\tau=1.5$ Gyr)',
-    'color': '#66ccee',
+    'color': paultol.bright.colors[1],
     'line': '-',
 }
 exp_long = {
     'name': 'exponential_long',
     'func': dtds.exponential(timescale=3),
     'label': r'Exponential ($\tau=3$ Gyr)',
-    'color': '#4477aa',
+    'color': paultol.bright.colors[0],
     'line': '--',
 }
 bimodal = {
     'name': 'bimodal',
     'func': dtds.bimodal(),
     'label': 'Bimodal',
-    'color': '#228833',
+    'color': paultol.bright.colors[2],
     'line': '-.',
 }
 
