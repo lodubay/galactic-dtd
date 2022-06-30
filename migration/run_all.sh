@@ -3,13 +3,17 @@ for DTD in "powerlaw" "powerlaw_steep" "powerlaw_broken" "exponential" "exponent
 do
 	for MIGR in "diffusion" "post-process"
 	do
-		python simulations.py -f --nstars=8 --migration=$MIGR --evolution=insideout --RIa=$DTD --name=outputs/$MIGR/insideout/$DTD
+		NAME=outputs/$MIGR/insideout/$DTD
+		echo $NAME
+		python simulations.py -f --nstars=8 --migration=$MIGR --evolution=insideout --RIa=$DTD --name=$NAME
 	done
 done
 for DTD in "powerlaw" "powerlaw_steep" "exponential"
 do
 	for MIGR in "diffusion" "post-process"
 	do
-		python simulations.py -f --nstars=8 --migration=$MIGR --evolution=insideout --RIa=$DTD --minimum-delay=0.15 --name=outputs/$MIGR/insideout/$DTD_delayed
+		NAME=outputs/$MIGR/insideout/$DTD\_delayed
+		echo $NAME
+		python simulations.py -f --nstars=8 --migration=$MIGR --evolution=insideout --RIa=$DTD --minimum-delay=0.15 --name=$NAME
 	done
 done
