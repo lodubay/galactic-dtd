@@ -7,11 +7,10 @@ import os
 import pickle
 sys.path.append(os.path.abspath(
     '/mnt/c/Users/dubay.11/Repos/galactic-dtd-migration/'))
-# from src.simulations.dtd import PowerLaw, BrokenPowerLaw, Exponential, Bimodal
 import matplotlib.pyplot as plt
 import paths
 
-PARENT_DIR = paths.data / 'migration_outputs' / 'dtdtest'
+PARENT_DIR = paths.data / 'migration' / 'diffusion' / 'insideout'
 
 plaw = {
     'name': 'powerlaw',
