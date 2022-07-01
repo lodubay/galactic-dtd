@@ -10,16 +10,27 @@ from matplotlib.colors import Normalize, LogNorm
 from sklearn.neighbors import KernelDensity
 from ofe_feh_vice import GALR_BINS, ABSZ_BINS, FEH_LIM, OFE_LIM
 from ofe_feh_vice import setup_axes, setup_colorbar
+import paths
+from utils import import_allStar
 
 global NBINS
 NBINS = 50
 
-def main(filename='../data/APOGEE/dr17_cut_data.csv', cmap='RdPu'):
-    data = pd.read_csv(Path(filename))
+def main(cmap='RdPu', verbose=True):
+    if verbose:
+        print('Importing allStar data...')
+    data = import_allStar()
+    if verbose:
+        print('Plotting 2D histograms...')
     fig, axs = plot_scatter_hist_grid(data)
+    if verbose:
+        print('Plotting contours...')
     plot_contours(axs, data, cmap=cmap)
-    plt.savefig('ofe_feh_apogee.pdf', dpi=300)
+    output = paths.figures / 'ofe_feh_apogee.pdf'
+    plt.savefig(output, dpi=300)
     plt.close()
+    if verbose:
+        print('Saved to %s.' % str(output))
 
 
 def plot_scatter_hist_grid(data):
@@ -46,13 +57,13 @@ def plot_scatter_hist_grid(data):
             if j == 0:
                 ax.set_ylabel('[O/Fe]')
                 ax.text(0.55, 0.85, r'$%s\leq |z| < %s$' % absz_lim,
-                        transform=ax.transAxes)
+                        transform=ax.transAxes, size=8)
             if i == 0:
                 ax.set_title(r'$%s\leq R_{\rm{Gal}} < %s$ kpc'% galr_lim)
     return fig, axs
 
 
-def plot_contours(axs, data, cmap='Greys', linewidths=1):
+def plot_contours(axs, data, cmap='Greys', linewidths=0.5):
     """
     Add contours of APOGEE abundances to axes.
 
@@ -185,10 +196,10 @@ def apogee_region(data, galr_lim=(0, 20), absz_lim=(0, 5)):
     galr_min, galr_max = galr_lim
     absz_min, absz_max = absz_lim
     # Select subset
-    subset = data[(data['ASTRONN_GALR'] >= galr_min) &
-                  (data['ASTRONN_GALR'] < galr_max) &
-                  (data['ASTRONN_GALZ'].abs() >= absz_min) &
-                  (data['ASTRONN_GALZ'].abs() < absz_max)]
+    subset = data[(data['GALR'] >= galr_min) &
+                  (data['GALR'] < galr_max) &
+                  (data['GALZ'].abs() >= absz_min) &
+                  (data['GALZ'].abs() < absz_max)]
     subset.reset_index(inplace=True)
     return subset.dropna(subset='O_FE')
 
@@ -248,7 +259,7 @@ def scatter_hist(ax, x, y, xlim=None, ylim=None, log_norm=True, cmap='gray',
     else:
         norm = Normalize(vmin=vmin, vmax=vmax)
     # Plot
-    ax.scatter(x, y, c=color, s=0.5, rasterized=rasterized)
+    ax.scatter(x, y, c=color, s=0.1, rasterized=rasterized)
     return ax.hist2d(x, y, bins=[xbins, ybins], cmap=cmap, norm=norm, cmin=cmin)
 
 

@@ -7,6 +7,8 @@ import numpy as np
 from numpy.random import default_rng
 import pandas as pd
 from astropy.table import Table
+import astropy.units as u
+from astropy.coordinates import SkyCoord, Galactic, Galactocentric
 import vice
 import paths
 
@@ -54,8 +56,58 @@ def import_allStar(name='allStarLite-dr17-synspec.fits'):
     df.replace(99.999, np.nan, inplace=True)
     # Replace NaN in ASPCAPFLAGS with empty string
     df['ASPCAPFLAGS'].replace(np.nan, '', inplace=True)
+    # Calculate galactocentric coordinates based on galactic l, b and Gaia dist
+    galr, galphi, galz = galactic_to_galactocentric(
+        df['GLON'], df['GLAT'], df['GAIAEDR3_R_MED_PHOTOGEO']/1000
+    )
+    df['GALR'] = galr
+    df['GALPHI'] = galphi
+    df['GALZ'] = galz
+    df.reset_index(inplace=True, drop=True)
     return df
 
+def galactic_to_galactocentric(l, b, distance):
+    r"""
+    Use astropy's SkyCoord to convert Galactic (l, b, distance) coordinates
+    to galactocentric (r, phi, z) coordinates.
+
+    Parameters
+    ----------
+    l : array-like
+        Galactic longitude in degrees
+    b : array-like
+        Galactic latitude in degrees
+    distance : array-like
+        Distance (from Sun) in kpc
+
+    Returns
+    -------
+    galr : numpy array
+        Galactocentric radius in kpc
+    galphi : numpy array
+        Galactocentric phi-coordinates in degrees
+    galz : numpy arraay
+        Galactocentric z-height in kpc
+    """
+    l = np.array(l)
+    b = np.array(b)
+    d = np.array(distance)
+    if l.shape == b.shape == d.shape:
+        if not isinstance(l, u.quantity.Quantity):
+            l *= u.deg
+        if not isinstance(b, u.quantity.Quantity):
+            b *= u.deg
+        if not isinstance(d, u.quantity.Quantity):
+            d *= u.kpc
+        galactic = SkyCoord(l=l, b=b, distance=d, frame=Galactic())
+        galactocentric = galactic.transform_to(frame=Galactocentric())
+        galactocentric.representation_type = 'cylindrical'
+        galr = galactocentric.rho.to(u.kpc).value
+        galphi = galactocentric.phi.to(u.deg).value
+        galz = galactocentric.z.to(u.kpc).value
+        return galr, galphi, galz
+    else:
+        raise ValueError('Arrays must be of same length.')
 
 def multioutput_to_pandas(output_name, data_dir='../data/migration_outputs'):
     """

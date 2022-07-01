@@ -8,15 +8,21 @@ xtick.direction: in
 ytick.direction: in
 xtick.top: True
 ytick.right: True
+xtick.major.width: 0.5
+xtick.minor.width: 0.3
+ytick.major.width: 0.5
+ytick.minor.width: 0.3
 # LATEX-style font
 font.family: STIXgeneral
 mathtext.fontset: cm
 # Font size
 legend.fontsize: 8
 axes.labelsize: 9
-xtick.labelsize: 9
-ytick.labelsize: 9
+axes.titlesize: 9
+xtick.labelsize: 8
+ytick.labelsize: 8
 # Axes
 axes.labelpad: 2.0
+axes.linewidth: 0.5
 # Saving figures
 savefig.pad_inches: 0.0
