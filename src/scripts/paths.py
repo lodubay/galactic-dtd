@@ -25,5 +25,5 @@ tex = src / "tex"
 # Absolute path to the `src/tex/figures` folder (contains figure output)
 figures = tex / "figures"
 
-# Absolute path to the `migration` folder
+# Absolute path to the `migration` folder (contains VICE simulation code)
 migration = root / "migration"

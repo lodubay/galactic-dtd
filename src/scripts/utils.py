@@ -3,9 +3,59 @@ Functions used by many plotting scripts.
 """
 
 from pathlib import Path
+import numpy as np
 from numpy.random import default_rng
 import pandas as pd
+from astropy.table import Table
 import vice
+import paths
+
+def decode(df):
+    """
+    Decode DataFrame with byte strings into ordinary strings.
+
+    Parameters
+    ----------
+    df : pandas DataFrame
+    """
+    str_df = df.select_dtypes([object])
+    str_df = str_df.stack().str.decode('utf-8').unstack()
+    for col in str_df:
+        df[col] = str_df[col]
+    return df
+
+def import_allStar(name='allStarLite-dr17-synspec.fits'):
+    """
+    Import APOGEE AllStar file and convert it to a pandas DataFrame.
+
+    Parameters
+    ----------
+    name : star, optional
+        The name of the AllStar data file.
+
+    Returns
+    -------
+    df : pandas DataFrame
+    """
+    table = Table.read(paths.data / 'APOGEE' / name, format='fits', hdu=1)
+    # Separate paramflags into individual columns
+    for i in range(len(table['PARAMFLAG'][0])):
+        table['PARAMFLAG' + str(i)] = table['PARAMFLAG'][:,i]
+    # Filter out multidimensional columns
+    cols = [name for name in table.colnames if len(table[name].shape) <= 1]
+    # Convert byte-strings to ordinary strings and convert to pandas
+    df = decode(table[cols].to_pandas())
+    # Limit to main red star sample
+    df = df[df['EXTRATARG'] == 0]
+    # Weed out bad flags
+    fatal_flags = (2**23) # STAR_BAD
+    df = df[df['ASPCAPFLAG'] & fatal_flags == 0]
+    # Replace NaN stand-in values with NaN
+    df.replace(99.999, np.nan, inplace=True)
+    # Replace NaN in ASPCAPFLAGS with empty string
+    df['ASPCAPFLAGS'].replace(np.nan, '', inplace=True)
+    return df
+
 
 def multioutput_to_pandas(output_name, data_dir='../data/migration_outputs'):
     """
