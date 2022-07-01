@@ -5,7 +5,7 @@ do
 	do
 		for MIGR in "diffusion" "post-process"
 		do
-			NAME=outputs/$MIGR/$EVOL/$DTD
+			NAME=../src/data/migration/$MIGR/$EVOL/$DTD
 			echo $NAME
 			python simulations.py -f --nstars=8 --migration=$MIGR --evolution=$EVOL --RIa=$DTD --name=$NAME
 		done
@@ -17,7 +17,7 @@ do
 	do
 		for MIGR in "diffusion" "post-process"
 		do
-			NAME=outputs/$MIGR/$EVOL/$DTD\_delayed
+			NAME=../src/data/migration/$MIGR/$EVOL/$DTD\_delayed
 			echo $NAME
 			python simulations.py -f --nstars=8 --migration=$MIGR --evolution=$EVOL --RIa=$DTD --minimum-delay=0.15 --name=$NAME
 		done
