@@ -6,9 +6,6 @@ from pathlib import Path
 import numpy as np
 from numpy.random import default_rng
 import pandas as pd
-from astropy.table import Table
-import astropy.units as u
-from astropy.coordinates import SkyCoord, Galactic, Galactocentric
 import vice
 import paths
 
@@ -39,6 +36,7 @@ def import_allStar(name='allStarLite-dr17-synspec.fits'):
     -------
     df : pandas DataFrame
     """
+    from astropy.table import Table
     table = Table.read(paths.data / 'APOGEE' / name, format='fits', hdu=1)
     # Separate paramflags into individual columns
     for i in range(len(table['PARAMFLAG'][0])):
@@ -89,6 +87,8 @@ def galactic_to_galactocentric(l, b, distance):
     galz : numpy arraay
         Galactocentric z-height in kpc
     """
+    import astropy.units as u
+    from astropy.coordinates import SkyCoord, Galactic, Galactocentric
     l = np.array(l)
     b = np.array(b)
     d = np.array(distance)
