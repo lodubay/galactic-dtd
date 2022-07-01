@@ -104,16 +104,10 @@ class diskmodel(vice.milkyway):
             # set the delay time distribution and minimum Type Ia delay time
             self.zones[i].delay = delay
             self.zones[i].RIa = dtd
-            # set the entrainment to zero beyond 15.5 kpc
-            if (self.annuli[i] + self.annuli[i + 1]) / 2 > MAX_SF_RADIUS:
-                self.zones[i].tau_star = 1.e6
-            else:
+            # set the star formation efficiency timescale within 15.5 kpc
+            if (self.annuli[i] + self.annuli[i + 1]) / 2 <= MAX_SF_RADIUS:
                 if spec.lower() == "conroy22":
                     self.zones[i].tau_star = models.conroy22_tau_star()
-                else:
-                    self.zones[i].tau_star = J21_sf_law(
-                        m.pi * (self.annuli[i + 1]**2 - self.annuli[i]**2)
-                    )
 
     def run(self, *args, **kwargs):
         out = super().run(*args, **kwargs)

@@ -7,11 +7,12 @@ from pathlib import Path
 import numpy as np
 import matplotlib.pyplot as plt
 import vice
+import paths
 
 def main():
     fig, axs = setup_axes()
-    plot_history(axs, '../data/migration_outputs/post-process/insideout/powerlaw', 80)
-    plot_history(axs, '../data/migration_outputs/post-process/conroy22_insideout/powerlaw', 80)
+    plot_history(axs, paths.data / 'migration/testa', 8)
+    plot_history(axs, paths.data / 'migration/testb', 8)
     plt.show()
 
 def plot_history(axs, output, zone):
@@ -21,14 +22,15 @@ def plot_history(axs, output, zone):
 
     Parameters
     ----------
-axs : list of Axes
+    axs : list of Axes
     output : str
         Path to multioutput directory.
     zone : int
         Index of zone to plot.
 
     """
-    history = vice.history(str(Path(output + '.vice') / ('zone%i' % zone)))
+    history = vice.history(str(Path('%s.vice' % output) / ('zone%i' % zone)))
+    print(history)
     axs[0,0].plot(history['time'], history['ifr'])
     axs[0,1].plot(history['time'], history['sfr'])
     axs[1,0].plot(history['time'], history['mgas'])
