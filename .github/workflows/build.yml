@@ -14,6 +14,9 @@ jobs:
         with:
           fetch-depth: 0
           
+      - name: Install astropy
+        run: conda install astropy
+          
       - name: Build the article PDF
         id: build
         uses: showyourwork/showyourwork-action@v1
