@@ -12,10 +12,11 @@ from utils import multioutput_to_pandas
 from ofe_feh_vice import plot_ofe_feh_stars, plot_post_process_track, \
     plot_post_process_tracks
 from ofe_feh_apogee import plot_contours
+from utils import import_allStar
+import paths
 
-def main(output_name, migration_dir='../data/migration_outputs',
-         stars_cmap='winter', apogee_path='../data/APOGEE/dr17_cut_data.csv',
-         apogee_cmap='magma'):
+def main(output_name, migration_dir='../data/migration',
+         stars_cmap='winter', apogee_cmap='magma'):
     """
     Parameters
     ----------
@@ -38,7 +39,7 @@ def main(output_name, migration_dir='../data/migration_outputs',
     fig, axs = plot_ofe_feh_stars(stars, stars_cmap)
     # Import APOGEE data
     print('Importing APOGEE')
-    apogee_data = pd.read_csv(Path(apogee_path))
+    apogee_data = import_allStar()
     print('Plotting APOGEE contours')
     plot_contours(axs, apogee_data, apogee_cmap, linewidths=0.5)
     # Add post-process abundance track
@@ -47,8 +48,8 @@ def main(output_name, migration_dir='../data/migration_outputs',
     plot_post_process_tracks(output_name, axs, data_dir=migration_dir)
     fig.suptitle(output_name)
     evolution, RIa = output_name.split('/')[-2:]
-    plt.savefig('ofe_feh_%s_%s.png' % (evolution, RIa), dpi=300)
-    plt.savefig('ofe_feh_%s_%s.pdf' % (evolution, RIa), dpi=300)
+    plt.savefig(paths.figures / 'ofe_feh_%s_%s.png' % (evolution, RIa), dpi=300)
+    plt.savefig(paths.figures / 'ofe_feh_%s_%s.pdf' % (evolution, RIa), dpi=300)
     plt.close()
 
 
