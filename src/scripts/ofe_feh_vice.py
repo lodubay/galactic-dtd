@@ -66,7 +66,7 @@ def plot_ofe_feh_stars(stars, cmap):
             if j == 0:
                 ax.set_ylabel('[O/Fe]')
                 ax.text(0.55, 0.85, r'$%s\leq |z| < %s$' % absz_lim,
-                        transform=ax.transAxes)
+                        transform=ax.transAxes, size=8)
             if i == 0:
                 ax.set_title(r'$%s\leq R_{\rm{Gal}} < %s$ kpc'% galr_lim)
     return fig, axs
