@@ -6,8 +6,86 @@ from pathlib import Path
 import numpy as np
 from numpy.random import default_rng
 import pandas as pd
+from astropy.table import Table
 import vice
 import paths
+
+# =============================================================================
+# DATA IMPORT AND UTILITY FUNCTIONS
+# =============================================================================
+
+def import_allStar(verbose=False):
+    """
+    Import APOGEE allStar data and, if necessary, export for faster re-use.
+    """
+    clean_df_path = paths.data / 'APOGEE' / 'allStarLite-dr17-synspec-clean.csv'
+    try:
+        if verbose:
+            print('Importing from %s' % clean_df_path)
+        df = pd.read_csv(clean_df_path, dtype={'MEMBER': 'object'})
+    except FileNotFoundError:
+        if verbose:
+            print('Clean allStar file not found, generating from source')
+        df = clean_allStar()
+        df.to_csv(clean_df_path, index=False)
+    return df
+
+def clean_allStar(name='allStarLite-dr17-synspec.fits'):
+    """
+    Import APOGEE AllStar file and convert it to a pandas DataFrame.
+
+    Parameters
+    ----------
+    name : star, optional
+        The name of the AllStar data file.
+
+    Returns
+    -------
+    df : pandas DataFrame
+    """
+    df = fits_to_pandas(paths.data / 'APOGEE' / name, hdu=1)
+    # Limit to main red star sample
+    df = df[df['EXTRATARG'] == 0]
+    df.drop(columns=['EXTRATARG'], inplace=True)
+    # Weed out bad flags
+    fatal_flags = (2**23) # STAR_BAD
+    df = df[df['ASPCAPFLAG'] & fatal_flags == 0]
+    # Replace NaN stand-in values with NaN
+    df.replace(99.999, np.nan, inplace=True)
+    # Replace NaN in certain columns with empty string
+    df.replace({'ASPCAPFLAGS': np.nan, 'MEMBER': np.nan}, '', inplace=True)
+    # Calculate galactocentric coordinates based on galactic l, b and Gaia dist
+    galr, galphi, galz = galactic_to_galactocentric(
+        df['GLON'], df['GLAT'], df['GAIAEDR3_R_MED_PHOTOGEO']/1000
+    )
+    df['GALR'] = galr
+    df['GALPHI'] = galphi
+    df['GALZ'] = galz
+    df.reset_index(inplace=True, drop=True)
+    return df
+
+def fits_to_pandas(path, **kwargs):
+    """
+    Import a table in the form of a FITS file and convert it to a pandas
+    DataFrame.
+
+    Parameters
+    ----------
+    path : Path or str
+        Path to fits file
+    Other keyword arguments are passed to astropy.table.Table
+
+    Returns
+    -------
+    df : pandas DataFrame
+    """
+    # Read FITS file into astropy table
+    table = Table.read(path, format='fits', **kwargs)
+    # Filter out multidimensional columns
+    cols = [name for name in table.colnames if len(table[name].shape) <= 1]
+    # Convert byte-strings to ordinary strings and convert to pandas
+    df = decode(table[cols].to_pandas())
+    return df
 
 def decode(df):
     """
@@ -21,47 +99,6 @@ def decode(df):
     str_df = str_df.stack().str.decode('utf-8').unstack()
     for col in str_df:
         df[col] = str_df[col]
-    return df
-
-def import_allStar(name='allStarLite-dr17-synspec.fits'):
-    """
-    Import APOGEE AllStar file and convert it to a pandas DataFrame.
-
-    Parameters
-    ----------
-    name : star, optional
-        The name of the AllStar data file.
-
-    Returns
-    -------
-    df : pandas DataFrame
-    """
-    from astropy.table import Table
-    table = Table.read(paths.data / 'APOGEE' / name, format='fits', hdu=1)
-    # Separate paramflags into individual columns
-    for i in range(len(table['PARAMFLAG'][0])):
-        table['PARAMFLAG' + str(i)] = table['PARAMFLAG'][:,i]
-    # Filter out multidimensional columns
-    cols = [name for name in table.colnames if len(table[name].shape) <= 1]
-    # Convert byte-strings to ordinary strings and convert to pandas
-    df = decode(table[cols].to_pandas())
-    # Limit to main red star sample
-    df = df[df['EXTRATARG'] == 0]
-    # Weed out bad flags
-    fatal_flags = (2**23) # STAR_BAD
-    df = df[df['ASPCAPFLAG'] & fatal_flags == 0]
-    # Replace NaN stand-in values with NaN
-    df.replace(99.999, np.nan, inplace=True)
-    # Replace NaN in ASPCAPFLAGS with empty string
-    df['ASPCAPFLAGS'].replace(np.nan, '', inplace=True)
-    # Calculate galactocentric coordinates based on galactic l, b and Gaia dist
-    galr, galphi, galz = galactic_to_galactocentric(
-        df['GLON'], df['GLAT'], df['GAIAEDR3_R_MED_PHOTOGEO']/1000
-    )
-    df['GALR'] = galr
-    df['GALPHI'] = galphi
-    df['GALZ'] = galz
-    df.reset_index(inplace=True, drop=True)
     return df
 
 def galactic_to_galactocentric(l, b, distance):
