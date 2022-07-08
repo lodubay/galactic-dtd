@@ -18,16 +18,14 @@ from colormaps import paultol
 from tri_panel_ism_tracks import setup_axes
 
 # Settings
-SLOPE = [-1.1, -0.8, -1.4]
-LINE_STYLE = ['-', ':', '--', '-', '-']
-COLOR = ['k', 'k', 'k', paultol.highcontrast.colors[2],
-         paultol.highcontrast.colors[1]]
+SLOPE = [-0.8, -1.1, -1.4]
+LINE_STYLE = [':', '-', '--']
+COLOR = ['k', 'k', 'k']
 NRUNS = len(SLOPE)
 DT = 0.01
 STANDARD_PARAMS = dict(
     func=models.insideout(8, dt=DT),
     mode='sfr',
-    RIa=dtds.powerlaw(),
     elements=('fe', 'o'),
     dt=DT,
     recycling='continuous',
@@ -42,10 +40,9 @@ def main(overwrite=False):
     fig, axs = setup_axes(felim=(-2., 0.2), tight_layout=True)
 
     for i in range(NRUNS):
-        delay = MINIMUM_DELAY[i]
-        tau_star = TAU_STAR[i]
-        name = gen_name_from_params(delay=delay, tau_star=tau_star)
-        label = rf'$t_D={int(delay*1000)}$ Myr, $\tau_*={int(tau_star)}$ Gyr'
+        slope = SLOPE[i]
+        name = gen_name_from_params(slope=slope)
+        label = rf'$\alpha={slope:.2f}$'
 
         if overwrite:
             run(output_dir, i)
@@ -56,24 +53,15 @@ def main(overwrite=False):
                 run(output_dir, i)
         history = vice.history(str(output_dir / name))
 
-        if tau_star != 2.0:
-            line_width = 2
-            zorder = 1
-        else:
-            line_width = 1.5
-            zorder = 10
-
         axs[0].plot(history['time'], history['[fe/h]'], label=label,
-                    color=COLOR[i], ls=LINE_STYLE[i], lw=line_width,
-                    zorder=zorder)
-        axs[1].plot(history['time'], history['[o/fe]'], color=COLOR[i],
-                    ls=LINE_STYLE[i], lw=line_width, zorder=zorder)
+                    color=COLOR[i], ls=LINE_STYLE[i])
+        axs[1].plot(history['time'], history['[o/fe]'],
+                    color=COLOR[i], ls=LINE_STYLE[i])
         axs[2].plot(history['[fe/h]'], history['[o/fe]'],
-                    color=COLOR[i], ls=LINE_STYLE[i], lw=line_width,
-                    zorder=zorder)
+                    color=COLOR[i], ls=LINE_STYLE[i])
 
     axs[0].legend(frameon=False)
-    fig.savefig(paths.figures / 'onezone_delay_taustar.png', dpi=300)
+    fig.savefig(paths.figures / 'onezone_slope.png', dpi=300)
     plt.close()
 
 
@@ -81,14 +69,12 @@ def run(output_dir, i):
     """
     Set up and run the ith one-zone model.
     """
-    sz = setup_single(output_dir,
-                      delay=MINIMUM_DELAY[i], tau_star=TAU_STAR[i],
-                      **STANDARD_PARAMS)
+    sz = setup_single(output_dir, slope=SLOPE[i], **STANDARD_PARAMS)
     simtime = np.arange(0, END_TIME + DT, DT)
     sz.run(simtime, overwrite=True)
 
 
-def setup_single(output_dir, delay=0.1, tau_star=2., **kwargs):
+def setup_single(output_dir, slope=-1.1, **kwargs):
     """
     Setup a one-zone model with a given minimum Ia delay time and SFE timescale.
 
@@ -96,28 +82,26 @@ def setup_single(output_dir, delay=0.1, tau_star=2., **kwargs):
     ----------
     output_dir : Path
         Parent directory for VICE outputs
-    delay : float, optional
-        Minimum Type Ia delay time in Gyr. The default is 0.1 Gyr.
-    tau_star : float, optional
-        Star formation efficiency timescale in Gyr. The default is 2 Gyr.
+    slope : float, optional
+        Slope of the power-law delay time distribution. The default is -1.1.
     Other keyword arguments are passed to vice.singlezone
 
     Returns
     -------
     sz : vice.singlezone object
     """
-    name = gen_name_from_params(delay=delay, tau_star=tau_star)
+    name = gen_name_from_params(slope=slope)
     sz = vice.singlezone(name=str(output_dir / name),
-                         delay=delay, tau_star=tau_star,
+                         RIa=dtds.powerlaw(slope=slope),
                          **kwargs)
     return sz
 
 
-def gen_name_from_params(slope=-1.1, tau_star=2.0):
+def gen_name_from_params(slope=-1.1):
     """
     Generate singlezone output name from its distinguishing parameters.
     """
-    name = 'slope{:03d}_taustar{:02d}'.format(int(-10*slope), int(tau_star*10))
+    name = 'slope{:03d}'.format(int(-10*slope))
     return name
 
 
