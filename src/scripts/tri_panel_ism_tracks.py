@@ -78,9 +78,11 @@ def plot_tracks(axs, dtd, zone=80,
                 linestyle=dtd['line'])
 
 
-def setup_axes(tlim=(-1, 14), felim=(-3, 0.25), olim=(-0.1, 0.5)):
+def setup_axes(tlim=(-1, 14), felim=(-3, 0.25), olim=(-0.1, 0.5), width=8,
+               **kwargs):
     """
-    Set up three-panel plot.
+    Set up three-panel abundance track plot: [Fe/H] vs time, [O/Fe] vs time,
+    and [O/Fe] vs [Fe/H].
 
     Parameters
     ----------
@@ -90,13 +92,16 @@ def setup_axes(tlim=(-1, 14), felim=(-3, 0.25), olim=(-0.1, 0.5)):
         Bounds of [Fe/H] axes
     olim : tuple, optional [default: (-0.1, 0.45)]
         Bounds of [O/Fe] axes
+    width : float, optional [default: 8]
+        width of the figure in inches
+    Other keyword arguments are passed to plt.subplots
 
     Returns
     -------
     fig : figure
     axs : list of axes
     """
-    fig, axs = plt.subplots(1, 3, figsize=(12, 4))
+    fig, axs = plt.subplots(1, 3, figsize=(width, width/3), **kwargs)
 
     # First panel: metallicity vs time
     ax = axs[0]

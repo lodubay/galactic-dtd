@@ -11,11 +11,12 @@ sys.path.append(str(paths.root))
 from migration.src.simulations import models, dtds
 from migration.src._globals import END_TIME
 from colormaps import paultol
+from tri_panel_ism_tracks import setup_axes
 
 # Settings
-MINIMUM_DELAY = [0.05, 0.10, 0.20, 0.10, 0.10] # Gyr
+MINIMUM_DELAY = [0.10, 0.05, 0.20, 0.10, 0.10] # Gyr
 TAU_STAR = [2.0, 2.0, 2.0, 1.0, 4.0] # Gyr
-LINE_STYLE = [':', '-', '--', '-', '-']
+LINE_STYLE = ['-', ':', '--', '-', '-']
 COLOR = ['k', 'k', 'k', paultol.highcontrast.colors[2],
          paultol.highcontrast.colors[1]]
 NRUNS = len(MINIMUM_DELAY)
@@ -33,13 +34,13 @@ STANDARD_PARAMS = dict(
 def main(overwrite=False):
     output_dir = paths.data / 'onezone' / 'delay_taustar'
 
-    fig, ax = plt.subplots()
+    fig, axs = setup_axes(felim=(-2., 0.2), tight_layout=True)
 
     for i in range(NRUNS):
         delay = MINIMUM_DELAY[i]
         tau_star = TAU_STAR[i]
         name = gen_name_from_params(delay=delay, tau_star=tau_star)
-        label = rf'$t_D={delay}$ Myr, $\tau_*={tau_star}$ Gyr'
+        label = rf'$t_D={int(delay*1000)}$ Myr, $\tau_*={int(tau_star)}$ Gyr'
 
         if overwrite:
             run(output_dir, i)
@@ -57,13 +58,19 @@ def main(overwrite=False):
             line_width = 1.5
             zorder = 10
 
-        ax.plot(history['[fe/h]'], history['[o/fe]'], label=label,
-                color=COLOR[i], ls=LINE_STYLE[i], lw=line_width, zorder=zorder)
+        axs[0].plot(history['time'], history['[fe/h]'], label=label,
+                    color=COLOR[i], ls=LINE_STYLE[i], lw=line_width,
+                    zorder=zorder)
+        axs[1].plot(history['time'], history['[o/fe]'], color=COLOR[i],
+                    ls=LINE_STYLE[i], lw=line_width, zorder=zorder)
+        axs[2].plot(history['[fe/h]'], history['[o/fe]'],
+                    color=COLOR[i], ls=LINE_STYLE[i], lw=line_width,
+                    zorder=zorder)
 
-    ax.set_xlabel('[Fe/H]')
-    ax.set_ylabel('[O/Fe]')
-    ax.legend()
-    fig.savefig(paths.figures / 'onezone_delay_taustar.pdf')
+    # ax.set_xlabel('[Fe/H]')
+    # ax.set_ylabel('[O/Fe]')
+    axs[0].legend(frameon=False)
+    fig.savefig(paths.figures / 'onezone_delay_taustar.png', dpi=300)
     plt.close()
 
 
