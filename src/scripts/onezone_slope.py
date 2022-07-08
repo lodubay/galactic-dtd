@@ -35,7 +35,7 @@ STANDARD_PARAMS = dict(
 )
 
 def main(overwrite=False):
-    output_dir = paths.data / 'onezone' / 'delay_taustar'
+    output_dir = paths.data / 'onezone' / 'slope'
 
     fig, axs = setup_axes(felim=(-2., 0.2), tight_layout=True)
 
