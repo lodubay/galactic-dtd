@@ -49,7 +49,7 @@ def main(output_name, migration_dir='../data/migration',
     # fig.suptitle(output_name)
     evolution, RIa = output_name.split('/')[-2:]
     plt.savefig(paths.figures / ('ofe_feh_%s_%s.png' % (evolution, RIa)), dpi=300)
-    plt.savefig(paths.figures / ('ofe_feh_%s_%s.pdf' % (evolution, RIa)), dpi=300)
+    # plt.savefig(paths.figures / ('ofe_feh_%s_%s.pdf' % (evolution, RIa)), dpi=300)
     plt.close()
 
 

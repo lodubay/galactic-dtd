@@ -191,6 +191,8 @@ def filter_multioutput_stars(stars, galr_lim=(0, 20), absz_lim=(0, 5),
         Minimum and maximum of the absolute value of z-height in kpc
     zone_width : float
         Width of each simulation zone in kpc
+    min_mass : float, optional
+        Minimum mass of stellar particle
 
     Returns
     -------

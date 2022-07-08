@@ -11,18 +11,13 @@ from matplotlib.cm import ScalarMappable
 import vice
 from utils import multioutput_to_pandas, filter_multioutput_stars, \
     sample_dataframe
+from _globals import GALR_BINS, ABSZ_BINS, ZONE_WIDTH
 
 global FEH_LIM
 global OFE_LIM
-global GALR_BINS
-global ABSZ_BINS
-global ZONE_WIDTH
 
 FEH_LIM = (-1.3, 0.8)
 OFE_LIM = (-0.1, 0.5)
-GALR_BINS = [3, 5, 7, 9, 11, 13] # kpc
-ABSZ_BINS = [0, 0.5, 1, 2] # kpc
-ZONE_WIDTH = 0.1 # kpc
 
 def main(output_name, data_dir='../data/migration_outputs', cmap='winter'):
     """
