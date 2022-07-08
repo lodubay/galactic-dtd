@@ -1,5 +1,9 @@
+"""
+This script plots abundance tracks for one-zone models with varying minimum
+Type Ia delay times and star formation efficiency timescales.
+"""
+
 import sys
-import glob
 from pathlib import Path
 import numpy as np
 import matplotlib.pyplot as plt
@@ -67,14 +71,15 @@ def main(overwrite=False):
                     color=COLOR[i], ls=LINE_STYLE[i], lw=line_width,
                     zorder=zorder)
 
-    # ax.set_xlabel('[Fe/H]')
-    # ax.set_ylabel('[O/Fe]')
     axs[0].legend(frameon=False)
     fig.savefig(paths.figures / 'onezone_delay_taustar.png', dpi=300)
     plt.close()
 
 
 def run(output_dir, i):
+    """
+    Set up and run the ith one-zone model.
+    """
     sz = setup_single(output_dir,
                       delay=MINIMUM_DELAY[i], tau_star=TAU_STAR[i],
                       **STANDARD_PARAMS)
@@ -105,6 +110,7 @@ def setup_single(output_dir, delay=0.1, tau_star=2., **kwargs):
                          delay=delay, tau_star=tau_star,
                          **kwargs)
     return sz
+
 
 def gen_name_from_params(delay=0.1, tau_star=2.0):
     """
