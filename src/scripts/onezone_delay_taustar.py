@@ -18,7 +18,7 @@ from colormaps import paultol
 from tri_panel_ism_tracks import setup_axes
 
 # Settings
-MINIMUM_DELAY = [0.10, 0.05, 0.20, 0.10, 0.10] # Gyr
+MINIMUM_DELAY = [0.08, 0.04, 0.16, 0.08, 0.08] # Gyr
 TAU_STAR = [2.0, 2.0, 2.0, 1.0, 4.0] # Gyr
 LINE_STYLE = ['-', ':', '--', '-', '-']
 COLOR = ['k', 'k', 'k', paultol.highcontrast.colors[2],
@@ -38,7 +38,8 @@ STANDARD_PARAMS = dict(
 def main(overwrite=False):
     output_dir = paths.data / 'onezone' / 'delay_taustar'
 
-    fig, axs = setup_axes(felim=(-2., 0.2), tight_layout=True)
+    fig, axs = setup_axes(felim=(-2., 0.2), olim=(-0.05, 0.5),
+                          tight_layout=True)
 
     for i in range(NRUNS):
         delay = MINIMUM_DELAY[i]
