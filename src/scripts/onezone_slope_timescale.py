@@ -15,12 +15,10 @@ sys.path.append(str(paths.root))
 from migration.src.simulations import models, dtds
 from migration.src._globals import END_TIME
 from colormaps import paultol
-from tri_panel_ism_tracks import setup_axes
+from track_and_mdf import setup_axes, plot_vice_onezone
 
-# Settings
+# VICE one-zone model settings
 SLOPE = [-0.8, -1.1, -1.4]
-LINE_STYLE = [':', '-', '--']
-COLOR = ['k', 'k', 'k']
 NRUNS = len(SLOPE)
 DT = 0.01
 STANDARD_PARAMS = dict(
@@ -34,8 +32,12 @@ STANDARD_PARAMS = dict(
     tau_star=2.,
 )
 
+# Plot settings
+LINE_STYLE = [':', '-', '--']
+COLOR = ['k', 'k', 'k']
+
 def main(overwrite=False):
-    output_dir = paths.data / 'onezone' / 'slope'
+    output_dir = paths.data / 'onezone' / 'slope_timescale'
 
     fig, axs = setup_axes(felim=(-2., 0.2), tight_layout=True)
 
@@ -101,7 +103,7 @@ def gen_name_from_params(slope=-1.1):
     """
     Generate singlezone output name from its distinguishing parameters.
     """
-    name = 'slope{:03d}'.format(int(-10*slope))
+    name = 'slope{:02d}'.format(int(-10*slope))
     return name
 
 
