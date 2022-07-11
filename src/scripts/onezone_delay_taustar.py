@@ -81,7 +81,7 @@ def main(overwrite=False):
     axs[2].set_xlim((None, odf_xlim[1]*2))
 
     axs[0].legend(frameon=False, loc='lower left')
-    fig.savefig(paths.figures / 'onezone_delay_taustar_2.png', dpi=300)
+    fig.savefig(paths.figures / 'onezone_delay_taustar.png', dpi=300)
     plt.close()
 
 
