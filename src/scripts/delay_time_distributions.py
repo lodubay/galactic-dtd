@@ -53,12 +53,12 @@ bimodal = {
     'line': '-.',
 }
 
-dtds = [bimodal, plaw_steep, plaw, plaw_broken, exp, exp_long]
+distributions = [bimodal, plaw_steep, plaw, plaw_broken, exp, exp_long]
 
 def main():
     fig, ax = plt.subplots(figsize=(3.25, 3.25), tight_layout=True)
     time = [0.001*i for i in range(40, 13200)]
-    for dtd in dtds:
+    for dtd in distributions:
         func = dtd['func']
         ax.plot(time, [func(t) for t in time], label=dtd['label'],
                 c=dtd['color'], ls=dtd['line'], lw=1)

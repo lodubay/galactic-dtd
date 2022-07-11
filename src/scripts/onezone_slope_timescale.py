@@ -18,8 +18,8 @@ from colormaps import paultol
 from track_and_mdf import setup_axes, plot_vice_onezone
 
 # VICE one-zone model settings
-SLOPE = [-0.8, -1.1, -1.4]
-NRUNS = len(SLOPE)
+SLOPES = [-0.8, -1.1, -1.4]
+TIMESCALES= [1.5, 3, 6]
 DT = 0.01
 STANDARD_PARAMS = dict(
     func=models.insideout(8, dt=DT),
@@ -28,86 +28,63 @@ STANDARD_PARAMS = dict(
     dt=DT,
     recycling='continuous',
     eta=2.5,
-    delay=0.04,
     tau_star=2.,
+    delay=0.04,
 )
 
 # Plot settings
-LINE_STYLE = [':', '-', '--']
+LINE_STYLE = [':', '--', '-']
 COLOR = ['k', 'k', 'k']
 
 def main(overwrite=False):
     output_dir = paths.data / 'onezone' / 'slope_timescale'
 
-    fig, axs = setup_axes(felim=(-2., 0.2), tight_layout=True)
+    fig, axs = setup_axes()
 
-    for i in range(NRUNS):
-        slope = SLOPE[i]
-        name = gen_name_from_params(slope=slope)
-        label = rf'$\alpha={slope:.2f}$'
+    for i, slope in enumerate(SLOPES):
+        name = 'powerlaw{:02d}'.format(int(-10*slope))
+        label = rf'Power-Law ($\alpha={slope:.2f}$)'
+        sz = vice.singlezone(name=str(output_dir / name),
+                             RIa=dtds.powerlaw(slope=slope),
+                             **STANDARD_PARAMS)
+        simtime = np.arange(0, END_TIME + DT, DT)
+        sz.run(simtime, overwrite=True)
+        plot_vice_onezone(str(output_dir / name), fig=fig, axs=axs,
+                          plot_kw={'label': label},
+                          style_kw={
+                              'linestyle': LINE_STYLE[i],
+                              'color': 'k',
+                              'linewidth': 1},
+                          )
 
-        if overwrite:
-            run(output_dir, i)
-        else:
-            try:
-                history = vice.history(str(output_dir / name))
-            except IOError:
-                run(output_dir, i)
-        history = vice.history(str(output_dir / name))
+    for i, timescale in enumerate(TIMESCALES):
+        name = 'exponential{:02d}'.format(int(10*timescale))
+        label = rf'Exponential ($\tau={timescale:.1f}$ Gyr)'
+        sz = vice.singlezone(name=str(output_dir / name),
+                             RIa=dtds.exponential(timescale=timescale),
+                             **STANDARD_PARAMS)
+        simtime = np.arange(0, END_TIME + DT, DT)
+        sz.run(simtime, overwrite=True)
+        plot_vice_onezone(str(output_dir / name), fig=fig, axs=axs,
+                          plot_kw={'label': label},
+                          style_kw={
+                              'linestyle': LINE_STYLE[i],
+                              'color': paultol.bright.colors[5],
+                              'linewidth': 1},
+                          )
 
-        axs[0].plot(history['time'], history['[fe/h]'], label=label,
-                    color=COLOR[i], ls=LINE_STYLE[i])
-        axs[1].plot(history['time'], history['[o/fe]'],
-                    color=COLOR[i], ls=LINE_STYLE[i])
-        axs[2].plot(history['[fe/h]'], history['[o/fe]'],
-                    color=COLOR[i], ls=LINE_STYLE[i])
+    # Adjust axis limits
+    axs[0].set_xlim((-2.5, 0.2))
+    axs[0].set_ylim((-0.1, 0.52))
+    mdf_ylim = axs[1].get_ylim()
+    axs[1].set_ylim((None, mdf_ylim[1]*2))
+    odf_xlim = axs[2].get_xlim()
+    axs[2].set_xlim((odf_xlim[0]*0.5, odf_xlim[1]*2))
 
-    axs[0].legend(frameon=False)
-    fig.savefig(paths.figures / 'onezone_slope.png', dpi=300)
+    axs[0].legend(frameon=False, loc='lower left', handlelength=1.2, fontsize=7)
+    fig.savefig(paths.figures / 'onezone_slope_timescale.png', dpi=300)
     plt.close()
-
-
-def run(output_dir, i):
-    """
-    Set up and run the ith one-zone model.
-    """
-    sz = setup_single(output_dir, slope=SLOPE[i], **STANDARD_PARAMS)
-    simtime = np.arange(0, END_TIME + DT, DT)
-    sz.run(simtime, overwrite=True)
-
-
-def setup_single(output_dir, slope=-1.1, **kwargs):
-    """
-    Setup a one-zone model with a given minimum Ia delay time and SFE timescale.
-
-    Parameters
-    ----------
-    output_dir : Path
-        Parent directory for VICE outputs
-    slope : float, optional
-        Slope of the power-law delay time distribution. The default is -1.1.
-    Other keyword arguments are passed to vice.singlezone
-
-    Returns
-    -------
-    sz : vice.singlezone object
-    """
-    name = gen_name_from_params(slope=slope)
-    sz = vice.singlezone(name=str(output_dir / name),
-                         RIa=dtds.powerlaw(slope=slope),
-                         **kwargs)
-    return sz
-
-
-def gen_name_from_params(slope=-1.1):
-    """
-    Generate singlezone output name from its distinguishing parameters.
-    """
-    name = 'slope{:02d}'.format(int(-10*slope))
-    return name
-
 
 
 if __name__ == '__main__':
     main()
-

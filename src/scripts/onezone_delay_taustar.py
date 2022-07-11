@@ -18,14 +18,13 @@ from colormaps import paultol
 from track_and_mdf import setup_axes, plot_vice_onezone
 
 # One-zone model settings
-MINIMUM_DELAY = [0.08, 0.04, 0.16, 0.08, 0.08] # Gyr
+MINIMUM_DELAY = [0.04, 0.08, 0.16, 0.08, 0.08] # Gyr
 TAU_STAR = [2.0, 2.0, 2.0, 1.0, 4.0] # Gyr
 NRUNS = len(MINIMUM_DELAY)
 DT = 0.01
 STANDARD_PARAMS = dict(
     func=models.insideout(8, dt=DT),
     mode='sfr',
-    RIa=dtds.powerlaw(),
     elements=('fe', 'o'),
     dt=DT,
     recycling='continuous',
@@ -33,7 +32,7 @@ STANDARD_PARAMS = dict(
 )
 
 # Plot settings
-LINE_STYLE = ['-', ':', '--', '-', '-']
+LINE_STYLE = [':', '-', '--', '-', '-']
 COLOR = ['k', 'k', 'k', paultol.highcontrast.colors[2],
          paultol.highcontrast.colors[1]]
 
@@ -78,9 +77,9 @@ def main(overwrite=False):
     mdf_ylim = axs[1].get_ylim()
     axs[1].set_ylim((None, mdf_ylim[1]*2))
     odf_xlim = axs[2].get_xlim()
-    axs[2].set_xlim((None, odf_xlim[1]*2))
+    axs[2].set_xlim((odf_xlim[0]*0.5, odf_xlim[1]*2))
 
-    axs[0].legend(frameon=False, loc='lower left')
+    axs[0].legend(frameon=False, loc='lower left', handlelength=1.2, fontsize=7)
     fig.savefig(paths.figures / 'onezone_delay_taustar.png', dpi=300)
     plt.close()
 
@@ -116,6 +115,7 @@ def setup_single(output_dir, delay=0.1, tau_star=2., **kwargs):
     """
     name = gen_name_from_params(delay=delay, tau_star=tau_star)
     sz = vice.singlezone(name=str(output_dir / name),
+                         RIa=dtds.powerlaw(tmin=delay),
                          delay=delay, tau_star=tau_star,
                          **kwargs)
     return sz

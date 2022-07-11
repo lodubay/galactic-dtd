@@ -5,7 +5,7 @@ alongside their corresponding metallicity distribution functions (MDFs).
 
 import numpy as np
 import matplotlib.pyplot as plt
-from matplotlib.ticker import MultipleLocator
+from matplotlib.ticker import MultipleLocator, LogLocator
 
 def main():
     """
@@ -156,10 +156,14 @@ def setup_axes(width=3.25):
     ax_mdf = fig.add_subplot(gs[0,0], sharex=ax_main)
     ax_mdf.tick_params(axis='x', labelcolor='#ffffff00')
     ax_mdf.set_yscale('log')
+    ax_mdf.set_ylabel('dN/d[Fe/H]')
+    ax_mdf.yaxis.set_major_locator(LogLocator(base=10, numticks=5))
     # Add panel to the right for MDF in [O/Fe]
     ax_odf = fig.add_subplot(gs[1,1], sharey=ax_main)
     ax_odf.tick_params(axis='y', labelcolor='#ffffff00')
     ax_odf.set_xscale('log')
+    ax_odf.set_xlabel('dN/d[O/Fe]')
+    ax_odf.xaxis.set_major_locator(LogLocator(base=10, numticks=5))
     axs = [ax_main, ax_mdf, ax_odf]
     return fig, axs
 
