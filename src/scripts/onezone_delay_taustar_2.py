@@ -38,7 +38,7 @@ STANDARD_PARAMS = dict(
 def main(overwrite=False):
     output_dir = paths.data / 'onezone' / 'delay_taustar'
 
-    fig, axs = setup_axes(feh_lim=(-3.1, 0.1), ofe_lim=(-0.16, 0.52))
+    fig, axs = setup_axes()
 
     for i in range(NRUNS):
         delay = MINIMUM_DELAY[i]
@@ -61,11 +61,24 @@ def main(overwrite=False):
             line_width = 1
             zorder = 10
 
-        plot_vice_onezone(str(output_dir / name), fig=fig, axs=axs, label=label,
-                          color=COLOR[i], linestyle=LINE_STYLE[i],
-                          linewidth=line_width, zorder=zorder)
+        plot_vice_onezone(str(output_dir / name), fig=fig, axs=axs,
+                          plot_kw={'label': label},
+                          style_kw={
+                              'color': COLOR[i],
+                              'linestyle': LINE_STYLE[i],
+                              'linewidth': line_width,
+                              'zorder': zorder},
+                          )
 
-    axs[0].legend(frameon=False, loc='lower left', bbox_to_anchor=(0.12, 0.1))
+    # Adjust axis limits
+    axs[0].set_xlim((-3, 0.2))
+    axs[0].set_ylim((-0.1, 0.54))
+    mdf_ylim = axs[1].get_ylim()
+    axs[1].set_ylim((None, mdf_ylim[1]*2))
+    odf_xlim = axs[2].get_xlim()
+    axs[2].set_xlim((None, odf_xlim[1]*2))
+
+    axs[0].legend(frameon=False, loc='lower left')
     fig.savefig(paths.figures / 'onezone_delay_taustar_2.png', dpi=300)
     plt.close()
 
