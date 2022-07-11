@@ -15,14 +15,11 @@ sys.path.append(str(paths.root))
 from migration.src.simulations import models, dtds
 from migration.src._globals import END_TIME
 from colormaps import paultol
-from tri_panel_ism_tracks import setup_axes
+from track_and_mdf import setup_axes, plot_vice_onezone
 
-# Settings
+# One-zone model settings
 MINIMUM_DELAY = [0.08, 0.04, 0.16, 0.08, 0.08] # Gyr
 TAU_STAR = [2.0, 2.0, 2.0, 1.0, 4.0] # Gyr
-LINE_STYLE = ['-', ':', '--', '-', '-']
-COLOR = ['k', 'k', 'k', paultol.highcontrast.colors[2],
-         paultol.highcontrast.colors[1]]
 NRUNS = len(MINIMUM_DELAY)
 DT = 0.01
 STANDARD_PARAMS = dict(
@@ -35,11 +32,15 @@ STANDARD_PARAMS = dict(
     eta=2.5,
 )
 
+# Plot settings
+LINE_STYLE = ['-', ':', '--', '-', '-']
+COLOR = ['k', 'k', 'k', paultol.highcontrast.colors[2],
+         paultol.highcontrast.colors[1]]
+
 def main(overwrite=False):
     output_dir = paths.data / 'onezone' / 'delay_taustar'
 
-    fig, axs = setup_axes(felim=(-2., 0.2), olim=(-0.05, 0.5),
-                          tight_layout=True)
+    fig, axs = setup_axes()
 
     for i in range(NRUNS):
         delay = MINIMUM_DELAY[i]
@@ -54,26 +55,33 @@ def main(overwrite=False):
                 history = vice.history(str(output_dir / name))
             except IOError:
                 run(output_dir, i)
-        history = vice.history(str(output_dir / name))
 
         if tau_star != 2.0:
-            line_width = 2
+            line_width = 1.5
             zorder = 1
         else:
-            line_width = 1.5
+            line_width = 1
             zorder = 10
 
-        axs[0].plot(history['time'], history['[fe/h]'], label=label,
-                    color=COLOR[i], ls=LINE_STYLE[i], lw=line_width,
-                    zorder=zorder)
-        axs[1].plot(history['time'], history['[o/fe]'], color=COLOR[i],
-                    ls=LINE_STYLE[i], lw=line_width, zorder=zorder)
-        axs[2].plot(history['[fe/h]'], history['[o/fe]'],
-                    color=COLOR[i], ls=LINE_STYLE[i], lw=line_width,
-                    zorder=zorder)
+        plot_vice_onezone(str(output_dir / name), fig=fig, axs=axs,
+                          plot_kw={'label': label},
+                          style_kw={
+                              'color': COLOR[i],
+                              'linestyle': LINE_STYLE[i],
+                              'linewidth': line_width,
+                              'zorder': zorder},
+                          )
 
-    axs[0].legend(frameon=False)
-    fig.savefig(paths.figures / 'onezone_delay_taustar.png', dpi=300)
+    # Adjust axis limits
+    axs[0].set_xlim((-3, 0.2))
+    axs[0].set_ylim((-0.1, 0.54))
+    mdf_ylim = axs[1].get_ylim()
+    axs[1].set_ylim((None, mdf_ylim[1]*2))
+    odf_xlim = axs[2].get_xlim()
+    axs[2].set_xlim((None, odf_xlim[1]*2))
+
+    axs[0].legend(frameon=False, loc='lower left')
+    fig.savefig(paths.figures / 'onezone_delay_taustar_2.png', dpi=300)
     plt.close()
 
 
@@ -119,7 +127,6 @@ def gen_name_from_params(delay=0.1, tau_star=2.0):
     """
     name = 'delay{:03d}_taustar{:02d}'.format(int(delay*1000), int(tau_star*10))
     return name
-
 
 
 if __name__ == '__main__':
