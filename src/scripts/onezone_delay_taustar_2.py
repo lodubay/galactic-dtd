@@ -15,7 +15,7 @@ sys.path.append(str(paths.root))
 from migration.src.simulations import models, dtds
 from migration.src._globals import END_TIME
 from colormaps import paultol
-from tracks_and_distributions import setup_axes, plot_vice_onezone
+from track_and_mdf import setup_axes, plot_vice_onezone
 
 # Settings
 MINIMUM_DELAY = [0.08, 0.04, 0.16, 0.08, 0.08] # Gyr
