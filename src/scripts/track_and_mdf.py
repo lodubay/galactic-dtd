@@ -7,11 +7,9 @@ import numpy as np
 import matplotlib.pyplot as plt
 from matplotlib.ticker import MultipleLocator
 
-def main():
-    pass
 
-
-def plot_vice_onezone(output, **kwargs):
+def plot_vice_onezone(output, fig=None, axs=[], style_kw={}, plot_kw={},
+                      hist_kw={'histtype': 'step'}):
     """
     Wrapper for plot_track_and_mdf given a VICE onezone output.
 
@@ -19,11 +17,26 @@ def plot_vice_onezone(output, **kwargs):
     ----------
     output : str
         Path to VICE output, not necessarily including the '.vice' extension
-    **kwargs passed to plot_track_and_mdf
+    fig : instance of matplotlib.figure.figure, optional
+        If no figure is provided, one is generated from setup_axes
+    axs : list of matplotlib.axes.Axes
+        There should be three axes: the first for the main [Fe/H] vs [O/Fe]
+        panel, the second for the MDF in [Fe/H], and the third for the MDF
+        in [O/Fe]
+    style_kw : dict, optional
+        Dict of style-related keyword arguments to pass to both
+        matplotlib.pyplot.plot and matplotlib.pyplot.hist
+    plot_kw : dict, optional
+        Dict of style-related keyword arguments to pass to
+        matplotlib.pyplot.plot
+    hist_kw : dict, optional
+        Dict of style-related keyword arguments to pass to
+        matplotlib.pyplot.plot
 
     Returns
     -------
-    fig, ax
+    fig : matplotlib.figure.Figure
+    axs : list of matplotlib.axes.Axes
     """
     import vice
     hist = vice.history(output)
@@ -32,7 +45,8 @@ def plot_vice_onezone(output, **kwargs):
     fig, axs = plot_track_and_mdf(hist['[fe/h]'], hist['[o/fe]'],
                                   dn_dfeh=mdf['dn/d[fe/h]'], feh_bins=mdf_bins,
                                   dn_dofe=mdf['dn/d[o/fe]'], ofe_bins=mdf_bins,
-                                  **kwargs)
+                                  fig=fig, axs=axs, style_kw=style_kw,
+                                  plot_kw=plot_kw, hist_kw=hist_kw)
     return fig, axs
 
 
@@ -69,28 +83,34 @@ def plot_track_and_mdf(feh, ofe, dn_dfeh=[], feh_bins=10, dn_dofe=[],
         Dict of style-related keyword arguments to pass to both
         matplotlib.pyplot.plot and matplotlib.pyplot.hist
     plot_kw : dict, optional
-        Dict of style-related keyword arguments to pass to matplotlib.pyplot.plot
+        Dict of style-related keyword arguments to pass to
+        matplotlib.pyplot.plot
     hist_kw : dict, optional
-        Dict of style-related keyword arguments to pass to matplotlib.pyplot.plot
+        Dict of style-related keyword arguments to pass to
+        matplotlib.pyplot.plot
 
     Returns
     -------
-    fig, axs
+    fig : matplotlib.figure.Figure
+    axs : list of matplotlib.axes.Axes
     """
     if fig == None or len(axs) != 3:
         fig, axs = setup_axes()
 
+    # Plot abundance tracks on main panel
     axs[0].plot(feh, ofe, **plot_kw, **style_kw)
 
+    # Plot distribution of [Fe/H] on top panel
     if len(dn_dfeh) == 0:
         dn_dfeh, feh_bins = np.histogram(feh, bins=feh_bins)
-    # mask zeros before log
+    # mask zeros before taking log
     dn_dfeh = np.array(dn_dfeh)
     dn_dfeh[dn_dfeh == 0] = 1e-10
     log_dn_dfeh = np.log10(dn_dfeh)
     axs[1].hist(feh_bins[:-1], feh_bins, weights=log_dn_dfeh,
                 **hist_kw, **style_kw)
 
+    # Plot distribution of [O/Fe] on right side panel
     if len(dn_dofe) == 0:
         dn_dofe, ofe_bins = np.histogram(ofe, bins=ofe_bins)
     dn_dofe = np.array(dn_dofe)
@@ -116,6 +136,7 @@ def setup_axes(width=3.25):
     -------
     fig : matplotlib.figure
     axs : list of matplotlib.axes.Axes
+        Ordered [ax_main, ax_mdf, ax_odf]
     """
     fig = plt.figure(figsize=(width, width))
     gs = fig.add_gridspec(2, 2, width_ratios=(3, 1), height_ratios=(1, 3),
@@ -146,7 +167,3 @@ def setup_axes(width=3.25):
     ax_odf.xaxis.set_minor_locator(MultipleLocator(0.5))
     axs = [ax_main, ax_mdf, ax_odf]
     return fig, axs
-
-
-if __name__ == '__main__':
-    main()
