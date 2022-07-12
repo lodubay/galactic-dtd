@@ -29,12 +29,15 @@
 \Blindtext[4]
 
 \section{Methods}
+\label{sec:methods}
 
 \subsection{Accuracy of astroNN}
+\label{subsec:astronn-quality}
 
 For $19784$ stars, or $\sim3.5\%$ of the sample, the astroNN [Fe/H] abundance estimate is $\gtrsim0.5$ dex lower than the value provided by ASPCAP. The vast majority of these stars are on the lower-main sequence according to \textit{Gaia} photometry, so we exclude stars with $\log(g) > 4$ in ASPCAP. In addition, 197 or $\sim3\%$ of stars with APOKASC-2 asteroseismic ages are reported to be $>5$ Gyr younger by astroNN. The APOKASC-2 age is unphysically high for many of these stars, often exceeding 15 Gyr. We identify prior mass loss as the cause of this discrepancy, so the astroNN ages are likely closer to the truth.
 
 \subsection{Measurements of the Type Ia Supernova Delay Time Distribution}
+\label{subsec:dtd-measurements}
 
 \begin{figure}
     \centering
@@ -65,6 +68,42 @@ Galaxy Cluster Power-Law    & t^{-1.4}              & \citet{Maoz2017-CosmicDTD}
 Short Exponential           & e^{-t/1.5\,\rm{Gyr}}  & \citet{Schonrich2009-RadialMixing} \\
 \enddata
 \end{deluxetable}
+
+\section{Results}
+\label{sec:results}
+
+\subsection{One-Zone Models}
+\label{subsec:onezone-results}
+
+\subsubsection{The SN Ia Delay-Time Distribution}
+
+\begin{figure}
+    \centering
+    \includegraphics{figures/onezone_slope_timescale.pdf}
+    \caption{Delay time distribution functions}
+    \label{fig:onezone-slope-timescale}
+    \script{onezone_slope_timescacle.py}
+\end{figure}
+
+\subsubsection{The Minimum SN Ia Delay Time}
+
+\begin{figure}
+    \centering
+    \includegraphics{figures/onezone_dtd_delay.pdf}
+    \caption{Delay time distribution functions}
+    \label{fig:onezone-dtd-delay}
+    \script{onezone_dtd_delay.py}
+\end{figure}
+
+\subsubsection{The Star Formation History}
+
+\begin{figure}
+    \centering
+    \includegraphics{figures/onezone_delay_taustar.pdf}
+    \caption{Delay time distribution functions}
+    \label{fig:onezone-delay-taustar}
+    \script{onezone_delay_taustar.py}
+\end{figure}
 
 \bibliography{bib}
 
