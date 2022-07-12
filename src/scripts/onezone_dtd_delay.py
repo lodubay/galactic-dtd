@@ -79,13 +79,9 @@ def main(overwrite=False):
     # Adjust axis limits
     axs[0].set_xlim((-2.5, 0.2))
     axs[0].set_ylim((-0.1, 0.52))
-    mdf_ylim = axs[1].get_ylim()
-    axs[1].set_ylim((None, mdf_ylim[1]*2))
-    odf_xlim = axs[2].get_xlim()
-    axs[2].set_xlim((odf_xlim[0]*0.5, odf_xlim[1]*2))
 
     axs[0].legend(frameon=False, loc='lower left', handlelength=1.2, fontsize=7)
-    fig.savefig(paths.figures / 'onezone_dtd_delay.png', dpi=300)
+    fig.savefig(paths.figures / 'onezone_dtd_delay.pdf', dpi=300)
     plt.close()
 
 

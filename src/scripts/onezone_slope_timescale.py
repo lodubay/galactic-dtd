@@ -41,13 +41,14 @@ def main(overwrite=False):
 
     fig, axs = setup_axes()
 
+    simtime = np.arange(0, END_TIME + DT, DT)
+
     for i, slope in enumerate(SLOPES):
         name = 'powerlaw{:02d}'.format(int(-10*slope))
         label = rf'Power-Law ($\alpha={slope:.2f}$)'
         sz = vice.singlezone(name=str(output_dir / name),
                              RIa=dtds.powerlaw(slope=slope),
                              **STANDARD_PARAMS)
-        simtime = np.arange(0, END_TIME + DT, DT)
         sz.run(simtime, overwrite=True)
         plot_vice_onezone(str(output_dir / name), fig=fig, axs=axs,
                           plot_kw={'label': label},
@@ -63,7 +64,6 @@ def main(overwrite=False):
         sz = vice.singlezone(name=str(output_dir / name),
                              RIa=dtds.exponential(timescale=timescale),
                              **STANDARD_PARAMS)
-        simtime = np.arange(0, END_TIME + DT, DT)
         sz.run(simtime, overwrite=True)
         plot_vice_onezone(str(output_dir / name), fig=fig, axs=axs,
                           plot_kw={'label': label},
@@ -76,13 +76,9 @@ def main(overwrite=False):
     # Adjust axis limits
     axs[0].set_xlim((-2.5, 0.2))
     axs[0].set_ylim((-0.1, 0.52))
-    mdf_ylim = axs[1].get_ylim()
-    axs[1].set_ylim((None, mdf_ylim[1]*2))
-    odf_xlim = axs[2].get_xlim()
-    axs[2].set_xlim((odf_xlim[0]*0.5, odf_xlim[1]*2))
 
     axs[0].legend(frameon=False, loc='lower left', handlelength=1.2, fontsize=7)
-    fig.savefig(paths.figures / 'onezone_slope_timescale.png', dpi=300)
+    fig.savefig(paths.figures / 'onezone_slope_timescale.pdf', dpi=300)
     plt.close()
 
 
