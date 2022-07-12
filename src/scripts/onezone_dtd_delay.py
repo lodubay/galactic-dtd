@@ -59,7 +59,7 @@ def main(overwrite=False):
                 run(output_dir, i)
 
         if model == 'exponential':
-            color = paultol.bright.colors[5]
+            color = paultol.bright.colors[0]
             line_width = 1.5
             zorder = 1
         else:

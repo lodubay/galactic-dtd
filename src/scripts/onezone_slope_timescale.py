@@ -54,7 +54,7 @@ def main(overwrite=False):
                           plot_kw={'label': label},
                           style_kw={
                               'linestyle': LINE_STYLE[i],
-                              'color': paultol.bright.colors[5],
+                              'color': paultol.bright.colors[0],
                               'linewidth': 1},
                           )
 
