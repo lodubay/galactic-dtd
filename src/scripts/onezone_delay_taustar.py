@@ -32,7 +32,7 @@ STANDARD_PARAMS = dict(
 )
 
 # Plot settings
-LINE_STYLE = [':', '-', '--', '-', '-']
+LINE_STYLE = ['--', '-', ':', '-', '-']
 COLOR = ['k', 'k', 'k', paultol.highcontrast.colors[2],
          paultol.highcontrast.colors[1]]
 

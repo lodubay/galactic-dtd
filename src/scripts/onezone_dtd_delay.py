@@ -33,7 +33,7 @@ STANDARD_PARAMS = dict(
 )
 
 # Plot settings
-LINE_STYLE = ['--', '-', '--', '-']
+LINE_STYLE = ['-', '--', '-', '--']
 
 def main(overwrite=False):
     output_dir = paths.data / 'onezone' / 'delay_slope'

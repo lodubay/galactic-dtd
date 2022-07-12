@@ -18,7 +18,7 @@ from colormaps import paultol
 from track_and_mdf import setup_axes, plot_vice_onezone
 
 # VICE one-zone model settings
-SLOPES = [-1.4, -1.1, -0.8]
+SLOPES = [-0.8, -1.1,-1.4]
 TIMESCALES= [6, 3, 1.5]
 DT = 0.01
 STANDARD_PARAMS = dict(
@@ -33,7 +33,7 @@ STANDARD_PARAMS = dict(
 )
 
 # Plot settings
-LINE_STYLE = [':', '--', '-']
+LINE_STYLE = ['-', '--', ':']
 COLOR = ['k', 'k', 'k']
 
 def main(overwrite=False):
