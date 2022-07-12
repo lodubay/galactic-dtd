@@ -18,8 +18,8 @@ from colormaps import paultol
 from track_and_mdf import setup_axes, plot_vice_onezone
 
 # VICE one-zone model settings
-SLOPES = [-0.8, -1.1, -1.4]
-TIMESCALES= [1.5, 3, 6]
+SLOPES = [-1.4, -1.1, -0.8]
+TIMESCALES= [6, 3, 1.5]
 DT = 0.01
 STANDARD_PARAMS = dict(
     func=models.insideout(8, dt=DT),
@@ -43,21 +43,6 @@ def main(overwrite=False):
 
     simtime = np.arange(0, END_TIME + DT, DT)
 
-    for i, slope in enumerate(SLOPES):
-        name = 'powerlaw{:02d}'.format(int(-10*slope))
-        label = rf'Power-Law ($\alpha={slope:.2f}$)'
-        sz = vice.singlezone(name=str(output_dir / name),
-                             RIa=dtds.powerlaw(slope=slope),
-                             **STANDARD_PARAMS)
-        sz.run(simtime, overwrite=True)
-        plot_vice_onezone(str(output_dir / name), fig=fig, axs=axs,
-                          plot_kw={'label': label},
-                          style_kw={
-                              'linestyle': LINE_STYLE[i],
-                              'color': 'k',
-                              'linewidth': 1},
-                          )
-
     for i, timescale in enumerate(TIMESCALES):
         name = 'exponential{:02d}'.format(int(10*timescale))
         label = rf'Exponential ($\tau={timescale:.1f}$ Gyr)'
@@ -70,6 +55,21 @@ def main(overwrite=False):
                           style_kw={
                               'linestyle': LINE_STYLE[i],
                               'color': paultol.bright.colors[5],
+                              'linewidth': 1},
+                          )
+
+    for i, slope in enumerate(SLOPES):
+        name = 'powerlaw{:02d}'.format(int(-10*slope))
+        label = rf'Power-Law ($\alpha={slope:.1f}$)'
+        sz = vice.singlezone(name=str(output_dir / name),
+                             RIa=dtds.powerlaw(slope=slope),
+                             **STANDARD_PARAMS)
+        sz.run(simtime, overwrite=True)
+        plot_vice_onezone(str(output_dir / name), fig=fig, axs=axs,
+                          plot_kw={'label': label},
+                          style_kw={
+                              'linestyle': LINE_STYLE[i],
+                              'color': 'k',
                               'linewidth': 1},
                           )
 

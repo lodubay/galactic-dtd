@@ -18,8 +18,8 @@ from colormaps import paultol
 from track_and_mdf import setup_axes, plot_vice_onezone
 
 # VICE one-zone model settings
-DELAYS = [0.04, 0.15, 0.04, 0.15]
-MODELS = ['powerlaw', 'powerlaw', 'exponential', 'exponential']
+DELAYS = [0.15, 0.04, 0.15, 0.04]
+MODELS = ['exponential', 'exponential', 'powerlaw', 'powerlaw']
 NRUNS = len(DELAYS)
 DT = 0.01
 STANDARD_PARAMS = dict(

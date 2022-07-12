@@ -18,7 +18,7 @@ from colormaps import paultol
 from track_and_mdf import setup_axes, plot_vice_onezone
 
 # One-zone model settings
-MINIMUM_DELAY = [0.04, 0.08, 0.16, 0.08, 0.08] # Gyr
+MINIMUM_DELAY = [0.16, 0.08, 0.04, 0.08, 0.08] # Gyr
 TAU_STAR = [2.0, 2.0, 2.0, 1.0, 4.0] # Gyr
 NRUNS = len(MINIMUM_DELAY)
 DT = 0.01
