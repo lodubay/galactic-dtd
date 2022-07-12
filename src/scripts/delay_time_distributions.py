@@ -10,50 +10,52 @@ from migration.src.simulations import dtds
 from colormaps import paultol
 plt.rcParams['axes.prop_cycle'] = plt.cycler('color', paultol.bright.colors)
 
-plaw = {
-    'name': 'powerlaw',
-    'func': dtds.powerlaw(),
-    'label': r'Power-Law ($\alpha=-1.1$)',
-    'color': 'k',
-    'line': '-',
-}
-plaw_steep = {
-    'name': 'powerlaw_steep',
-    'func': dtds.powerlaw(slope=-1.4),
-    'label': r'Power-Law ($\alpha=-1.4$)',
-    'color': paultol.bright.colors[5],
-    'line': '--',
-}
-plaw_broken = {
-    'name': 'powerlaw_broken',
-    'func': dtds.powerlaw_broken(),
-    'label': 'Broken Power-Law',
-    'color': paultol.bright.colors[4],
-    'line': '-.',
-}
-exp = {
-    'name': 'exponential',
-    'func': dtds.exponential(),
-    'label': r'Exponential ($\tau=1.5$ Gyr)',
-    'color': paultol.bright.colors[1],
-    'line': '-',
-}
-exp_long = {
-    'name': 'exponential_long',
-    'func': dtds.exponential(timescale=3),
-    'label': r'Exponential ($\tau=3$ Gyr)',
-    'color': paultol.bright.colors[0],
-    'line': '--',
-}
-bimodal = {
-    'name': 'bimodal',
-    'func': dtds.bimodal(),
-    'label': 'Bimodal',
-    'color': paultol.bright.colors[2],
-    'line': '-.',
-}
+class styles:
+    plaw = {
+        'name': 'powerlaw',
+        'func': dtds.powerlaw(),
+        'label': r'Power-Law ($\alpha=-1.1$)',
+        'color': 'k',
+        'line': '-',
+    }
+    plaw_steep = {
+        'name': 'powerlaw_steep',
+        'func': dtds.powerlaw(slope=-1.4),
+        'label': r'Power-Law ($\alpha=-1.4$)',
+        'color': paultol.bright.colors[5],
+        'line': '--',
+    }
+    plaw_broken = {
+        'name': 'powerlaw_broken',
+        'func': dtds.powerlaw_broken(),
+        'label': 'Broken Power-Law',
+        'color': paultol.bright.colors[1],
+        'line': '-.',
+    }
+    exp = {
+        'name': 'exponential',
+        'func': dtds.exponential(),
+        'label': r'Exponential ($\tau=1.5$ Gyr)',
+        'color': paultol.bright.colors[4],
+        'line': '--',
+    }
+    exp_long = {
+        'name': 'exponential_long',
+        'func': dtds.exponential(timescale=3),
+        'label': r'Exponential ($\tau=3$ Gyr)',
+        'color': paultol.bright.colors[0],
+        'line': '-',
+    }
+    bimodal = {
+        'name': 'bimodal',
+        'func': dtds.bimodal(),
+        'label': 'Bimodal',
+        'color': paultol.bright.colors[2],
+        'line': '-.',
+    }
 
-distributions = [bimodal, plaw_steep, plaw, plaw_broken, exp, exp_long]
+distributions = [styles.bimodal, styles.plaw_steep, styles.plaw,
+                 styles.plaw_broken, styles.exp, styles.exp_long]
 
 def main():
     fig, ax = plt.subplots(figsize=(3.25, 3.25), tight_layout=True)
