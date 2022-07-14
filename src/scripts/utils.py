@@ -146,7 +146,7 @@ def galactic_to_galactocentric(l, b, distance):
     else:
         raise ValueError('Arrays must be of same length.')
 
-def multioutput_to_pandas(output_name, data_dir='../data/migration_outputs'):
+def multioutput_to_pandas(output_name, data_dir='../data/migration'):
     """
     Convert VICE multizone stars output to pandas DataFrame (slow).
 
