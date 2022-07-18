@@ -37,6 +37,8 @@ LINE_STYLE = ['-', '--', '-', '--']
 
 def main(overwrite=False):
     output_dir = paths.data / 'onezone' / 'delay_slope'
+    if not output_dir.exists():
+        output_dir.mkdir(parents=True)
 
     fig, axs = setup_axes()
 

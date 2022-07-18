@@ -36,6 +36,8 @@ DTDS = [styles.bimodal, styles.plaw_steep, styles.plaw, styles.plaw_broken,
 
 def main(overwrite=False):
     output_dir = paths.data / 'onezone' / 'dtd'
+    if not output_dir.exists():
+        output_dir.mkdir(parents=True)
 
     fig, axs = setup_axes()
 

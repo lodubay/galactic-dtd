@@ -38,6 +38,8 @@ COLOR = ['k', 'k', 'k']
 
 def main(overwrite=False):
     output_dir = paths.data / 'onezone' / 'slope_timescale'
+    if not output_dir.exists():
+        output_dir.mkdir(parents=True)
 
     fig, axs = setup_axes()
 

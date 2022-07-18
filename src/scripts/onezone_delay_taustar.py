@@ -38,6 +38,8 @@ COLOR = ['k', 'k', 'k', paultol.highcontrast.colors[2],
 
 def main(overwrite=False):
     output_dir = paths.data / 'onezone' / 'delay_taustar'
+    if not output_dir.exists():
+        output_dir.mkdir(parents=True)
 
     fig, axs = setup_axes()
 
