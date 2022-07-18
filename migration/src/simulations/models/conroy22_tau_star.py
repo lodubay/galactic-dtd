@@ -3,15 +3,6 @@ This file declares the time-dependence of the star formation efficiency
 timescale from Conroy et al. (2022)
 """
 
-from ..._globals import END_TIME
-from .normalize import normalize
-from .utils import constant, exponential
-from .gradient import gradient
-from .insideout import insideout
-from .lateburst import lateburst
-import vice
-import math as m
-
 class conroy22_tau_star:
 	r"""
 	The piecewise time-dependent star formation efficiency (SFE) timescale model
