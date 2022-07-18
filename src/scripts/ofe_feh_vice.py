@@ -68,7 +68,7 @@ def plot_ofe_feh_stars(stars, cmap):
 
 
 def plot_post_process_track(output_name, axs, galr=8,
-                            data_dir='../data/migration_outputs'):
+                            data_dir='../data/migration'):
     """
     Plot abundance track for a given annulus across all panels.
 
@@ -96,7 +96,7 @@ def plot_post_process_track(output_name, axs, galr=8,
 
 
 def plot_post_process_tracks(output_name, axs,
-                             data_dir='../data/migration_outputs'):
+                             data_dir='../data/migration'):
     """
     Plot post-process abundance track for the mean annulus in each panel.
 
