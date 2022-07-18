@@ -11,9 +11,8 @@ import paths
 
 def main():
     fig, axs = setup_axes()
-    plot_history(axs, paths.data / 'migration/testa', 8)
-    plot_history(axs, paths.data / 'migration/testb', 8)
-    plt.show()
+    plot_history(axs, paths.data / 'migration/diffusion/conroy22/powerlaw', 80)
+    plt.savefig(paths.figures / 'star_formation_histories.png', dpi=300)
 
 def plot_history(axs, output, zone):
     r"""
@@ -30,7 +29,7 @@ def plot_history(axs, output, zone):
 
     """
     history = vice.history(str(Path('%s.vice' % output) / ('zone%i' % zone)))
-    print(history)
+    # print(history)
     axs[0,0].plot(history['time'], history['ifr'])
     axs[0,1].plot(history['time'], history['sfr'])
     axs[1,0].plot(history['time'], history['mgas'])
@@ -46,8 +45,10 @@ def setup_axes():
     axs[0,0].set_xlim((0, 13.2))
     axs[0,1].set_title(r'Star Formation Rate [$M_{\odot}\,\rm{yr}^{-1}$]')
     axs[1,0].set_title(r'Gas Mass [$M_{\odot}$]')
-    axs[1,1].set_title(r'SFE Timescale [Gyr]')
+    axs[1,0].set_xlabel('Time [Gyr]')
+    axs[1,1].set_title(r'Star Formation Efficiency Timescale [Gyr]')
     axs[1,1].set_yscale('log')
+    axs[1,1].set_xlabel('Time [Gyr]')
 
     return fig, axs
 
