@@ -1,7 +1,7 @@
 #!/bin/bash
 for DTD in "powerlaw" "powerlaw_steep" "powerlaw_broken" "exponential" "exponential_long" "bimodal"
 do
-	for EVOL in "insideout" "lateburst" "conroy22"
+	for EVOL in "insideout" "lateburst" "insideout_conroy22" "lateburst_conroy22"
 	do
 		for MIGR in "diffusion" "post-process"
 		do
@@ -13,7 +13,7 @@ do
 done
 for DTD in "powerlaw" "powerlaw_steep" "exponential"
 do
-	for EVOL in "insideout" "lateburst" "conroy22"
+	for EVOL in "insideout" "lateburst" "insideout_conroy22" "lateburst_conroy22"
 	do
 		for MIGR in "diffusion" "post-process"
 		do
