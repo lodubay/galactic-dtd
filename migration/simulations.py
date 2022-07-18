@@ -11,7 +11,7 @@ import sys
 
 _MIGRATION_MODELS_ = ["diffusion", "linear", "post-process", "sudden"]
 _EVOLUTION_MODELS_ = ["static", "insideout", "lateburst", "outerburst",
-                      "conroy22"]
+                      "insideout_conroy22", "lateburst_conroy22"]
 _DELAY_MODELS_ = ["powerlaw", "powerlaw_steep", "powerlaw_broken",
                   "exponential", "exponential_long", "bimodal"]
 

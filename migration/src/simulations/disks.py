@@ -45,7 +45,8 @@ class diskmodel(vice.milkyway):
         - "insideout"
         - "lateburst"
         - "outerburst"
-        - "conroy22"
+        - "insideout_conroy22"
+        - "lateburst_conroy22"
 
     verbose : ``bool`` [default : True]
         Whether or not the run the models with verbose output.
@@ -92,7 +93,7 @@ class diskmodel(vice.milkyway):
             filename = "%s_analogdata.out" % (name))
         self.evolution = star_formation_history(spec = spec,
             zone_width = zone_width)
-        if spec.lower() == "conroy22":
+        if "conroy22" in spec.lower():
             from .yields import C22
             self.mode = "ifr"
         else:
@@ -106,7 +107,7 @@ class diskmodel(vice.milkyway):
             self.zones[i].RIa = dtd
             # set the star formation efficiency timescale within 15.5 kpc
             if (self.annuli[i] + self.annuli[i + 1]) / 2 <= MAX_SF_RADIUS:
-                if spec.lower() == "conroy22":
+                if "conroy22" in spec.lower():
                     self.zones[i].tau_star = models.conroy22_tau_star()
 
     def run(self, *args, **kwargs):
@@ -174,12 +175,13 @@ class star_formation_history:
         while (i + 1) * zone_width < max_radius:
             self._radii.append((i + 0.5) * zone_width)
             self._evol.append({
-                    "static":         models.static,
-                    "insideout":     models.insideout,
-                    "lateburst":     models.lateburst,
-                    "outerburst":     models.outerburst,
-                    "conroy22": models.insideout_conroy22
-                }[spec.lower()]((i + 0.5) * zone_width))
+                "static":             models.static,
+                "insideout":          models.insideout,
+                "lateburst":          models.lateburst,
+                "outerburst":         models.outerburst,
+                "insideout_conroy22": models.insideout_conroy22,
+                "lateburst_conroy22": models.lateburst_conroy22,
+            }[spec.lower()]((i + 0.5) * zone_width))
             i += 1
 
     def __call__(self, radius, time):
@@ -227,12 +229,12 @@ class delay_time_distribution:
         self.tmax = tmax
         kwargs = {'tmin': self.tmin, 'tmax': self.tmax}
         self._dtd = {
-            "powerlaw": dtds.powerlaw(**kwargs),
-            "powerlaw_steep": dtds.powerlaw(slope=-1.4, **kwargs),
-            "powerlaw_broken": dtds.powerlaw_broken(**kwargs),
-            "exponential": dtds.exponential(**kwargs),
+            "powerlaw":         dtds.powerlaw(**kwargs),
+            "powerlaw_steep":   dtds.powerlaw(slope=-1.4, **kwargs),
+            "powerlaw_broken":  dtds.powerlaw_broken(**kwargs),
+            "exponential":      dtds.exponential(**kwargs),
             "exponential_long": dtds.exponential(timescale=3, **kwargs),
-            "bimodal": dtds.bimodal(**kwargs)
+            "bimodal":          dtds.bimodal(**kwargs)
         }[dist.lower()]
 
     def __call__(self, time):
