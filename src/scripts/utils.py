@@ -237,3 +237,41 @@ def sample_dataframe(df, n):
         return sample.reset_index()
     else:
         raise TypeError('Expected pandas DataFrame.')
+
+def bracket_string_to_allstar_column(bracket):
+    """
+    Convert a bracket notation string (e.g. '[Fe/H]') to its corresponding
+    allStar column name (e.g. FE_H).
+
+    Parameters
+    ----------
+    bracket : str
+        Bracket notation for chemical abundance (e.g. '[Fe/H]')
+
+    Returns
+    -------
+    col : str
+        allStar column name (e.g. 'FE_H')
+    """
+    col = bracket.upper()
+    col = col.replace('[', '').replace(']', '')
+    col = col.replace('/', '_')
+    return col
+
+def format_bracket_string(bracket):
+    """
+    Capitalize the proper characters in a bracket notation string.
+
+    Parameters
+    ----------
+    bracket : str
+        Bracket notation for chemical abundance (e.g. '[Fe/H]')
+
+    Returns
+    -------
+    str
+    """
+    for i in range(len(bracket)):
+        if bracket[i-1] in ['[', '/']:
+            bracket[i] = bracket[i].upper()
+    return bracket

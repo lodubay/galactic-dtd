@@ -19,6 +19,8 @@ from utils import multioutput_to_pandas, filter_multioutput_stars, import_allSta
 import paths
 
 global FEH_LIM
+global BIN_WIDTH
+global SMOOTH_WIDTH
 global GALR_BINS
 
 FEH_LIM = (-1.1, 0.6)
@@ -103,13 +105,13 @@ def gen_mdf(stars, col='[fe/h]', range=None, bin_width=0.05):
         MDF bin width in data units
     """
     if not range:
-        range = (stars['[fe/h]'].min(), stars['[fe/h]'].max())
+        range = (stars[col].min(), stars[col].max())
     bins = np.arange(range[0], range[1] + bin_width, bin_width)
     # Calculate remaining stellar mass for each particle
     stars['stellar_mass'] = stars['mass'] * (
         1 - stars['age'].apply(vice.cumulative_return_fraction))
     # Sum remaining stellar mass binned by metallicity
-    mdf = stars.groupby([pd.cut(stars['[fe/h]'], bins)])['stellar_mass'].sum()
+    mdf = stars.groupby([pd.cut(stars[col], bins)])['stellar_mass'].sum()
     mdf /= (mdf.sum() * bin_width)
     return mdf, bins
 
