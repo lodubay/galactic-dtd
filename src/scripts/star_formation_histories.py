@@ -11,7 +11,7 @@ import paths
 
 def main():
     fig, axs = setup_axes()
-    plot_history(axs, paths.data / 'migration/diffusion/conroy22/powerlaw', 80)
+    plot_history(axs, paths.data / 'migration/diffusion/lateburst_conroy22/powerlaw', 80)
     plt.savefig(paths.figures / 'star_formation_histories.png', dpi=300)
 
 def plot_history(axs, output, zone):
