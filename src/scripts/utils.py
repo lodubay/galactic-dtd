@@ -146,7 +146,7 @@ def galactic_to_galactocentric(l, b, distance):
     else:
         raise ValueError('Arrays must be of same length.')
 
-def multioutput_to_pandas(output_name, data_dir='../data/migration'):
+def multioutput_to_pandas(output_name, data_dir=paths.data/'migration'):
     """
     Convert VICE multizone stars output to pandas DataFrame (slow).
 
@@ -237,6 +237,112 @@ def sample_dataframe(df, n):
         return sample.reset_index()
     else:
         raise TypeError('Expected pandas DataFrame.')
+
+# =============================================================================
+# FILE NAMING AND STRING FORMATTING
+# =============================================================================
+
+_MIGRATION_MODELS = ['diffusion', 'post-process']
+_EVOLUTION_MODELS = ['insideout', 'lateburst']
+_EFFICIENCY_MODELS = ['johnson21', 'conroy22']
+_RIA_MODELS = ['powerlaw', 'exponential', 'plateau', 'prompt']
+_RIA_SETTING_DEFAULTS = {
+    'powerlaw': -1.1,
+    'exponential': 1.5,
+    'plateau': 0.2,
+    'prompt': 0.05}
+
+def multizone_output_path(migration='diffusion', evolution='insideout',
+                          efficiency='johnson21', RIa='powerlaw',
+                          RIa_setting=None, minimum_delay=0.04,
+                          parent=paths.data/'migration'):
+    r"""
+    Generate the name of a VICE multizone output based on its simulation
+    parameters.
+
+    Parameters
+    ----------
+    migration : str [default: 'diffusion']
+        A keyword denoting the stellar migration model.
+        Allowed values:
+
+        - 'diffusion'
+        - 'post-process'
+
+    evolution : str [default: 'insideout']
+        A keyword denoting the star formation history.
+        Allowed values:
+
+        - 'insideout'
+        - 'lateburst'
+
+    efficiency : str [default: 'johnson21']
+        A keyword denoting the star formation efficiency prescription.
+        Allowed values:
+
+        - 'johnson21'
+        - 'conroy22'
+
+    RIa : str [default: 'powerlaw']
+        A keyword denoting the general form of the delay-time distribution.
+        Allowed values:
+
+        - 'powerlaw'
+        - 'exponential'
+        - 'plateau'
+        - 'prompt'
+
+    RIa_setting : float [default: None]
+        The primary setting for the given delay-time distribution. If None,
+        the default value for the given DTD is assumed. The primary setting
+        and default for each DTD is:
+
+        - 'powerlaw': the power-law slope [default: -1.1]
+        - 'exponential': the exponential timescale in Gyr [default: 1.5]
+        - 'plateau': the plateau width in Gyr [default: 0.2]
+        - 'prompt': the peak of the prompt component in Gyr [default: 0.05]
+
+    minimum_delay : float [default: 0.04]
+        The minimum delay time in Gyr before the first SNe Ia explode.
+
+    Returns
+    -------
+    pathlib.Path
+        Path to VICE multizone output directory
+    """
+    if not isinstance(migration, str):
+        raise TypeError('Parameter "migration" must be a string. Got: %s'
+                        % type(migration))
+    if migration not in _MIGRATION_MODELS:
+        raise ValueError('Parameter "migration" must be one of %s. Got: %s'
+                         % (_MIGRATION_MODELS, migration))
+    if not isinstance(evolution, str):
+        raise TypeError('Parameter "evolution" must be a string. Got: %s'
+                        % type(evolution))
+    if evolution not in _EVOLUTION_MODELS:
+        raise ValueError('Parameter "evolution" must be one of %s. Got: %s'
+                         % (_EVOLUTION_MODELS, evolution))
+    if not isinstance(RIa, str):
+        raise TypeError('Parameter "RIa" must be a string. Got: %s' % type(RIa))
+    if RIa not in _RIA_MODELS:
+        raise ValueError('Parameter "RIa" must be one of %s. Got: %s'
+                         % (_RIA_MODELS, RIa))
+    if RIa_setting is None:
+        RIa_setting = _RIA_SETTING_DEFAULTS[RIa]
+    elif not isinstance(RIa_setting, float):
+        raise TypeError('Parameter "RIa_setting" must be a float. Got: %s'
+                        % type(RIa_setting))
+    if not isinstance(minimum_delay, float):
+        raise TypeError('Parameter "minimum_delay" must be a float. Got: %s'
+                        % type(minimum_delay))
+    if RIa in ['powerlaw', 'exponential']:
+        RIa_name = f'{RIa}{int(abs(RIa_setting)*10):02d}'
+    else:
+        RIa_name = f'{RIa}{int(RIa_setting*1000):03d}'
+    RIa_name += f'_delay{int(minimum_delay*1000):03d}.vice'
+    evol_name = '_'.join((evolution, efficiency))
+    path = parent / migration / evol_name / RIa_name
+    return path
 
 def bracket_string_to_allstar_column(bracket):
     """
