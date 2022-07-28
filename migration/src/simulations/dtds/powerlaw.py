@@ -42,4 +42,17 @@ class powerlaw:
 
     def normalize(self, tmin, tmax):
         intslope = self.slope + 1 # The slope of the integral
-        return intslope / (tmax ** intslope - tmin ** intslope)
+        if intslope == 0:
+            # Prevent divide-by-zero case
+            return 1 / ((self.integral(self.slope+1e-3, tmin, tmax) +
+                         self.integral(self.slope-1e-3, tmin, tmax)) / 2)
+        else:
+            return 1 / self.integral(self.slope, tmin, tmax)
+
+    @staticmethod
+    def integral(slope, tmin, tmax):
+        """
+        Calculate the analytic integral of the power-law between two bounds.
+        """
+        intslope = slope + 1
+        return (tmax ** intslope - tmin ** intslope) / intslope

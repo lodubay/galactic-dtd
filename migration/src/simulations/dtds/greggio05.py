@@ -12,9 +12,8 @@ from ..._globals import END_TIME
 
 class greggio05_double:
     def __init__(self, scheme='wide', t_nuc_min=0.04, t_nuc_max=1.,
-                 t_grav_min=0.001, beta_sep=0., beta_grav=-0.75, dt=0.001,
-                 mlr='larson1974', imf='kroupa', sd_slope=-1.44, nsamples=100,
-                 q_slope=1, efficiency=0.5):
+                 t_grav_min=1e-3, beta_sep=0., beta_grav=-0.75, dt=1e-3,
+                 mlr='larson1974', nsamples=100, efficiency=1., **kwargs):
         """
         Parameters
         ----------
@@ -26,7 +25,7 @@ class greggio05_double:
         t_nuc_max : float [default: 1]
             Nuclear timescale in Gyr of the least massive possible secondary,
             assumed to be 2 solar masses
-        t_grav_min : float [default: 0.001]
+        t_grav_min : float [default: 1e-3]
             Minimum gravitational delay in Gyr of the DD progenitor, assumed
             to be independent of the mass of the secondary
         beta_sep : float [default: 0]
@@ -37,61 +36,36 @@ class greggio05_double:
             The exponent of the power law distribution adopted for the
             gravitational delays in the 'close' scheme; a flat distribution
             of final separations corresponds to beta_grav = -0.75
-        dt : float [default: 0.001]
+        dt : float [default: 1e-3]
             Integration timestep in Gyr
         mlr : str [default: 'larson1974']
             Which model of mass-lifetime relation to use. Must be one available
             in VICE
-        imf : str [default: 'kroupa']
-            Which model of IMF to use. Must be one available in VICE
-        sd_slope : float [default: -1.44]
-            Power-law slope of the secondary mass evolution function, which
-            goes into the single-degenerate distribution function
         nsamples : int [default: 100]
             Number of log-spaced points at which to pre-compute the DTD
-        q_slope : float [default: 1]
-            The power-law slope of the mass ratio distribution q = m2/m1
         efficiency : float [default: 0.5]
             Mass-transfer efficiency represented by epsilon in Equation 17
+        Other keyword arguments are passed to greggio05_single
         """
+        self.scheme = scheme
         self.t_nuc_min = check_if_instance(t_nuc_min, float, 't_nuc_min')
         self.t_nuc_max = check_if_instance(t_nuc_max, float, 't_nuc_max')
         self.t_grav_min = check_if_instance(t_grav_min, float, 't_grav_min')
-        if dt > 0:
-            self.dt = check_if_instance(dt, float, 'dt')
-        else:
-            raise ValueError('Integration timestep must be positive.')
+        self.dt = dt
         # Total minimum and maximum delay times
         self.t_min = t_nuc_min + t_grav_min
         self.t_max = t_nuc_max + self.maximum_gravitational_delay(t_nuc_max)
 
-        if scheme.lower() == 'wide':
+        if scheme == 'wide':
             self.beta = beta_sep
-        elif scheme == 'close':
-            # t_min = asymptotic_nuclear_lifetime(t)
+        else:
             self.beta = beta_grav
-        else:
-            raise ValueError('Parameter "scheme" must be "wide" or "close".')
-        self.scheme = scheme.lower()
 
-        if efficiency >= 0 and efficiency <= 1:
-            self.efficiency = check_if_instance(efficiency, Number, 'efficiency')
-        else:
-            raise ValueError('Efficiency must be a number between 0 and 1.')
-
-        if isinstance(mlr, str):
-            try:
-                mlr_wrapper(1, model=mlr)
-                self.mlr = mlr
-            except:
-                raise ValueError('Parameter "mlr" not in acceptable list.')
-        else:
-            raise TypeError('Parameter "mlr" must be a string. Got: %s' \
-                            % type(mlr))
+        self.efficiency = efficiency
+        self.mlr = mlr
 
         self.single_degenerate_distribution = greggio05_single(
-            m2_slope=sd_slope, q_slope=q_slope, efficiency=efficiency,
-            mlr=mlr, imf=imf
+            efficiency=self.efficiency, mlr=self.mlr, **kwargs
         )
 
         # Pre-calculate the DTD to save on compute time
@@ -101,8 +75,11 @@ class greggio05_double:
                                  num=nsamples, endpoint=True)
         self.dtd = np.zeros(self.times.shape)
         for i, t in enumerate(tqdm(self.times)):
-            self.dtd[i] = self.pre_calculate(t)
+            self.dtd[i] = self.integrate(t)
 
+        # Normalize the DTD
+        timesteps = self.times[1:] - self.times[:-1]
+        self.dtd /= np.sum(self.dtd[:-1] * timesteps * 1e9)
 
     def __call__(self, time):
         """
@@ -116,15 +93,115 @@ class greggio05_double:
         Returns
         -------
         float
-            Interpolated value of the distribution function of DD SNe Ia
+            Interpolated value of the distribution function of DD SNe Ia,
+            or NaN if time is outside the bounds of integration
         """
         if isinstance(time, float):
-            return np.interp(time, self.times, self.dtd)
+            if time >= 0:
+                if time < self.t_min:
+                    return 0
+                elif time <= END_TIME:
+                    return np.interp(time, self.times, self.dtd)
+                else:
+                    return np.nan
+            else:
+                raise ValueError('Time must be positive.')
         else:
             raise TypeError('Parameter "time" must be a float. Got: %s' \
                             % type(time))
 
-    def pre_calculate(self, time, t_min=0):
+    @property
+    def scheme(self):
+        """
+        Type: str
+            Keyword denoting assumptions about the evolution of the
+            double-degenerate system.
+            Allowed values:
+
+                - 'wide': there is a wide distribution of separation and total
+                mass irrespective of the initial mass of the secondary
+                - 'close': there is a tight correlation between the initial
+                separation and the gravitational merge time
+        """
+        return self._scheme
+
+    @scheme.setter
+    def scheme(self, value):
+        if isinstance(value, str):
+            if value.lower() in ['wide', 'close']:
+                self._scheme = value.lower()
+            else:
+                raise ValueError('DD scheme must be either "wide" or "close".')
+        else:
+            raise TypeError('Parameter "scheme" must be a string. Got: %s' % \
+                            type(value))
+
+    @property
+    def efficiency(self):
+        """
+        Type: float
+            The single-degenerate mass-transfer efficiency represented by
+            epsilon in Equation 17 from Greggio 2005.
+        """
+        return self._efficiency
+
+    @efficiency.setter
+    def efficiency(self, value):
+        if isinstance(value, Number):
+            if value >= 0 and value <= 1:
+                self._efficiency = float(value)
+            else:
+                raise ValueError('Efficiency must be between 0 and 1.')
+        else:
+            raise TypeError('Parameter "efficiency" must be a Number. Got: %s'\
+                            % type(value))
+
+    @property
+    def mlr(self):
+        r"""
+        Type: str
+            Which formulation of the mass-lifetime relation (MLR) to assume.
+            Allowed values:
+
+                - 'larson1974'
+                - 'mm1989'
+                - 'pm1993'
+                - 'ka1997'
+                - 'hpt2000'
+                - 'vincenzo2016'
+                - 'powerlaw'
+        """
+        return self._mlr
+
+    @mlr.setter
+    def mlr(self, value):
+        value = check_if_instance(value, str, 'mlr')
+        try:
+            mlr_wrapper(1, model=value)
+            self._mlr = value
+        except:
+            raise ValueError('Parameter "mlr" not in acceptable list.')
+
+    @property
+    def dt(self):
+        """
+        Type: float
+            Integration timestep in Gyr
+        """
+        return self._dt
+
+    @dt.setter
+    def dt(self, value):
+        if isinstance(value, Number):
+            if value > 0:
+                self._dt = float(value)
+            else:
+                raise ValueError('Integration timestep must be positive.')
+        else:
+            raise TypeError('Parameter "dt" must be a Number. Got: %s' \
+                            % type(value))
+
+    def integrate(self, time):
         """
         Integrate over all nuclear timescales up to the given time to obtain
         the distribution function of DD SNe Ia at that time.
@@ -133,9 +210,6 @@ class greggio05_double:
         ----------
         time : float
             Time in Gyr since star formation event
-        t_min : float [default: 0]
-            Minimum limit of integration, which will override the default if
-            it is greater than the automatically calculated limit
 
         Returns
         -------
@@ -155,7 +229,7 @@ class greggio05_double:
                                          self.dt)
             # TODO this re-calculates the SD distribution every time, but it
             # doesn't change. figure out a way to speed this up
-            integral = sum([
+            integral = np.sum([
                 self.single_degenerate_distribution(t_nuc) * \
                     self.f_merge(time, t_nuc, case=1) * \
                     self.dt \
@@ -271,7 +345,7 @@ class greggio05_double:
 
 
 class greggio05_single:
-    def __init__(self, m2_slope=-1.44, q_slope=1, efficiency=0.5,
+    def __init__(self, m2_slope=-1.44, q_slope=1, efficiency=1.,
                  mlr='larson1974', imf='kroupa'):
         """
         Parameters
@@ -287,42 +361,13 @@ class greggio05_single:
         imf : str [default: 'kroupa']
             Which IMF to use
         """
-        if isinstance(m2_slope, Number):
-            self.m2_slope = m2_slope
-        else:
-            raise TypeError('Parameter "m2_slope" must be a number. Got: %s' \
-                            % type(m2_slope))
-        if isinstance(q_slope, Number):
-            self.q_slope = q_slope
-        else:
-            raise TypeError('Parameter "q_slope" must be a number. Got: %s' \
-                            % type(q_slope))
-        if isinstance(efficiency, Number):
-            if efficiency >= 0 and efficiency <= 1:
-                self.efficiency = efficiency
-            else:
-                raise ValueError('Efficiency must be between 0 and 1.')
-        else:
-            raise TypeError('Parameter "efficiency" must be a number. Got: %s'\
-                            % type(efficiency))
-        if isinstance(mlr, str):
-            try:
-                mlr_wrapper(1, model=mlr)
-                self.mlr = mlr
-            except:
-                raise ValueError('Parameter "mlr" not in acceptable list.')
-        else:
-            raise TypeError('Parameter "mlr" must be a string. Got: %s' \
-                            % type(mlr))
-        if isinstance(imf, str):
-            if imf.lower() in ['kroupa', 'salpeter']:
-                self.imf = imf
-            else:
-                raise ValueError('Parameter "imf" must be one of "kroupa" or ' + \
-                                 '"salpeter".')
-        else:
-            raise TypeError('Parameter "imf" must be a string. Got: %s' \
-                            % type(imf))
+        self.m2_slope = m2_slope
+        self.q_slope = q_slope
+        self.efficiency = efficiency
+        self.mlr = mlr
+        self.imf = imf
+        self.norm = 1
+        self.norm = self.normalize()
 
     def __call__(self, time):
         """
@@ -339,14 +384,98 @@ class greggio05_single:
             The value of the single-degenerate DTD
         """
         secondary_mass = mlr_wrapper(time, which='age', model=self.mlr)
-        f_m2 = self.secondary_mass_distribution(secondary_mass, imf=self.imf,
-                                                q_slope=self.q_slope,
-                                                efficiency=self.efficiency)
-        return f_m2 * time ** self.m2_slope
+        f_m2 = self.secondary_mass_distribution(secondary_mass)
+        return self.norm * f_m2 * time ** self.m2_slope
 
-    @staticmethod
-    def secondary_mass_distribution(m2, m1_max=8, imf='kroupa', q_slope=1,
-                                    dm=0.01, efficiency=0.5):
+    @property
+    def m2_slope(self):
+        """
+        Type: float
+            The power-law slope of the derivative of the secondary mass
+            function
+        """
+        return self._m2_slope
+
+    @m2_slope.setter
+    def m2_slope(self, value):
+        self._m2_slope = float(check_if_instance(value, Number, 'm2_slope'))
+
+    @property
+    def q_slope(self):
+        """
+        Type: float
+            The power-law slope of the mass ratio distribution (q = m2/m1)
+        """
+        return self._q_slope
+
+    @q_slope.setter
+    def q_slope(self, value):
+        self._q_slope = float(check_if_instance(value, Number, 'q_slope'))
+
+    @property
+    def efficiency(self):
+        """
+        Type: float
+            The mass-transfer efficiency represented by epsilon in Equation 17
+            from Greggio 2005.
+        """
+        return self._efficiency
+
+    @efficiency.setter
+    def efficiency(self, value):
+        value = check_if_instance(value, Number, 'efficiency')
+        if value >= 0 and value <= 1:
+            self._efficiency = float(value)
+        else:
+            raise ValueError('Efficiency must be between 0 and 1.')
+
+    @property
+    def mlr(self):
+        r"""
+        Type: str
+            Which formulation of the mass-lifetime relation (MLR) to assume.
+            Allowed values:
+
+                - 'larson1974'
+                - 'mm1989'
+                - 'pm1993'
+                - 'ka1997'
+                - 'hpt2000'
+                - 'vincenzo2016'
+                - 'powerlaw'
+        """
+        return self._mlr
+
+    @mlr.setter
+    def mlr(self, value):
+        value = check_if_instance(value, str, 'mlr')
+        try:
+            mlr_wrapper(1, model=value)
+            self._mlr = value
+        except:
+            raise ValueError('Parameter "mlr" not in acceptable list.')
+
+    @property
+    def imf(self):
+        r"""
+        Type: str
+            Which formulation of the initial mass function (IMF) to assume.
+            Allowed values:
+
+                - 'kroupa'
+                - 'salpeter'
+        """
+        return self._imf
+
+    @imf.setter
+    def imf(self, value):
+        value = check_if_instance(value, str, 'imf')
+        if value.lower() in ['kroupa', 'salpeter']:
+            self._imf = value
+        else:
+            raise ValueError('IMF must be either "kroupa" or "salpeter".')
+
+    def secondary_mass_distribution(self, m2, m1_max=8, dm=0.01):
         """
         The distribution function of the secondaries in SN Ia progenitor
         systems (equation 16 in Greggio 2005). This assumes the mass of the
@@ -359,10 +488,6 @@ class greggio05_single:
             Mass of the secondary in solar masses
         m1_max : float [default: 8]
             Maximum primary mass in solar masses
-        imf : str [default: 'kroupa']
-            Which IMF to assume, either 'kroupa' or 'salpeter'
-        q_slope : float [default: 1]
-            The power-law slope of the mass ratio distribution q = m2/m1
         dm : float [default: 0.01]
             Mass integration step in solar masses
 
@@ -372,19 +497,42 @@ class greggio05_single:
             The relative frequency of the given secondary mass
         """
         # Lower limit of integration over primary mass
-        m_wd_min = minimum_wd_mass(m2, efficiency=efficiency)
+        m_wd_min = minimum_wd_mass(m2, efficiency=self.efficiency)
         m1_min = max((m2, 2, 2 + 10 * (m_wd_min - 0.6)))
         primary_masses = np.arange(m1_min, m1_max + dm, dm)
         imf_func = {
             'kroupa': vice.imf.kroupa,
             'salpeter': vice.imf.salpeter
-        }[imf]
-        integral = sum([m2**q_slope * m1**q_slope * imf_func(m1) * dm \
-                        for m1 in primary_masses])
+        }[self.imf]
+        integral = np.sum([m2 ** self.q_slope * m1 ** (-(self.q_slope + 1)) * \
+                           imf_func(m1) * dm \
+                           for m1 in primary_masses])
         return integral
 
+    def normalize(self, tmin=0.04, tmax=END_TIME, dt=1e-3):
+        """
+        Normalize the area under the DTD to 1.
 
-def minimum_wd_mass(secondary_mass, efficiency=0.5):
+        Parameters
+        ----------
+        tmin : float [default: 0.04]
+            Minimum integration time in Gyr
+        tmax : float [default: 13.2]
+            Maximum integration time in Gyr
+        dt : float [default: 1e-3]
+            Integration timestep in Gyr
+
+        Returns
+        -------
+        float
+            Normalization factor in Msun^-1 yr^-1
+        """
+        tarr = np.arange(tmin, tmax+dt, dt)
+        integral = np.sum([self.__call__(t) * dt * 1e9 for t in tarr])
+        return 1 / integral
+
+
+def minimum_wd_mass(secondary_mass, efficiency=1.):
     """
     The minimum acceptable white dwarf mass for a successful SN Ia event.
 
@@ -448,7 +596,7 @@ def mlr_wrapper(qty, which='mass', model='larson1974', **kwargs):
         'hpt2000': vice.mlr.hpt2000,
         'vincenzo2016': vice.mlr.vincenzo2016,
         'powerlaw': vice.mlr.powerlaw
-    }[model](qty, which=which, **kwargs)
+    }[model.lower()](qty, which=which, **kwargs)
 
 def check_if_instance(param, param_type, name):
     """
