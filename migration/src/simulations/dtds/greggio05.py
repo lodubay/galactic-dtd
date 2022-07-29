@@ -9,7 +9,6 @@ import numpy as np
 from tqdm import tqdm
 from scipy.optimize import curve_fit
 import vice
-import matplotlib.pyplot as plt
 from ..._globals import END_TIME
 
 # The minimum nuclear lifetime of the secondary in Gyr (8 solar masses)
@@ -19,29 +18,60 @@ T_NUC_MAX = 1.
 # The minimum gravitational inspiral delay in Gyr
 T_GRAV_MIN = 1e-3
 
-def main():
-    fit = greggio05_analytic.fit_to_model('wide', dt=1e-3, nsamples=100)
-    print('Slope 1 = %s\nSlope 2 = %s' % (fit.slope1, fit.slope2))
-    test = greggio05_analytic()
-    tarr = np.arange(0.04, 13.2, 0.001)
-    plt.plot(tarr * 1e9, [test(t) for t in tarr])
-    plt.xscale('log')
-    plt.yscale('log')
-    plt.show()
+# Best-fit analytic parameters for WIDE DD prescription
+WIDE_PARAMS = {
+    'tsplit': 1.,
+    'slope1': -1.9,
+    'slope2': -0.91,
+    'rise_strength': 1.7,
+    'rise_timescale': 0.084,
+    'tail_strength': 0.85,
+    'tail_timescale': 0.088,
+}
+# Best-fit analytic parameters for CLOSE DD prescription
+CLOSE_PARAMS = {
+    'tsplit': 1.,
+    'slope1': -0.53,
+    'slope2': -1.1,
+    'rise_strength': 3.0,
+    'rise_timescale': 0.042,
+    'tail_strength': 0.62,
+    'tail_timescale': 0.11,
+}
 
 class greggio05_analytic:
     """
     An analytic approximation of the double-degenerate DTD from Greggio 2005
     """
-    def __init__(self, tsplit=1., slope1=-0.2, slope2=-0.9,
-                 rise_strength=1.7, rise_timescale=0.09,
-                 tail_strength=0.8, tail_timescale=0.1, normalize=True):
+    def __init__(self, tsplit=1., slope1=-0.19, slope2=-0.91,
+                 rise_strength=1.7, rise_timescale=8.4e-2,
+                 tail_strength=0.85, tail_timescale=8.8e-2, normalize=True):
+        """
+        Parameters
+        ----------
+        tsplit : float, optional
+            Break time in Gyr of the piecewise function. The default is 1.
+        slope1 : float, optional
+            The slope of the first power-law. The default is -0.2
+        slope2 : float, optional
+            The slope of the second power-law. The default is
+        rise_strength : float, optional
+            Coefficient of the exponential rise. The default is
+        rise_timescale : float, optional
+            Timescale in Gyr of the exponential rise. The default is
+        tail_strength : float, optional
+            Coefficient of the exponential tail. The default is
+        tail_timescale : float, optional
+            Timescale in Gyr of the exponential tail. The default is
+        normalize : bool, optional
+            Whether to normalize the DTD. The default is True.
+        """
         self.tsplit = tsplit
         self.slope1 = slope1
         self.slope2 = slope2
-        self.rise = self.exponential(rise_strength, rise_timescale)
-        self.tail = self.exponential(-tail_strength, tail_timescale,
-                                     offset=self.tsplit)
+        self.rise = exponential_scaling(rise_strength, rise_timescale)
+        self.tail = exponential_scaling(-tail_strength, tail_timescale,
+                                        offset=self.tsplit)
         self.norm = 1
         if normalize:
             self.norm = self.normalize()
@@ -58,6 +88,14 @@ class greggio05_analytic:
         else:
             raise TypeError('Parameter "time" must be numeric. Got: %s' \
                             % type(time))
+
+    @classmethod
+    def from_defaults(cls, scheme):
+        params = {
+            'wide': WIDE_PARAMS,
+            'close': CLOSE_PARAMS
+        }[scheme]
+        return cls(**params)
 
     @classmethod
     def fit_to_model(cls, scheme, tmin=0.04, tmax=END_TIME, tstep=0.01,
@@ -80,6 +118,7 @@ class greggio05_analytic:
         print('Fitting analytic model...')
         popt, pcov = curve_fit(analytic_wrapper, tarr, yarr,
                                p0=(0, -1, 1, 0.1, 1, 0.1, 1e-9))
+        print('Done!')
         return cls(slope1=popt[0], slope2=popt[1],
                    rise_strength=popt[2], rise_timescale=popt[3],
                    tail_strength=popt[4], tail_timescale=popt[5])
@@ -95,11 +134,14 @@ class greggio05_analytic:
     def part2(self, time):
         return self.tail(time) * time ** self.slope2
 
-    @staticmethod
-    def exponential(strength, timescale, offset=0):
-        """
-        Generate an exponential scaling function of time.
+class exponential_scaling:
+    """An exponential scaling function of time.
 
+    At small times, this function approaches a declining exponential. At large
+    times, the function approaches an asymptote of 1.
+    """
+    def __init__(self, strength, timescale, offset=0):
+        """
         Parameters
         ----------
         strength : float
@@ -109,13 +151,14 @@ class greggio05_analytic:
             The exponential timescale in the same units of time
         offset : float, optional
             Horizontal (temporal) offset of the exponential. The default is 0
-
-        Returns
-        -------
-        <function>
-            A function of time
         """
-        return lambda t: (1 - strength * m.exp(-(t - offset) / timescale))
+        self.strength = strength
+        self.timescale = timescale
+        self.offset = offset
+
+    def __call__(self, time):
+        return (1 - self.strength * m.exp(-(time - self.offset) / self.timescale))
+
 
 def analytic_wrapper(time, slope1, slope2, rise_strength, rise_timescale,
                      tail_strength, tail_timescale, norm):
@@ -855,6 +898,3 @@ def check_if_instance(param, param_type, name):
         raise TypeError(
             'Parameter "%s" must be an instance of "%s". Got: "%s"' \
             % (name, str(param_type), type(param)))
-
-if __name__ == '__main__':
-    main()
