@@ -109,3 +109,23 @@ def normalize_conroy22(time_dependence, radial_gradient, radius, dt = 0.01,
 	sfh = vice.toolkit.interpolation.interp_scheme_1d(times, sfh)
 	return normalize(sfh, radial_gradient, radius, dt = dt, dr = dr,
 		recycling = recycling)
+
+
+def twoinfall_ampratio(time_dependence, radial_gradient, radius, onset = 4,
+	dt = 0.01, dr = 0.1, recycling = 0.4, thin_scale = 2.0, thick_scale = 2.5):
+	area = m.pi * ((radius + dr)**2 - radius**2)
+	tau_star = J21_sf_law(area)
+	eta = vice.milkyway.default_mass_loading(radius)
+	mgas = 0
+	time = 0
+	mstar = 0
+	mstar_at_onset = None
+	while time < END_TIME:
+		sfr = mgas / tau_star(time, mgas) # msun / Gyr
+		mgas += time_dependence(time) * dt * 1.e9 # yr-Gyr conversion
+		mgas -= sfr * dt * (1 + eta - recycling)
+		mstar += sfr * dt * (1 - recycling)
+		if mstar_at_onset is None and time >= onset: mstar_at_onset = mstar
+		time += dt
+	thick_to_thin = 0.27 * m.exp(radius * (1 / thin_scale - 1 / thick_scale))
+	return mstar / (mstar - mstar_at_onset) * (1 + thick_to_thin)**-1

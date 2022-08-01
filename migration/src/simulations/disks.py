@@ -95,10 +95,14 @@ class diskmodel(vice.milkyway):
             zone_width = zone_width)
         if "conroy22" in spec.lower():
             from .yields import C22
-            self.mode = "ifr"
         else:
             from vice.yields.presets import JW20
             vice.yields.sneia.settings['fe'] *= 10**0.1
+        if spec.lower() in ["insideout_conroy22", "lateburst_conroy22",
+                            "twoinfall"]:
+            self.mode = "ifr"
+            for zone in self.zones: zone.Mg0 = 0
+        else:
             self.mode = "sfr"
         dtd = delay_time_distribution(dist = RIa, tmin = delay)
         for i in range(self.n_zones):
@@ -181,6 +185,7 @@ class star_formation_history:
                 "outerburst":         models.outerburst,
                 "insideout_conroy22": models.insideout_conroy22,
                 "lateburst_conroy22": models.lateburst_conroy22,
+                "twoinfall":          models.twoinfall,
             }[spec.lower()]((i + 0.5) * zone_width))
             i += 1
 

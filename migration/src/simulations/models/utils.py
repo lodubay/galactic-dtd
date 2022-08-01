@@ -72,6 +72,21 @@ def interpolate(x1, y1, x2, y2, x):
 	return (y2 - y1) / (x2 - x1) * (x - x1) + y1
 
 
+def heaviside_step(x):
+	r"""
+	The Heaviside step function.
+	Parameters
+	----------
+	x : ``float``
+		Some real number.
+	Returns
+	-------
+	y : ``float``
+		1 if x >= 0, 0 otherwise.
+	"""
+	return int(x >= 0)
+
+
 class constant:
 
 	r"""
@@ -179,7 +194,7 @@ class exponential:
 	def timescale(self):
 		r"""
 		Type : real number
-		
+
 		Default : 1
 
 		The e-folding timescale of the exponential. If positive, this object
@@ -198,6 +213,134 @@ class exponential:
 		else:
 			raise TypeError("Timescale must be a real number. Got: %s" % (
 				type(value)))
+
+
+class double_exponential:
+
+	r"""
+	A double exponential decay function.
+	Parameters
+	----------
+	onset : real number [default : 0]
+		The attribute ``onset``. See below.
+	ratio : real number [default : 1]
+		The attribute ``ratio``. See below.
+	Attributes
+	----------
+	first : ``exponential``
+		The first of the two exponential decay episodes
+	second : ``exponential``
+		The second of the two exponential decay episodes
+	onset : real number [default : 0]
+		The time of the onset of the second exponential decay, in arbitrary
+		units.
+	ratio : real number [default : 1]
+		The amplitude ratio of the second to the first exponential decay.
+	Calling
+	-------
+	Call this object as you would any other function of time.
+		Parameters:
+			- time : real number
+				Time in the same units as the attribute ``onset`` and the
+				timescales associated with the attributes ``first`` and
+				``second``.
+		Returns:
+			- y : real number
+				The value of the double exponential defined via
+				:math:`f(t) + XH(t - t_o)g(t - t_o)`, where :math:`f` and
+				:math:`g` are the attributes ``first`` and ``second``,
+				respectively, :math:`t_o` is the attribute ``onset``,
+				:math:`H` is the Heaviside step function, and :math:`X` is
+				the attribute ``ratio``.
+	Notes
+	-----
+	This object makes use of composition to store the two individual
+	exponential decays.
+	"""
+
+	def __init__(self, onset = 0, ratio = 1):
+		self.first = exponential()
+		self.second = exponential()
+		self.onset = onset
+		self.ratio = ratio
+
+	def __call__(self, time):
+		return (self.first.__call__(time) + heaviside_step(time - self.onset) *
+			self.ratio * self.second.__call__(time - self.onset))
+
+	@property
+	def first(self):
+		r"""
+		Type : ``exponential``
+		The first of the two exponential decay functions.
+		"""
+		return self._first
+
+	@first.setter
+	def first(self, value):
+		if isinstance(value, exponential):
+			self._first = value
+		else:
+			raise TypeError("""Attribute 'first' must be of type \
+'exponential_decay'. Got: %s""" % (type(value)))
+
+	@property
+	def second(self):
+		r"""
+		Type : ``exponential``
+		The second of the two exponential decay functions, which will be
+		forced to a value of zero before the time denoted by the attribute
+		``onset``.
+		"""
+		return self._second
+
+	@second.setter
+	def second(self, value):
+		if isinstance(value, exponential):
+			self._second = value
+		else:
+			raise TypeError("""Attribute 'second' must be of type \
+'exponential_decay'. Got: %s""" % (type(value)))
+
+	@property
+	def onset(self):
+		r"""
+		Type : float
+		Default : 0
+		The time of onset of the second exponential decay, in the same units
+		as the time coordinate that this object will be called with.
+		"""
+		return self._onset
+
+	@onset.setter
+	def onset(self, value):
+		if isinstance(value, numbers.Number):
+			self._onset = float(value)
+		else:
+			raise TypeError("""Attribute 'onset' must be a numerical \
+value. Got: %s""" % (type(value)))
+
+	@property
+	def ratio(self):
+		r"""
+		Type : float
+		Default : 1
+		The amplitude ratio of the second to the first exponential. The second
+		exponential will be multiplied by this value.
+		"""
+		return self._ratio
+
+	@ratio.setter
+	def ratio(self, value):
+		if isinstance(value, numbers.Number):
+			if value >= 0:
+				self._ratio = float(value)
+			else:
+				raise ValueError("""Attribute 'ratio' must be non-negative. \
+Got: %g""" % (value))
+		else:
+			raise TypeError("""Attribute 'ratio' must be a numerical value. \
+Got: %s""" % (type(value)))
 
 
 class modified_exponential(exponential):
