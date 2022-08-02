@@ -8,8 +8,8 @@ import matplotlib.pyplot as plt
 from matplotlib.ticker import MultipleLocator
 
 
-def plot_vice_onezone(output, fig=None, axs=[], style_kw={}, plot_kw={},
-                      hist_kw={'histtype': 'step'}):
+def plot_vice_onezone(output, fig=None, axs=[], label=None, color=None,
+                      histtype='step', marker_labels=False, style_kw={}):
     """
     Wrapper for plot_track_and_mdf given a VICE onezone output.
 
@@ -23,15 +23,16 @@ def plot_vice_onezone(output, fig=None, axs=[], style_kw={}, plot_kw={},
         There should be three axes: the first for the main [Fe/H] vs [O/Fe]
         panel, the second for the MDF in [Fe/H], and the third for the MDF
         in [O/Fe]
+    label : str, optional
+        Plot label to add to main panel legend
+    color : str, optional
+        Color of plot and histogram
+    histtype : str, optional
+        Histogram type; options are 'bar', 'barstacked', 'step', 'stepfilled'.
+        The default is 'step'.
     style_kw : dict, optional
         Dict of style-related keyword arguments to pass to both
         matplotlib.pyplot.plot and matplotlib.pyplot.hist
-    plot_kw : dict, optional
-        Dict of style-related keyword arguments to pass to
-        matplotlib.pyplot.plot
-    hist_kw : dict, optional
-        Dict of style-related keyword arguments to pass to
-        matplotlib.pyplot.plot
 
     Returns
     -------
@@ -45,14 +46,45 @@ def plot_vice_onezone(output, fig=None, axs=[], style_kw={}, plot_kw={},
     fig, axs = plot_track_and_mdf(hist['[fe/h]'], hist['[o/fe]'],
                                   dn_dfeh=mdf['dn/d[fe/h]'], feh_bins=mdf_bins,
                                   dn_dofe=mdf['dn/d[o/fe]'], ofe_bins=mdf_bins,
-                                  fig=fig, axs=axs, style_kw=style_kw,
-                                  plot_kw=plot_kw, hist_kw=hist_kw)
+                                  fig=fig, axs=axs, label=label, color=color,
+                                  histtype=histtype, style_kw=style_kw)
+    plot_time_markers(hist['time'], hist['[fe/h]'], hist['[o/fe]'], axs[0],
+                      color=color, show_labels=marker_labels)
     return fig, axs
 
 
+def plot_time_markers(time, feh, ofe, ax, loc=[0.1, 0.3, 1, 3, 10],
+                      color=None, show_labels=False):
+    markers = ['o', 's', '^', 'd', 'v', 'p', '*', 'X']
+    time = np.array(time)
+    for i, t in enumerate(loc):
+        idx = np.argmin(np.abs(time - t))
+        ax.scatter(feh[idx], ofe[idx], s=9, marker=markers[i],
+                   edgecolors=color, facecolors='w', zorder=10)
+        if show_labels:
+            if t < 1:
+                label = f'{int(t*1000)} Myr'
+            else:
+                label = f'{int(t)} Gyr'
+            xpad = 0.025
+            ypad = 0.005
+            # ax.text(feh[idx] + xpad, ofe[idx] + ypad, label, fontsize=7,
+            #         ha='left', va='bottom', color='w', weight=1000, stretch=500, zorder=10)
+            ax.text(feh[idx] + xpad, ofe[idx] + ypad, label, fontsize=7,
+                    ha='left', va='bottom', zorder=10,
+                    bbox={
+                        'facecolor': 'w',
+                        'edgecolor': 'none',
+                        'boxstyle': 'round',
+                        'pad': 0.1,
+                        'alpha': 0.7,
+                    },
+            )
+
+
 def plot_track_and_mdf(feh, ofe, dn_dfeh=[], feh_bins=10, dn_dofe=[],
-                       ofe_bins=10, fig=None, axs=[], style_kw={},
-                       plot_kw={}, hist_kw={'histtype': 'step'}):
+                       ofe_bins=10, fig=None, axs=[], label=None, color=None,
+                       histtype='step', style_kw={}):
     """
     Simultaneously plot a track in [Fe/H] vs [O/Fe] and the corresponding
     metallicity distribution functions (MDFs).
@@ -79,15 +111,16 @@ def plot_track_and_mdf(feh, ofe, dn_dfeh=[], feh_bins=10, dn_dofe=[],
         There should be three axes: the first for the main [Fe/H] vs [O/Fe]
         panel, the second for the MDF in [Fe/H], and the third for the MDF
         in [O/Fe]
+    label : str, optional
+        Plot label to add to main panel legend
+    color : str, optional
+        Color of plot and histogram
+    histtype : str, optional
+        Histogram type; options are 'bar', 'barstacked', 'step', 'stepfilled'.
+        The default is 'step'.
     style_kw : dict, optional
         Dict of style-related keyword arguments to pass to both
         matplotlib.pyplot.plot and matplotlib.pyplot.hist
-    plot_kw : dict, optional
-        Dict of style-related keyword arguments to pass to
-        matplotlib.pyplot.plot
-    hist_kw : dict, optional
-        Dict of style-related keyword arguments to pass to
-        matplotlib.pyplot.plot
 
     Returns
     -------
@@ -98,7 +131,7 @@ def plot_track_and_mdf(feh, ofe, dn_dfeh=[], feh_bins=10, dn_dofe=[],
         fig, axs = setup_axes()
 
     # Plot abundance tracks on main panel
-    axs[0].plot(feh, ofe, **plot_kw, **style_kw)
+    axs[0].plot(feh, ofe, label=label, color=color, **style_kw)
 
     # Plot distribution of [Fe/H] on top panel
     if len(dn_dfeh) == 0:
@@ -107,8 +140,8 @@ def plot_track_and_mdf(feh, ofe, dn_dfeh=[], feh_bins=10, dn_dofe=[],
     dn_dfeh = np.array(dn_dfeh)
     dn_dfeh[dn_dfeh == 0] = 1e-10
     log_dn_dfeh = np.log10(dn_dfeh)
-    axs[1].hist(feh_bins[:-1], feh_bins, weights=log_dn_dfeh,
-                **hist_kw, **style_kw)
+    axs[1].hist(feh_bins[:-1], feh_bins, weights=log_dn_dfeh, color=color,
+                histtype=histtype, **style_kw)
 
     # Plot distribution of [O/Fe] on right side panel
     if len(dn_dofe) == 0:
@@ -116,8 +149,8 @@ def plot_track_and_mdf(feh, ofe, dn_dfeh=[], feh_bins=10, dn_dofe=[],
     dn_dofe = np.array(dn_dofe)
     dn_dofe[dn_dofe == 0] = 1e-10
     log_dn_dofe = np.log10(dn_dofe)
-    axs[2].hist(ofe_bins[:-1], ofe_bins, weights=log_dn_dofe,
-                orientation='horizontal', **hist_kw, **style_kw)
+    axs[2].hist(ofe_bins[:-1], ofe_bins, weights=log_dn_dofe, color=color,
+                orientation='horizontal', histtype=histtype, **style_kw)
 
     return fig, axs
 
@@ -144,7 +177,9 @@ def setup_axes(width=3.25):
                           wspace=0.05, hspace=0.05)
     # Start with the center panel for [Fe/H] vs [O/Fe]
     ax_main = fig.add_subplot(gs[1,0])
+    ax_main.xaxis.set_major_locator(MultipleLocator(0.5))
     ax_main.xaxis.set_minor_locator(MultipleLocator(0.1))
+    ax_main.yaxis.set_major_locator(MultipleLocator(0.1))
     ax_main.yaxis.set_minor_locator(MultipleLocator(0.02))
     ax_main.set_xlabel('[Fe/H]')
     ax_main.set_ylabel('[O/Fe]')

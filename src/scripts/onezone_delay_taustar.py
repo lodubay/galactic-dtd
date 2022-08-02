@@ -35,6 +35,7 @@ STANDARD_PARAMS = dict(
 LINE_STYLE = ['--', '-', ':', '-', '-']
 COLOR = ['k', 'k', 'k', paultol.highcontrast.colors[2],
          paultol.highcontrast.colors[1]]
+MARKER = []
 
 def main(overwrite=False):
     output_dir = paths.data / 'onezone' / 'delay_taustar'
@@ -64,21 +65,26 @@ def main(overwrite=False):
             line_width = 1
             zorder = 10
 
+        if delay == 0.08 and tau_star == 2:
+            marker_labels = True
+        else:
+            marker_labels = False
+
         plot_vice_onezone(str(output_dir / name), fig=fig, axs=axs,
-                          plot_kw={'label': label},
+                          label=label, color=COLOR[i],
+                          marker_labels=marker_labels,
                           style_kw={
-                              'color': COLOR[i],
                               'linestyle': LINE_STYLE[i],
                               'linewidth': line_width,
                               'zorder': zorder},
                           )
 
     # Adjust axis limits
-    axs[0].set_xlim((-3, 0.2))
+    axs[0].set_xlim((-2.7, 0.3))
     axs[0].set_ylim((-0.1, 0.54))
 
     axs[0].legend(frameon=False, loc='lower left', handlelength=1.2, fontsize=7)
-    fig.savefig(paths.figures / 'onezone_delay_taustar.pdf', dpi=300)
+    fig.savefig(paths.figures / 'onezone_delay_taustar.png', dpi=300)
     plt.close()
 
 
