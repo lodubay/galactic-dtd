@@ -61,7 +61,8 @@ class greggio05_double:
     """
 
     def __init__(self, scheme, beta_sep=0., beta_grav=-0.75, efficiency=1.,
-                 dt=1e-3, nsamples=100, mlr='larson1974', **kwargs):
+                 dt=1e-3, nsamples=100, mlr='larson1974', progress=True,
+                 **kwargs):
         """
         Parameters
         ----------
@@ -88,6 +89,9 @@ class greggio05_double:
         mlr : str, optional
             Which model of mass-lifetime relation to use; must be one available
             in VICE. The default is 'larson1974'.
+        progress : bool, optional
+            If True, show a progress bar when computing the DTD. The default
+            is True.
         kwargs : dict
             Keyword arguments passed to greggio05_single
         """
@@ -110,12 +114,17 @@ class greggio05_double:
         )
 
         # Pre-calculate the DTD to save on compute time
-        print('Computing Greggio 2005 DTD...')
+        if progress:
+            print('Computing Greggio 2005 DTD...')
         self.times = np.logspace(np.log10(self.t_min),
                                  np.log10(min((END_TIME, self.t_max))),
                                  num=nsamples, endpoint=True)
         self.dtd = np.zeros(self.times.shape)
-        for i, t in enumerate(tqdm(self.times)):
+        if progress:
+            tlist = tqdm(self.times)
+        else:
+            tlist = self.times
+        for i, t in enumerate(tlist):
             self.dtd[i] = self.integrate(t)
 
         # Normalize the DTD

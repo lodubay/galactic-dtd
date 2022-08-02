@@ -126,10 +126,8 @@ class greggio05_approximate:
         """
         Fit the analytic function to data from a pre-generated DTD.
         """
-        print('Fitting approximate model to Greggio 2005...')
         popt, pcov = curve_fit(analytic_wrapper, tarr, yarr,
-                               p0=(0, -1, 1, 0.1, 1, 0.1, 1e-9))
-        print('Done!')
+                               p0=(-0.5, -1, 1, 0.1, 1, 0.1, 1e-9))
         return cls(slope1=popt[0], slope2=popt[1],
                    rise_strength=popt[2], rise_timescale=popt[3],
                    tail_strength=popt[4], tail_timescale=popt[5])
