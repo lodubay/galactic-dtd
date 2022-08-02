@@ -1,6 +1,7 @@
 
 __all__ = ["insideout", "lateburst", "outerburst", "static",
-		   "conroy22_tau_star", "insideout_conroy22", "lateburst_conroy22"]
+		    "conroy22_tau_star", "insideout_conroy22", "lateburst_conroy22",
+           "twoinfall"]
 from .insideout import insideout
 from .lateburst import lateburst
 from .outerburst import outerburst
