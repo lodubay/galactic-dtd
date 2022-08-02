@@ -35,7 +35,6 @@ STANDARD_PARAMS = dict(
 LINE_STYLE = ['--', '-', ':', '-', '-']
 COLOR = ['k', 'k', 'k', paultol.highcontrast.colors[2],
          paultol.highcontrast.colors[1]]
-MARKER = []
 
 def main(overwrite=False):
     output_dir = paths.data / 'onezone' / 'delay_taustar'

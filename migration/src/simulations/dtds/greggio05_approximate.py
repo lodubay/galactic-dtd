@@ -13,7 +13,7 @@ from .greggio05_double import greggio05_double
 # Best-fit analytic parameters for WIDE DD prescription
 WIDE_PARAMS = {
     'tsplit': 1.,
-    'slope1': -1.9,
+    'slope1': -0.19,
     'slope2': -0.91,
     'rise_strength': 1.7,
     'rise_timescale': 0.084,

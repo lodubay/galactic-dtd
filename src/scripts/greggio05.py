@@ -17,7 +17,6 @@ from migration.src.simulations import dtds
 from migration.src._globals import END_TIME
 from colormaps import paultol
 
-SD_FACTOR = 1
 WIDE_COLORS = [paultol.muted.colors[1],
                paultol.muted.colors[4],
                paultol.muted.colors[6]]
@@ -25,7 +24,7 @@ CLOSE_COLORS = [paultol.muted.colors[3],
                 paultol.muted.colors[2],
                 paultol.muted.colors[7]]
 
-def main(scheme, dt=1e-4, nsamples=200, verbose=False, format='pdf'):
+def main(scheme, dt=1e-4, nsamples=200, verbose=True, format='pdf'):
     fig, ax = plt.subplots(figsize=(3.25, 3.25), tight_layout=True)
     tarr = np.arange(0.04, END_TIME, dt)
 
@@ -39,9 +38,9 @@ def main(scheme, dt=1e-4, nsamples=200, verbose=False, format='pdf'):
         print('Plotting single-degenerate DTD...')
     sd = dtds.greggio05_single()
     sd_arr = np.array([sd(t) for t in tarr])
-    ax.plot(tarr * 1e9, SD_FACTOR * sd_arr,
+    ax.plot(tarr * 1e9, sd_arr,
             color=paultol.muted.colors[0], linestyle='-', linewidth=1,
-            label=r'SD $\times$ %s' % SD_FACTOR)
+            label='Single degenerate' )
     if verbose:
         print('Done!')
 
@@ -51,7 +50,7 @@ def main(scheme, dt=1e-4, nsamples=200, verbose=False, format='pdf'):
     dd_arr = np.array([dd_func(t) for t in tarr])
     ax.plot(tarr * 1e9, dd_arr,
             color=colors[0], linestyle='-', linewidth=1,
-            label='DD %s' % scheme.upper())
+            label='Double degenerate %s' % scheme.upper())
 
     # Best fit approximate function
     if verbose:
@@ -97,4 +96,4 @@ def main(scheme, dt=1e-4, nsamples=200, verbose=False, format='pdf'):
     fig.savefig(paths.figures / ('greggio05_%s.%s' % (scheme, format)), dpi=300)
 
 if __name__ == '__main__':
-    main('close', format='png', verbose=True, dt=1e-3, nsamples=100)
+    main('wide', format='png', verbose=True, dt=1e-3, nsamples=100)

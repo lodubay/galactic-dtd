@@ -40,6 +40,48 @@ def main(overwrite=False):
 
     simtime = np.arange(0, END_TIME + DT, DT)
 
+    name = 'exponential30'
+    sz = vice.singlezone(name=str(output_dir / name),
+                         RIa=dtds.exponential(timescale=3),
+                         **STANDARD_PARAMS)
+    sz.run(simtime, overwrite=True)
+    plot_vice_onezone(str(output_dir / name), fig=fig, axs=axs,
+                      label=r'Exponential ($\tau=3$ Gyr)',
+                      color=paultol.muted.colors[7],
+                      style_kw={
+                           'linestyle': '--',
+                           'linewidth': 1,
+                           'zorder': 1,
+                      })
+
+    name = 'exponential15'
+    sz = vice.singlezone(name=str(output_dir / name),
+                         RIa=dtds.exponential(timescale=1.5),
+                         **STANDARD_PARAMS)
+    sz.run(simtime, overwrite=True)
+    plot_vice_onezone(str(output_dir / name), fig=fig, axs=axs,
+                      label=r'Exponential ($\tau=1.5$ Gyr)',
+                      color=paultol.muted.colors[6],
+                      style_kw={
+                           'linestyle': '--',
+                           'linewidth': 1,
+                           'zorder': 1,
+                      })
+
+    name = 'powerlaw'
+    sz = vice.singlezone(name=str(output_dir / name),
+                         RIa=dtds.powerlaw(slope=-1.1),
+                         **STANDARD_PARAMS)
+    sz.run(simtime, overwrite=True)
+    plot_vice_onezone(str(output_dir / name), fig=fig, axs=axs,
+                      label=r'Power-Law ($\alpha=-1.1$)',
+                      color='k',
+                      style_kw={
+                           'linestyle': '--',
+                           'linewidth': 1,
+                           'zorder': 1,
+                      })
+
     # Single-degenerate
     name = 'single'
     sz = vice.singlezone(name=str(output_dir / name),
@@ -47,12 +89,12 @@ def main(overwrite=False):
                          **STANDARD_PARAMS)
     sz.run(simtime, overwrite=True)
     plot_vice_onezone(str(output_dir / name), fig=fig, axs=axs,
-                      plot_kw={'label': 'SD'},
-                      # style_kw={
-                      #     'color': COLOR[i],
-                      #     'linestyle': LINE_STYLE[i],
-                      #     'linewidth': line_width,
-                      #     'zorder': zorder},
+                      label='Single degenerate',
+                      color=paultol.muted.colors[0],
+                       style_kw={
+                           'linestyle': '-',
+                           'linewidth': 1,
+                           'zorder': 9},
                       )
 
     # Double-degenerate WIDE model
@@ -62,12 +104,12 @@ def main(overwrite=False):
                          **STANDARD_PARAMS)
     sz.run(simtime, overwrite=True)
     plot_vice_onezone(str(output_dir / name), fig=fig, axs=axs,
-                      plot_kw={'label': 'DD WIDE'},
-                      # style_kw={
-                      #     'color': COLOR[i],
-                      #     'linestyle': LINE_STYLE[i],
-                      #     'linewidth': line_width,
-                      #     'zorder': zorder},
+                      label='Double degenerate WIDE',
+                      color=paultol.muted.colors[1],
+                      style_kw={
+                           'linestyle': '-',
+                           'linewidth': 1,
+                           'zorder': 9},
                       )
 
     # Double-degenerate WIDE model
@@ -77,41 +119,13 @@ def main(overwrite=False):
                          **STANDARD_PARAMS)
     sz.run(simtime, overwrite=True)
     plot_vice_onezone(str(output_dir / name), fig=fig, axs=axs,
-                      plot_kw={'label': 'DD CLOSE'},
-                      # style_kw={
-                      #     'color': COLOR[i],
-                      #     'linestyle': LINE_STYLE[i],
-                      #     'linewidth': line_width,
-                      #     'zorder': zorder},
+                      label='Double degenerate CLOSE',
+                      color=paultol.muted.colors[3],
+                      style_kw={
+                           'linestyle': '-',
+                           'linewidth': 1,
+                           'zorder': 9},
                       )
-
-    name = 'exponential'
-    sz = vice.singlezone(name=str(output_dir / name),
-                         RIa=dtds.exponential(timescale=1.5),
-                         **STANDARD_PARAMS)
-    sz.run(simtime, overwrite=True)
-    plot_vice_onezone(str(output_dir / name), fig=fig, axs=axs,
-                      plot_kw={'label': 'Exponential'},
-                      style_kw={
-                      #     'color': COLOR[i],
-                           'linestyle': '--',
-                      #     'linewidth': line_width,
-                      #     'zorder': zorder
-                      })
-
-    name = 'powerlaw'
-    sz = vice.singlezone(name=str(output_dir / name),
-                         RIa=dtds.powerlaw(slope=-1.1),
-                         **STANDARD_PARAMS)
-    sz.run(simtime, overwrite=True)
-    plot_vice_onezone(str(output_dir / name), fig=fig, axs=axs,
-                      plot_kw={'label': 'Power-Law'},
-                      style_kw={
-                      #     'color': COLOR[i],
-                           'linestyle': '--',
-                      #     'linewidth': line_width,
-                      #     'zorder': zorder
-                      })
 
     # Adjust axis limits
     axs[0].set_xlim((-2.5, 0.2))
