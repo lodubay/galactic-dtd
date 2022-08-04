@@ -3,7 +3,6 @@ This file defines the power-law delay-time distribution (DTD) of Type Ia
 supernovae.
 """
 
-import math as m
 from ..._globals import END_TIME
 
 class powerlaw:
@@ -37,7 +36,7 @@ class powerlaw:
         self.slope = slope
         self.coeff = coeff
         self.norm = self.normalize(tmin, tmax)
-        self._name = f'powerlaw_slope{int(10 * m.abs(slope))}'
+        self._name = 'powerlaw_slope{:02d}'.format(int(10 * abs(slope)))
 
     def __call__(self, time):
         return self.coeff * self.norm * (time ** self.slope)
