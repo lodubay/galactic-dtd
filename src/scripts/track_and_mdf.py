@@ -50,7 +50,8 @@ def plot_vice_onezone(output, fig=None, axs=[], label=None, color=None,
                                   dn_dfeh=mdf['dn/d[fe/h]'], feh_bins=mdf_bins,
                                   dn_dofe=mdf['dn/d[o/fe]'], ofe_bins=mdf_bins,
                                   fig=fig, axs=axs, label=label, color=color,
-                                  histtype=histtype, style_kw=style_kw)
+                                  histtype=histtype, logmdf=logmdf,
+                                  style_kw=style_kw)
     plot_time_markers(hist['time'], hist['[fe/h]'], hist['[o/fe]'], axs[0],
                       color=color, show_labels=marker_labels)
     return fig, axs
@@ -151,7 +152,7 @@ def plot_track_and_mdf(feh, ofe, dn_dfeh=[], feh_bins=10, dn_dofe=[],
     axs : list of matplotlib.axes.Axes
     """
     if fig == None or len(axs) != 3:
-        fig, axs = setup_axes()
+        fig, axs = setup_axes(logmdf=logmdf)
 
     # Plot abundance tracks on main panel
     axs[0].plot(feh, ofe, label=label, color=color, **style_kw)
@@ -184,7 +185,7 @@ def plot_track_and_mdf(feh, ofe, dn_dfeh=[], feh_bins=10, dn_dofe=[],
     return fig, axs
 
 
-def setup_axes(width=3.25):
+def setup_axes(width=3.25, logmdf=True):
     """
     Create a figure with three axes: the main abundance track axis plus two
     side panels for [Fe/H] and [O/Fe] distribution functions.
@@ -215,19 +216,28 @@ def setup_axes(width=3.25):
     # Add panel above for MDF in [Fe/H]
     ax_mdf = fig.add_subplot(gs[0,0], sharex=ax_main)
     ax_mdf.tick_params(axis='x', labelcolor='#ffffff00')
-    ax_mdf.set_ylim((-4, 1.5))
-    ax_mdf.yaxis.set_major_locator(MultipleLocator(2))
-    ax_mdf.yaxis.set_minor_locator(MultipleLocator(0.5))
-    ax_mdf.set_ylabel('log(dN/d[Fe/H])', size=7)
     ax_mdf.tick_params(axis='y', labelsize=7)
+    if logmdf:
+        ax_mdf.set_ylim((-4, 1.5))
+        ax_mdf.yaxis.set_major_locator(MultipleLocator(2))
+        ax_mdf.yaxis.set_minor_locator(MultipleLocator(0.5))
+        ax_mdf.set_ylabel('log(dN/d[Fe/H])', size=7)
+    else:
+        ax_mdf.set_ylabel('dN/d[Fe/H]', size=7)
+        ax_mdf.yaxis.set_major_locator(MultipleLocator(5))
+        ax_mdf.yaxis.set_minor_locator(MultipleLocator(1))
     # Add panel to the right for MDF in [O/Fe]
     ax_odf = fig.add_subplot(gs[1,1], sharey=ax_main)
     ax_odf.tick_params(axis='y', labelcolor='#ffffff00')
-    # ax_odf.set_xscale('log')
-    ax_odf.set_xlabel('log(dN/d[O/Fe])', size=7)
     ax_odf.tick_params(axis='x', labelsize=7)
-    ax_odf.set_xlim((-3.5, 1.5))
-    ax_odf.xaxis.set_major_locator(MultipleLocator(2))
-    ax_odf.xaxis.set_minor_locator(MultipleLocator(0.5))
+    if logmdf:
+        ax_odf.set_xlabel('log(dN/d[O/Fe])', size=7)
+        ax_odf.set_xlim((-3.5, 1.5))
+        ax_odf.xaxis.set_major_locator(MultipleLocator(2))
+        ax_odf.xaxis.set_minor_locator(MultipleLocator(0.5))
+    else:
+        ax_odf.set_xlabel('dN/d[O/Fe]')
+        ax_odf.xaxis.set_major_locator(MultipleLocator(5))
+        ax_odf.xaxis.set_minor_locator(MultipleLocator(1))
     axs = [ax_main, ax_mdf, ax_odf]
     return fig, axs

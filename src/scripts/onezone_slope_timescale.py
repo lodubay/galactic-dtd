@@ -42,7 +42,7 @@ def main(overwrite=False):
     if not output_dir.exists():
         output_dir.mkdir(parents=True)
 
-    fig, axs = setup_axes()
+    fig, axs = setup_axes(logmdf=False)
 
     simtime = np.arange(0, END_TIME + DT, DT)
 
@@ -60,6 +60,7 @@ def main(overwrite=False):
                               'linestyle': LINE_STYLE[i],
                               'linewidth': 1},
                           marker_labels=(i==2),
+                          logmdf=False
                           )
 
     for i, slope in enumerate(SLOPES):
@@ -75,6 +76,7 @@ def main(overwrite=False):
                           style_kw={
                               'linestyle': LINE_STYLE[i],
                               'linewidth': 1},
+                          logmdf=False
                           )
 
     # Adjust axis limits
