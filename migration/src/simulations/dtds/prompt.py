@@ -1,16 +1,18 @@
 """
-This file defines the bimodal delay-time distribution (DTD) of Type Ia
+This file defines the 'prompt' delay-time distribution (DTD) of Type Ia
 supernovae.
 """
 
 from .utils import gaussian, exponential
 from ..._globals import END_TIME
 
-class bimodal:
+class prompt:
     """
-    The bimodal delay-time distribution of SNe Ia. This assumes ~50% of SNe Ia
-    belong to a prompt (<0.1 Gyr) component with the form of a narrow Gaussian,
-    and the remaining ~50% form an exponential DTD.
+    The 'prompt' delay-time distribution of SNe Ia.
+
+    This DTD assumes ~50% of SNe Ia belong to a prompt (<0.1 Gyr) component
+    with the form of a narrow Gaussian, and the remaining ~50% form an
+    exponential DTD.
 
     Attributes
     ----------
@@ -25,7 +27,7 @@ class bimodal:
     def __init__(self, center=0.05, stdev=0.01, timescale=3,
                  tmin=0.04, tsplit=0.1, tmax=END_TIME):
         """
-        Initialize the bimodal model.
+        Initialize the prompt model.
 
         Parameters
         ----------
@@ -48,6 +50,8 @@ class bimodal:
         self.norm = 1
         # Normalize over full time range
         self.norm *= 1e-9 * self.normalize(tmin, tmax)
+        self._name = 'prompt_peak{:03d}_timescale{:02d}'.format(
+            int(center * 1000), int(timescale * 10))
 
     def __call__(self, time):
         """
@@ -91,3 +95,7 @@ class bimodal:
             integral += self.__call__(time) * dt
             time += dt
         return 1 / integral
+
+    @property
+    def name(self):
+        return self._name

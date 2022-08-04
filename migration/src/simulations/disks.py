@@ -70,8 +70,10 @@ class diskmodel(vice.milkyway):
         - "powerlaw_broken"
         - "exponential"
         - "exponential_long"
-        - "bimodal"
+        - "prompt"
 
+    RIa_kwargs : ``dict`` [default: {}]
+        Keyword arguments to pass to the delay-time distribution initialization
     kwargs : varying types
         Other keyword arguments to pass ``vice.milkyway``.
 
@@ -80,7 +82,7 @@ class diskmodel(vice.milkyway):
 
     def __init__(self, zone_width = 0.1, name = "diskmodel", spec = "static",
         verbose = True, migration_mode = "diffusion",
-        delay = 0.04, RIa = "powerlaw", **kwargs):
+        delay = 0.04, RIa = "powerlaw", RIa_kwargs={}, **kwargs):
         super().__init__(zone_width = zone_width, name = name,
             verbose = verbose, **kwargs)
         if self.zone_width <= 0.2 and self.dt <= 0.02 and self.n_stars >= 6:
@@ -104,7 +106,7 @@ class diskmodel(vice.milkyway):
             for zone in self.zones: zone.Mg0 = 0
         else:
             self.mode = "sfr"
-        dtd = delay_time_distribution(dist = RIa, tmin = delay)
+        dtd = delay_time_distribution(dist = RIa, tmin = delay, **RIa_kwargs)
         for i in range(self.n_zones):
             # set the delay time distribution and minimum Type Ia delay time
             self.zones[i].delay = delay
@@ -220,6 +222,8 @@ class delay_time_distribution:
         The minimum SN Ia delay time in Gyr.
     tmax : float [default: 13.2]
         The maximum SN Ia delay time in Gyr.
+    kwargs : dict
+        Keyword arguments passed to the DTD initialization.
 
     Calling
     -------
@@ -229,17 +233,18 @@ class delay_time_distribution:
             Simulation time in Gyr.
     """
 
-    def __init__(self, dist = "powerlaw", tmin = 0.04, tmax = END_TIME):
+    def __init__(self, dist="powerlaw", tmin=0.04, tmax=END_TIME, **kwargs):
         self.tmin = tmin
         self.tmax = tmax
-        kwargs = {'tmin': self.tmin, 'tmax': self.tmax}
+        kwargs['tmin'] = self.tmin
+        kwargs['tmax'] = self.tmax
         self._dtd = {
             "powerlaw":         dtds.powerlaw(**kwargs),
-            "powerlaw_steep":   dtds.powerlaw(slope=-1.4, **kwargs),
+            # "powerlaw_steep":   dtds.powerlaw(slope=-1.4, **kwargs),
             "powerlaw_broken":  dtds.powerlaw_broken(**kwargs),
             "exponential":      dtds.exponential(**kwargs),
-            "exponential_long": dtds.exponential(timescale=3, **kwargs),
-            "bimodal":          dtds.bimodal(**kwargs)
+            # "exponential_long": dtds.exponential(timescale=3, **kwargs),
+            "prompt":          dtds.prompt(**kwargs)
         }[dist.lower()]
 
     def __call__(self, time):

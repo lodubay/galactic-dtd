@@ -21,3 +21,8 @@ class exponential(generic_exponential):
         super().__init__(timescale=timescale)
         # Normalize to 1 between the minimum delay and maximum simulation time
         self.norm *= 1e-9 / (timescale * (self.__call__(tmin) - self.__call__(tmax)))
+        self._name = f'exponential_timescale{int(10 * timescale)}'
+
+    @property
+    def name(self):
+        return self._name
