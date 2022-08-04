@@ -8,7 +8,7 @@ Created on Wed Jun 29 10:48:42 2022
 from .powerlaw import powerlaw
 from ..._globals import END_TIME
 
-class powerlaw_broken:
+class broken_powerlaw:
     """
     A two-part broken power-law delay-time distribution of SNe Ia. The default
     setting is a flat distribution (slope of 0) before the time of separation

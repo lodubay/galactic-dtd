@@ -21,6 +21,7 @@ from track_and_mdf import setup_axes, plot_vice_onezone
 SLOPES = [-0.8, -1.1,-1.4]
 TIMESCALES= [6, 3, 1.5]
 DT = 0.01
+DELAY = 0.04
 STANDARD_PARAMS = dict(
     func=models.insideout(8, dt=DT),
     mode='sfr',
@@ -29,7 +30,7 @@ STANDARD_PARAMS = dict(
     recycling='continuous',
     eta=2.5,
     tau_star=2.,
-    delay=0.04,
+    delay=DELAY,
 )
 
 # Plot settings
@@ -46,37 +47,38 @@ def main(overwrite=False):
     simtime = np.arange(0, END_TIME + DT, DT)
 
     for i, timescale in enumerate(TIMESCALES):
-        name = 'exponential{:02d}'.format(int(10*timescale))
-        label = rf'Exponential ($\tau={timescale:.1f}$ Gyr)'
-        sz = vice.singlezone(name=str(output_dir / name),
-                             RIa=dtds.exponential(timescale=timescale),
+        dist = dtds.exponential(timescale=timescale, tmin=DELAY)
+        # name = 'exponential{:02d}'.format(int(10*timescale))
+        sz = vice.singlezone(name=str(output_dir / dist.name),
+                             RIa=dist,
                              **STANDARD_PARAMS)
         sz.run(simtime, overwrite=True)
-        plot_vice_onezone(str(output_dir / name), fig=fig, axs=axs,
-                          plot_kw={'label': label},
+        plot_vice_onezone(str(output_dir / dist.name), fig=fig, axs=axs,
+                          label=rf'Exponential ($\tau={timescale:.1f}$ Gyr)',
+                          color=paultol.bright.colors[0],
                           style_kw={
                               'linestyle': LINE_STYLE[i],
-                              'color': paultol.bright.colors[0],
                               'linewidth': 1},
+                          marker_labels=(i==2),
                           )
 
     for i, slope in enumerate(SLOPES):
-        name = 'powerlaw{:02d}'.format(int(-10*slope))
-        label = rf'Power-Law ($\alpha={slope:.1f}$)'
-        sz = vice.singlezone(name=str(output_dir / name),
-                             RIa=dtds.powerlaw(slope=slope),
+        dist = dtds.powerlaw(slope=slope, tmin=DELAY)
+        # name = 'powerlaw{:02d}'.format(int(-10*slope))
+        sz = vice.singlezone(name=str(output_dir / dist.name),
+                             RIa=dist,
                              **STANDARD_PARAMS)
         sz.run(simtime, overwrite=True)
-        plot_vice_onezone(str(output_dir / name), fig=fig, axs=axs,
-                          plot_kw={'label': label},
+        plot_vice_onezone(str(output_dir / dist.name), fig=fig, axs=axs,
+                          label=rf'Power-Law ($\alpha={slope:.1f}$)',
+                          color='k',
                           style_kw={
                               'linestyle': LINE_STYLE[i],
-                              'color': 'k',
                               'linewidth': 1},
                           )
 
     # Adjust axis limits
-    axs[0].set_xlim((-2.5, 0.2))
+    axs[0].set_xlim((-2.5, 0.3))
     axs[0].set_ylim((-0.1, 0.52))
 
     axs[0].legend(frameon=False, loc='lower left', handlelength=1.2, fontsize=7)
