@@ -55,6 +55,26 @@ def plot_vice_onezone(output, fig=None, axs=[], label=None, color=None,
 
 def plot_time_markers(time, feh, ofe, ax, loc=[0.1, 0.3, 1, 3, 10],
                       color=None, show_labels=False):
+    """
+    Add temporal markers to the [O/Fe] vs [Fe/H] tracks.
+
+    Parameters
+    ----------
+    time : array-like
+        Array of simulation time in Gyr.
+    feh : array-like
+        Array of [Fe/H] abundances.
+    ofe : array-like
+        Array of [O/Fe] abundances.
+    ax : matplotlib.axes.Axes
+        Axis in which to plot the time markers.
+    loc : list, optional
+        List of times in Gyr to mark. The default is [0.1, 0.3, 1, 3, 10].
+    color : color or None, optional
+        Color of the markers. The default is None.
+    show_labels : bool, optional
+        Whether to add marker labels. The default is False.
+    """
     markers = ['o', 's', '^', 'd', 'v', 'p', '*', 'X']
     time = np.array(time)
     for i, t in enumerate(loc):
@@ -68,8 +88,6 @@ def plot_time_markers(time, feh, ofe, ax, loc=[0.1, 0.3, 1, 3, 10],
                 label = f'{int(t)} Gyr'
             xpad = 0.025
             ypad = 0.005
-            # ax.text(feh[idx] + xpad, ofe[idx] + ypad, label, fontsize=7,
-            #         ha='left', va='bottom', color='w', weight=1000, stretch=500, zorder=10)
             ax.text(feh[idx] + xpad, ofe[idx] + ypad, label, fontsize=7,
                     ha='left', va='bottom', zorder=10,
                     bbox={

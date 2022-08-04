@@ -121,6 +121,7 @@ def main(overwrite=False):
     plot_vice_onezone(str(output_dir / name), fig=fig, axs=axs,
                       label='Double degenerate CLOSE',
                       color=paultol.muted.colors[3],
+                      marker_labels=True,
                       style_kw={
                            'linestyle': '-',
                            'linewidth': 1,
@@ -128,11 +129,11 @@ def main(overwrite=False):
                       )
 
     # Adjust axis limits
-    axs[0].set_xlim((-2.5, 0.2))
+    axs[0].set_xlim((-2.5, 0.3))
     axs[0].set_ylim((-0.1, 0.54))
 
     axs[0].legend(frameon=False, loc='lower left', handlelength=1.2, fontsize=7)
-    fig.savefig(paths.figures / 'onezone_greggio05.png', dpi=300)
+    fig.savefig(paths.figures / 'onezone_greggio05.pdf', dpi=300)
     plt.close()
 
 

@@ -83,7 +83,7 @@ def main(overwrite=False):
     axs[0].set_ylim((-0.1, 0.54))
 
     axs[0].legend(frameon=False, loc='lower left', handlelength=1.2, fontsize=7)
-    fig.savefig(paths.figures / 'onezone_delay_taustar.png', dpi=300)
+    fig.savefig(paths.figures / 'onezone_delay_taustar.pdf', dpi=300)
     plt.close()
 
 
