@@ -25,7 +25,7 @@ class prompt:
     """
 
     def __init__(self, center=0.05, stdev=0.01, timescale=3,
-                 tmin=0.04, tsplit=0.1, tmax=END_TIME):
+                 tmin=0.04, tmax=END_TIME):
         """
         Initialize the prompt model.
 
@@ -39,8 +39,6 @@ class prompt:
             Exponential timescale of the tardy component in Gyr.
         tmin : float [default: 0.04]
             Minimum delay time in Gyr for integration purposes.
-        tsplit : float [default: 0.1]
-            Time in Gyr to switch from prompt to tardy component.
         tmax : float [default: 13.2]
             Maximum delay time in Gyr for integration purposes.
 

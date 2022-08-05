@@ -52,6 +52,8 @@ def plot_vice_onezone(output, fig=None, axs=[], label=None, color=None,
                                   fig=fig, axs=axs, label=label, color=color,
                                   histtype=histtype, logmdf=logmdf,
                                   style_kw=style_kw)
+    if color == None:
+        color = axs[0].lines[-1].get_color()
     plot_time_markers(hist['time'], hist['[fe/h]'], hist['[o/fe]'], axs[0],
                       color=color, show_labels=marker_labels)
     return fig, axs
