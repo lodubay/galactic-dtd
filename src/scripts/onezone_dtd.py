@@ -41,6 +41,10 @@ def main(overwrite=False):
 
     simtime = np.arange(0, END_TIME + DT, DT)
 
+    distributions = [dtds.powerlaw(slope=-1.1, tmin=DELAY),
+                     dtds.plateau(width=0.2, slope=-1.1, tmin=DELAY),
+                     dtds.exponential(timescale=3, tmin=DELAY),
+                     dtds.prompt(center=0.05, timescale=3, tmin=DELAY)]
     labels = [r'Power-Law ($\alpha=-1.1$)',
               r'Power-Law with 200 Myr plateau',
               r'Exponential ($\tau=3$ Gyr)',
@@ -48,15 +52,10 @@ def main(overwrite=False):
     colors = [paultol.vibrant.colors[i] for i in [4, 0, 1, 2]]
     line_styles = ['-', '-.', '--', ':']
 
-    for i, dist in enumerate([
-            dtds.powerlaw(slope=-1.1, tmin=DELAY),
-            dtds.plateau(width=0.2, slope=-1.1, tmin=DELAY),
-            dtds.exponential(timescale=3, tmin=DELAY),
-            dtds.prompt(center=0.05, timescale=3, tmin=DELAY),]):
-
-        run_singlezone(str(output_dir / dist.name), simtime, overwrite=overwrite,
+    for i, dist in enumerate(distributions):
+        run_singlezone(str(output_dir / dist.name), simtime,
+                       overwrite=overwrite,
                        RIa=dist, **STANDARD_PARAMS)
-
         plot_vice_onezone(str(output_dir / dist.name), fig=fig, axs=axs,
                           label=labels[i], color=colors[i],
                           style_kw={'linestyle': line_styles[i],
