@@ -16,11 +16,13 @@ from migration.src.simulations import models, dtds
 from migration.src._globals import END_TIME
 from colormaps import paultol
 from track_and_mdf import setup_axes, plot_vice_onezone
+from utils import run_singlezone
 
 # VICE one-zone model settings
-PLATEAUS = [0.1, 0.2, 0.5, 1.] # Myr
+PLATEAUS = [0.1, 0.2, 0.5, 1.] # Gyr
 DELAY = 0.04 # minimum delay time in Gyr
 DT = 0.01
+SLOPE = -1.1
 STANDARD_PARAMS = dict(
     func=models.insideout(8, dt=DT),
     mode='sfr',
@@ -36,7 +38,7 @@ STANDARD_PARAMS = dict(
 LINE_STYLE = [':', '-.', '--', '-']
 
 def main(overwrite=False):
-    output_dir = paths.data / 'onezone' / 'powerlaw_plateau'
+    output_dir = paths.data / 'onezone' / 'plateau'
     if not output_dir.exists():
         output_dir.mkdir(parents=True)
 
@@ -45,45 +47,31 @@ def main(overwrite=False):
     fig, axs = setup_axes()
 
     # Plot standard power-law for reference
-    sz = vice.singlezone(name=str(output_dir / 'powerlaw'),
-                         RIa=dtds.powerlaw(slope=-1.1),
-                         **STANDARD_PARAMS)
-    sz.run(simtime, overwrite=True)
-    plot_vice_onezone(str(output_dir / 'powerlaw'),
+    dist = dtds.powerlaw(slope=SLOPE, tmin=DELAY)
+    run_singlezone(str(output_dir / dist.name), simtime, overwrite=overwrite,
+                   RIa=dist, **STANDARD_PARAMS)
+    plot_vice_onezone(str(output_dir / dist.name),
                       fig=fig, axs=axs,
-                      plot_kw={'label': 'No plateau'},
-                      style_kw={'color': 'k',
-                                'linestyle': '-',
+                      label='No plateau', color='k',
+                      style_kw={'linestyle': '-',
                                 'linewidth': 1,
                                 'zorder': 1},
                       )
 
     for i, plateau in enumerate(PLATEAUS):
-        name = gen_name_from_params(plateau)
         if plateau >= 1:
             label = f'{plateau:.01f} Gyr plateau'
         else:
             label = f'{int(plateau*1000)} Myr plateau'
 
-        if overwrite:
-            sz = vice.singlezone(name=str(output_dir / name),
-                                 RIa=dtds.powerlaw_broken(tsplit=plateau+DELAY),
-                                 **STANDARD_PARAMS)
-            sz.run(simtime, overwrite=True)
-        else:
-            try:
-                history = vice.history(str(output_dir / name))
-            except IOError:
-                sz = vice.singlezone(name=str(output_dir / name),
-                                     RIa=dtds.powerlaw_broken(tsplit=plateau+DELAY),
-                                     **STANDARD_PARAMS)
-                sz.run(simtime, overwrite=True)
+        dist = dtds.plateau(width=plateau, slope=SLOPE, tmin=DELAY)
+        run_singlezone(str(output_dir / dist.name), simtime, overwrite=overwrite,
+                       RIa=dist, **STANDARD_PARAMS)
 
-        plot_vice_onezone(str(output_dir / name),
+        plot_vice_onezone(str(output_dir / dist.name),
                           fig=fig, axs=axs,
-                          plot_kw={'label': label},
+                          label=label, color=paultol.bright.colors[1],
                           style_kw={
-                              'color': paultol.bright.colors[1],
                               'linestyle': LINE_STYLE[i],
                               'linewidth': 1,
                               'zorder': 10},
@@ -91,26 +79,26 @@ def main(overwrite=False):
 
     # Plot exponentials for reference
     for tau, ls in zip([1.5, 3], ['--', '-']):
-        name = f'exponential{int(tau*10):02d}'
-        sz = vice.singlezone(name=str(output_dir / name),
-                             RIa=dtds.exponential(timescale=tau),
-                             **STANDARD_PARAMS)
-        sz.run(simtime, overwrite=True)
-        plot_vice_onezone(str(output_dir / name),
+        dist = dtds.exponential(timescale=tau, tmin=DELAY)
+        run_singlezone(str(output_dir / dist.name), simtime, overwrite=overwrite,
+                       RIa=dist, **STANDARD_PARAMS)
+
+        plot_vice_onezone(str(output_dir / dist.name),
                           fig=fig, axs=axs,
-                          plot_kw={'label': rf'Exponential ($\tau={tau:.01f}$ Gyr)'},
-                          style_kw={'color': paultol.bright.colors[0],
-                                    'linestyle': ls,
+                          label=rf'Exponential ($\tau={tau:.01f}$ Gyr)',
+                          color=paultol.bright.colors[0],
+                          style_kw={'linestyle': ls,
                                     'linewidth': 1.5,
                                     'zorder': 1},
+                          marker_labels=(tau==1.5),
                           )
 
     # Adjust axis limits
-    axs[0].set_xlim((-2.5, 0.2))
+    axs[0].set_xlim((-2.5, 0.3))
     axs[0].set_ylim((-0.1, 0.52))
 
     axs[0].legend(frameon=False, loc='lower left', handlelength=1.5, fontsize=7)
-    fig.savefig(paths.figures / 'onezone_powerlaw_plateau.pdf', dpi=300)
+    fig.savefig(paths.figures / 'onezone_plateau.pdf', dpi=300)
     plt.close()
 
 

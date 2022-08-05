@@ -92,16 +92,20 @@ def plot_time_markers(time, feh, ofe, ax, loc=[0.1, 0.3, 1, 3, 10],
                 label = f'{int(t*1000)} Myr'
             else:
                 label = f'{int(t)} Gyr'
-            xpad = 0.025
-            ypad = 0.005
+            if i == 0:
+                xpad = -0.1
+                ypad = 0.01
+            else:
+                xpad = 0.03
+                ypad = 0.008
             ax.text(feh[idx] + xpad, ofe[idx] + ypad, label, fontsize=7,
                     ha='left', va='bottom', zorder=10,
                     bbox={
                         'facecolor': 'w',
                         'edgecolor': 'none',
                         'boxstyle': 'round',
-                        'pad': 0.1,
-                        'alpha': 0.7,
+                        'pad': 0.05,
+                        'alpha': 0.8,
                     },
             )
 

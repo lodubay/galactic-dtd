@@ -12,12 +12,14 @@ from vice.yields.presets import JW20
 vice.yields.sneia.settings['fe'] *= 10**0.1
 import paths
 sys.path.append(str(paths.root))
-from migration.src.simulations import models
+from migration.src.simulations import models, dtds
 from migration.src._globals import END_TIME
+from colormaps import paultol
 from track_and_mdf import setup_axes, plot_vice_onezone
-from delay_time_distributions import styles
+from utils import run_singlezone
 
 # VICE one-zone model settings
+DELAY = 0.04
 DT = 0.01
 STANDARD_PARAMS = dict(
     func=models.insideout(8, dt=DT),
@@ -27,12 +29,8 @@ STANDARD_PARAMS = dict(
     recycling='continuous',
     eta=2.5,
     tau_star=2.,
-    delay=0.04,
+    delay=DELAY,
 )
-
-# Plot settings
-DTDS = [styles.bimodal, styles.plaw_steep, styles.plaw, styles.plaw_broken,
-        styles.exp, styles.exp_long]
 
 def main(overwrite=False):
     output_dir = paths.data / 'onezone' / 'dtd'
@@ -43,20 +41,31 @@ def main(overwrite=False):
 
     simtime = np.arange(0, END_TIME + DT, DT)
 
-    for dtd in DTDS:
-        sz = vice.singlezone(name=str(output_dir / dtd['name']),
-                             RIa=dtd['func'], **STANDARD_PARAMS)
-        sz.run(simtime, overwrite=True)
-        plot_vice_onezone(str(output_dir / dtd['name']), fig=fig, axs=axs,
-                          plot_kw={'label': dtd['label']},
-                          style_kw={
-                              'linestyle': dtd['line'],
-                              'color': dtd['color'],
-                              'linewidth': 1},
+    labels = [r'Power-Law ($\alpha=-1.1$)',
+              r'Power-Law with 200 Myr plateau',
+              r'Exponential ($\tau=3$ Gyr)',
+              r'Exponential with prompt component',]
+    colors = [paultol.vibrant.colors[i] for i in [4, 0, 1, 2]]
+    line_styles = ['-', '-.', '--', ':']
+
+    for i, dist in enumerate([
+            dtds.powerlaw(slope=-1.1, tmin=DELAY),
+            dtds.plateau(width=0.2, slope=-1.1, tmin=DELAY),
+            dtds.exponential(timescale=3, tmin=DELAY),
+            dtds.prompt(center=0.05, timescale=3, tmin=DELAY),]):
+
+        run_singlezone(str(output_dir / dist.name), simtime, overwrite=overwrite,
+                       RIa=dist, **STANDARD_PARAMS)
+
+        plot_vice_onezone(str(output_dir / dist.name), fig=fig, axs=axs,
+                          label=labels[i], color=colors[i],
+                          style_kw={'linestyle': line_styles[i],
+                                    'linewidth': 1},
+                          marker_labels=(i==2)
                           )
 
     # Adjust axis limits
-    axs[0].set_xlim((-2.5, 0.2))
+    axs[0].set_xlim((-2.5, 0.3))
     axs[0].set_ylim((-0.1, 0.52))
 
     axs[0].legend(frameon=False, loc='lower left', handlelength=1.2, fontsize=7)
