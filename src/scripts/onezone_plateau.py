@@ -90,7 +90,7 @@ def main(overwrite=False):
                           style_kw={'linestyle': ls,
                                     'linewidth': 1.5,
                                     'zorder': 1},
-                          marker_labels=(tau==1.5),
+                          marker_labels=(tau==3),
                           )
 
     # Adjust axis limits
