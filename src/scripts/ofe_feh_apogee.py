@@ -15,6 +15,7 @@ from utils import import_allStar
 
 global NBINS
 NBINS = 50
+GALR_BINS = GALR_BINS[:-1]
 
 def main(cmap='RdPu', verbose=True):
     if verbose:

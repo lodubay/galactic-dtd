@@ -13,7 +13,7 @@ from matplotlib.cm import ScalarMappable
 from matplotlib.colors import BoundaryNorm
 from sklearn.neighbors import KernelDensity
 import vice
-from _globals import ABSZ_BINS, ZONE_WIDTH
+from _globals import ABSZ_BINS, ZONE_WIDTH, GALR_BINS
 from ofe_feh_apogee import apogee_region
 from utils import multioutput_to_pandas, filter_multioutput_stars, import_allStar
 import paths
@@ -21,12 +21,10 @@ import paths
 global FEH_LIM
 global BIN_WIDTH
 global SMOOTH_WIDTH
-global GALR_BINS
 
 FEH_LIM = (-1.1, 0.6)
 BIN_WIDTH = 0.01
 SMOOTH_WIDTH = 0.2
-GALR_BINS = [3, 5, 7, 9, 11, 13, 15]
 
 def main(evolution, RIa, cmap_name='plasma_r'):
     output = '%s/%s' % (evolution, RIa)
@@ -112,6 +110,7 @@ def gen_mdf(stars, col='[fe/h]', range=None, bin_width=0.05):
         1 - stars['age'].apply(vice.cumulative_return_fraction))
     # Sum remaining stellar mass binned by metallicity
     mdf = stars.groupby([pd.cut(stars[col], bins)])['stellar_mass'].sum()
+    # Normalize
     mdf /= (mdf.sum() * bin_width)
     return mdf, bins
 
@@ -133,7 +132,10 @@ def box_smooth(hist, bins, width):
     bin_width = bins[1] - bins[0]
     box_width = int(width / bin_width)
     box = np.ones(box_width) / box_width
-    hist_smooth = np.convolve(hist, box, mode='same')
+    try:
+        hist_smooth = np.convolve(hist, box, mode='same')
+    except:
+        print(box)
     return hist_smooth
 
 

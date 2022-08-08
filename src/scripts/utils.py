@@ -14,7 +14,133 @@ import paths
 # DATA IMPORT AND UTILITY FUNCTIONS
 # =============================================================================
 
-def import_allStar(verbose=False):
+allStar_file_name = 'allStarLite-dr17-synspec.fits'
+
+def import_astroNN(verbose=False, allStar_name=allStar_file_name):
+    """
+    Import the joint data table of APOGEE allStar and astroNN.
+    
+    If no joint table exists, import each data set separately and join them, 
+    then export the result as a CSV file.
+    
+    Parameters
+    ----------
+    verbose : bool, optional
+        If True, print verbose progress messages. The default is False.
+        
+    Returns
+    -------
+    pandas.DataFrame
+    """
+    joined_path = paths.data / 'APOGEE' / 'allStarLite-astroNN-dr17-clean.csv'
+    try:
+        if verbose:
+            print('Importing from %s' % joined_path)
+        joined = pd.read_csv(joined_path, dtype={'MEMBER': 'object'})
+    except FileNotFoundError:
+        if verbose:
+            print('No complete CSV found, importing and joining from source')
+        # Important! Data can only be cleaned *after* joining the two sets
+        allStar = fits_to_pandas(paths.data / 'APOGEE' / allStar_name, hdu=1)
+        joined = join_astroNN(allStar)
+        joined = clean_allStar(joined)
+        joined.to_csv(joined_path, index=False)
+    return joined
+
+def join_astroNN(allStar, name='apogee_astroNN-DR17.fits'):
+    """
+    Import the astroNN dataset and join it with the APOGEE allStar dataset.
+    
+    This relies on allStar and astroNN having exactly the same number of rows
+    and in the same order, which should be the case if they haven't been
+    changed.
+    
+    Parameters
+    ----------
+    allStar : pandas.DataFrame
+        The APOGEE allStar dataset
+    name : str, optional
+        Name of the astroNN fits file
+    
+    Returns
+    -------
+    pandas.DataFrame
+    """
+    astroNN = fits_to_pandas(paths.data / 'APOGEE' / name)
+    astroNN = rename_astroNN_columns(astroNN)
+    # Add a few more abundance combinations
+    subtract_abundances(astroNN, 'O_H', 'FE_H', prefix='ASTRONN_')
+    subtract_abundances(astroNN, 'MG_H', 'FE_H', prefix='ASTRONN_')
+    subtract_abundances(astroNN, 'TI_H', 'FE_H', prefix='ASTRONN_')
+    subtract_abundances(astroNN, 'C_H', 'N_H', prefix='ASTRONN_')
+    joined = allStar.join(astroNN.drop('APOGEE_ID', axis=1))
+    return joined
+    
+def subtract_abundances(data, abund1, abund2, prefix=''):
+    """
+    Subtract one abundance measurement from another to calculate the ratio
+    of the numerators.
+    
+    Parameters
+    ----------
+    data : pandas.DataFrame
+        DataFrame containing abundance data
+    abund1 : str
+        Name of abundance from which abund2 is subtracted, in the format 'X_Z'
+        (e.g., 'O_FE').
+    abund2 : str
+        Name of abundance to subtract from abund1, in the format 'Y_Z' 
+        (e.g. 'FE_H').
+    prefix : str, optional
+        Prefix to abundance column names. The default is ''.
+        
+    Returns
+    -------
+    pandas.DataFrame
+        Abundance data with new column of combined abundances
+    """
+    abund1_name = prefix + abund1
+    abund2_name = prefix + abund2
+    result_name = prefix + abund1.split('_')[0] + '_' + abund2.split('_')[0]
+    data[result_name] = data[abund1_name] - data[abund2_name]
+    abund1_err = abund1_name + '_ERR'
+    abund2_err = abund2_name + '_ERR'
+    result_err = result_name + '_ERR'
+    data[result_err] = quad_add(data[abund1_err], data[abund2_err])
+    return data
+
+def quad_add(arr1, arr2):
+    """
+    Add two input arrays in quadrature.
+    """
+    return np.sqrt(arr1**2 + arr2**2)
+
+def rename_astroNN_columns(astroNN):
+    """
+    Select relevant astroNN columns and rename them to avoid conflicts
+    
+    Parameters
+    ----------
+    astroNN : pandas.DataFrame
+        DataFrame generated from astroNN fits file
+    
+    Returns
+    -------
+    pandas.DataFrame
+    """
+    cols = ['APOGEE_ID'] + astroNN.columns[5:49].tolist()
+    cols += ['weighted_dist', 'weighted_dist_error', 'age_lowess_correct', 
+             'age_total_error']
+    cols += ['galr', 'galphi', 'galz']
+    astroNN = astroNN[cols].copy()
+    cols_new = ['APOGEE_ID'] + ['ASTRONN_'+name for name in cols[1:45]]
+    cols_new += ['ASTRONN_DIST', 'ASTRONN_DIST_ERR', 'ASTRONN_AGE', 
+                 'ASTRONN_AGE_ERR']
+    cols_new += ['ASTRONN_'+name.upper() for name in cols[49:]]
+    astroNN.columns = cols_new
+    return astroNN
+
+def import_allStar(verbose=False, name=allStar_file_name):
     """
     Import APOGEE allStar data and, if necessary, export for faster re-use.
     """
@@ -26,24 +152,25 @@ def import_allStar(verbose=False):
     except FileNotFoundError:
         if verbose:
             print('Clean allStar file not found, generating from source')
-        df = clean_allStar()
+        raw = fits_to_pandas(paths.data / 'APOGEE' / name, hdu=1)
+        df = clean_allStar(raw)
         df.to_csv(clean_df_path, index=False)
     return df
 
-def clean_allStar(name='allStarLite-dr17-synspec.fits'):
+def clean_allStar(df):
     """
     Import APOGEE AllStar file and convert it to a pandas DataFrame.
 
     Parameters
     ----------
-    name : star, optional
-        The name of the AllStar data file.
+    df : pandas.DataFrame
+        The unmodified, freshly converted DataFrame of the allStar file
 
     Returns
     -------
     df : pandas DataFrame
     """
-    df = fits_to_pandas(paths.data / 'APOGEE' / name, hdu=1)
+    # df = fits_to_pandas(paths.data / 'APOGEE' / name, hdu=1)
     # Limit to main red star sample
     df = df[df['EXTRATARG'] == 0]
     df.drop(columns=['EXTRATARG'], inplace=True)
@@ -417,3 +544,72 @@ def run_singlezone(name, simtime, overwrite=False, **kwargs):
             sz = vice.singlezone(name=name, **kwargs)
             sz.run(simtime, overwrite=overwrite)
     return sz
+
+# =============================================================================
+# VICE FUNCTION WRAPPERS
+# =============================================================================
+
+class NormalIMF:
+    """
+    A normalized initial mass function (IMF).
+    """
+    def __init__(self, which='kroupa', m_lower=0.08, m_upper=100, dm=0.01):
+        """
+        Initialize the IMF.
+
+        Parameters
+        ----------
+        which : string, optional
+            Which version of the IMF to use. Must be one of 'salpeter' or
+            'kroupa'. The default is 'kroupa'
+        m_lower : float, optional
+            Lower limit of integration in solar masses. The default is 0.08.
+        m_upper : TYPE, optional
+            Upper limit of integration in solar masses. The default is 100.
+        dm : TYPE, optional
+            Integration step in solar masses. The default is 0.01.
+        """
+        select = {
+            'salpeter': vice.imf.salpeter,
+            'kroupa': vice.imf.kroupa
+        }
+        if which in select.keys():
+            self.dm = dm
+            self.masses = np.arange(m_lower, m_upper + dm, dm)
+            self._imf = select[which]
+            self.norm = 1
+            self.norm = 1 / self.integrate()
+        else:
+            raise ValueError('IMF must be either "kroupa" or "salpeter".')
+
+    def __call__(self, mass):
+        """
+        Calculate the normalized IMF at a given stellar mass.
+
+        Parameters
+        ----------
+        mass : float
+            Stellar mass in solar masses.
+
+        Returns
+        -------
+        float
+            The normalized value of the IMF at that stellar mass.
+        """
+        return self.norm * self._imf(mass)
+
+    def integrate(self):
+        """
+        float
+            The integral of the IMF
+        """
+        integral = sum([self.__call__(m) * self.dm for m in self.masses])
+        return integral
+
+    def weighted_mean(self):
+        """
+        Calculate the average stellar mass of the IMF.
+        """
+        weights = np.array([self.__call__(m) for m in self.masses])
+        weighted_mean = np.average(self.masses, weights=weights)
+        return weighted_mean

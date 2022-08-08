@@ -18,6 +18,7 @@ global OFE_LIM
 
 FEH_LIM = (-1.3, 0.8)
 OFE_LIM = (-0.1, 0.5)
+GALR_BINS = GALR_BINS[:-1]
 
 def main(output_name, data_dir='../data/migration_outputs', cmap='winter'):
     """
