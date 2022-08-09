@@ -241,7 +241,8 @@ class delay_time_distribution:
         self._dtd = {
             "powerlaw":         dtds.powerlaw(**kwargs),
             # "powerlaw_steep":   dtds.powerlaw(slope=-1.4, **kwargs),
-            "powerlaw_broken":  dtds.powerlaw_broken(**kwargs),
+            # "powerlaw_broken":  dtds.powerlaw_broken(**kwargs),
+            "plateau": dtds.plateau(**kwargs),
             "exponential":      dtds.exponential(**kwargs),
             # "exponential_long": dtds.exponential(timescale=3, **kwargs),
             "prompt":          dtds.prompt(**kwargs)
