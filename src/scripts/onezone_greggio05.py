@@ -29,14 +29,14 @@ STANDARD_PARAMS = dict(
     delay=0.04,
     tau_star=2.,
 )
+LOG_MDF = False
 
 def main(overwrite=False):
     output_dir = paths.data / 'onezone' / 'greggio05'
     if not output_dir.exists():
         output_dir.mkdir(parents=True)
 
-    fig, axs = setup_axes()
-
+    fig, axs = setup_axes(logmdf=LOG_MDF)
 
     simtime = np.arange(0, END_TIME + DT, DT)
 
@@ -53,6 +53,7 @@ def main(overwrite=False):
                            'linestyle': '-',
                            'linewidth': 1,
                            'zorder': 10},
+                      logmdf=LOG_MDF
                       )
     
     # Double-degenerate CLOSE model
@@ -67,6 +68,7 @@ def main(overwrite=False):
                            'linestyle': '-',
                            'linewidth': 1,
                            'zorder': 9},
+                      logmdf=LOG_MDF
                       )
 
     # Single-degenerate
@@ -77,37 +79,70 @@ def main(overwrite=False):
     plot_vice_onezone(str(output_dir / dtd.name), fig=fig, axs=axs,
                       label='Single Degenerate',
                       color=paultol.muted.colors[0],
-                       style_kw={
-                           'linestyle': '-',
-                           'linewidth': 1,
-                           'zorder': 8},
+                      style_kw={
+                          'linestyle': '-',
+                          'linewidth': 1,
+                          'zorder': 8},
+                      logmdf=LOG_MDF
                       )
 
-    dtd = dtds.exponential(timescale=3)
+    # dtd = dtds.exponential(timescale=3)
+    # sz = vice.singlezone(name=str(output_dir / dtd.name), 
+    #                      RIa=dtd, **STANDARD_PARAMS)
+    # sz.run(simtime, overwrite=True)
+    # plot_vice_onezone(str(output_dir / dtd.name), fig=fig, axs=axs,
+    #                   label=r'Exponential ($\tau=3$ Gyr)',
+    #                   color=paultol.muted.colors[7],
+    #                   style_kw={
+    #                         'linestyle': '--',
+    #                         'linewidth': 1,
+    #                         'zorder': 1,
+    #                   },
+    #                   logmdf=False)
+    
+    dtd = dtds.plateau(width=1, slope=-1.1)
     sz = vice.singlezone(name=str(output_dir / dtd.name), 
                          RIa=dtd, **STANDARD_PARAMS)
     sz.run(simtime, overwrite=True)
     plot_vice_onezone(str(output_dir / dtd.name), fig=fig, axs=axs,
-                      label=r'Exponential ($\tau=3$ Gyr)',
+                      label=r'Plateau ($W=1$ Gyr, $\alpha=-1.1$)',
                       color=paultol.muted.colors[7],
                       style_kw={
                             'linestyle': '--',
                             'linewidth': 1,
                             'zorder': 1,
-                      })
+                      },
+                      logmdf=LOG_MDF
+                      )
 
     dtd = dtds.exponential(timescale=1.5)
     sz = vice.singlezone(name=str(output_dir / dtd.name),
-                         RIa=dtd, **STANDARD_PARAMS)
+                          RIa=dtd, **STANDARD_PARAMS)
     sz.run(simtime, overwrite=True)
     plot_vice_onezone(str(output_dir / dtd.name), fig=fig, axs=axs,
                       label=r'Exponential ($\tau=1.5$ Gyr)',
                       color=paultol.muted.colors[6],
                       style_kw={
-                           'linestyle': '--',
-                           'linewidth': 1,
-                           'zorder': 1,
-                      })
+                            'linestyle': '--',
+                            'linewidth': 1,
+                            'zorder': 1,
+                      }, 
+                      logmdf=LOG_MDF
+                      )
+    
+    # dtd = dtds.plateau(width=0.4, slope=-1.1)
+    # sz = vice.singlezone(name=str(output_dir / dtd.name), 
+    #                      RIa=dtd, **STANDARD_PARAMS)
+    # sz.run(simtime, overwrite=True)
+    # plot_vice_onezone(str(output_dir / dtd.name), fig=fig, axs=axs,
+    #                   label=r'Plateau ($W=400$ Myr)',
+    #                   color=paultol.muted.colors[6],
+    #                   style_kw={
+    #                         'linestyle': '--',
+    #                         'linewidth': 1,
+    #                         'zorder': 1,
+    #                   },
+    #                   logmdf=False)
 
     dtd = dtds.powerlaw(slope=-1.1)
     sz = vice.singlezone(name=str(output_dir / dtd.name),
@@ -120,7 +155,9 @@ def main(overwrite=False):
                            'linestyle': '--',
                            'linewidth': 1,
                            'zorder': 1,
-                      })
+                      }, 
+                      logmdf=LOG_MDF
+                      )
 
     # Adjust axis limits
     axs[0].set_xlim((-2.5, 0.3))

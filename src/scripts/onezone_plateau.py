@@ -36,6 +36,7 @@ STANDARD_PARAMS = dict(
 
 # Plot settings
 LINE_STYLE = [':', '-.', '--', '-']
+LOG_MDF = True
 
 def main(overwrite=False):
     output_dir = paths.data / 'onezone' / 'plateau'
@@ -44,7 +45,7 @@ def main(overwrite=False):
 
     simtime = np.arange(0, END_TIME + DT, DT)
 
-    fig, axs = setup_axes()
+    fig, axs = setup_axes(logmdf=LOG_MDF)
 
     # Plot standard power-law for reference
     dist = dtds.powerlaw(slope=SLOPE, tmin=DELAY)
@@ -56,6 +57,7 @@ def main(overwrite=False):
                       style_kw={'linestyle': '-',
                                 'linewidth': 1,
                                 'zorder': 1},
+                      logmdf=LOG_MDF
                       )
 
     for i, plateau in enumerate(PLATEAUS):
@@ -75,6 +77,7 @@ def main(overwrite=False):
                               'linestyle': LINE_STYLE[i],
                               'linewidth': 1,
                               'zorder': 10},
+                          logmdf=LOG_MDF
                           )
 
     # Plot exponentials for reference
@@ -91,6 +94,7 @@ def main(overwrite=False):
                                     'linewidth': 1.5,
                                     'zorder': 1},
                           marker_labels=(tau==3),
+                          logmdf=LOG_MDF
                           )
 
     # Adjust axis limits

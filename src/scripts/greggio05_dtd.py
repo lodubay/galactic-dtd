@@ -28,7 +28,7 @@ def main(dt=DT, nsamples=NSAMPLES, verbose=True):
     sd_arr = np.array([sd(t) for t in tarr])
     ax.plot(tarr * 1e9, sd_arr,
             color=paultol.muted.colors[0], linestyle='-', linewidth=1,
-            label='Single Degenerate' )
+            label='Single Degenerate Chandrasekhar' )
     if verbose:
         print('Done!')
         
@@ -82,7 +82,7 @@ def main(dt=DT, nsamples=NSAMPLES, verbose=True):
     ax.set_ylim((2e-12, 2e-9))
     ax.legend(loc='lower center', fontsize=7, handlelength=1.2, frameon=False)
 
-    fig.savefig(paths.figures / 'greggio05.pdf', dpi=300)
+    fig.savefig(paths.figures / 'greggio05_dtd.pdf', dpi=300)
 
 if __name__ == '__main__':
     main()
