@@ -64,7 +64,7 @@ def main(overwrite=False):
             line_width = 1
             zorder = 10
 
-        if delay == 0.08 and tau_star == 2:
+        if delay == 0.16 and tau_star == 2:
             marker_labels = True
         else:
             marker_labels = False

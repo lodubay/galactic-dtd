@@ -28,7 +28,7 @@ SMOOTH_WIDTH = 0.05
 
 def main(evolution, RIa, cmap_name='plasma_r'):
     output = '%s/%s' % (evolution, RIa)
-    stars_pp = multioutput_to_pandas(output, paths.data / 'migration' / 'post-process')
+    # stars_pp = multioutput_to_pandas(output, paths.data / 'migration' / 'post-process')
     stars_diff = multioutput_to_pandas(output, paths.data / 'migration' / 'diffusion')
     apogee_data = import_allStar()
 
@@ -45,14 +45,14 @@ def main(evolution, RIa, cmap_name='plasma_r'):
         for j in range(len(GALR_BINS)-1):
             galr_lim = GALR_BINS[j:j+2]
             # Plot VICE post-process in left panels
-            pp_subset = filter_multioutput_stars(stars_pp,
-                                                 galr_lim, absz_lim,
-                                                 ZONE_WIDTH, min_mass=0)
-            pp_mdf, bins = gen_mdf(pp_subset, col='[o/fe]', range=OFE_LIM,
-                                   bin_width=BIN_WIDTH)
-            pp_smooth = box_smooth(pp_mdf, bins, SMOOTH_WIDTH)
-            x_plot = bins[:-1] + BIN_WIDTH/2
-            axs[i,0].plot(x_plot, pp_smooth, color=colors[j], linewidth=1)
+            # pp_subset = filter_multioutput_stars(stars_pp,
+            #                                      galr_lim, absz_lim,
+            #                                      ZONE_WIDTH, min_mass=0)
+            # pp_mdf, bins = gen_mdf(pp_subset, col='[o/fe]', range=OFE_LIM,
+            #                        bin_width=BIN_WIDTH)
+            # pp_smooth = box_smooth(pp_mdf, bins, SMOOTH_WIDTH)
+            # x_plot = bins[:-1] + BIN_WIDTH/2
+            # axs[i,0].plot(x_plot, pp_smooth, color=colors[j], linewidth=1)
 
             # Plot VICE diffusion in center panels
             diff_subset = filter_multioutput_stars(stars_diff,
@@ -61,6 +61,7 @@ def main(evolution, RIa, cmap_name='plasma_r'):
             diff_mdf, bins = gen_mdf(diff_subset, col='[o/fe]', range=OFE_LIM,
                                      bin_width=BIN_WIDTH)
             diff_smooth = box_smooth(diff_mdf, bins, SMOOTH_WIDTH)
+            x_plot = bins[:-1] + BIN_WIDTH/2
             axs[i,1].plot(x_plot, diff_smooth, color=colors[j], linewidth=1)
 
             # Plot APOGEE in right panels

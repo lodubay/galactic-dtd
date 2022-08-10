@@ -132,10 +132,7 @@ def box_smooth(hist, bins, width):
     bin_width = bins[1] - bins[0]
     box_width = int(width / bin_width)
     box = np.ones(box_width) / box_width
-    try:
-        hist_smooth = np.convolve(hist, box, mode='same')
-    except:
-        print(box)
+    hist_smooth = np.convolve(hist, box, mode='same')
     return hist_smooth
 
 

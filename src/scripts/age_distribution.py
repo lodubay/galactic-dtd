@@ -23,7 +23,7 @@ BIN_WIDTH = 1
 
 def main(evolution, RIa, cmap_name='plasma_r'):
     output = '%s/%s' % (evolution, RIa)
-    stars_pp = multioutput_to_pandas(paths.data / 'migration' / 'post-process' / output)
+    # stars_pp = multioutput_to_pandas(paths.data / 'migration' / 'post-process' / output)
     stars_diff = multioutput_to_pandas(paths.data / 'migration' / 'diffusion' / output)
     astroNN_data = import_astroNN()
     # diff_subset = filter_multioutput_stars(stars_diff,
@@ -51,12 +51,12 @@ def main(evolution, RIa, cmap_name='plasma_r'):
             # Plot VICE post-process in left panels
             # TODO bin in 1 Gyr age bins instead
             # TODO bin all 10+ Gyr stars in one bin
-            pp_subset = filter_multioutput_stars(stars_pp,
-                                                 galr_lim, absz_lim,
-                                                 ZONE_WIDTH, min_mass=0)
-            dndt, bins = age_distribution(pp_subset)
-            adf_smooth = box_smooth(dndt, bins, SMOOTH_WIDTH)
-            axs[i,0].plot(bins[:-1], adf_smooth, color=colors[j], linewidth=1)
+            # pp_subset = filter_multioutput_stars(stars_pp,
+            #                                      galr_lim, absz_lim,
+            #                                      ZONE_WIDTH, min_mass=0)
+            # dndt, bins = age_distribution(pp_subset)
+            # adf_smooth = box_smooth(dndt, bins, SMOOTH_WIDTH)
+            # axs[i,0].plot(bins[:-1], adf_smooth, color=colors[j], linewidth=1)
             
             # Plot VICE diffusion in center panels
             diff_subset = filter_multioutput_stars(stars_diff,
@@ -64,26 +64,31 @@ def main(evolution, RIa, cmap_name='plasma_r'):
                                                    ZONE_WIDTH, min_mass=0)
             dndt, bins = age_distribution(diff_subset)
             adf_smooth = box_smooth(dndt, bins, SMOOTH_WIDTH)
-            axs[i,1].plot(bins[:-1], adf_smooth, color=colors[j], linewidth=1)
+            axs[i,0].plot(bins[:-1], adf_smooth, color=colors[j], linewidth=1)
 
             # Plot APOGEE in right panels
             apogee_subset = apogee_region(astroNN_data, galr_lim, absz_lim)
-            apogee_adf, _ = np.histogram(apogee_subset['ASTRONN_AGE'], bins=bins,
-                                         density=True)
-            apogee_smooth = box_smooth(apogee_adf, bins, SMOOTH_WIDTH)
-            axs[i,2].plot(bins[:-1], apogee_smooth, color=colors[j], linewidth=1)
+            # apogee_adf, _ = np.histogram(apogee_subset['ASTRONN_AGE'], bins=bins,
+            #                              density=True)
+            # apogee_smooth = box_smooth(apogee_adf, bins, SMOOTH_WIDTH)
+            # axs[i,2].plot(bins[:-1], apogee_smooth, color=colors[j], linewidth=1)
+            age_bins = np.arange(0, 11, 1)
+            age_bins = np.concatenate((age_bins, [AGE_LIM[1]]))
+            axs[i,1].hist(apogee_subset['ASTRONN_AGE'], bins=age_bins, 
+                          density=True, color=colors[j], linewidth=1, 
+                          histtype='step')
             
     for ax in axs[-1]:
         ax.set_xlabel('Age [Gyr]')
-    axs[0,0].set_title('Post-process')
-    axs[0,1].set_title('Diffusion')
-    axs[0,2].set_title('astroNN')
+    # axs[0,0].set_title('Post-process')
+    axs[0,0].set_title('VICE')
+    axs[0,1].set_title('astroNN')
     plt.savefig(paths.figures / ('adf.png'), dpi=300)
     plt.close()
 
 
 def setup_axes(xlim=AGE_LIM):
-    fig, axs = plt.subplots(3, 3, figsize=(4.5, 4),
+    fig, axs = plt.subplots(3, 2, figsize=(3.25, 4),
                             sharex=True, sharey=True)
     fig.subplots_adjust(left=0.07, top=0.93, right=0.97, bottom=0.1,
                         wspace=0.07, hspace=0.)
@@ -150,7 +155,8 @@ def age_distribution(stars, end_time=END_TIME, dt=DT, **kwargs):
     # Number of stars in each age bin
     nstars = np.around(mass_remaining / mass_average)
     # Fraction of stars in each age bin
-    dndt = nstars / (dt * nstars.sum())
+    if nstars.sum() > 0:
+        dndt = nstars / (dt * nstars.sum())
     return dndt, bins
 
 
@@ -237,4 +243,4 @@ def mean_stellar_mass(age, imf=vice.imf.kroupa, mlr=vice.mlr.larson1974,
 
 
 if __name__ == '__main__':
-    main('insideout_johnson21', 'powerlaw_slope11_delay040')
+    main('insideout_johnson21', 'powerlaw_slope11_delay150')
