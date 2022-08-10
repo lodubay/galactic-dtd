@@ -52,6 +52,7 @@ class greggio05_single:
         imf : str, optional
             Which IMF to use. The default is 'kroupa'
         """
+        self._name = 'greggio05_single'
         self.m2_slope = m2_slope
         self.q_slope = q_slope
         self.efficiency = efficiency
@@ -77,6 +78,10 @@ class greggio05_single:
         secondary_mass = mlr_wrapper(time, which='age', model=self.mlr)
         f_m2 = self.secondary_mass_distribution(secondary_mass)
         return self.norm * f_m2 * time ** self.m2_slope
+    
+    @property
+    def name(self):
+        return self._name
 
     @property
     def m2_slope(self):

@@ -104,6 +104,8 @@ class greggio05_double:
         self.efficiency = efficiency
         self.dt = dt
         self.mlr = mlr
+        
+        self._name = 'greggio05_double_%s' % self.scheme
 
         # Total minimum and maximum delay times
         self.t_min = T_NUC_MIN + T_GRAV_MIN
@@ -115,7 +117,7 @@ class greggio05_double:
 
         # Pre-calculate the DTD to save on compute time
         if progress:
-            print('Computing Greggio 2005 DTD...')
+            print('Computing Greggio 2005 DD %s DTD...' % self.scheme.upper())
         self.times = np.logspace(np.log10(self.t_min),
                                  np.log10(min((END_TIME, self.t_max))),
                                  num=nsamples, endpoint=True)
@@ -166,6 +168,10 @@ class greggio05_double:
         else:
             raise TypeError('Parameter "time" must be a float. Got: %s' \
                             % type(time))
+                
+    @property
+    def name(self):
+        return self._name
 
     @property
     def scheme(self):

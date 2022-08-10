@@ -41,7 +41,8 @@ class greggio05_approximate:
     """
     def __init__(self, tsplit=1., slope1=-0.19, slope2=-0.91,
                  rise_strength=1.7, rise_timescale=8.4e-2,
-                 tail_strength=0.85, tail_timescale=8.8e-2, normalize=True):
+                 tail_strength=0.85, tail_timescale=8.8e-2, normalize=True,
+                 name='greggio05_approx'):
         """
         Parameters
         ----------
@@ -61,7 +62,11 @@ class greggio05_approximate:
             Timescale in Gyr of the exponential tail. The default is
         normalize : bool, optional
             Whether to normalize the DTD. The default is True.
+        name : str, optional
+            Identifying name for chemical evolution model runs. The default is
+            'greggio05_approx'.
         """
+        self._name = name
         self.tsplit = tsplit
         self.slope1 = slope1
         self.slope2 = slope2
@@ -106,7 +111,7 @@ class greggio05_approximate:
             'wide': WIDE_PARAMS,
             'close': CLOSE_PARAMS
         }[scheme]
-        return cls(**params)
+        return cls(name='greggio05_approx_%s' % scheme, **params)
 
     @classmethod
     def fit_to_model(cls, scheme, tmin=0.04, tmax=END_TIME, tstep=0.01,
@@ -119,10 +124,10 @@ class greggio05_approximate:
         model = greggio05_double(scheme, **kwargs)
         tarr = np.arange(tmin, tmax, tstep)
         yarr = np.array([model(t) for t in tarr])
-        return cls.fit_to_data(tarr, yarr)
+        return cls.fit_to_data(tarr, yarr, name='greggio05_approx_%s' % scheme)
 
     @classmethod
-    def fit_to_data(cls, tarr, yarr):
+    def fit_to_data(cls, tarr, yarr, name='greggio05_approx'):
         """
         Fit the analytic function to data from a pre-generated DTD.
         """
@@ -130,7 +135,12 @@ class greggio05_approximate:
                                p0=(-0.5, -1, 1, 0.1, 1, 0.1, 1e-9))
         return cls(slope1=popt[0], slope2=popt[1],
                    rise_strength=popt[2], rise_timescale=popt[3],
-                   tail_strength=popt[4], tail_timescale=popt[5])
+                   tail_strength=popt[4], tail_timescale=popt[5],
+                   name=name)
+    
+    @property
+    def name(self):
+        return self._name
 
     def normalize(self, tmin=0.04, tmax=END_TIME, dt=0.001):
         tarr = np.arange(tmin, tmax+dt, dt)
