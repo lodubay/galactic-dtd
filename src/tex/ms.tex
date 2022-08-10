@@ -3,10 +3,10 @@
 
 \usepackage{showyourwork}
 \usepackage{amsmath}
-\usepackage{siunitx}
+% \usepackage{siunitx}
 
 % custom unit definitions
-\DeclareSIUnit\year{yr}
+% \DeclareSIUnit\year{yr}
 
 % Begin!
 \begin{document}
@@ -66,7 +66,7 @@ For $19784$ stars, or $\sim3.5\%$ of the sample, the astroNN [Fe/H] abundance es
 \startdata
 Field Galaxy Power-Law      & t^{-1.1}              & \citet{Maoz2017-CosmicDTD} \\   
 Galaxy Cluster Power-Law    & t^{-1.4}              & \citet{Maoz2017-CosmicDTD} \\
-Short Exponential           & e^{-t/1.5\,\rm{Gyr}}  & \citet{Schonrich2009-RadialMixing} \\
+Short Exponential           & e^{-t/1.5~\rm{Gyr}}  & \citet{Schonrich2009-RadialMixing} \\
 \enddata
 \end{deluxetable}
 
@@ -133,8 +133,8 @@ An implementation of these DTDs in a chemical evolution model requires numerical
 \begin{equation}
     f_{\rm{Ia}}^{\rm{DD}}(t) \propto
     \begin{cases}
-        t^{\alpha_1} (1 - A_{\rm{rise}} e^{-t/\tau_{\rm{rise}}}) & t \le \SI{1}{\giga\year} \\
-        B t^{\alpha_2} (1 + A_{\rm{tail}} e^{-(t - \SI{1}{\giga\year})/\tau_{\rm{tail}}}) & t > \SI{1}{\giga\year}
+        t^{\alpha_1} (1 - A_{\rm{rise}} e^{-t/\tau_{\rm{rise}}}) & t \le 1~\rm{Gyr} \\
+        B t^{\alpha_2} (1 + A_{\rm{tail}} e^{-(t - 1~\rm{Gyr})/\tau_{\rm{tail}}}) & t > 1~\rm{Gyr}
     \end{cases}
     \label{eq:greggio05-approx}
 \end{equation}
@@ -142,7 +142,7 @@ An implementation of these DTDs in a chemical evolution model requires numerical
 \noindent with the normalization $B$ of the second part set such that
 
 \begin{equation}
-    B = \frac{1}{1 + A_{\rm{tail}}} t^{(\alpha_1-\alpha_2)} (1 - A_{\rm{rise}} e^{-(\SI{1}{\giga\year})/\tau_{\rm{rise}}}).
+    B = \frac{1}{1 + A_{\rm{tail}}} t^{(\alpha_1-\alpha_2)} (1 - A_{\rm{rise}} e^{-(1~\rm{Gyr})/\tau_{\rm{rise}}}).
 \end{equation}
 
 \noindent We use a non-linear least squares method to fit Equation \ref{eq:greggio05-approx} to the analytical DTDs for DD progenitors. We obtain best-fit parameters $\alpha_1=-0.19$, $A_{\rm{rise}}=1.7$, $\tau_{\rm{rise}}=0.084$ Gyr, $\alpha_2=-0.91$, $A_{\rm{tail}}=0.85$, and $\tau_{\rm{tail}}=0.088$ Gyr for the ``WIDE'' scheme, and $\alpha_1=-0.53$, $A_{\rm{rise}}=3.0$, $\tau_{\rm{rise}}=0.042$ Gyr, $\alpha_2=-1.1$, $A_{\rm{tail}}=0.62$, and $\tau_{\rm{tail}}=0.11$ Gyr for the ``CLOSE'' scheme. These best-fit approximations are represented by the dashed curves in Figure \ref{fig:greggio05-dtd}. The difference between the true analytical DTDs and our best-fit approximations is small enough as to be irrelevant for our purposes, so for the rest of this section we rely on the best-fit approximations for faster simulations.
