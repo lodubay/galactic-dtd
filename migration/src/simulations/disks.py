@@ -245,7 +245,8 @@ class delay_time_distribution:
             "plateau": dtds.plateau(**kwargs),
             "exponential":      dtds.exponential(**kwargs),
             # "exponential_long": dtds.exponential(timescale=3, **kwargs),
-            "prompt":          dtds.prompt(**kwargs)
+            "prompt":          dtds.prompt(**kwargs),
+            "greggio05_single": dtds.greggio05_single(**kwargs),
         }[dist.lower()]
 
     def __call__(self, time):
