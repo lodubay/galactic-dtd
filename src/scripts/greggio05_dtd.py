@@ -28,7 +28,7 @@ def main(dt=DT, nsamples=NSAMPLES, verbose=True):
     sd_arr = np.array([sd(t) for t in tarr])
     ax.plot(tarr * 1e9, sd_arr,
             color=paultol.muted.colors[0], linestyle='-', linewidth=1,
-            label='Single Degenerate Chandrasekhar' )
+            label='Single Degenerate' )
     if verbose:
         print('Done!')
         

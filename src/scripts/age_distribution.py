@@ -63,8 +63,9 @@ def main(evolution, RIa, cmap_name='plasma_r'):
                                                    galr_lim, absz_lim,
                                                    ZONE_WIDTH, min_mass=0)
             dndt, bins = age_distribution(diff_subset)
-            adf_smooth = box_smooth(dndt, bins, SMOOTH_WIDTH)
-            axs[i,0].plot(bins[:-1], adf_smooth, color=colors[j], linewidth=1)
+            bin_centers = 0.5 * (bins[:-1] + bins[1:])
+            # adf_smooth = box_smooth(dndt, bins, SMOOTH_WIDTH)
+            axs[i,0].plot(bin_centers, dndt, color=colors[j], linewidth=1)
 
             # Plot APOGEE in right panels
             apogee_subset = apogee_region(astroNN_data, galr_lim, absz_lim)
@@ -72,12 +73,18 @@ def main(evolution, RIa, cmap_name='plasma_r'):
             #                              density=True)
             # apogee_smooth = box_smooth(apogee_adf, bins, SMOOTH_WIDTH)
             # axs[i,2].plot(bins[:-1], apogee_smooth, color=colors[j], linewidth=1)
-            age_bins = np.arange(0, 11, 1)
-            age_bins = np.concatenate((age_bins, [AGE_LIM[1]]))
-            axs[i,1].hist(apogee_subset['ASTRONN_AGE'], bins=age_bins, 
-                          density=True, color=colors[j], linewidth=1, 
-                          histtype='step')
+            # age_bins = np.arange(0, 11, 1)
+            # age_bins = np.concatenate((age_bins, [AGE_LIM[1]]))
+            # axs[i,1].hist(apogee_subset['ASTRONN_AGE'], bins=age_bins, 
+            #               density=True, color=colors[j], linewidth=1, 
+            #               histtype='step')
+            age_bins = np.arange(AGE_LIM[0], AGE_LIM[1] + BIN_WIDTH, BIN_WIDTH)
+            apogee_hist, _ = np.histogram(apogee_subset['ASTRONN_AGE'], 
+                                          bins=age_bins, density=True)
+            bin_centers = 0.5 * (age_bins[:-1] + age_bins[1:])
+            axs[i,1].plot(bin_centers, apogee_hist, color=colors[j], linewidth=1)
             
+    axs[0,0].set_ylim((0, None))
     for ax in axs[-1]:
         ax.set_xlabel('Age [Gyr]')
     # axs[0,0].set_title('Post-process')
@@ -115,8 +122,7 @@ def setup_axes(xlim=AGE_LIM):
     #     ax.spines['left'].set_bounds(0, 2.6)
     return fig, axs
 
-
-def age_distribution(stars, end_time=END_TIME, dt=DT, **kwargs):
+def age_distribution(stars, bin_width=BIN_WIDTH, end_time=END_TIME, dt=DT, **kwargs):
     """
     Calculate the distribution of ages in a VICE multizone output.
     
@@ -138,25 +144,27 @@ def age_distribution(stars, end_time=END_TIME, dt=DT, **kwargs):
     bins : 1x(n+1) numpy.ndarray
         Age bins derived from simulation timesteps
     """
+    bins = np.arange(0, end_time + bin_width, bin_width)
+    bin_centers = 0.5 * (bins[:-1] + bins[1:])
     # Create dummy entries to count at least 0 mass at every age
-    bins = np.arange(0, end_time + dt, dt)
     temp_df = pd.DataFrame({'age': bins[:-1], 'mass': np.zeros(bins[:-1].shape)})
     stars = pd.concat([stars, temp_df])
     stars['age'] = np.round(stars['age'], decimals=2)
-    # Sum stellar mass in each timestep
-    mass_total = stars.groupby(['age']).sum()['mass']
-    ages = np.array(mass_total.index)
-    mass_total = np.array(mass_total)
+    # Sum stellar mass in each bin
+    mass_total, _ = np.histogram(stars['age'], bins=bins, weights=stars['mass'])
+    # mass_total = stars.groupby(['age']).sum()['mass']
+    # ages = np.array(mass_total.index)
+    # mass_total = np.array(mass_total)
     # Calculate remaining stellar mass today
     mass_remaining = mass_total * (1 - np.array(
-        [vice.cumulative_return_fraction(age) for age in ages]))
+        [vice.cumulative_return_fraction(age) for age in bin_centers]))
     # Average mass of a star of that particular age
-    mass_average = np.array([mean_stellar_mass(age, **kwargs) for age in ages])
+    mass_average = np.array([mean_stellar_mass(age, **kwargs) for age in bin_centers])
     # Number of stars in each age bin
     nstars = np.around(mass_remaining / mass_average)
     # Fraction of stars in each age bin
     if nstars.sum() > 0:
-        dndt = nstars / (dt * nstars.sum())
+        dndt = nstars / (bin_width * nstars.sum())
     return dndt, bins
 
 
@@ -243,4 +251,4 @@ def mean_stellar_mass(age, imf=vice.imf.kroupa, mlr=vice.mlr.larson1974,
 
 
 if __name__ == '__main__':
-    main('insideout_johnson21', 'powerlaw_slope11_delay150')
+    main('insideout_johnson21', 'powerlaw_slope11_delay040')

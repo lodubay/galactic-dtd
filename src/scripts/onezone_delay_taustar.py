@@ -35,13 +35,14 @@ STANDARD_PARAMS = dict(
 LINE_STYLE = ['--', '-', ':', '-', '-']
 COLOR = ['k', 'k', 'k', paultol.highcontrast.colors[2],
          paultol.highcontrast.colors[1]]
+LOG_MDF = True
 
 def main(overwrite=False):
     output_dir = paths.data / 'onezone' / 'delay_taustar'
     if not output_dir.exists():
         output_dir.mkdir(parents=True)
 
-    fig, axs = setup_axes()
+    fig, axs = setup_axes(logmdf=LOG_MDF)
 
     for i in range(NRUNS):
         delay = MINIMUM_DELAY[i]
@@ -76,6 +77,7 @@ def main(overwrite=False):
                               'linestyle': LINE_STYLE[i],
                               'linewidth': line_width,
                               'zorder': zorder},
+                          logmdf=LOG_MDF
                           )
 
     # Adjust axis limits

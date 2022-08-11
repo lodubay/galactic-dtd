@@ -191,8 +191,9 @@ def discrete_colormap(cmap_name, bounds):
     return cmap, norm
 
 
-def setup_axes(xlim=FEH_LIM):
-    fig, axs = plt.subplots(3, 3, figsize=(4.5, 4),
+def setup_axes(xlim=FEH_LIM, ncols=3, absz_bins=ABSZ_BINS, galr_bins=GALR_BINS):
+    nrows = len(absz_bins)
+    fig, axs = plt.subplots(3, ncols, figsize=(1.5*ncols, nrows+1),
                             sharex=True, sharey=True)
     fig.subplots_adjust(left=0.07, top=0.93, right=0.97, bottom=0.1,
                         wspace=0.07, hspace=0.)

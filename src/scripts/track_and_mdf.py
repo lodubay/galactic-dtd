@@ -219,6 +219,8 @@ def setup_axes(width=3.25, logmdf=True):
     ax_main.yaxis.set_minor_locator(MultipleLocator(0.02))
     ax_main.set_xlabel('[Fe/H]')
     ax_main.set_ylabel('[O/Fe]')
+    ax_main.set_xlim((-2.5, 0.3))
+    ax_main.set_ylim((-0.1, 0.54))
     # Add panel above for MDF in [Fe/H]
     ax_mdf = fig.add_subplot(gs[0,0], sharex=ax_main)
     ax_mdf.tick_params(axis='x', labelcolor='#ffffff00')
@@ -227,9 +229,9 @@ def setup_axes(width=3.25, logmdf=True):
         ax_mdf.set_ylim((-4, 1.5))
         ax_mdf.yaxis.set_major_locator(MultipleLocator(2))
         ax_mdf.yaxis.set_minor_locator(MultipleLocator(0.5))
-        ax_mdf.set_ylabel('log(dN/d[Fe/H])', size=7)
+        ax_mdf.set_ylabel(r'log(d$N$/d[Fe/H])', size=7)
     else:
-        ax_mdf.set_ylabel('dN/d[Fe/H]', size=7)
+        ax_mdf.set_ylabel(r'd$N$/d[Fe/H]', size=7)
         ax_mdf.yaxis.set_major_locator(MultipleLocator(5))
         ax_mdf.yaxis.set_minor_locator(MultipleLocator(1))
     # Add panel to the right for MDF in [O/Fe]
@@ -237,12 +239,12 @@ def setup_axes(width=3.25, logmdf=True):
     ax_odf.tick_params(axis='y', labelcolor='#ffffff00')
     ax_odf.tick_params(axis='x', labelsize=7)
     if logmdf:
-        ax_odf.set_xlabel('log(dN/d[O/Fe])', size=7)
+        ax_odf.set_xlabel(r'log(d$N$/d[O/Fe])', size=7)
         ax_odf.set_xlim((-3.5, 1.5))
         ax_odf.xaxis.set_major_locator(MultipleLocator(2))
         ax_odf.xaxis.set_minor_locator(MultipleLocator(0.5))
     else:
-        ax_odf.set_xlabel('dN/d[O/Fe]')
+        ax_odf.set_xlabel(r'd$N$/d[O/Fe]')
         ax_odf.xaxis.set_major_locator(MultipleLocator(5))
         ax_odf.xaxis.set_minor_locator(MultipleLocator(1))
     axs = [ax_main, ax_mdf, ax_odf]
