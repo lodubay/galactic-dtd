@@ -34,7 +34,7 @@ class greggio05_single:
         Normalize the DTD to unity
     """
     def __init__(self, m2_slope=-1.44, q_slope=1, efficiency=1.,
-                 mlr='larson1974', imf='kroupa'):
+                 mlr='larson1974', imf='kroupa', **kwargs):
         """
         Parameters
         ----------
@@ -51,6 +51,8 @@ class greggio05_single:
             Which mass-lifetime relation to use. The default is 'larson1974'
         imf : str, optional
             Which IMF to use. The default is 'kroupa'
+        kwargs : dict, optional
+            Keyword arguments passed to self.normalize()
         """
         self._name = 'greggio05_single'
         self.m2_slope = m2_slope
@@ -59,7 +61,7 @@ class greggio05_single:
         self.mlr = mlr
         self.imf = imf
         self.norm = 1
-        self.norm = self.normalize()
+        self.norm = self.normalize(**kwargs)
 
     def __call__(self, time):
         """

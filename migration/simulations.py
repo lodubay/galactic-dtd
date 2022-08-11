@@ -13,7 +13,8 @@ _MIGRATION_MODELS_ = ["diffusion", "linear", "post-process", "sudden"]
 _EVOLUTION_MODELS_ = ["static", "insideout", "lateburst", "outerburst",
                       "insideout_conroy22", "lateburst_conroy22", "twoinfall"]
 _DELAY_MODELS_ = ["powerlaw", "powerlaw_steep", "powerlaw_broken",
-                  "exponential", "exponential_long", "bimodal"]
+                  "exponential", "exponential_long", "bimodal", 
+                  "greggio05_single"]
 
 def parse():
     r"""
