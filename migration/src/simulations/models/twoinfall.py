@@ -84,8 +84,7 @@ class twoinfall(double_exponential):
         #     thin_scale * thick_scale))
         thin_to_thick /= 0.27
         timescale_factor = self.first.timescale / self.second.timescale
-        timescale_factor *= self.first.timescale * (1 - m.exp(-END_TIME /
-            self.first.timescale))
-        timescale_factor /= self.second.timescale * (1 - m.exp(
-            -(END_TIME - self.onset) / self.second.timescale))
+        timescale_factor *= (1 - m.exp(-END_TIME / self.first.timescale))
+        timescale_factor /= (1 - m.exp(-(END_TIME - self.onset) / 
+                                       self.second.timescale))
         return thin_to_thick * timescale_factor

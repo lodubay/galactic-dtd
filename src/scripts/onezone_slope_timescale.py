@@ -37,13 +37,14 @@ STANDARD_PARAMS = dict(
 # Plot settings
 LINE_STYLE = ['-', '--', ':']
 COLOR = ['k', 'k', 'k']
+LOG_MDF = False
 
 def main(overwrite=False):
     output_dir = paths.data / 'onezone' / 'slope_timescale'
     if not output_dir.exists():
         output_dir.mkdir(parents=True)
 
-    fig, axs = setup_axes()
+    fig, axs = setup_axes(logmdf=LOG_MDF)
 
     simtime = np.arange(0, END_TIME + DT, DT)
 
@@ -59,6 +60,7 @@ def main(overwrite=False):
                               'linestyle': LINE_STYLE[i],
                               'linewidth': 1},
                           marker_labels=(i==0),
+                          logmdf=LOG_MDF
                           )
 
     for i, slope in enumerate(SLOPES):
@@ -72,6 +74,7 @@ def main(overwrite=False):
                           style_kw={
                               'linestyle': LINE_STYLE[i],
                               'linewidth': 1},
+                          logmdf=LOG_MDF
                           )
 
     # Adjust axis limits
