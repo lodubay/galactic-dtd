@@ -1,6 +1,6 @@
 """
-This script plots abundance tracks from one-zone models with varying Type Ia
-delay time distribution (DTD).
+This script plots abundance tracks from one-zone models with a power-law + 
+plateau DTD with varying plateau widths and minimum delay times.
 """
 
 import sys
@@ -21,6 +21,7 @@ from utils import run_singlezone
 
 # VICE one-zone model settings
 DELAYS = [0.15, 0.04]
+PLATEAUS = [1, 0.35, 0.1]
 DT = 0.01
 STANDARD_PARAMS = dict(
     func=models.insideout(8, dt=DT),
@@ -34,6 +35,7 @@ STANDARD_PARAMS = dict(
 LINE_STYLES = ['--', '-']
 COLORS = paultol.highcontrast.colors
 LOG_MDF = False
+SLOPE = -1.1
 
 def main(overwrite=False):
     output_dir = paths.data / 'onezone' / 'plateau_delay'
@@ -44,82 +46,27 @@ def main(overwrite=False):
 
     simtime = np.arange(0, END_TIME + DT, DT)
 
-    for delay, ls in zip(DELAYS, LINE_STYLES):
-        for width, color in zip()
-    delay = 0.15
-    dist = dtds.plateau(width=1, slope=-1.1, tmin=delay)
-    name = dist.name + f'_delay{int(1000*delay)}'
-    run_singlezone(str(output_dir / name), simtime,
-                   overwrite=overwrite,
-                   RIa=dist, delay=delay, **STANDARD_PARAMS)
-    plot_vice_onezone(str(output_dir / name), fig=fig, axs=axs,
-                      label=None, 
-                      color='b',
-                      style_kw={'linestyle': '--',
-                                'linewidth': 1,
-                                'zorder': 1},
-                      logmdf=LOG_MDF
-                      )
-    
-    delay = 0.04
-    dist = dtds.plateau(width=1, slope=-1.1, tmin=delay)
-    name = dist.name + f'_delay{int(1000*delay)}'
-    run_singlezone(str(output_dir / name), simtime,
-                   overwrite=overwrite,
-                   RIa=dist, delay=delay, **STANDARD_PARAMS)
-    plot_vice_onezone(str(output_dir / name), fig=fig, axs=axs,
-                      label=r'1 Gyr plateau', 
-                      color='b',
-                      style_kw={'linestyle': '-',
-                                'linewidth': 1,
-                                'zorder': 1},
-                      logmdf=LOG_MDF
-                      )
-                      
-    delay = 0.04
-    dist = dtds.plateau(width=0.35, slope=-1.1, tmin=delay)
-    name = dist.name + f'_delay{int(1000*delay)}'
-    run_singlezone(str(output_dir / name), simtime,
-                   overwrite=overwrite,
-                   RIa=dist, delay=delay, **STANDARD_PARAMS)
-    plot_vice_onezone(str(output_dir / name), fig=fig, axs=axs,
-                      label=r'350 Myr plateau', 
-                      color='r',
-                      style_kw={'linestyle': '-',
-                                'linewidth': 1,
-                                'zorder': 1},
-                      logmdf=LOG_MDF
-                      )
-    
-    delay = 0.15
-    dist = dtds.plateau(width=0.1, slope=-1.1, tmin=delay)
-    name = dist.name + f'_delay{int(1000*delay)}'
-    run_singlezone(str(output_dir / name), simtime,
-                   overwrite=overwrite,
-                   RIa=dist, delay=delay, **STANDARD_PARAMS)
-    plot_vice_onezone(str(output_dir / name), fig=fig, axs=axs,
-                      label=None, 
-                      color='orange',
-                      style_kw={'linestyle': '--',
-                                'linewidth': 1,
-                                'zorder': 2},
-                      logmdf=LOG_MDF
-                      )
-                  
-    delay = 0.04
-    dist = dtds.plateau(width=0.1, slope=-1.1, tmin=delay)
-    name = dist.name + f'_delay{int(1000*delay)}'
-    run_singlezone(str(output_dir / name), simtime,
-                   overwrite=overwrite,
-                   RIa=dist, delay=delay, **STANDARD_PARAMS)
-    plot_vice_onezone(str(output_dir / name), fig=fig, axs=axs,
-                      label=r'100 Myr plateau', 
-                      color='orange',
-                      style_kw={'linestyle': '-',
-                                'linewidth': 1,
-                                'zorder': 2},
-                      logmdf=LOG_MDF
-                      )
+    for width, color in zip(PLATEAUS, COLORS):
+        for delay, ls in zip(DELAYS, LINE_STYLES):
+            dist = dtds.plateau(width=width, slope=SLOPE, tmin=delay)
+            name = dist.name + f'_delay{int(1000*delay)}'
+            if delay == 0.04:
+                if width < 1:
+                    label = r'%s Myr plateau' % int(width * 1000)
+                else:
+                    label = r'%s Gyr plateau' % width
+            else:
+                label = None
+            run_singlezone(str(output_dir / name), simtime,
+                           overwrite=overwrite,
+                           RIa=dist, delay=delay, **STANDARD_PARAMS)
+            plot_vice_onezone(str(output_dir / name), fig=fig, axs=axs,
+                              label=label,  color=color,
+                              style_kw={'linestyle': ls,
+                                        'linewidth': 1,
+                                        'zorder': 1},
+                              logmdf=LOG_MDF
+                              )
 
     # Legend
     handles, labels = axs[0].get_legend_handles_labels()
@@ -127,7 +74,7 @@ def main(overwrite=False):
     labels += [f'{int(1000*delay)} Myr minimum delay' for delay in DELAYS]
     axs[0].legend(handles, labels, frameon=False, loc='lower left',
                   handlelength=1.2, fontsize=7)
-    fig.savefig(paths.figures / 'onezone_plateau_delay.png', dpi=300)
+    fig.savefig(paths.figures / 'onezone_plateau_delay.pdf', dpi=300)
     plt.close()
 
 

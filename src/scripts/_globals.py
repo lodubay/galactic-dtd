@@ -7,3 +7,7 @@ ABSZ_BINS = [0, 0.5, 1, 2] # kpc
 ZONE_WIDTH = 0.1 # kpc
 DT = 0.01 # Gyr
 END_TIME = 13.2 # Gyr
+
+# AASTeX plot widths
+ONE_COLUMN_WIDTH = 3.25
+TWO_COLUMN_WIDTH = 7.
