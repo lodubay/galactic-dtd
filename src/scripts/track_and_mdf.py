@@ -10,7 +10,7 @@ from matplotlib.ticker import MultipleLocator
 
 
 def plot_vice_onezone(output, fig=None, axs=[], label=None, color=None,
-                      histtype='step', logmdf=True, marker_labels=False,
+                      histtype='step', logmdf=False, marker_labels=False,
                       style_kw={}):
     """
     Wrapper for plot_track_and_mdf given a VICE onezone output.
@@ -33,7 +33,8 @@ def plot_vice_onezone(output, fig=None, axs=[], label=None, color=None,
         Histogram type; options are 'bar', 'barstacked', 'step', 'stepfilled'.
         The default is 'step'.
     logmdf : bool, optional
-        Whether to plot the MDFs in log space. The default is True.
+        If True, plot the marginal distributions on a log scale. The default
+        is False.
     style_kw : dict, optional
         Dict of style-related keyword arguments to pass to both
         matplotlib.pyplot.plot and matplotlib.pyplot.hist
@@ -113,7 +114,7 @@ def plot_time_markers(time, feh, ofe, ax, loc=[0.1, 0.3, 1, 3, 10],
 
 def plot_track_and_mdf(feh, ofe, dn_dfeh=[], feh_bins=10, dn_dofe=[],
                        ofe_bins=10, fig=None, axs=[], label=None, color=None,
-                       histtype='step', logmdf=True, style_kw={}):
+                       histtype='step', logmdf=False, style_kw={}):
     """
     Simultaneously plot a track in [Fe/H] vs [O/Fe] and the corresponding
     metallicity distribution functions (MDFs).
@@ -148,7 +149,8 @@ def plot_track_and_mdf(feh, ofe, dn_dfeh=[], feh_bins=10, dn_dofe=[],
         Histogram type; options are 'bar', 'barstacked', 'step', 'stepfilled'.
         The default is 'step'.
     logmdf : bool, optional
-        Whether to plot the MDFs in log space. The default is True.
+        If True, plot the marginal distributions on a log scale. The default
+        is False.
     style_kw : dict, optional
         Dict of style-related keyword arguments to pass to both
         matplotlib.pyplot.plot and matplotlib.pyplot.hist
@@ -196,15 +198,18 @@ def plot_track_and_mdf(feh, ofe, dn_dfeh=[], feh_bins=10, dn_dofe=[],
     return fig, axs
 
 
-def setup_axes(width=3.25, logmdf=True):
+def setup_axes(width=3.25, logmdf=False):
     """
     Create a figure with three axes: the main abundance track axis plus two
     side panels for [Fe/H] and [O/Fe] distribution functions.
 
     Parameters
     ----------
-    width : float
+    width : float, optional
         Width of the figure in inches. The default is 3.25 in.
+    logmdf : bool, optional
+        If True, plot the marginal distributions on a log scale. The default
+        is False.
 
     Returns
     -------
