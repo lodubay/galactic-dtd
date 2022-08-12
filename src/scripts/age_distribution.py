@@ -9,120 +9,192 @@ import matplotlib.pyplot as plt
 from matplotlib.ticker import MultipleLocator
 import vice
 import paths
-from utils import multioutput_to_pandas, filter_multioutput_stars, import_astroNN
+from utils import multioutput_to_pandas, filter_multioutput_stars, import_astroNN, get_bin_centers
 from _globals import DT, GALR_BINS, ZONE_WIDTH, ABSZ_BINS, END_TIME
 from mdf_9panel import setup_colorbar, discrete_colormap, box_smooth
 from ofe_feh_apogee import apogee_region
 
-global AGE_LIM
-global SMOOTH_WIDTH
-
-AGE_LIM = (0, 14)
-SMOOTH_WIDTH = 1
+MAX_AGE = 14
 BIN_WIDTH = 1
+# SMOOTH_WIDTH = 1
 
 def main(evolution, RIa, cmap_name='plasma_r'):
-    output = '%s/%s' % (evolution, RIa)
-    # stars_pp = multioutput_to_pandas(paths.data / 'migration' / 'post-process' / output)
-    stars_diff = multioutput_to_pandas(paths.data / 'migration' / 'diffusion' / output)
+    # Import data
+    # output = '%s/%s' % (evolution, RIa)
+    # stars = multioutput_to_pandas(paths.data / 'migration' / 'diffusion' / output)
     astroNN_data = import_astroNN()
-    # diff_subset = filter_multioutput_stars(stars_diff,
-    #                                         (0, 15), (0, 5),
-    #                                         ZONE_WIDTH, min_mass=0)
-    # ages, n_stars = age_distribution(diff_subset)
-    # ages, n_stars = age_distribution(stars_diff)
-    # plt.plot(ages, n_stars)
-    # plt.xlabel('Age [Gyr]')
-    # plt.ylabel('dN/dAge')
-    # plt.savefig(paths.figures / 'adf.png', dpi=300)
-    # plt.show()
-    
-    fig, axs = setup_axes(xlim=AGE_LIM)
+    # Set up plot
+    fig, axs = setup_axes(ncols=4, figure_width=7.)
     cmap, norm = discrete_colormap(cmap_name, GALR_BINS)
     cax = setup_colorbar(fig, cmap, norm, label=r'Galactocentric radius [kpc]')
     # Define color scheme
     rmin, rmax = GALR_BINS[0], GALR_BINS[-2]
     colors = cmap([(r-rmin)/(rmax-rmin) for r in GALR_BINS[:-1]])
-    for i in range(len(ABSZ_BINS)-1):
-        absz_lim = ABSZ_BINS[-(i+2):len(ABSZ_BINS)-i]
-        axs[i,0].set_ylabel(r'$|z| = %s - %s$' % tuple(absz_lim))
-        for j in range(len(GALR_BINS)-1):
-            galr_lim = GALR_BINS[j:j+2]
-            # Plot VICE post-process in left panels
-            # TODO bin in 1 Gyr age bins instead
-            # TODO bin all 10+ Gyr stars in one bin
-            # pp_subset = filter_multioutput_stars(stars_pp,
-            #                                      galr_lim, absz_lim,
-            #                                      ZONE_WIDTH, min_mass=0)
-            # dndt, bins = age_distribution(pp_subset)
-            # adf_smooth = box_smooth(dndt, bins, SMOOTH_WIDTH)
-            # axs[i,0].plot(bins[:-1], adf_smooth, color=colors[j], linewidth=1)
-            
-            # Plot VICE diffusion in center panels
-            diff_subset = filter_multioutput_stars(stars_diff,
-                                                   galr_lim, absz_lim,
-                                                   ZONE_WIDTH, min_mass=0)
-            dndt, bins = age_distribution(diff_subset)
-            bin_centers = 0.5 * (bins[:-1] + bins[1:])
-            # adf_smooth = box_smooth(dndt, bins, SMOOTH_WIDTH)
-            axs[i,0].plot(bin_centers, dndt, color=colors[j], linewidth=1)
-
-            # Plot APOGEE in right panels
-            apogee_subset = apogee_region(astroNN_data, galr_lim, absz_lim)
-            # apogee_adf, _ = np.histogram(apogee_subset['ASTRONN_AGE'], bins=bins,
-            #                              density=True)
-            # apogee_smooth = box_smooth(apogee_adf, bins, SMOOTH_WIDTH)
-            # axs[i,2].plot(bins[:-1], apogee_smooth, color=colors[j], linewidth=1)
-            # age_bins = np.arange(0, 11, 1)
-            # age_bins = np.concatenate((age_bins, [AGE_LIM[1]]))
-            # axs[i,1].hist(apogee_subset['ASTRONN_AGE'], bins=age_bins, 
-            #               density=True, color=colors[j], linewidth=1, 
-            #               histtype='step')
-            age_bins = np.arange(AGE_LIM[0], AGE_LIM[1] + BIN_WIDTH, BIN_WIDTH)
-            apogee_hist, _ = np.histogram(apogee_subset['ASTRONN_AGE'], 
-                                          bins=age_bins, density=True)
-            bin_centers = 0.5 * (age_bins[:-1] + age_bins[1:])
-            axs[i,1].plot(bin_centers, apogee_hist, color=colors[j], linewidth=1)
+    # Plot
+    # for col, RIa in enumerate(['powerlaw_slope11_delay040', 'exponential30_delay040', 'greggio05_single']):
+    for col, evolution in enumerate(['insideout_johnson21', 'lateburst_johnson21', 'insideout_conroy22']):
+        output = '%s/%s' % (evolution, RIa)
+        stars = multioutput_to_pandas(paths.data / 'migration' / 'diffusion' / output)
+        plot_vice_adf(stars, axs[:,col], colors=colors, label=evolution)
+    plot_astroNN_adf(astroNN_data, axs[:,col+1], colors=colors)
             
     axs[0,0].set_ylim((0, None))
-    for ax in axs[-1]:
-        ax.set_xlabel('Age [Gyr]')
-    # axs[0,0].set_title('Post-process')
-    axs[0,0].set_title('VICE')
-    axs[0,1].set_title('astroNN')
-    plt.savefig(paths.figures / ('adf.png'), dpi=300)
+    plt.savefig(paths.figures / 'adf.png', dpi=300)
     plt.close()
+    
+
+def plot_astroNN_adf(data, axs, colors=[], label='astroNN', 
+                     age_bin_width=BIN_WIDTH, max_age=MAX_AGE,
+                     absz_bins=ABSZ_BINS, galr_bins=GALR_BINS):
+    """
+    Plot age distributions from astroNN data.
+    
+    Parameters
+    ----------
+    data : pandas.DataFrame
+        Combined data from APOGEE and astroNN.
+    axs : list of matplotlib.axes.Axes
+        Axes on which to plot the age distributions, the length of which must
+        correspond to len(absz_bins)-1 (3 by default); usually a single
+        column from a larger array of axes.
+    colors : list, optional
+        List of colors corresponding to galactic radius. If len(colors) !=
+        len(galr_bins)-1, the default matplotlib color scheme will be used.
+        The default is [].
+    label : str, optional
+        Axis column label. The default is 'astroNN'.
+    age_bin_width : float, optional
+        Width of age bins in Gyr. The default is 1.
+    max_age : float, optional
+        Maximum age in Gyr to include. The default is 14.
+    absz_bins : list, optional
+        Bin edges of galactic z-height in kpc. The default is [0, 0.5, 1, 2].
+    galr_bins : list, optional
+        Bin edges of galactic radius in kpc. The default is
+        [3, 5, 7, 9, 11, 13, 15].
+    """
+    if len(colors) != len(galr_bins) - 1:
+        colors = [None for galr in galr_bins[:-1]]
+    if len(axs) == len(absz_bins) - 1:
+        for i, ax in enumerate(axs.flatten()):
+            absz_lim = absz_bins[-(i+2):len(absz_bins)-i]
+            for j in range(len(galr_bins)-1):
+                galr_lim = galr_bins[j:j+2]
+                subset = apogee_region(data, galr_lim, absz_lim)
+                age_bins = np.arange(0, max_age + age_bin_width, age_bin_width)
+                age_hist, _ = np.histogram(subset['ASTRONN_AGE'], 
+                                           bins=age_bins, density=True)
+                ax.plot(get_bin_centers(age_bins), age_hist, 
+                        color=colors[j], linewidth=1)
+        axs[0].set_title(label)
+    else:
+        raise ValueError('Mismatch between axes and z-height bins.')
+    
+    
+def plot_vice_adf(stars, axs, colors=[], label='VICE', age_bin_width=BIN_WIDTH,
+                  absz_bins=ABSZ_BINS, galr_bins=GALR_BINS, 
+                  zone_width=ZONE_WIDTH):
+    """
+    Plot age distributions from a VICE multi-zone run.
+    
+    Parameters
+    ----------
+    stars : pandas.DataFrame
+        Output of utils.multioutput_to_stars.
+    axs : list of matplotlib.axes.Axes
+        Axes on which to plot the age distributions, the length of which must
+        correspond to len(absz_bins)-1 (3 by default); usually a single
+        column from a larger array of axes.
+    colors : list, optional
+        List of colors corresponding to galactic radius. If len(colors) !=
+        len(galr_bins)-1, the default matplotlib color scheme will be used.
+        The default is [].
+    label : str, optional
+        Axis column label. The default is 'VICE'.
+    age_bin_width : float, optional
+        Width of age bins in Gyr. The default is 1.
+    absz_bins : list, optional
+        Bin edges of galactic z-height in kpc. The default is [0, 0.5, 1, 2].
+    galr_bins : list, optional
+        Bin edges of galactic radius in kpc. The default is 
+        [3, 5, 7, 9, 11, 13, 15].
+    zone_width : float, optional
+        Width of VICE zones in kpc. The default is 0.1.
+    """
+    if len(colors) != len(galr_bins) - 1:
+        colors = [None for galr in galr_bins[:-1]]
+    if len(axs) == len(absz_bins) - 1:
+        for i, ax in enumerate(axs.flatten()):
+            absz_lim = absz_bins[-(i+2):len(absz_bins)-i]
+            for j in range(len(galr_bins)-1):
+                galr_lim = galr_bins[j:j+2]
+                subset = filter_multioutput_stars(stars, galr_lim, absz_lim,
+                                                  zone_width, min_mass=0)
+                dndt, bins = age_distribution(subset, bin_width=age_bin_width)
+                ax.plot(get_bin_centers(bins), dndt, 
+                        color=colors[j], linewidth=1)
+        axs[0].set_title(label)
+    else:
+        raise ValueError('Mismatch between axes and z-height bins.')
 
 
-def setup_axes(xlim=AGE_LIM):
-    fig, axs = plt.subplots(3, 2, figsize=(3.25, 4),
-                            sharex=True, sharey=True)
+def setup_axes(ncols=2, figure_width=3.25, xlim=(0, MAX_AGE), 
+               absz_bins=ABSZ_BINS):
+    """
+    Set up matplotlib figure and axes for the age distribution plot.
+    
+    Parameters
+    ----------
+    ncols : int, optional
+        Number of columns in figure. The default is 2.
+    figure_width : float, optional
+        Width of the figure in inches. For an AASTeX document, this should be
+        3.25 for a single-column figure or 7.0 for a double-column figure. The
+        figure height will be scaled to maintain a consistent aspect ratio.
+        The default is 3.25.
+    xlim : tuple or list, optional
+        Limits of x-axis in Gyr. The default is (0, 14).
+    absz_bins : list, optional
+        Bin edges of galactic z-height in kpc. The default is [0, 0.5, 1, 2].
+        
+    Returns
+    -------
+    fig : matplotlib.figure.Figure
+    axs : list of matplotlib.axes.Axes
+    """
+    # Determine figure dimensions
+    nrows = len(absz_bins) - 1
+    ax_width = (figure_width - 0.25) / ncols
+    ax_height = ax_width / 1.5
+    figure_height = ax_height * nrows + 1
+    fig, axs = plt.subplots(nrows, ncols, sharex=True, sharey=True,
+                            figsize=(figure_width, figure_height))
     fig.subplots_adjust(left=0.07, top=0.93, right=0.97, bottom=0.1,
                         wspace=0.07, hspace=0.)
-    # axs[0,0].set_xlim((xlim[0]-0.09, xlim[1]+0.09))
+    # Format x-axis
     axs[0,0].set_xlim(xlim)
     axs[0,0].xaxis.set_major_locator(MultipleLocator(5))
     axs[0,0].xaxis.set_minor_locator(MultipleLocator(1))
-    # axs[0,0].yaxis.set_major_locator(MultipleLocator(1))
-    # axs[0,0].yaxis.set_minor_locator(MultipleLocator(0.2))
-    # Refine axes
+    for ax in axs[-1]:
+        ax.set_xlabel('Age [Gyr]')
+    # Remove spines and y-axis labels
     for ax in axs.flatten():
         ax.spines['right'].set_visible(False)
         ax.spines['left'].set_visible(False)
         ax.spines['top'].set_visible(False)
-        # ax.spines['bottom'].set_bounds(xlim[0], xlim[1])
         ax.yaxis.set_ticks_position('none')
         ax.yaxis.set_ticklabels([])
         ax.patch.set_alpha(0)
         ax.tick_params(top=False, which='both')
-    # Turn on y-axis spine and ticks for left-hand panels
-    # for ax in axs[:,0]:
-    #     ax.spines['left'].set_visible(True)
-    #     ax.yaxis.set_ticks_position('left')
-    #     ax.spines['left'].set_bounds(0, 2.6)
+    # Label rows
+    for i in range(len(absz_bins)-1):
+        absz_lim = tuple(absz_bins[-(i+2):len(absz_bins)-i])
+        axs[i,0].set_ylabel(r'$|z| = %s - %s$' % absz_lim)
     return fig, axs
 
-def age_distribution(stars, bin_width=BIN_WIDTH, end_time=END_TIME, dt=DT, **kwargs):
+
+def age_distribution(stars, bin_width=BIN_WIDTH, end_time=END_TIME, dt=DT, 
+                     **kwargs):
     """
     Calculate the distribution of ages in a VICE multizone output.
     
