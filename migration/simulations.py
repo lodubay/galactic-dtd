@@ -11,7 +11,7 @@ import src
 
 _MIGRATION_MODELS_ = ["diffusion", "linear", "post-process", "sudden"]
 _EVOLUTION_MODELS_ = ["static", "insideout", "lateburst", "outerburst",
-                      "insideout_conroy22", "lateburst_conroy22", "twoinfall"]
+                      "insideout_ifrmode", "lateburst_ifrmode", "twoinfall"]
 _DELAY_MODELS_ = ["powerlaw", "powerlaw_steep", "powerlaw_broken",
                   "exponential", "exponential_long", "bimodal", 
                   "greggio05_single"]
@@ -34,8 +34,13 @@ def parse():
 
     parser.add_argument("--evolution",
         help = "The evolutionary history to assume (Default: insideout)",
-		type = str,
-		default = "insideout")
+        type = str,
+        default = "insideout")
+    
+    parser.add_argument("--tau-star",
+        help = "The SFE timescale to assume (Default: johnson21)",
+        type = str,
+        default = "johnson21")
 
     parser.add_argument("--RIa",
         help = "The SN Ia delay-time distribution to assume (Default: powerlaw)",
@@ -100,6 +105,7 @@ def model(args):
     kwargs = dict(
         name = args.name,
         spec = args.evolution,
+        tau_star = args.tau_star,
         RIa = args.RIa,
         RIa_kwargs = args.RIa_kwargs,
         delay = args.minimum_delay
