@@ -16,7 +16,7 @@ ytick.minor.width: 0.3
 font.family: STIXgeneral
 mathtext.fontset: cm
 # Font size
-legend.fontsize: 8
+legend.fontsize: 7
 axes.labelsize: 9
 axes.titlesize: 9
 xtick.labelsize: 8

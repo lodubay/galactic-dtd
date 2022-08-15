@@ -86,12 +86,12 @@ def main(overwrite=False):
                       logmdf=LOG_MDF
                       )
     
-    dtd = dtds.plateau(width=0.35, slope=-1.1)
+    dtd = dtds.plateau(width=0.3, slope=-1.1)
     sz = vice.singlezone(name=str(output_dir / dtd.name), 
                           RIa=dtd, **STANDARD_PARAMS)
     sz.run(simtime, overwrite=True)
     plot_vice_onezone(str(output_dir / dtd.name), fig=fig, axs=axs,
-                      label=r'Plateau ($W=350$ Myr, $\alpha=-1.1$)',
+                      label=r'Plateau ($W=300$ Myr, $\alpha=-1.1$)',
                       color=paultol.muted.colors[7],
                       style_kw={
                             'linestyle': '--',

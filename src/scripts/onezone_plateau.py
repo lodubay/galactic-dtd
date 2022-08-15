@@ -19,7 +19,7 @@ from track_and_mdf import setup_axes, plot_vice_onezone
 from utils import run_singlezone
 
 # VICE one-zone model settings
-PLATEAUS = [0.1, 0.2, 0.5, 1.] # Gyr
+PLATEAUS = [0.1, 0.3, 1.] # Gyr
 DELAY = 0.04 # minimum delay time in Gyr
 DT = 0.01
 SLOPE = -1.1
@@ -35,8 +35,8 @@ STANDARD_PARAMS = dict(
 )
 
 # Plot settings
-LINE_STYLE = [':', '-.', '--', '-']
-LOG_MDF = True
+LINE_STYLE = [':', '-.', '-']
+LOG_MDF = False
 
 def main(overwrite=False):
     output_dir = paths.data / 'onezone' / 'plateau'
