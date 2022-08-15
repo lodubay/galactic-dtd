@@ -7,6 +7,6 @@ from .lateburst import lateburst
 from .outerburst import outerburst
 from .static import static
 from .conroy22_tau_star import conroy22_tau_star
-from .insideout_conroy22 import insideout_conroy22
-from .lateburst_conroy22 import lateburst_conroy22
+from .insideout_ifrmode import insideout_ifrmode
+from .lateburst_ifrmode import lateburst_ifrmode
 from .twoinfall import twoinfall
