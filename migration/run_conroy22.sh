@@ -14,3 +14,6 @@ for EVOL in ${EVOL_LIST[@]}; do
 			echo $NAME
 			EVOL_FULL=$EVOL"_ifrmode"
 			python simulations.py -f --nstars=8 --migration=$MIGR --evolution=$EVOL_FULL --RIa=$DTD --RIa-kwargs=$DTD_PARAM --minimum-delay=0.04 --name=$NAME
+		done
+	done
+done
