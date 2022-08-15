@@ -9,7 +9,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 import vice
 from vice.yields.presets import JW20
-vice.yields.sneia.settings['fe'] *= 10**0.1
+vice.yields.sneia.settings['fe'] = 0.0021
 import paths
 sys.path.append(str(paths.root))
 from migration.src.simulations import models, dtds
