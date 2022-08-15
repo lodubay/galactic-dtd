@@ -6,7 +6,7 @@ given radius in the lateburst model from Johnson et al. (2021).
 from ..._globals import END_TIME
 from .utils import modified_exponential, gaussian
 from .insideout import _TAU_RISE_, insideout
-from .normalize import normalize, normalize_ifrmode
+from .normalize import normalize
 from .gradient import gradient
 import math as m
 import os

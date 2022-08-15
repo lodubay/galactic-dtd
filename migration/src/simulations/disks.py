@@ -45,9 +45,17 @@ class diskmodel(vice.milkyway):
         - "insideout"
         - "lateburst"
         - "outerburst"
-        - "insideout_conroy22"
-        - "lateburst_conroy22"
+        - "insideout_ifrmode"
+        - "lateburst_ifrmode"
 
+    tau_star : ``str`` [default : "johnson21"]
+        A keyword denoting the prescription for the star formation efficiency
+        timescale.
+        Allowed values:
+            
+        - "johnson21"
+        - "conroy22"
+    
     verbose : ``bool`` [default : True]
         Whether or not the run the models with verbose output.
     migration_mode : ``str`` [default : "diffusion"]
@@ -66,10 +74,8 @@ class diskmodel(vice.milkyway):
         Allowed values:
 
         - "powerlaw"
-        - "powerlaw_steep"
-        - "powerlaw_broken"
+        - "plateau"
         - "exponential"
-        - "exponential_long"
         - "prompt"
 
     RIa_kwargs : ``dict`` [default: {}]
@@ -81,7 +87,7 @@ class diskmodel(vice.milkyway):
     """
 
     def __init__(self, zone_width = 0.1, name = "diskmodel", spec = "static",
-        verbose = True, migration_mode = "diffusion",
+        tau_star = "johnson21", verbose = True, migration_mode = "diffusion",
         delay = 0.04, RIa = "powerlaw", RIa_kwargs={}, **kwargs):
         super().__init__(zone_width = zone_width, name = name,
             verbose = verbose, **kwargs)
@@ -95,17 +101,19 @@ class diskmodel(vice.milkyway):
             filename = "%s_analogdata.out" % (name))
         self.evolution = star_formation_history(spec = spec,
             zone_width = zone_width)
-        if "conroy22" in spec.lower():
+        # Set the yields
+        if tau_star == "conroy22":
             from .yields import C22
         else:
             from vice.yields.presets import JW20
             vice.yields.sneia.settings['fe'] *= 10**0.1
-        if spec.lower() in ["insideout_conroy22", "lateburst_conroy22",
-                            "twoinfall"]:
+        # Set the SF mode - infall vs star formation rate
+        if (spec.lower() == "twoinfall") or ("ifrmode" in spec.lower()):
             self.mode = "ifr"
             for zone in self.zones: zone.Mg0 = 0
         else:
             self.mode = "sfr"
+        # Set the Type Ia delay time distribution
         dtd = delay_time_distribution(dist = RIa, tmin = delay, **RIa_kwargs)
         for i in range(self.n_zones):
             # set the delay time distribution and minimum Type Ia delay time
@@ -113,8 +121,10 @@ class diskmodel(vice.milkyway):
             self.zones[i].RIa = dtd
             # set the star formation efficiency timescale within 15.5 kpc
             if (self.annuli[i] + self.annuli[i + 1]) / 2 <= MAX_SF_RADIUS:
-                if "conroy22" in spec.lower():
-                    self.zones[i].tau_star = models.conroy22_tau_star()
+                if tau_star == "conroy22":
+                    self.zones[i].tau_star = models.conroy22_tau_star(
+                        m.pi * (self.annuli[i + 1]**2 - self.annuli[i]**2)
+                    )
 
     def run(self, *args, **kwargs):
         out = super().run(*args, **kwargs)
@@ -185,9 +195,9 @@ class star_formation_history:
                 "insideout":          models.insideout,
                 "lateburst":          models.lateburst,
                 "outerburst":         models.outerburst,
-                "insideout_conroy22": models.insideout_conroy22,
-                "lateburst_conroy22": models.lateburst_conroy22,
                 "twoinfall":          models.twoinfall,
+                "insideout_ifrmode":  models.insideout_ifrmode,
+                "lateburst_ifrmode":  models.lateburst_ifrmode,
             }[spec.lower()]((i + 0.5) * zone_width))
             i += 1
 
@@ -236,18 +246,13 @@ class delay_time_distribution:
     def __init__(self, dist="powerlaw", tmin=0.04, tmax=END_TIME, **kwargs):
         self.tmin = tmin
         self.tmax = tmax
-        kwargs['tmin'] = self.tmin
-        kwargs['tmax'] = self.tmax
         self._dtd = {
-            "powerlaw":         dtds.powerlaw(**kwargs),
-            # "powerlaw_steep":   dtds.powerlaw(slope=-1.4, **kwargs),
-            # "powerlaw_broken":  dtds.powerlaw_broken(**kwargs),
-            "plateau": dtds.plateau(**kwargs),
-            "exponential":      dtds.exponential(**kwargs),
-            # "exponential_long": dtds.exponential(timescale=3, **kwargs),
-            "prompt":          dtds.prompt(**kwargs),
-            "greggio05_single": dtds.greggio05_single(**kwargs),
-        }[dist.lower()]
+            "powerlaw":         dtds.powerlaw,
+            "plateau":          dtds.plateau,
+            "exponential":      dtds.exponential,
+            "prompt":           dtds.prompt,
+            "greggio05_single": dtds.greggio05_single,
+        }[dist.lower()](tmin=tmin, tmax=tmax, **kwargs)
 
     def __call__(self, time):
         if time >= self.tmin and time <= self.tmax:

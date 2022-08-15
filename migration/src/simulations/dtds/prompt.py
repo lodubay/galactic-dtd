@@ -24,7 +24,7 @@ class prompt:
         Normalization coefficient scaled so the total integral is unity.
     """
 
-    def __init__(self, center=0.05, stdev=0.01, timescale=3,
+    def __init__(self, center=0.05, stdev=0.015, timescale=3,
                  tmin=0.04, tmax=END_TIME):
         """
         Initialize the prompt model.
