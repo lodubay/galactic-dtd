@@ -18,29 +18,118 @@ MAX_AGE = 14
 BIN_WIDTH = 1
 # SMOOTH_WIDTH = 1
 
-def main(evolution, RIa, cmap_name='plasma_r'):
-    # Import data
-    # output = '%s/%s' % (evolution, RIa)
-    # stars = multioutput_to_pandas(paths.data / 'migration' / 'diffusion' / output)
-    astroNN_data = import_astroNN()
+def main(evolution, RIa):
+    output = 'diffusion/%s/%s' % (evolution, RIa)
+    plot_single_comparison(output)
+    
+    
+def plot_multiple_comparison(outputs, labels, output_dir=paths.data/'migration',
+                             cmap_name='plasma_r', verbose=False, 
+                             fname='adf_multiple_comparison.png',
+                             double_line_titles=False):
+    """
+    One-stop function to generate a complete plot comparing the ADFs of
+    multiple VICE multi-zone outputs to the astroNN ADF.
+    
+    Parameters
+    ----------
+    outputs : list
+        List of paths to VICE multioutputs starting at the parent directory.
+    labels : list
+        Titles of each VICE column. Must be same length as outputs.
+    output_dir : str or pathlib.Path, optional
+        The parent directory for all VICE multizone outputs. The default is
+        '../data/migration'.
+    cmap_name : str
+        Name of the colormap to use. The default is 'cmap_r'.
+    verbose : bool
+        If True, print status updates. The default is False
+    fname : str, optional
+        The name of the plot output file including its extension. The default
+        is 'adf_multiple_comparison.png'.
+    double_line_titles : bool, optional
+        If True, provide space for double-line axis titles. The default is 
+        False.
+    """
+        
     # Set up plot
-    fig, axs = setup_axes(ncols=4, figure_width=7.)
+    fig, axs = setup_axes(ncols=len(outputs)+1, figure_width=7.)
+    if double_line_titles:
+        # Allow room for two-line axis titles
+        fig.subplots_adjust(top=0.9)
     cmap, norm = discrete_colormap(cmap_name, GALR_BINS)
     cax = setup_colorbar(fig, cmap, norm, label=r'Galactocentric radius [kpc]')
     # Define color scheme
-    rmin, rmax = GALR_BINS[0], GALR_BINS[-2]
-    colors = cmap([(r-rmin)/(rmax-rmin) for r in GALR_BINS[:-1]])
+    colors = get_color_list(cmap, GALR_BINS)
     # Plot
-    # for col, RIa in enumerate(['powerlaw_slope11_delay040', 'exponential30_delay040', 'greggio05_single']):
-    for col, evolution in enumerate(['insideout_johnson21', 'lateburst_johnson21', 'insideout_conroy22']):
-        output = '%s/%s' % (evolution, RIa)
-        stars = multioutput_to_pandas(paths.data / 'migration' / 'diffusion' / output)
-        plot_vice_adf(stars, axs[:,col], colors=colors, label=evolution)
+    for col, output in enumerate(outputs):
+        if verbose:
+            print('Plotting age distribution from %s...' % output)
+        stars = multioutput_to_pandas(Path(output_dir) / output)
+        plot_vice_adf(stars, axs[:,col], colors=colors, label=labels[col])
+    
+    if verbose:
+        print('Plotting astroNN age distribution...')
+    astroNN_data = import_astroNN()
     plot_astroNN_adf(astroNN_data, axs[:,col+1], colors=colors)
             
     axs[0,0].set_ylim((0, None))
-    plt.savefig(paths.figures / 'adf.png', dpi=300)
+    plt.savefig(paths.figures / fname, dpi=300)
     plt.close()
+    if verbose:
+        print('Done!')
+    
+    
+def plot_single_comparison(output, output_dir=paths.data/'migration',
+                           label='VICE', cmap_name='plasma_r', verbose=False,
+                           fname=''):
+    """
+    One-stop function to generate a complete plot comparing the ADF of a single
+    VICE output to the astroNN ADF.
+    
+    Parameters
+    ----------
+    output : str
+        Path to VICE multioutput starting at the parent directory.
+    output_dir : str or pathlib.Path, optional
+        The parent directory for all VICE multizone outputs. The default is
+        '../data/migration'.
+    label : str, optional
+        Title of VICE column. The default is 'VICE'.
+    cmap_name : str
+        Name of the colormap to use. The default is 'cmap_r'.
+    verbose : bool
+        If True, print status updates. The default is False
+    fname : str, optional
+        The name of the plot output file including its extension. If '', a name
+        is automatically generated based on the output directory name. The 
+        default is ''.
+    """
+    # Set up plot
+    fig, axs = setup_axes(ncols=2, figure_width=7.)
+    cmap, norm = discrete_colormap(cmap_name, GALR_BINS)
+    cax = setup_colorbar(fig, cmap, norm, label=r'Galactocentric radius [kpc]')
+    colors = get_color_list(cmap, GALR_BINS)
+    
+    if verbose:
+        print('Plotting age distribution from %s...' % output)
+    stars = multioutput_to_pandas(Path(output_dir) / output)
+    plot_vice_adf(stars, axs[:,0], colors=colors, label=label)
+    
+    if verbose:
+        print('Plotting astroNN age distribution...')
+    astroNN_data = import_astroNN()
+    plot_astroNN_adf(astroNN_data, axs[:,1], colors=colors)
+    
+    # Automatically generate plot filename if none is provided
+    if fname == '':
+        fname = 'adf_%s_%s.png' % tuple(output.split('/')[1:])
+            
+    axs[0,0].set_ylim((0, None))
+    plt.savefig(paths.figures / fname, dpi=300)
+    plt.close()
+    if verbose:
+        print('Done! Plot is located at src/tex/figures/%s' % fname)    
     
 
 def plot_astroNN_adf(data, axs, colors=[], label='astroNN', 
@@ -137,6 +226,24 @@ def plot_vice_adf(stars, axs, colors=[], label='VICE', age_bin_width=BIN_WIDTH,
     else:
         raise ValueError('Mismatch between axes and z-height bins.')
 
+def get_color_list(cmap, bins):
+    """
+    Split a discrete colormap into a list of colors based on bin edges.
+    
+    Parameters
+    ----------
+    cmap : matplotlib colormap
+    bins : array-like
+        Bin edges, including left- and right-most edges
+    
+    Returns
+    -------
+    list
+        List of colors of length len(bins) - 1
+    """
+    rmin, rmax = bins[0], bins[-2]
+    colors = cmap([(r-rmin)/(rmax-rmin) for r in bins[:-1]])
+    return colors
 
 def setup_axes(ncols=2, figure_width=3.25, xlim=(0, MAX_AGE), 
                absz_bins=ABSZ_BINS):
