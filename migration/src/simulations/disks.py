@@ -189,7 +189,7 @@ class star_formation_history:
                 "outerburst":         models.outerburst,
                 "twoinfall":          models.twoinfall,
                 "conroy22":           models.exponential_ifrmode,
-            }[spec.lower()]((i + 0.5) * zone_width))
+            }[spec.lower()]((i + 0.5) * zone_width), dr = zone_width)
             i += 1
 
     def __call__(self, radius, time):

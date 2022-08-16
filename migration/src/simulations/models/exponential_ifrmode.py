@@ -20,12 +20,6 @@ class exponential_ifrmode(exponential):
         The timestep size of the model in Gyr.
     dr : float [default : 0.1]
         The width of the annulus in kpc.
-    which_tau_star : str [default: "johnson21"]
-        The SFE timescale prescription to use.
-        Allowed values:
-            
-        - "johnson21"
-        - "conroy22"
 
     Functions
     ---------
@@ -34,10 +28,10 @@ class exponential_ifrmode(exponential):
     Other atributes and functionality are inherited from
     ``modified_exponential`` declared in ``src/simulations/models/utils.py``.
     """
-    def __init__(self, radius, dt = 0.01, dr = 0.1, which_tau_star = "johnson21"):
+    def __init__(self, radius, dt = 0.01, dr = 0.1):
         super().__init__(timescale = self.timescale(radius))
         self.norm *= normalize_ifrmode(self, gradient, radius, dt = dt, dr = dr,
-                                 which_tau_star = which_tau_star)
+                                 which_tau_star = "conroy22")
 
     @staticmethod
     def timescale(radius, Re = 5):
