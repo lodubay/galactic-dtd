@@ -9,9 +9,10 @@ import matplotlib.pyplot as plt
 from matplotlib.ticker import MultipleLocator
 import vice
 import paths
-from utils import multioutput_to_pandas, filter_multioutput_stars, import_astroNN, get_bin_centers
+from utils import multioutput_to_pandas, filter_multioutput_stars, \
+    import_astroNN, get_bin_centers, get_color_list, discrete_colormap, \
+    setup_discrete_colorbar
 from _globals import DT, GALR_BINS, ZONE_WIDTH, ABSZ_BINS, END_TIME
-from mdf_9panel import setup_colorbar, discrete_colormap, box_smooth
 from ofe_feh_apogee import apogee_region
 
 MAX_AGE = 14
@@ -58,7 +59,8 @@ def plot_multiple_comparison(outputs, labels, output_dir=paths.data/'migration',
         # Allow room for two-line axis titles
         fig.subplots_adjust(top=0.9)
     cmap, norm = discrete_colormap(cmap_name, GALR_BINS)
-    cax = setup_colorbar(fig, cmap, norm, label=r'Galactocentric radius [kpc]')
+    cax = setup_discrete_colorbar(fig, cmap, norm, 
+                                  label=r'Galactocentric radius [kpc]')
     # Define color scheme
     colors = get_color_list(cmap, GALR_BINS)
     # Plot
@@ -108,7 +110,8 @@ def plot_single_comparison(output, output_dir=paths.data/'migration',
     # Set up plot
     fig, axs = setup_axes(ncols=2, figure_width=7.)
     cmap, norm = discrete_colormap(cmap_name, GALR_BINS)
-    cax = setup_colorbar(fig, cmap, norm, label=r'Galactocentric radius [kpc]')
+    cax = setup_discrete_colorbar(fig, cmap, norm, 
+                                  label=r'Galactocentric radius [kpc]')
     colors = get_color_list(cmap, GALR_BINS)
     
     if verbose:
@@ -225,25 +228,6 @@ def plot_vice_adf(stars, axs, colors=[], label='VICE', age_bin_width=BIN_WIDTH,
         axs[0].set_title(label)
     else:
         raise ValueError('Mismatch between axes and z-height bins.')
-
-def get_color_list(cmap, bins):
-    """
-    Split a discrete colormap into a list of colors based on bin edges.
-    
-    Parameters
-    ----------
-    cmap : matplotlib colormap
-    bins : array-like
-        Bin edges, including left- and right-most edges
-    
-    Returns
-    -------
-    list
-        List of colors of length len(bins) - 1
-    """
-    rmin, rmax = bins[0], bins[-2]
-    colors = cmap([(r-rmin)/(rmax-rmin) for r in bins[:-1]])
-    return colors
 
 def setup_axes(ncols=2, figure_width=3.25, xlim=(0, MAX_AGE), 
                absz_bins=ABSZ_BINS):
@@ -380,53 +364,6 @@ def mean_stellar_mass(age, imf=vice.imf.kroupa, mlr=vice.mlr.larson1974,
     dndm = np.array([imf(m) for m in masses])
     weighted_mean = np.average(masses, weights=dndm)
     return weighted_mean
-
-
-# def f_survive(age, mlr='larson1974', imf='kroupa', m_lower=0.08, m_upper=100,
-#               dm=0.01):
-#     """
-#     Calculate the surviving mass fraction of a stellar population with a given
-#     age.
-
-#     Parameters
-#     ----------
-#     age : float
-#         Age of the stellar population in Gyr
-#     mlr : str
-#         Mass-lifetime relation (MLR) to use. The default is 'larson1974'.
-#     imf : str
-#         Which IMF to use. Options are 'kroupa' or 'salpeter'.
-#     m_lower : float
-#         Lower limit of stellar mass. The default is 0.08 solar masses.
-#     m_upper : float
-#         Upper limit of stellar mass. The default is 100 solar masses.
-#     dm : float
-#         Integration step size in solar masses. The default is 0.01.
-
-#     Returns
-#     -------
-#     float
-#         Stellar population surviving mass fraction.
-#     """
-#     mlr_select = {
-#         'larson1974': vice.mlr.larson1974,
-#         'mm1989': vice.mm1989,
-#         'pm1993': vice.mlr.pm1993,
-#         'ka1997': vice.mlr.ka1997,
-#         'hpt2000': vice.mlr.hpt2000,
-#         'vincenzo2016': vice.mlr.vincenzo2016,
-#         'powerlaw': vice.mlr.powerlaw
-#     }
-#     if mlr in mlr_select.keys():
-#         # Mass of a star with a lifetime equal to age
-#         mass = mlr_select[mlr](age, which='age')
-#         m_arr = np.array(m_lower, min((m_upper, mass)), dm)
-#         normal_imf = NormalIMF(which=imf, m_lower=m_lower, m_upper=m_upper,
-#                                dm=dm)
-#         f_survive = sum([normal_imf(m) for m in m_arr])
-#         return f_survive
-#     else:
-#         raise ValueError('MLR must be in acceptable list.')
 
 
 if __name__ == '__main__':

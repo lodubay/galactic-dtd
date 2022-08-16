@@ -9,13 +9,12 @@ import pandas as pd
 pd.options.mode.chained_assignment = None # default='warn'
 import matplotlib.pyplot as plt
 from matplotlib.ticker import MultipleLocator
-from matplotlib.cm import ScalarMappable
-from matplotlib.colors import BoundaryNorm
 from sklearn.neighbors import KernelDensity
 import vice
 from _globals import ABSZ_BINS, ZONE_WIDTH, GALR_BINS
 from ofe_feh_apogee import apogee_region
-from utils import multioutput_to_pandas, filter_multioutput_stars, import_allStar
+from utils import multioutput_to_pandas, filter_multioutput_stars, \
+    import_allStar, discrete_colormap, setup_discrete_colorbar
 import paths
 
 global FEH_LIM
@@ -34,7 +33,8 @@ def main(evolution, RIa, cmap_name='plasma_r'):
 
     fig, axs = setup_axes(xlim=FEH_LIM)
     cmap, norm = discrete_colormap(cmap_name, GALR_BINS)
-    cax = setup_colorbar(fig, cmap, norm, label=r'Galactocentric radius [kpc]')
+    cax = setup_discrete_colorbar(fig, cmap, norm, 
+                                  label=r'Galactocentric radius [kpc]')
     # Define color scheme
     rmin, rmax = GALR_BINS[0], GALR_BINS[-2]
     colors = cmap([(r-rmin)/(rmax-rmin) for r in GALR_BINS[:-1]])
@@ -169,26 +169,6 @@ def smooth_pdf(X, range=None, num=51, kernel='gaussian', bandwidth=0.05):
     kde = KernelDensity(kernel=kernel, bandwidth=bandwidth).fit(X)
     log_dens = kde.score_samples(X_plot)
     return X_plot[:,0], np.exp(log_dens)
-
-
-def setup_colorbar(fig, cmap, norm, label=''):
-    # fig.subplots_adjust(right=0.95, left=0.12, bottom=0.07, top=0.85,
-    #                     wspace=0.05, hspace=0.12)
-    # cax = plt.axes([0.12, 0.93, 0.83, 0.02])
-    fig.subplots_adjust(bottom=0.2)
-    cax = plt.axes([0.2, 0.09, 0.6, 0.02])
-    # Add colorbar
-    cbar = fig.colorbar(ScalarMappable(norm, cmap), cax,
-                        orientation='horizontal')
-    cbar.set_label(label)#, labelpad=5)
-    # cbar.ax.xaxis.set_label_position('top')
-    return cax
-
-
-def discrete_colormap(cmap_name, bounds):
-    cmap = plt.get_cmap(cmap_name)
-    norm = BoundaryNorm(bounds, cmap.N)
-    return cmap, norm
 
 
 def setup_axes(xlim=FEH_LIM, ncols=3, absz_bins=ABSZ_BINS, galr_bins=GALR_BINS):

@@ -6,6 +6,9 @@ from pathlib import Path
 import numpy as np
 from numpy.random import default_rng
 import pandas as pd
+import matplotlib.pyplot as plt
+from matplotlib.colors import BoundaryNorm
+from matplotlib.cm import ScalarMappable
 from astropy.table import Table
 import vice
 import paths
@@ -637,3 +640,72 @@ def get_bin_centers(bin_edges):
         return 0.5 * (bin_edges[:-1] + bin_edges[1:])
     else:
         raise ValueError('The length of bin_edges must be at least 2.')
+
+
+def get_color_list(cmap, bins):
+    """
+    Split a discrete colormap into a list of colors based on bin edges.
+    
+    Parameters
+    ----------
+    cmap : matplotlib colormap
+    bins : array-like
+        Bin edges, including left- and right-most edges
+    
+    Returns
+    -------
+    list
+        List of colors of length len(bins) - 1
+    """
+    rmin, rmax = bins[0], bins[-2]
+    colors = cmap([(r-rmin)/(rmax-rmin) for r in bins[:-1]])
+    return colors
+
+
+def discrete_colormap(cmap_name, bounds):
+    """
+    Convert a continuous colormap into a discrete one.
+    
+    Parameters
+    ----------
+    cmap_name : str
+        Name of matplotlib colormap
+    bounds : array-like
+        Bounds of discrete colormap
+    
+    Returns
+    -------
+    cmap : matplotlib colormap
+    norm : colormap normalization
+    """
+    cmap = plt.get_cmap(cmap_name)
+    norm = BoundaryNorm(bounds, cmap.N)
+    return cmap, norm
+
+
+def setup_discrete_colorbar(fig, cmap, norm, label='', width=0.6):
+    """
+    Adds a colorbar for a discrete colormap to the bottom of the figure.
+    
+    Parameters
+    ----------
+    fig : matplotlib.figure.Figure
+    cmap : matplotlib colormap
+    norm : matplotlib colormap normalization
+    label : str, optional
+        Colorbar label. The default is ''.
+    width : float, optional
+        Width of colorbar as fraction of whole figure. The default is 0.6.
+    
+    Returns
+    -------
+    cax : matplotlib.axes.Axes
+        Colorbar axes
+    """
+    fig.subplots_adjust(bottom=0.2)
+    cax = plt.axes([0.5 - (width / 2), 0.09, width, 0.02])
+    # Add colorbar
+    cbar = fig.colorbar(ScalarMappable(norm, cmap), cax,
+                        orientation='horizontal')
+    cbar.set_label(label)
+    return cax

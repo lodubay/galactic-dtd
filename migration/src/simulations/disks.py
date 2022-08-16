@@ -45,15 +45,7 @@ class diskmodel(vice.milkyway):
         - "insideout"
         - "lateburst"
         - "outerburst"
-        - "insideout_ifrmode"
-        - "lateburst_ifrmode"
-
-    tau_star : ``str`` [default : "johnson21"]
-        A keyword denoting the prescription for the star formation efficiency
-        timescale.
-        Allowed values:
-            
-        - "johnson21"
+        - "twoinfall"
         - "conroy22"
     
     verbose : ``bool`` [default : True]
@@ -87,7 +79,7 @@ class diskmodel(vice.milkyway):
     """
 
     def __init__(self, zone_width = 0.1, name = "diskmodel", spec = "static",
-        tau_star = "johnson21", verbose = True, migration_mode = "diffusion",
+        verbose = True, migration_mode = "diffusion",
         delay = 0.04, RIa = "powerlaw", RIa_kwargs={}, **kwargs):
         super().__init__(zone_width = zone_width, name = name,
             verbose = verbose, **kwargs)
@@ -102,13 +94,13 @@ class diskmodel(vice.milkyway):
         self.evolution = star_formation_history(spec = spec,
             zone_width = zone_width)
         # Set the yields
-        if tau_star == "conroy22":
+        if spec.lower() == "conroy22":
             from .yields import C22
         else:
             from vice.yields.presets import JW20
             vice.yields.sneia.settings['fe'] *= 10**0.1
         # Set the SF mode - infall vs star formation rate
-        if (spec.lower() == "twoinfall") or ("ifrmode" in spec.lower()):
+        if spec.lower() in ["twoinfall", "conroy22"]:
             self.mode = "ifr"
             for zone in self.zones: zone.Mg0 = 0
         else:
@@ -121,7 +113,7 @@ class diskmodel(vice.milkyway):
             self.zones[i].RIa = dtd
             # set the star formation efficiency timescale within 15.5 kpc
             if (self.annuli[i] + self.annuli[i + 1]) / 2 <= MAX_SF_RADIUS:
-                if tau_star == "conroy22":
+                if spec.lower() == "conroy22":
                     self.zones[i].tau_star = models.conroy22_tau_star(
                         m.pi * (self.annuli[i + 1]**2 - self.annuli[i]**2)
                     )
@@ -196,8 +188,7 @@ class star_formation_history:
                 "lateburst":          models.lateburst,
                 "outerburst":         models.outerburst,
                 "twoinfall":          models.twoinfall,
-                "insideout_ifrmode":  models.insideout_ifrmode,
-                "lateburst_ifrmode":  models.lateburst_ifrmode,
+                "conroy22":           models.exponential_ifrmode,
             }[spec.lower()]((i + 0.5) * zone_width))
             i += 1
 
