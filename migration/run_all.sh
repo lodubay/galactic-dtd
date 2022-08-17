@@ -24,7 +24,7 @@ DTD_NAMES=(
 	"plateau/width1000_slope11" 
 	"exponential/timescale15" 
 	"exponential/timescale30" 
-	"prompt/peak050_timescale30"
+	"prompt/peak050_stdev015_timescale30"
 )
 EVOL_LIST=("insideout" "lateburst" "twoinfall" "conroy22")
 MIGR_LIST=("diffusion" "post-process")

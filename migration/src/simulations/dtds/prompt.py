@@ -48,8 +48,8 @@ class prompt:
         self.norm = 1
         # Normalize over full time range
         self.norm *= 1e-9 * self.normalize(tmin, tmax)
-        self._name = 'prompt_peak{:03d}_timescale{:02d}'.format(
-            int(center * 1000), int(timescale * 10))
+        self._name = 'prompt_peak{:03d}_stdev{:03d}_timescale{:02d}'.format(
+            int(center * 1000), int(stdev * 1000), int(timescale * 10))
 
     def __call__(self, time):
         """
