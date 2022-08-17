@@ -18,13 +18,13 @@ DTD_PARAMS=(
 	"peak=0.05_stdev=0.015_timescale=3"
 )
 DTD_NAMES=(
-	"powerlaw/slope11" 
-	"powerlaw/slope14" 
-	"plateau/width300_slope11" 
-	"plateau/width1000_slope11" 
-	"exponential/timescale15" 
-	"exponential/timescale30" 
-	"prompt/peak050_stdev015_timescale30"
+	"powerlaw_slope11" 
+	"powerlaw_slope14" 
+	"plateau_width300_slope11" 
+	"plateau_width1000_slope11" 
+	"exponential_timescale15" 
+	"exponential_timescale30" 
+	"prompt_peak050_stdev015_timescale30"
 )
 EVOL_LIST=("insideout" "lateburst" "twoinfall" "conroy22")
 MIGR_LIST=("diffusion" "post-process")
