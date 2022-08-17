@@ -1,25 +1,42 @@
 #!/bin/bash
-for DTD in "powerlaw" "powerlaw_steep" "powerlaw_broken" "exponential" "exponential_long" "bimodal"
-do
-	for EVOL in "insideout" "lateburst" "insideout_conroy22" "lateburst_conroy22"
-	do
-		for MIGR in "diffusion" "post-process"
-		do
-			NAME=../src/data/migration/$MIGR/$EVOL/$DTD
+DTD_LIST=(
+	"powerlaw" 
+	"powerlaw" 
+	"plateau" 
+	"plateau" 
+	"exponential" 
+	"exponential" 
+	"prompt"
+)
+DTD_PARAMS=(
+	"slope=-1.1" 
+	"slope=-1.4" 
+	"width=0.3_slope=-1.1" 
+	"width=1_slope=-1.1" 
+	"timescale=1.5" 
+	"timescale=3" 
+	"peak=0.05_stdev=0.015_timescale=3"
+)
+DTD_NAMES=(
+	"powerlaw/slope11" 
+	"powerlaw/slope14" 
+	"plateau/width300_slope11" 
+	"plateau/width1000_slope11" 
+	"exponential/timescale15" 
+	"exponential/timescale30" 
+	"prompt/peak050_timescale30"
+)
+EVOL_LIST=("insideout" "lateburst" "twoinfall" "conroy22")
+MIGR_LIST=("diffusion" "post-process")
+
+for EVOL in ${EVOL_LIST[@]}; do
+	for i in ${!DTD_LIST[@]}; do
+		for MIGR in ${MIGR_LIST[@]}; do
+			DTD=${DTD_LIST[$i]}
+			DTD_PARAM=${DTD_PARAMS[$i]}
+			NAME=../src/data/migration/$MIGR/$EVOL/${DTD_NAMES[$i]}
 			echo $NAME
-			python simulations.py -f --nstars=8 --migration=$MIGR --evolution=$EVOL --RIa=$DTD --name=$NAME
-		done
-	done
-done
-for DTD in "powerlaw" "powerlaw_steep" "exponential"
-do
-	for EVOL in "insideout" "lateburst" "insideout_conroy22" "lateburst_conroy22"
-	do
-		for MIGR in "diffusion" "post-process"
-		do
-			NAME=../src/data/migration/$MIGR/$EVOL/$DTD\_delayed
-			echo $NAME
-			python simulations.py -f --nstars=8 --migration=$MIGR --evolution=$EVOL --RIa=$DTD --minimum-delay=0.15 --name=$NAME
+			python simulations.py -f --nstars=8 --migration=$MIGR --evolution=$EVOL --RIa=$DTD --RIa-params=$DTD_PARAM --minimum-delay=0.04 --name=$NAME
 		done
 	done
 done
