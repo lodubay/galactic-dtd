@@ -41,10 +41,11 @@ def parse():
         type = str,
         default = "powerlaw")
 
-    parser.add_argument("--RIa-kwargs",
-        help = "Keyword arguments passed to the DTD initialization",
-        type = dict,
-        default = dict())
+    parser.add_argument("--RIa-params",
+        help = "Parameters for the SN Ia delay-time distribution separated by \
+underscores. (Default: 'slope=-1.1')",
+        type = str,
+        default = "slope=-1.1")
 
     parser.add_argument("--minimum-delay",
          help = "The minimum SN Ia delay time in Gyr (Default: 0.04)",
@@ -90,6 +91,11 @@ def model(args):
     args : argparse.Namespace
         The command line arguments parsed via argparse.
     """
+    # Parse RIa params into dict
+    RIa_kwargs = {}
+    for p in args.RIa_params.split('_'):
+        key, value = p.split('=')
+        RIa_kwargs[key] = float(value)
     config = src.simulations.config(
         timestep_size = args.dt,
         star_particle_density = args.nstars,
@@ -100,7 +106,7 @@ def model(args):
         name = args.name,
         spec = args.evolution,
         RIa = args.RIa,
-        RIa_kwargs = args.RIa_kwargs,
+        RIa_kwargs = RIa_kwargs,
         delay = args.minimum_delay
     )
     if args.migration == "post-process":

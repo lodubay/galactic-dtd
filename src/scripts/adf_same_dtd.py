@@ -8,7 +8,7 @@ from age_distribution import plot_multiple_comparison
 DTD_NAME = 'powerlaw_slope11_delay040'
 SFH_LIST = ['insideout_johnson21',
             'lateburst_johnson21',
-            'insideout_conroy22',
+            'conroy22',
             'twoinfall']
 LABELS = ['Inside-Out',
           'Late-Burst',

@@ -13,10 +13,10 @@ from utils import discrete_colormap, get_color_list, setup_discrete_colorbar, \
     get_bin_centers
 from _globals import END_TIME, GALR_BINS, ZONE_WIDTH
 
-def main(evolution, RIa='test', cmap_name='plasma_r'):
+def main(evolution, RIa='powerlaw_slope11_delay040', cmap_name='plasma_r'):
     output = paths.data / 'migration' / 'diffusion' / evolution / RIa
     fname = 'sfh_%s.png' % evolution
-    plot_by_zone(output, fname=fname, zone_width=1, cmap_name=cmap_name)
+    plot_by_zone(output, fname=fname, zone_width=0.1, cmap_name=cmap_name)
     # fig, axs = setup_axes()
     # plot_history(axs, paths.data / 'migration/diffusion/twoinfall/powerlaw_slope11_delay040', 80, color='b')
     # plot_history(axs, paths.data / 'migration/diffusion/insideout_conroy22/powerlaw_slope11_delay040', 80, color='orange')
