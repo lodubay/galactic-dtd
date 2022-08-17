@@ -19,6 +19,27 @@ import paths
 
 allStar_file_name = 'allStarLite-dr17-synspec.fits'
 
+def select_giants(data, logg_col='LOGG', teff_col='TEFF'):
+    """
+    Select stars in the RGB and red clump by cuts in log(g) and Teff.
+    
+    Parameters
+    ----------
+    data : pandas.DataFrame
+        APOGEE allStar data
+    logg_col : str, optional
+        Name of column containing surface gravities. The default is 'LOGG'.
+    teff_col : str, optional
+        Name of column containing effective temperatures. The default is 'TEFF'.
+    
+    Returns
+    -------
+    giants : pandas.DataFrame
+        APOGEE allStar data with cuts
+    """
+    return data[(data[logg_col] < 4) & (data[teff_col] < 5500) & 
+                ~((data[logg_col] > 3) & (data[teff_col] < 4000))]
+
 def import_astroNN(verbose=False, allStar_name=allStar_file_name):
     """
     Import the joint data table of APOGEE allStar and astroNN.

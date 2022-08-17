@@ -11,7 +11,7 @@ import vice
 import paths
 from utils import multioutput_to_pandas, filter_multioutput_stars, \
     import_astroNN, get_bin_centers, get_color_list, discrete_colormap, \
-    setup_discrete_colorbar
+    setup_discrete_colorbar, select_giants
 from _globals import DT, GALR_BINS, ZONE_WIDTH, ABSZ_BINS, END_TIME
 from ofe_feh_apogee import apogee_region
 
@@ -72,7 +72,7 @@ def plot_multiple_comparison(outputs, labels, output_dir=paths.data/'migration',
     
     if verbose:
         print('Plotting astroNN age distribution...')
-    astroNN_data = import_astroNN()
+    astroNN_data = select_giants(import_astroNN())
     plot_astroNN_adf(astroNN_data, axs[:,col+1], colors=colors)
             
     axs[0,0].set_ylim((0, None))
@@ -121,7 +121,7 @@ def plot_single_comparison(output, output_dir=paths.data/'migration',
     
     if verbose:
         print('Plotting astroNN age distribution...')
-    astroNN_data = import_astroNN()
+    astroNN_data = select_giants(import_astroNN())
     plot_astroNN_adf(astroNN_data, axs[:,1], colors=colors)
     
     # Automatically generate plot filename if none is provided
