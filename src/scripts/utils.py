@@ -12,12 +12,43 @@ from matplotlib.cm import ScalarMappable
 from astropy.table import Table
 import vice
 import paths
+from _globals import ZONE_WIDTH
 
 # =============================================================================
-# DATA IMPORT AND UTILITY FUNCTIONS
+# APOGEE / ASTRONN DATA IMPORT AND UTILITY FUNCTIONS
 # =============================================================================
 
 allStar_file_name = 'allStarLite-dr17-synspec.fits'
+
+def apogee_region(data, galr_lim=(0, 20), absz_lim=(0, 5)):
+    """
+    Slice APOGEE data within a given Galactic region of radius and z-height.
+
+    Parameters
+    ----------
+    stars : pandas DataFrame
+        Output from stars_dataframe()
+    galr_lim : tuple
+        Minimum and maximum Galactic radius in kpc
+    absz_lim : tuple
+        Minimum and maximum of the absolute value of z-height in kpc
+    zone_width : float
+        Width of each simulation zone in kpc
+
+    Returns
+    -------
+    pandas DataFrame
+        Re-indexed DataFrame of stellar parameters
+    """
+    galr_min, galr_max = galr_lim
+    absz_min, absz_max = absz_lim
+    # Select subset
+    subset = data[(data['GALR'] >= galr_min) &
+                  (data['GALR'] < galr_max) &
+                  (data['GALZ'].abs() >= absz_min) &
+                  (data['GALZ'].abs() < absz_max)]
+    subset.reset_index(inplace=True)
+    return subset
 
 def select_giants(data, logg_col='LOGG', teff_col='TEFF'):
     """
@@ -296,6 +327,10 @@ def galactic_to_galactocentric(l, b, distance):
         return galr, galphi, galz
     else:
         raise ValueError('Arrays must be of same length.')
+        
+# =============================================================================
+# VICE MULTIZONE INPUT AND UTILITY FUNCTIONS
+# =============================================================================
 
 def multioutput_to_pandas(output_name, data_dir=paths.data/'migration'):
     """
@@ -327,7 +362,7 @@ def multioutput_to_pandas(output_name, data_dir=paths.data/'migration'):
     return stars
 
 def filter_multioutput_stars(stars, galr_lim=(0, 20), absz_lim=(0, 5),
-                             zone_width=0.1, min_mass=1.0):
+                             zone_width=ZONE_WIDTH, min_mass=1.0):
     """
     Slice DataFrame of stars within a given Galactic region of radius and
     z-height.
@@ -528,6 +563,7 @@ def format_bracket_string(bracket):
     -------
     str
     """
+    bracket = bracket.lower()
     for i in range(len(bracket)):
         if bracket[i-1] in ['[', '/']:
             bracket[i] = bracket[i].upper()

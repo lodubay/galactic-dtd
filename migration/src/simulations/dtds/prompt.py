@@ -24,7 +24,7 @@ class prompt:
         Normalization coefficient scaled so the total integral is unity.
     """
 
-    def __init__(self, center=0.05, stdev=0.015, timescale=3,
+    def __init__(self, peak=0.05, stdev=0.015, timescale=3,
                  tmin=0.04, tmax=END_TIME):
         """
         Initialize the prompt model.
@@ -43,13 +43,13 @@ class prompt:
             Maximum delay time in Gyr for integration purposes.
 
         """
-        self.prompt = gaussian(center=center, stdev=stdev, coeff=0.5)
+        self.prompt = gaussian(center=peak, stdev=stdev, coeff=0.5)
         self.tardy = exponential(timescale=timescale, coeff=0.5)
         self.norm = 1
         # Normalize over full time range
         self.norm *= 1e-9 * self.normalize(tmin, tmax)
         self._name = 'prompt_peak{:03d}_stdev{:03d}_timescale{:02d}'.format(
-            int(center * 1000), int(stdev * 1000), int(timescale * 10))
+            int(peak * 1000), int(stdev * 1000), int(timescale * 10))
 
     def __call__(self, time):
         """

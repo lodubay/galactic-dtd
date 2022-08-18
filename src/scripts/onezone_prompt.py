@@ -66,7 +66,7 @@ def main(overwrite=True):
     )
 
     for i in range(len(PEAKS)):
-        dist = dtds.prompt(center=PEAKS[i], stdev=WIDTHS[i],
+        dist = dtds.prompt(peak=PEAKS[i], stdev=WIDTHS[i],
                            timescale=TIMESCALE, tmin=DELAY)
         run_singlezone(str(output_dir / dist.name), simtime,
                        overwrite=overwrite, RIa=dist, **STANDARD_PARAMS)

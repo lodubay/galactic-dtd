@@ -1,6 +1,6 @@
 """
 This script plots multiple age distribution functions (ADFs) for multizone
-runs which assume the same star formathion history (SFH).
+runs which assume the same Type Ia delay time distribution (DTD).
 """
 
 from age_distribution import plot_multiple_comparison

@@ -11,7 +11,7 @@ from sklearn.neighbors import KernelDensity
 from ofe_feh_vice import GALR_BINS, ABSZ_BINS, FEH_LIM, OFE_LIM
 from ofe_feh_vice import setup_axes, setup_colorbar
 import paths
-from utils import import_allStar
+from utils import import_allStar, apogee_region
 
 global NBINS
 NBINS = 50
@@ -171,37 +171,6 @@ def normalize_colorbar(data):
                                        range=[FEH_LIM, OFE_LIM])
     norm = LogNorm(vmin=10, vmax=H.max())
     return norm
-
-
-def apogee_region(data, galr_lim=(0, 20), absz_lim=(0, 5)):
-    """
-    Slice APOGEE data within a given Galactic region of radius and z-height.
-
-    Parameters
-    ----------
-    stars : pandas DataFrame
-        Output from stars_dataframe()
-    galr_lim : tuple
-        Minimum and maximum Galactic radius in kpc
-    absz_lim : tuple
-        Minimum and maximum of the absolute value of z-height in kpc
-    zone_width : float
-        Width of each simulation zone in kpc
-
-    Returns
-    -------
-    pandas DataFrame
-        Re-indexed DataFrame of stellar parameters
-    """
-    galr_min, galr_max = galr_lim
-    absz_min, absz_max = absz_lim
-    # Select subset
-    subset = data[(data['GALR'] >= galr_min) &
-                  (data['GALR'] < galr_max) &
-                  (data['GALZ'].abs() >= absz_min) &
-                  (data['GALZ'].abs() < absz_max)]
-    subset.reset_index(inplace=True)
-    return subset.dropna(subset='O_FE')
 
 
 def scatter_hist(ax, x, y, xlim=None, ylim=None, log_norm=True, cmap='gray',

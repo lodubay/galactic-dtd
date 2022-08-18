@@ -2,7 +2,7 @@
 Plot MDFs from all multizone runs
 """
 
-from ofe_distribution import main
+from feh_distribution import main
 
 SFH_LIST = [
     'insideout', 
