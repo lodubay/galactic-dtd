@@ -27,12 +27,14 @@ DTD_NAMES=(
 	"prompt_peak050_stdev015_timescale30"
 )
 EVOL="conroy22"
-MIGR="diffusion"
+MIGR_LIST=("diffusion" "post-process")
 
 for i in ${!DTD_LIST[@]}; do
-	DTD=${DTD_LIST[$i]}
-	DTD_PARAM=${DTD_PARAMS[$i]}
-	NAME=../src/data/migration/$MIGR/$EVOL/${DTD_NAMES[$i]}
-	echo $NAME
-	python simulations.py -f --nstars=8 --migration=$MIGR --evolution=$EVOL --RIa=$DTD --RIa-params=$DTD_PARAM --minimum-delay=0.04 --name=$NAME
+	for MIGR in ${MIGR_LIST[@]}; do
+		DTD=${DTD_LIST[$i]}
+		DTD_PARAM=${DTD_PARAMS[$i]}
+		NAME=../src/data/migration/$MIGR/$EVOL/${DTD_NAMES[$i]}
+		echo $NAME
+		python simulations.py -f --nstars=8 --migration=$MIGR --evolution=$EVOL --RIa=$DTD --RIa-params=$DTD_PARAM --minimum-delay=0.04 --name=$NAME
+	done
 done
