@@ -15,7 +15,7 @@ import os
 
 class twoinfall(double_exponential):
 
-    def __init__(self, radius, dt = 0.01, dr = 0.1):
+    def __init__(self, radius, dt = 0.01, dr = 0.1, outflows = True):
         spitoni_params = np.genfromtxt('%s/spitoni_twoinfall.dat' % (
             os.path.abspath(os.path.dirname(__file__))))
         super().__init__(onset = 4, ratio = 0.2) # dummy values
@@ -28,9 +28,9 @@ class twoinfall(double_exponential):
         # self.second.timescale = 2 + 4 * (radius / 15.5)
         self.ratio = self.amp_ratio(radius)
         # self.ratio = twoinfall_ampratio(self, gradient, radius,
-        #     onset = self.onset, dt = dt, dr = dr)
+        #     onset = self.onset, dt = dt, dr = dr, outflows = outflows)
         prefactor = normalize_ifrmode(self, gradient, radius, dt = dt,
-            dr = dr)
+            dr = dr, outflows = outflows)
         self.first.norm *= prefactor
         self.second.norm *= prefactor
         

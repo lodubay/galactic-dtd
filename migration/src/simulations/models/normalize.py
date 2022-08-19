@@ -67,7 +67,8 @@ def normalize(time_dependence, radial_gradient, radius, dt = 0.01, dr = 0.5,
 
 
 def normalize_ifrmode(time_dependence, radial_gradient, radius, dt = 0.01,
-                      dr = 0.1, recycling = 0.4, which_tau_star='johnson21'):
+                      dr = 0.1, recycling = 0.4, which_tau_star='johnson21',
+                      outflows = True):
     r"""
     Performs essentially the same thing as ``normalize`` but for models ran in
     infall mode.
@@ -77,7 +78,10 @@ def normalize_ifrmode(time_dependence, radial_gradient, radius, dt = 0.01,
         'johnson21': J21_sf_law,
         'conroy22': conroy22_tau_star
     }[which_tau_star](area)
-    eta = vice.milkyway.default_mass_loading(radius)
+    if outflows:
+        eta = vice.milkyway.default_mass_loading(radius)
+    else:
+        eta = 0
     mgas = 0
     time = 0
     sfh = []
@@ -96,10 +100,13 @@ def normalize_ifrmode(time_dependence, radial_gradient, radius, dt = 0.01,
 
 def twoinfall_ampratio(time_dependence, radial_gradient, radius, onset = 4,
                        dt = 0.01, dr = 0.1, recycling = 0.4, thin_scale = 2.0, 
-                       thick_scale = 2.5):
+                       thick_scale = 2.5, outflows = True):
     area = m.pi * ((radius + dr)**2 - radius**2)
     tau_star = J21_sf_law(area)
-    eta = vice.milkyway.default_mass_loading(radius)
+    if outflows:
+        eta = vice.milkyway.default_mass_loading(radius)
+    else:
+        eta = 0
     mgas = 0
     time = 0
     mstar = 0

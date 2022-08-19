@@ -26,13 +26,12 @@ def main(overwrite=True):
         output_dir.mkdir(parents=True)
         
     kwargs = dict(
-        func=models.twoinfall(GALR, dt=DT),
         mode='ifr',
         Mg0=0,
         elements=('fe', 'o'),
         dt=DT,
         recycling='continuous',
-        RIa=dtds.powerlaw(slope=-1.1),
+        RIa=dtds.exponential(timescale=1.5),
         delay=0.04,
         tau_star=2
     )
@@ -40,15 +39,33 @@ def main(overwrite=True):
     
     fig, axs = setup_axes()
     
-    for eta in MASS_LOADING:
-        output = str(output_dir / ('eta{:02d}'.format(int(eta * 10))))
-        sz = vice.singlezone(name=output, eta=eta, **kwargs)
-        sz.run(simtime, overwrite=overwrite)
-        plot_vice_onezone(output, fig=fig, axs=axs, label=rf'$\eta={eta:.1f}$')
+    # for eta in MASS_LOADING:
+    eta = vice.milkyway.default_mass_loading(GALR)
+    output = str(output_dir / ('eta{:02d}'.format(int(eta * 10))))
+    sz = vice.singlezone(name=output, eta=eta, 
+                         func=models.twoinfall(GALR, dt=DT, outflows=True),
+                         **kwargs)
+    sz.run(simtime, overwrite=overwrite)
+    plot_vice_onezone(output, fig=fig, axs=axs, label=rf'$\eta={eta:.1f}$')
+    
+    eta = 0
+    vice.yields.ccsne.settings['fe'] *= 0.2
+    vice.yields.ccsne.settings['o'] *= 0.2
+    vice.yields.sneia.settings['fe'] *= 0.25
+    # from vice.yields.sneia import iwamoto99
+    # vice.yields.sneia.settings['o'] *= 5
+    # from vice.yields.ccsne import WW95
+    # vice.yields.ccsne.settings['o'] *= 2
+    output = str(output_dir / ('eta{:02d}'.format(int(eta * 10))))
+    sz = vice.singlezone(name=output, eta=eta, 
+                         func=models.twoinfall(GALR, dt=DT, outflows=False),
+                         **kwargs)
+    sz.run(simtime, overwrite=overwrite)
+    plot_vice_onezone(output, fig=fig, axs=axs, label=rf'$\eta={eta:.1f}$')
         
     axs[0].legend(loc='lower left', frameon=False)
     axs[0].set_xlim((-2.5, 1))
-    axs[0].set_ylim((-0.2, 0.5))
+    axs[0].set_ylim((-0.24, 0.5))
     fig.savefig(paths.figures / 'onezone_twoinfall.png', dpi=300)    
 
 if __name__ == '__main__':
