@@ -5,9 +5,9 @@ runs which assume the same Type Ia delay time distribution (DTD).
 
 from age_distribution import plot_multiple_comparison
 
-DTD_NAME = 'powerlaw_slope11_delay040'
-SFH_LIST = ['insideout_johnson21',
-            'lateburst_johnson21',
+DTD_NAME = 'powerlaw_slope11'
+SFH_LIST = ['insideout',
+            'lateburst',
             'conroy22',
             'twoinfall']
 LABELS = ['Inside-Out',

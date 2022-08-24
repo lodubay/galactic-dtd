@@ -4,6 +4,7 @@ Johnson et al. (2021).
 """
 
 from .conroy22_tau_star import conroy22_tau_star
+from .spitoni21_tau_star import spitoni21_tau_star
 from ..._globals import MAX_SF_RADIUS, END_TIME, M_STAR_MW
 import vice
 from vice.toolkit import J21_sf_law
@@ -74,10 +75,19 @@ def normalize_ifrmode(time_dependence, radial_gradient, radius, dt = 0.01,
     infall mode.
     """
     area = m.pi * ((radius + dr)**2 - radius**2)
-    tau_star = {
-        'johnson21': J21_sf_law,
-        'conroy22': conroy22_tau_star
-    }[which_tau_star](area)
+    if which_tau_star.lower() == 'spitoni21':
+        tau_star = spitoni21_tau_star(area, radius)
+    elif which_tau_star.lower() == 'conroy22':
+        tau_star = conroy22_tau_star(area)
+    elif which_tau_star.lower() == 'johnson21':
+        tau_star = J21_sf_law(area)
+    else:
+        raise TypeError('Unrecognized prescription for tau_star!')
+    # tau_star = {
+    #     'johnson21': J21_sf_law,
+    #     'conroy22': conroy22_tau_star,
+    #     'spitoni21': spitoni21_tau_star,
+    # }[which_tau_star](area)
     if outflows:
         eta = vice.milkyway.default_mass_loading(radius)
     else:

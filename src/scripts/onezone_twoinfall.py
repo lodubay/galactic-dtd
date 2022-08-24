@@ -33,7 +33,6 @@ def main(overwrite=True):
         recycling='continuous',
         RIa=dtds.exponential(timescale=1.5),
         delay=0.04,
-        tau_star=2
     )
     simtime = np.arange(0, END_TIME+DT, DT)
     
@@ -42,22 +41,21 @@ def main(overwrite=True):
     # for eta in MASS_LOADING:
     eta = vice.milkyway.default_mass_loading(GALR)
     output = str(output_dir / ('eta{:02d}'.format(int(eta * 10))))
-    sz = vice.singlezone(name=output, eta=eta, 
+    sz = vice.singlezone(name=output, eta=eta, tau_star=2,
                          func=models.twoinfall(GALR, dt=DT, outflows=True),
                          **kwargs)
     sz.run(simtime, overwrite=overwrite)
     plot_vice_onezone(output, fig=fig, axs=axs, label=rf'$\eta={eta:.1f}$')
     
     eta = 0
-    vice.yields.ccsne.settings['fe'] *= 0.2
-    vice.yields.ccsne.settings['o'] *= 0.2
-    vice.yields.sneia.settings['fe'] *= 0.25
-    # from vice.yields.sneia import iwamoto99
-    # vice.yields.sneia.settings['o'] *= 5
-    # from vice.yields.ccsne import WW95
-    # vice.yields.ccsne.settings['o'] *= 2
+    from vice.yields.ccsne import WW95
+    vice.yields.ccsne.settings['o'] *= 2
+    from vice.yields.sneia import iwamoto99
+    # vice.yields.ccsne.settings['fe'] *= 0.35
+    # vice.yields.ccsne.settings['o'] *= 0.35
+    # vice.yields.sneia.settings['fe'] *= 0.45
     output = str(output_dir / ('eta{:02d}'.format(int(eta * 10))))
-    sz = vice.singlezone(name=output, eta=eta, 
+    sz = vice.singlezone(name=output, eta=eta, tau_star=tau_star,
                          func=models.twoinfall(GALR, dt=DT, outflows=False),
                          **kwargs)
     sz.run(simtime, overwrite=overwrite)
@@ -66,7 +64,14 @@ def main(overwrite=True):
     axs[0].legend(loc='lower left', frameon=False)
     axs[0].set_xlim((-2.5, 1))
     axs[0].set_ylim((-0.24, 0.5))
-    fig.savefig(paths.figures / 'onezone_twoinfall.png', dpi=300)    
+    fig.savefig(paths.figures / 'onezone_twoinfall.png', dpi=300)   
+
+def tau_star(time, onset=4):
+    if time < onset:
+        return 1 / 2.
+    else:
+        return 1.
+    
 
 if __name__ == '__main__':
     main()

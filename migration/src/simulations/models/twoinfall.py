@@ -19,18 +19,20 @@ class twoinfall(double_exponential):
         spitoni_params = np.genfromtxt('%s/spitoni_twoinfall.dat' % (
             os.path.abspath(os.path.dirname(__file__))))
         super().__init__(onset = 4, ratio = 0.2) # dummy values
+        # if outflows:
+        #     self.first.timescale = 2.5
+        #     self.second.timescale = 4
+            # self.first.timescale = 0.5 + radius / 15.5
+            # self.second.timescale = 2 + 4 * (radius / 15.5)
+        # else:
         self.first.timescale = self.polyfit(radius, spitoni_params, 3)
         self.second.timescale = self.polyfit(radius, spitoni_params, 5)
         self.onset = self.polyfit(radius, spitoni_params, 9)
-        # self.first.timescale = 0.1
-        # self.second.timescale = 4
-        # self.first.timescale = 0.5 + radius / 15.5
-        # self.second.timescale = 2 + 4 * (radius / 15.5)
         self.ratio = self.amp_ratio(radius)
         # self.ratio = twoinfall_ampratio(self, gradient, radius,
         #     onset = self.onset, dt = dt, dr = dr, outflows = outflows)
         prefactor = normalize_ifrmode(self, gradient, radius, dt = dt,
-            dr = dr, outflows = outflows)
+            dr = dr, outflows = outflows, which_tau_star = 'spitoni21')
         self.first.norm *= prefactor
         self.second.norm *= prefactor
         

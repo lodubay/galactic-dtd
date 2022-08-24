@@ -10,11 +10,17 @@ SFH_NAME = 'insideout'
 DTD_LIST = ['powerlaw_slope11',
             'powerlaw_slope14',
             'plateau_width300_slope11',
-            'plateau_width1000_slope11']
+            'plateau_width1000_slope11',
+            'exponential_timescale15',
+            'exponential_timescale30',
+            'prompt_peak050_stdev015_timescale30']
 LABELS = ['Power-Law\n($\\alpha=-1.1$)',
           'Power-Law\n($\\alpha=-1.4$)',
           'Broken Power-Law\n($W=300$ Myr)',
-          'Broken Power-Law\n($W=1$ Gyr)']
+          'Broken Power-Law\n($W=1$ Gyr)',
+          'Exponential\n($\\tau=1.5$ Gyr)',
+          'Exponential\n($\\tau=3$ Gyr)',
+          'Prompt ($\\mu=50$ Myr)\n+ Exponential ($\\tau=3$ Gyr)']
 
 def main(verbose=False):
     outputs = ['%s/%s/%s' % (MIGRATION, SFH_NAME, dtd) for dtd in DTD_LIST]
