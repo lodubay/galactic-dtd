@@ -7,6 +7,7 @@ import sys
 import numpy as np
 import matplotlib.pyplot as plt
 import vice
+from vice.toolkit import J21_sf_law
 from vice.yields.presets import JW20
 vice.yields.sneia.settings['fe'] *= 10**0.1
 import paths
@@ -17,7 +18,7 @@ from migration.src._globals import END_TIME
 
 MASS_LOADING = [0, 0.5, 1, 2]
 DT = 0.01
-GALR = 8.0 # kpc
+GALR = 12.0 # kpc
 
 def main(overwrite=True):
     
@@ -36,26 +37,30 @@ def main(overwrite=True):
     )
     simtime = np.arange(0, END_TIME+DT, DT)
     
+    area = np.pi * ((GALR + 0.1)**2 - GALR**2)
+    
     fig, axs = setup_axes()
     
     # for eta in MASS_LOADING:
     eta = vice.milkyway.default_mass_loading(GALR)
     output = str(output_dir / ('eta{:02d}'.format(int(eta * 10))))
-    sz = vice.singlezone(name=output, eta=eta, tau_star=2,
+    sz = vice.singlezone(name=output, eta=eta, 
+                         tau_star=J21_sf_law(area),
                          func=models.twoinfall(GALR, dt=DT, outflows=True),
                          **kwargs)
     sz.run(simtime, overwrite=overwrite)
     plot_vice_onezone(output, fig=fig, axs=axs, label=rf'$\eta={eta:.1f}$')
     
     eta = 0
-    from vice.yields.ccsne import WW95
-    vice.yields.ccsne.settings['o'] *= 2
-    from vice.yields.sneia import iwamoto99
-    # vice.yields.ccsne.settings['fe'] *= 0.35
-    # vice.yields.ccsne.settings['o'] *= 0.35
-    # vice.yields.sneia.settings['fe'] *= 0.45
+    # from vice.yields.ccsne import WW95
+    # vice.yields.ccsne.settings['o'] *= 2
+    # from vice.yields.sneia import iwamoto99
+    vice.yields.ccsne.settings['fe'] *= 0.35
+    vice.yields.ccsne.settings['o'] *= 0.35
+    vice.yields.sneia.settings['fe'] *= 0.28
     output = str(output_dir / ('eta{:02d}'.format(int(eta * 10))))
-    sz = vice.singlezone(name=output, eta=eta, tau_star=tau_star,
+    sz = vice.singlezone(name=output, eta=eta, 
+                         tau_star=models.spitoni21_tau_star(area, GALR),
                          func=models.twoinfall(GALR, dt=DT, outflows=False),
                          **kwargs)
     sz.run(simtime, overwrite=overwrite)
