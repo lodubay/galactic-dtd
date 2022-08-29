@@ -18,7 +18,7 @@ from migration.src._globals import END_TIME
 
 MASS_LOADING = [0, 0.5, 1, 2]
 DT = 0.01
-GALR = 12.0 # kpc
+GALR = 8.0 # kpc
 
 def main(overwrite=True):
     
@@ -46,7 +46,7 @@ def main(overwrite=True):
     output = str(output_dir / ('eta{:02d}'.format(int(eta * 10))))
     sz = vice.singlezone(name=output, eta=eta, 
                          tau_star=J21_sf_law(area),
-                         func=models.twoinfall(GALR, dt=DT, outflows=True),
+                         func=models.twoinfall_approx(GALR, dt=DT),
                          **kwargs)
     sz.run(simtime, overwrite=overwrite)
     plot_vice_onezone(output, fig=fig, axs=axs, label=rf'$\eta={eta:.1f}$')
@@ -57,14 +57,15 @@ def main(overwrite=True):
     # from vice.yields.sneia import iwamoto99
     vice.yields.ccsne.settings['fe'] *= 0.35
     vice.yields.ccsne.settings['o'] *= 0.35
-    vice.yields.sneia.settings['fe'] *= 0.28
+    vice.yields.sneia.settings['fe'] *= 0.32
     output = str(output_dir / ('eta{:02d}'.format(int(eta * 10))))
     sz = vice.singlezone(name=output, eta=eta, 
                          tau_star=models.spitoni21_tau_star(area, GALR),
-                         func=models.twoinfall(GALR, dt=DT, outflows=False),
+                         func=models.twoinfall_spitoni21(GALR, dt=DT),
                          **kwargs)
     sz.run(simtime, overwrite=overwrite)
-    plot_vice_onezone(output, fig=fig, axs=axs, label=rf'$\eta={eta:.1f}$')
+    plot_vice_onezone(output, fig=fig, axs=axs, label=rf'$\eta={eta:.1f}$',
+                      marker_labels=True)
         
     axs[0].legend(loc='lower left', frameon=False)
     axs[0].set_xlim((-2.5, 1))

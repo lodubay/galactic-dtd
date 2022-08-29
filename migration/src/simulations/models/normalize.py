@@ -110,13 +110,10 @@ def normalize_ifrmode(time_dependence, radial_gradient, radius, dt = 0.01,
 
 def twoinfall_ampratio(time_dependence, radial_gradient, radius, onset = 4,
                        dt = 0.01, dr = 0.1, recycling = 0.4, thin_scale = 2.0, 
-                       thick_scale = 2.5, outflows = True):
+                       thick_scale = 2.5):
     area = m.pi * ((radius + dr)**2 - radius**2)
     tau_star = J21_sf_law(area)
-    if outflows:
-        eta = vice.milkyway.default_mass_loading(radius)
-    else:
-        eta = 0
+    eta = vice.milkyway.default_mass_loading(radius)
     mgas = 0
     time = 0
     mstar = 0
