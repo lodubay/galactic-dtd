@@ -9,7 +9,7 @@ import numpy as np
 from numpy.polynomial.polynomial import Polynomial
 from vice.toolkit import J21_sf_law
 
-class spitoni21_tau_star(J21_sf_law):
+class twoinfall_tau_star(J21_sf_law):
     r"""
     An implementation of the Spitoni et al. (2021) SFE timescale model.
     

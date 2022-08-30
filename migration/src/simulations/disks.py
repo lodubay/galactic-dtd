@@ -95,7 +95,9 @@ class diskmodel(vice.milkyway):
             zone_width = zone_width)
         # Set the yields
         if spec.lower() == "conroy22":
-            from .yields import C22
+            from .yields import conroy22
+        elif spec.lower() == "twoinfall":
+            from .yields import twoinfall
         else:
             from vice.yields.presets import JW20
             vice.yields.sneia.settings['fe'] *= 10**0.1
@@ -116,6 +118,11 @@ class diskmodel(vice.milkyway):
                 if spec.lower() == "conroy22":
                     self.zones[i].tau_star = models.conroy22_tau_star(
                         m.pi * (self.annuli[i + 1]**2 - self.annuli[i]**2)
+                    )
+                elif spec.lower() == "twoinfall":
+                    self.zones[i].tau_star = models.twoinfall_tau_star(
+                        m.pi * (self.annuli[i + 1]**2 - self.annuli[i]**2),
+                        self.annuli[i]
                     )
 
     def run(self, *args, **kwargs):
