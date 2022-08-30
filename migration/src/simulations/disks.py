@@ -107,6 +107,9 @@ class diskmodel(vice.milkyway):
             for zone in self.zones: zone.Mg0 = 0
         else:
             self.mode = "sfr"
+        # Remove outflows in the two-infall case (per Spitoni et al. 2021)
+        if spec.lower() == "twoinfall":
+            self.mass_loading = lambda x: 0.0
         # Set the Type Ia delay time distribution
         dtd = delay_time_distribution(dist = RIa, tmin = delay, **RIa_kwargs)
         for i in range(self.n_zones):
