@@ -44,11 +44,11 @@ def main(output_name, migration_dir='../data/migration',
     plot_contours(axs, apogee_data, apogee_cmap, linewidths=0.5)
     # Add post-process abundance track
     print('Plotting abundance tracks')
-    plot_post_process_track(output_name, axs, galr=8, data_dir=migration_dir)
+    # plot_post_process_track(output_name, axs, galr=8, data_dir=migration_dir)
     plot_post_process_tracks(output_name, axs, data_dir=migration_dir)
     # fig.suptitle(output_name)
     migration, evolution, RIa = output_name.split('/')[-3:]
-    plt.savefig(paths.figures / ('ofe_feh_%s_%s_%s.png' % (migration, evolution, RIa)), dpi=300)
+    plt.savefig(paths.figures / ('ofe_feh/%s_%s.png' % (evolution, RIa)), dpi=300)
     # plt.savefig(paths.figures / ('ofe_feh_%s_%s.pdf' % (evolution, RIa)), dpi=300)
     plt.close()
 
