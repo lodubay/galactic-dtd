@@ -16,8 +16,8 @@ from _globals import GALR_BINS, ABSZ_BINS, ZONE_WIDTH
 global FEH_LIM
 global OFE_LIM
 
-FEH_LIM = (-1.3, 0.8)
-OFE_LIM = (-0.1, 0.5)
+FEH_LIM = (-1.6, 0.6)
+OFE_LIM = (-0.25, 0.55)
 GALR_BINS = GALR_BINS[:-1]
 
 def main(output_name, data_dir='../data/migration', cmap='winter'):
@@ -55,7 +55,7 @@ def plot_ofe_feh_stars(stars, cmap):
             # Scatter plot of random sample of stellar particles
             ax.scatter(sample['[fe/h]'], sample['[o/fe]'], s=0.1,
                        c=sample['zone_origin'] * ZONE_WIDTH, cmap=cmap,
-                       norm=norm, rasterized=True)
+                       norm=norm, rasterized=True, edgecolor='none')
             # Label axes
             if i == len(axs)-1:
                 ax.set_xlabel('[Fe/H]')
@@ -200,7 +200,8 @@ def setup_axes(rows, cols, width=8, xlim=None, ylim=None):
     axs[0,0].set_ylim(ylim)
     axs[0,0].xaxis.set_major_locator(MultipleLocator(0.5))
     axs[0,0].xaxis.set_minor_locator(MultipleLocator(0.1))
-    axs[0,0].yaxis.set_minor_locator(MultipleLocator(0.02))
+    axs[0,0].yaxis.set_major_locator(MultipleLocator(0.2))
+    axs[0,0].yaxis.set_minor_locator(MultipleLocator(0.05))
     return fig, axs
 
 

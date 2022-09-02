@@ -109,7 +109,7 @@ class diskmodel(vice.milkyway):
             self.mode = "sfr"
         # Remove outflows in the two-infall case (per Spitoni et al. 2021)
         if spec.lower() == "twoinfall":
-            self.mass_loading = lambda x: 0.0
+            self.mass_loading = self.no_outflow_mass_loading
         # Set the Type Ia delay time distribution
         dtd = delay_time_distribution(dist = RIa, tmin = delay, **RIa_kwargs)
         for i in range(self.n_zones):
@@ -117,16 +117,14 @@ class diskmodel(vice.milkyway):
             self.zones[i].delay = delay
             self.zones[i].RIa = dtd
             # set the star formation efficiency timescale within 15.5 kpc
-            if (self.annuli[i] + self.annuli[i + 1]) / 2 <= MAX_SF_RADIUS:
+            mean_radius = (self.annuli[i] + self.annuli[i + 1]) / 2
+            if mean_radius <= MAX_SF_RADIUS:
+                area = m.pi * (self.annuli[i + 1]**2 - self.annuli[i]**2)
                 if spec.lower() == "conroy22":
-                    self.zones[i].tau_star = models.conroy22_tau_star(
-                        m.pi * (self.annuli[i + 1]**2 - self.annuli[i]**2)
-                    )
+                    self.zones[i].tau_star = models.conroy22_tau_star(area)
                 elif spec.lower() == "twoinfall":
-                    self.zones[i].tau_star = models.twoinfall_tau_star(
-                        m.pi * (self.annuli[i + 1]**2 - self.annuli[i]**2),
-                        self.annuli[i]
-                    )
+                    self.zones[i].tau_star = models.twoinfall_tau_star(area, 
+                       mean_radius)
 
     def run(self, *args, **kwargs):
         out = super().run(*args, **kwargs)
@@ -160,6 +158,10 @@ class diskmodel(vice.milkyway):
         model.bins = config.bins
         model.elements = config.elements
         return model
+    
+    @staticmethod
+    def no_outflow_mass_loading(rgal):
+        return 0.
 
 
 class star_formation_history:

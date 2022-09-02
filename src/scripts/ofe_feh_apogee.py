@@ -56,8 +56,8 @@ def plot_scatter_hist_grid(data):
                 ax.set_xlabel('[Fe/H]')
             if j == 0:
                 ax.set_ylabel('[O/Fe]')
-                ax.text(0.55, 0.85, r'$%s\leq |z| < %s$' % absz_lim,
-                        transform=ax.transAxes, size=8)
+                ax.text(0.1, 0.1, r'$%s\leq |z| < %s$' % absz_lim,
+                        transform=ax.transAxes, size=8, va='bottom', ha='left')
             if i == 0:
                 ax.set_title(r'$%s\leq R_{\rm{Gal}} < %s$ kpc'% galr_lim)
     return fig, axs
@@ -228,7 +228,7 @@ def scatter_hist(ax, x, y, xlim=None, ylim=None, log_norm=True, cmap='gray',
     else:
         norm = Normalize(vmin=vmin, vmax=vmax)
     # Plot
-    ax.scatter(x, y, c=color, s=0.1, rasterized=rasterized)
+    ax.scatter(x, y, c=color, s=0.5, rasterized=rasterized, edgecolor='none')
     return ax.hist2d(x, y, bins=[xbins, ybins], cmap=cmap, norm=norm, cmin=cmin)
 
 

@@ -6,8 +6,8 @@ two-infall star formation history.
 
 import os
 import numpy as np
-from numpy.polynomial.polynomial import Polynomial
 from vice.toolkit import J21_sf_law
+from .utils import polyfit
 
 class twoinfall_tau_star(J21_sf_law):
     r"""
@@ -24,17 +24,12 @@ class twoinfall_tau_star(J21_sf_law):
         spitoni_params = np.genfromtxt('%s/spitoni_twoinfall.dat' % (
             os.path.abspath(os.path.dirname(__file__))))
         self.radius = radius
-        self.onset = self.polyfit(radius, spitoni_params, 9)
+        self.onset = polyfit(radius, spitoni_params, 9)
         super().__init__(area, **kwargs)
         
     def __call__(self, time, mgas):
         mgas_dependence = super().__call__(time, mgas) / self.molecular(time)
         return mgas_dependence * self.time_dependence(time)
-        
-    def polyfit(self, radius, params, col):
-        fit = Polynomial.fit(params[:,0], params[:,col], deg=2, 
-                             w=1/params[:,col+1])
-        return fit(radius)
 
     def time_dependence(self, time):
         r"""

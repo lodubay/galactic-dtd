@@ -20,6 +20,7 @@ gaussian : object
 
 import math as m
 import numbers
+from numpy.polynomial.polynomial import Polynomial
 
 
 def get_bin_number(bins, value):
@@ -499,3 +500,8 @@ class gaussian:
 			raise TypeError("Std must be a real number. Got: %s" % (
 				type(value)))
 
+
+def polyfit(radius, params, col):
+    fit = Polynomial.fit(params[:,0], params[:,col], deg=2, 
+                         w=1/params[:,col+1])
+    return fit(radius)

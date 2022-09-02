@@ -3,14 +3,14 @@ This file declares the time-dependence of the star formation history at a
 given radius under the two-infall model.
 """
 
-import numpy as np
-from numpy.polynomial.polynomial import Polynomial
-from ..._globals import END_TIME
-from .utils import double_exponential
-from .normalize import normalize_ifrmode, twoinfall_ampratio
-from .gradient import gradient
 import math as m
 import os
+import numpy as np
+from ..._globals import END_TIME
+from .utils import double_exponential
+from .normalize import normalize_ifrmode
+from .gradient import gradient
+from .utils import polyfit
 
 
 class twoinfall(double_exponential):
@@ -35,9 +35,3 @@ class twoinfall(double_exponential):
         timescale_factor /= (1 - m.exp(-(END_TIME - self.onset) / 
                                        self.second.timescale))
         return timescale_factor
-
-        
-def polyfit(radius, params, col):
-    fit = Polynomial.fit(params[:,0], params[:,col], deg=2, 
-                         w=1/params[:,col+1])
-    return fit(radius)
