@@ -43,9 +43,9 @@ def parse():
 
     parser.add_argument("--RIa-params",
         help = "Parameters for the SN Ia delay-time distribution separated by \
-underscores. (Default: 'slope=-1.1')",
+underscores. (Default: '')",
         type = str,
-        default = "slope=-1.1")
+        default = "")
 
     parser.add_argument("--minimum-delay",
          help = "The minimum SN Ia delay time in Gyr (Default: 0.04)",
@@ -93,9 +93,10 @@ def model(args):
     """
     # Parse RIa params into dict
     RIa_kwargs = {}
-    for p in args.RIa_params.split('_'):
-        key, value = p.split('=')
-        RIa_kwargs[key] = float(value)
+    if '=' in args.RIa_params:
+        for p in args.RIa_params.split('_'):
+            key, value = p.split('=')
+            RIa_kwargs[key] = float(value)
     config = src.simulations.config(
         timestep_size = args.dt,
         star_particle_density = args.nstars,
