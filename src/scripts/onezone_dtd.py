@@ -27,7 +27,7 @@ STANDARD_PARAMS = dict(
     elements=('fe', 'o'),
     dt=DT,
     recycling='continuous',
-    eta=2.5,
+    eta=2.1,
     tau_star=2.,
     delay=DELAY,
 )
@@ -42,11 +42,11 @@ def main(overwrite=False):
     simtime = np.arange(0, END_TIME + DT, DT)
 
     distributions = [dtds.powerlaw(slope=-1.1, tmin=DELAY),
-                     dtds.plateau(width=0.2, slope=-1.1, tmin=DELAY),
+                     dtds.plateau(width=0.3, slope=-1.1, tmin=DELAY),
                      dtds.exponential(timescale=3, tmin=DELAY),
-                     dtds.prompt(center=0.05, timescale=3, tmin=DELAY)]
+                     dtds.prompt(peak=0.05, stdev=0.015, timescale=3, tmin=DELAY)]
     labels = [r'Power-Law ($\alpha=-1.1$)',
-              r'Power-Law with 200 Myr plateau',
+              r'Power-Law with 300 Myr plateau',
               r'Exponential ($\tau=3$ Gyr)',
               r'Exponential with prompt component',]
     colors = [paultol.vibrant.colors[i] for i in [4, 0, 1, 2]]

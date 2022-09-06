@@ -64,13 +64,13 @@ def plot_multiple_comparison(outputs, labels, output_dir=paths.data/'migration',
     # Plot
     for col, output in enumerate(outputs):
         if verbose:
-            print('Plotting MDF from %s...' % output)
+            print('Plotting [O/Fe] distribution from %s...' % output)
         stars = multioutput_to_pandas(Path(output_dir) / output)
         plot_distributions(vice_mdf, stars, axs[:,col], 
                            label=labels[col], cmap_name=cmap_name)
     
     if verbose:
-        print('Plotting MDF from APOGEE...')
+        print('Plotting [O/Fe] distribution from APOGEE...')
     apogee_data = import_allStar()
     plot_distributions(apogee_mdf, apogee_data, axs[:,col+1], 
                        label='APOGEE DR17', cmap_name=cmap_name)
@@ -113,13 +113,13 @@ def plot_single_comparison(output, output_dir=paths.data/'migration',
                           cmap_name=cmap_name)
     
     if verbose:
-        print('Plotting age distribution from %s...' % output)
+        print('Plotting [O/Fe] distribution from %s...' % output)
     stars = multioutput_to_pandas(Path(output_dir) / output)
     plot_distributions(vice_mdf, stars, axs[:,0], 
                        label='VICE', cmap_name=cmap_name)
     
     if verbose:
-        print('Plotting astroNN age distribution...')
+        print('Plotting APOGEE [O/Fe] distribution...')
     apogee_data = import_allStar()
     plot_distributions(apogee_mdf, apogee_data, axs[:,1], 
                        label='APOGEE DR17', cmap_name=cmap_name)
