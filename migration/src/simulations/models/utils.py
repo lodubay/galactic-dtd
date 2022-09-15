@@ -503,5 +503,10 @@ class gaussian:
 
 def polyfit(radius, params, col):
     fit = Polynomial.fit(params[:,0], params[:,col], deg=2, 
-                         w=1/params[:,col+1])
+                         w=1/params[:,col+1], domain=[])
     return fit(radius)
+
+def expfit(radius, params, col):
+    logy = [m.log(y) for y in params[:,col]]
+    fit = Polynomial.fit(params[:,0], logy, deg=1, w=1/params[:,col+1], domain=[])
+    return m.exp(fit.coef[0]) * m.exp(fit.coef[1] * radius)

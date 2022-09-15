@@ -16,7 +16,7 @@ class styles:
     plaw = {
         'func': dtds.powerlaw(slope=-1.1, tmin=DELAY),
         'label': r'Power-Law ($\alpha=-1.1$)',
-        'color': 'k',
+        'color': paultol.vibrant.colors[4],
         'line': '-',
     }
     plaw_steep = {
@@ -27,9 +27,9 @@ class styles:
     }
     plateau = {
         'func': dtds.plateau(width=0.3, slope=-1.1, tmin=DELAY),
-        'label': r'Plateau ($W=300$ Myr)',
-        'color': paultol.bright.colors[1],
-        'line': ':',
+        'label': r'Power-Law with 300 Myr plateau',
+        'color': paultol.vibrant.colors[0],
+        'line': '-.',
     }
     plateau_long = {
         'func': dtds.plateau(width=1., slope=-1.1, tmin=DELAY),
@@ -46,33 +46,34 @@ class styles:
     exp_long = {
         'func': dtds.exponential(timescale=3, tmin=DELAY),
         'label': r'Exponential ($\tau=3$ Gyr)',
-        'color': paultol.bright.colors[0],
-        'line': '-',
+        'color': paultol.vibrant.colors[1],
+        'line': '--',
     }
     prompt = {
-        'func': dtds.prompt(center=0.05, stdev=0.015, timescale=3, tmin=DELAY),
-        'label': r'Prompt ($\bar t=50$ Myr)',
-        'color': paultol.bright.colors[2],
-        'line': '-.',
+        'func': dtds.prompt(peak=0.05, stdev=0.015, timescale=3, tmin=DELAY),
+        'label': r'Exponential with prompt component',
+        'color': paultol.vibrant.colors[2],
+        'line': ':',
     }
 
-distributions = [styles.prompt, styles.plaw_steep, styles.plaw, styles.plateau, 
-                 styles.exp, styles.exp_long, styles.plateau_long]
+# distributions = [styles.prompt, styles.plaw_steep, styles.plaw, styles.plateau, 
+#                  styles.exp, styles.exp_long, styles.plateau_long]
+distributions = [styles.plaw, styles.plateau, styles.exp_long, styles.prompt]
 
 def main():
     fig, ax = plt.subplots(figsize=(3.25, 3.25), tight_layout=True)
     time = [0.001*i for i in range(40, 13200)]
     for dtd in distributions:
         func = dtd['func']
-        ax.plot(time, [func(t) for t in time], label=dtd['label'],
-                c=dtd['color'], ls=dtd['line'], lw=1)
+        ax.plot([t * 1e9 for t in time], [func(t) for t in time], 
+                label=dtd['label'], c=dtd['color'], ls=dtd['line'], lw=1)
     ax.set_xscale('log')
     ax.set_yscale('log')
     ax.set_ylim((1e-12, 5e-8))
-    ax.set_xlabel('Time [Gyr]')
+    ax.set_xlabel('Time After Starburst [yr]')
     ax.set_ylabel(r'Normalized SN Ia Rate [$\rm{M}_\odot^{-1}$ yr$^{-1}$]')
-    ax.legend(frameon=False, loc='upper right', fontsize=7, handlelength=1.25)
-    fig.savefig(paths.figures / 'delay_time_distributions.pdf')
+    ax.legend(frameon=False, loc='upper right', fontsize=8, handlelength=1.25)
+    fig.savefig(paths.figures / 'delay_time_distributions.png')
     plt.close()
 
 if __name__ == '__main__':

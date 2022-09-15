@@ -76,7 +76,8 @@ def normalize_ifrmode(time_dependence, radial_gradient, radius, dt = 0.01,
     """
     area = m.pi * ((radius + dr)**2 - radius**2)
     if which_tau_star.lower() == 'spitoni21':
-        tau_star = twoinfall_tau_star(area, radius)
+        # tau_star = twoinfall_tau_star(area, radius)
+        tau_star = lambda t, mgas: 2.
     elif which_tau_star.lower() == 'conroy22':
         tau_star = conroy22_tau_star(area)
     elif which_tau_star.lower() == 'johnson21':

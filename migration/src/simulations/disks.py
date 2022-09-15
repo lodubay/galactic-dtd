@@ -123,8 +123,10 @@ class diskmodel(vice.milkyway):
                 if spec.lower() == "conroy22":
                     self.zones[i].tau_star = models.conroy22_tau_star(area)
                 elif spec.lower() == "twoinfall":
+                    # self.zones[i].tau_star = 2
+                    # self.zones[i].func = models.twoinfall((i + 0.5) * zone_width, dr = zone_width)
                     self.zones[i].tau_star = models.twoinfall_tau_star(area, 
-                       mean_radius)
+                        mean_radius)
 
     def run(self, *args, **kwargs):
         out = super().run(*args, **kwargs)

@@ -10,7 +10,7 @@ from ..._globals import END_TIME
 from .utils import double_exponential
 from .normalize import normalize_ifrmode
 from .gradient import gradient
-from .utils import polyfit
+from .utils import polyfit, expfit
 
 
 class twoinfall(double_exponential):
@@ -19,13 +19,21 @@ class twoinfall(double_exponential):
         spitoni_params = np.genfromtxt('%s/spitoni_twoinfall.dat' % (
             os.path.abspath(os.path.dirname(__file__))))
         super().__init__(onset = 4, ratio = 0.2) # dummy values
-        self.first.timescale = polyfit(radius, spitoni_params, 3)
-        self.second.timescale = polyfit(radius, spitoni_params, 5)
-        self.onset = polyfit(radius, spitoni_params, 9)
-        thin_to_thick = polyfit(radius, spitoni_params, 7)
+        # self.first.timescale = polyfit(radius, spitoni_params, 3)
+        # self.second.timescale = polyfit(radius, spitoni_params, 5)
+        # self.onset = polyfit(radius, spitoni_params, 9)
+        # thin_to_thick = polyfit(radius, spitoni_params, 7)
+        self.first.timescale = expfit(radius, spitoni_params, 3)
+        self.second.timescale = expfit(radius, spitoni_params, 5)
+        self.onset = expfit(radius, spitoni_params, 9)
+        thin_to_thick = expfit(radius, spitoni_params, 7)
         self.ratio = thin_to_thick * self.timescale_ratio()
         prefactor = normalize_ifrmode(self, gradient, radius, dt = dt,
             dr = dr, outflows = False, which_tau_star = 'spitoni21')
+        # prefactor = 1
+        # Spitoni's parameters produce an infall rate in terms of mass, but
+        # the multizone simulations take surface mass density
+        prefactor /= m.pi * ((radius + dr/2) ** 2 - (radius - dr/2) ** 2)
         self.first.norm *= prefactor
         self.second.norm *= prefactor
     

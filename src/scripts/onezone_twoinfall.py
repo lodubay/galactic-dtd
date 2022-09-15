@@ -3,6 +3,7 @@ This script plots a comparison between one-zone two-infall models with and
 without outflows.
 """
 
+import math as m
 import sys
 import numpy as np
 import matplotlib.pyplot as plt
@@ -13,9 +14,19 @@ sys.path.append(str(paths.root))
 from migration.src.simulations import models, dtds
 from migration.src._globals import END_TIME
 from migration.src.simulations.yields import twoinfall
+from migration.src.simulations.models.gradient import gradient
+from vice.toolkit import J21_sf_law
 
+ZONE_WIDTH = 1
 DT = 0.01
-RADII = [4, 6, 8, 10, 12] # kpc
+RADII = [4, 6, 8, 10, 12, 14] # kpc
+
+class twoinfall_gradient(models.twoinfall):
+    def __init__(self, radius, dt=DT, dr=ZONE_WIDTH):
+        super().__init__(radius, dt=dt, dr=dr)
+        area = m.pi * ((radius + dr/2)**2 - (radius - dr/2)**2)
+        self.first.norm *= gradient(radius) * area
+        self.second.norm *= gradient(radius) * area
 
 def main(overwrite=True):
     
@@ -32,18 +43,21 @@ def main(overwrite=True):
         recycling='continuous',
         RIa=dtds.exponential(timescale=1.5),
         delay=0.04,
-        schmidt=False
     )
     simtime = np.arange(0, END_TIME+DT, DT)
     
     fig, axs = setup_axes()
     
     for galr in RADII:
-        area = np.pi * ((galr + 0.1)**2 - galr**2)
+        area = np.pi * ((galr + ZONE_WIDTH)**2 - galr**2)
+        galr_mean = galr + ZONE_WIDTH / 2
         output = str(output_dir / (f'twoinfall{galr:02d}'))
         sz = vice.singlezone(name=output,
-                             tau_star=models.twoinfall_tau_star(area, galr),
-                             func=models.twoinfall(galr, dt=DT),
+                             # tau_star=2,
+                             tau_star=models.twoinfall_tau_star(area, galr_mean),
+                             func=twoinfall_gradient(galr_mean),
+                             # func=models.twoinfall(galr_mean, dt=DT, dr=ZONE_WIDTH),
+                             # eta=vice.milkyway.default_mass_loading(galr_mean),
                              **kwargs)
         sz.run(simtime, overwrite=overwrite)
         plot_vice_onezone(output, fig=fig, axs=axs, label='%s kpc' % galr,

@@ -64,11 +64,11 @@ def main(overwrite=False):
                           )
 
     # Adjust axis limits
-    axs[0].set_xlim((-2.5, 0.3))
+    axs[0].set_xlim((-2.1, 0.6))
     axs[0].set_ylim((-0.1, 0.52))
 
-    axs[0].legend(frameon=False, loc='lower left', handlelength=1.2, fontsize=7)
-    fig.savefig(paths.figures / 'onezone_dtd.pdf', dpi=300)
+    # axs[0].legend(frameon=False, loc='lower left', handlelength=1.2, fontsize=7)
+    fig.savefig(paths.figures / 'onezone_dtd.png', dpi=300)
     plt.close()
 
 

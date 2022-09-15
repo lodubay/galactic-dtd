@@ -20,12 +20,12 @@ class twoinfall_tau_star(J21_sf_law):
     replaces it with the model by Conroy et al. (2021), also introducing a
     radial dependence.
     """
-    def __init__(self, area, radius, **kwargs):
+    def __init__(self, area, radius, mode = "ifr", **kwargs):
         spitoni_params = np.genfromtxt('%s/spitoni_twoinfall.dat' % (
             os.path.abspath(os.path.dirname(__file__))))
         self.radius = radius
         self.onset = polyfit(radius, spitoni_params, 9)
-        super().__init__(area, **kwargs)
+        super().__init__(area, mode = mode, **kwargs)
         
     def __call__(self, time, mgas):
         mgas_dependence = super().__call__(time, mgas) / self.molecular(time)
