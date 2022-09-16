@@ -39,9 +39,9 @@ def main(output_name, migration_dir='../data/migration',
     fig, axs = plot_ofe_feh_stars(stars, stars_cmap)
     # Import APOGEE data
     print('Importing APOGEE')
-    # apogee_data = import_allStar()
+    apogee_data = import_allStar()
     print('Plotting APOGEE contours')
-    # plot_contours(axs, apogee_data, apogee_cmap, linewidths=0.5)
+    plot_contours(axs, apogee_data, apogee_cmap, linewidths=0.5)
     # Add post-process abundance track
     print('Plotting abundance tracks')
     # plot_post_process_track(output_name, axs, galr=8, data_dir=migration_dir)

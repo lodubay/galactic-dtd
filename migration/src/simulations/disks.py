@@ -189,7 +189,7 @@ class star_formation_history:
             Simulation time in Gyr.
     """
 
-    def __init__(self, spec = "static", zone_width = 0.1):
+    def __init__(self, spec = "static", zone_width = 0.1, dt = 0.01):
         self._radii = []
         self._evol = []
         i = 0
@@ -203,7 +203,7 @@ class star_formation_history:
                 "outerburst":         models.outerburst,
                 "twoinfall":          models.twoinfall,
                 "conroy22":           models.exponential_ifrmode,
-            }[spec.lower()]((i + 0.5) * zone_width, dr = zone_width))
+            }[spec.lower()]((i + 0.5) * zone_width, dr = zone_width, dt = dt))
             i += 1
 
     def __call__(self, radius, time):
@@ -214,11 +214,13 @@ class star_formation_history:
         else:
             idx = get_bin_number(self._radii, radius)
             if idx != -1:
-                return gradient(radius) * interpolate(self._radii[idx],
+                # return gradient(radius) * interpolate(self._radii[idx],
+                return interpolate(self._radii[idx],
                     self._evol[idx](time), self._radii[idx + 1],
                     self._evol[idx + 1](time), radius)
             else:
-                return gradient(radius) * interpolate(self._radii[-2],
+                # return gradient(radius) * interpolate(self._radii[-2],
+                return interpolate(self._radii[-2],
                     self._evol[-2](time), self._radii[-1], self._evol[-1](time),
                     radius)
 
