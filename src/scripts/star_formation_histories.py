@@ -13,7 +13,7 @@ from utils import discrete_colormap, get_color_list, setup_discrete_colorbar, \
     get_bin_centers
 from _globals import END_TIME, GALR_BINS, ZONE_WIDTH
 
-def main(evolution, RIa='test', cmap_name='plasma_r'):
+def main(evolution, RIa='powerlaw_slope11', cmap_name='plasma_r'):
     output = paths.data / 'migration' / 'post-process' / evolution / RIa
     fname = 'sfh_%s.png' % evolution
     plot_by_zone(output, fname=fname, zone_width=ZONE_WIDTH, cmap_name=cmap_name)
