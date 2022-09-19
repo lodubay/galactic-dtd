@@ -214,13 +214,11 @@ class star_formation_history:
         else:
             idx = get_bin_number(self._radii, radius)
             if idx != -1:
-                # return gradient(radius) * interpolate(self._radii[idx],
-                return interpolate(self._radii[idx],
+                return gradient(radius) * interpolate(self._radii[idx],
                     self._evol[idx](time), self._radii[idx + 1],
                     self._evol[idx + 1](time), radius)
             else:
-                # return gradient(radius) * interpolate(self._radii[-2],
-                return interpolate(self._radii[-2],
+                return gradient(radius) * interpolate(self._radii[-2],
                     self._evol[-2](time), self._radii[-1], self._evol[-1](time),
                     radius)
 

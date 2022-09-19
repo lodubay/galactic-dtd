@@ -10,7 +10,7 @@ from ..._globals import END_TIME
 from .utils import double_exponential
 from .normalize import normalize_ifrmode
 from .gradient import gradient
-from .utils import polyfit, expfit
+from .utils import polyfit
 
 
 class twoinfall(double_exponential):
@@ -29,6 +29,9 @@ class twoinfall(double_exponential):
         # Spitoni's parameters produce an infall rate in terms of mass, but
         # the multizone simulations take surface mass density
         prefactor /= m.pi * ((radius + dr/2) ** 2 - (radius - dr/2) ** 2)
+        # Also, Spitoni's parameters already incorporate the radial gas density
+        # gradient
+        prefactor /= gradient(radius)
         self.first.norm *= prefactor
         self.second.norm *= prefactor
     

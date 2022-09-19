@@ -15,7 +15,6 @@ from migration.src.simulations import models, dtds
 from migration.src._globals import END_TIME
 from migration.src.simulations.yields import twoinfall
 from migration.src.simulations.models.gradient import gradient
-from vice.toolkit import J21_sf_law
 
 ZONE_WIDTH = 0.1
 DT = 0.01
@@ -25,8 +24,8 @@ class twoinfall_gradient(models.twoinfall):
     def __init__(self, radius, dt=DT, dr=ZONE_WIDTH):
         super().__init__(radius, dt=dt, dr=dr)
         area = m.pi * ((radius + dr/2)**2 - (radius - dr/2)**2)
-        self.first.norm *= area# * gradient(radius)
-        self.second.norm *= area# * gradient(radius)
+        self.first.norm *= area * gradient(radius)
+        self.second.norm *= area * gradient(radius)
 
 def main(overwrite=True):
     

@@ -11,7 +11,7 @@ from sklearn.neighbors import KernelDensity
 from ofe_feh_vice import GALR_BINS, ABSZ_BINS, FEH_LIM, OFE_LIM
 from ofe_feh_vice import setup_axes, setup_colorbar
 import paths
-from utils import import_allStar, apogee_region
+from utils import import_allStar, apogee_region, scatter_hist
 
 global NBINS
 NBINS = 50
@@ -171,65 +171,6 @@ def normalize_colorbar(data):
                                        range=[FEH_LIM, OFE_LIM])
     norm = LogNorm(vmin=10, vmax=H.max())
     return norm
-
-
-def scatter_hist(ax, x, y, xlim=None, ylim=None, log_norm=True, cmap='gray',
-                 cmin=10, vmin=None, vmax=None, nbins=50, color='k',
-                 rasterized=True):
-    """
-    Generate a scatter plot and overlayed 2D histogram for dense data.
-
-    Parameters
-    ----------
-    ax : matplotlib.axis.Axes
-        Axes object on which to plot the data.
-    x : array-like
-        Horizontal coordinates of the data points.
-    y : array-like
-        Vertical coordinates of the data points.
-    xlim : float, optional
-        Bounds for x-axis. The default is None.
-    ylim : float, optional
-        Bounds for y-axis. The default is None.
-    log_norm : bool, optional
-        Shade the 2D histogram on a logarithmic scale. The default is True.
-    cmap : str, optional
-        Colormap for 2D histogram. The default is'gray'.
-    cmin : int, optional
-        Minimum counts per bin; any number below this will show individual points.
-        The default is 10.
-    vmin : float or None, optional
-        Value to map to minimum of histogram normalization. The default is None.
-    vmax : float or None, optional
-        Value to map to maximum of histogram normalization. The default is None.
-    nbins : int or tuple of ints, optional
-        Number of histogram bins. If a tuple, presumed to be (xbins, ybins).
-        The default is 50.
-    color : str, optional
-        Color of individual points. The default is 'k'.
-    rasterized : bool, optional [default: True]
-        Whether to rasterize the scattered points
-    """
-    # Set automatic plot bounds
-    if not xlim:
-        xlim = (np.min(x), np.max(x))
-    if not ylim:
-        ylim = (np.min(y), np.max(y))
-    # Set bin edges
-    if type(nbins) == 'tuple':
-        xbins, ybins = nbins
-    else:
-        xbins = ybins = nbins
-    xbins = np.linspace(xlim[0], xlim[1], num=xbins, endpoint=True)
-    ybins = np.linspace(ylim[0], ylim[1], num=ybins, endpoint=True)
-    # Histogram normalization
-    if log_norm:
-        norm = LogNorm(vmin=vmin, vmax=vmax)
-    else:
-        norm = Normalize(vmin=vmin, vmax=vmax)
-    # Plot
-    ax.scatter(x, y, c=color, s=0.5, rasterized=rasterized, edgecolor='none')
-    return ax.hist2d(x, y, bins=[xbins, ybins], cmap=cmap, norm=norm, cmin=cmin)
 
 
 if __name__ == '__main__':

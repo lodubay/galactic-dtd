@@ -733,7 +733,7 @@ def scatter_hist(ax, x, y, xlim=None, ylim=None, log_norm=True, cmap='gray',
     else:
         norm = Normalize(vmin=vmin, vmax=vmax)
     # Plot
-    ax.scatter(x, y, c=color, s=0.1, rasterized=rasterized, marker='.')
+    ax.scatter(x, y, c=color, s=0.5, rasterized=rasterized, edgecolor='none')
     return ax.hist2d(x, y, bins=[xbins, ybins], cmap=cmap, norm=norm, cmin=cmin)
 
 
