@@ -113,13 +113,13 @@ def plot_single_comparison(output, output_dir=paths.data/'migration',
                           cmap_name=cmap_name)
     
     if verbose:
-        print('Plotting age distribution from %s...' % output)
+        print('Plotting [Fe/H] distribution from %s...' % output)
     stars = multioutput_to_pandas(Path(output_dir) / output)
     plot_distributions(vice_mdf, stars, axs[:,0], 
                        label='VICE', cmap_name=cmap_name)
     
     if verbose:
-        print('Plotting astroNN age distribution...')
+        print('Plotting APOGEE [Fe/H] distribution...')
     apogee_data = import_allStar()
     plot_distributions(apogee_mdf, apogee_data, axs[:,1], 
                        label='APOGEE DR17', cmap_name=cmap_name)

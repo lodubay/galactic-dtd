@@ -6,7 +6,7 @@ multizone runs which assume the same star formathion history (SFH).
 from ofe_distribution import plot_multiple_comparison
 
 MIGRATION = 'diffusion'
-SFH_NAME = 'insideout'
+SFH_NAME = 'twoinfall'
 PRIMARY_DTD_LIST = ['powerlaw_slope11',
                     'plateau_width300_slope11',
                     'exponential_timescale15',
@@ -26,12 +26,12 @@ def main(verbose=False):
     primary_outputs = ['%s/%s/%s' % (MIGRATION, SFH_NAME, dtd) for dtd in \
                        PRIMARY_DTD_LIST]
     plot_multiple_comparison(primary_outputs, PRIMARY_LABELS, 
-                             fname='mdf_ofe_insideout_1.pdf', 
+                             fname='mdf_ofe_twoinfall_1.pdf', 
                              verbose=verbose, double_line_titles=True)
     secondary_outputs = ['%s/%s/%s' % (MIGRATION, SFH_NAME, dtd) for dtd in \
                          SECONDARY_DTD_LIST]
     plot_multiple_comparison(secondary_outputs, SECONDARY_LABELS, 
-                             fname='mdf_ofe_insideout_2.pdf', 
+                             fname='mdf_ofe_twoinfall_2.pdf', 
                              verbose=verbose, double_line_titles=True)
 
 if __name__ == '__main__':

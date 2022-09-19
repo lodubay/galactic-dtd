@@ -1,9 +1,13 @@
 from ofe_feh_compare import main
 
-for evolution in ['insideout', 'lateburst', 'conroy22']:
-    for RIa in ['powerlaw', 'powerlaw_delayed', 'powerlaw_steep',
-                'powerlaw_steep_delayed', 'powerlaw_broken', 'exponential',
-                'exponential_long', 'exponential_delayed', 'bimodal']:
+for evolution in ['insideout', 'lateburst', 'conroy22', 'twoinfall']:
+    for RIa in ['powerlaw_slope11', 
+                'powerlaw_slope14', 
+                'exponential_timescale15',
+                'exponential_timescale30',
+                'plateau_width300_slope11',
+                'plateau_width1000_slope11',
+                'prompt_peak050_stdev015_timescale30']:
         output_name = '/'.join(('diffusion', evolution, RIa))
         print('Plotting %s' % output_name)
         main(output_name)
