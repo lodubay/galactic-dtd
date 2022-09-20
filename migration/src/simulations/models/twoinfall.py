@@ -19,15 +19,17 @@ class twoinfall(double_exponential):
         spitoni_params = np.genfromtxt('%s/spitoni_twoinfall.dat' % (
             os.path.abspath(os.path.dirname(__file__))))
         super().__init__(onset = 4, ratio = 0.2) # dummy values
-        # self.first.timescale = polyfit(radius, spitoni_params, 3)
-        # self.second.timescale = polyfit(radius, spitoni_params, 5)
-        # self.onset = polyfit(radius, spitoni_params, 9)
+        self.first.timescale = 0.1#polyfit(radius, spitoni_params, 3)
+        self.second.timescale = 4#polyfit(radius, spitoni_params, 5)
+        self.onset = 4#polyfit(radius, spitoni_params, 9)
         # thin_to_thick = polyfit(radius, spitoni_params, 7)
-        self.first.timescale = self.timescale1(radius)
-        self.second.timescale = self.timescale2(radius)
-        self.onset = self.tmax(radius)
-        thin_to_thick = self.thin_to_thick(radius)
-        self.ratio = thin_to_thick * self.timescale_ratio()
+        # self.first.timescale = self.timescale1(radius)
+        # self.second.timescale = self.timescale2(radius)
+        # self.onset = self.tmax(radius)
+        # thin_to_thick = self.thin_to_thick(radius)
+        # self.ratio = thin_to_thick * self.timescale_ratio()
+        self.ratio = 0.1
+        # print(self.ratio)
         area = m.pi * ((radius + dr/2) ** 2 - (radius - dr/2) ** 2)
         self.first.norm /= area
         self.second.norm /= area

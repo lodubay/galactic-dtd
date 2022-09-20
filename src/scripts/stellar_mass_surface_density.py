@@ -18,13 +18,13 @@ def main(evolutions, RIa='powerlaw_slope11', migration='diffusion'):
         output_name = 'migration/%s/%s/%s' % (migration, evolution, RIa)
         multiout = vice.multioutput(str(paths.data / output_name))
         # print(multiout.zones['zone1'].history["mstar"][-1])
-        for zone in multiout.zones:
-            print(zone)
+        # for zone in multiout.zones:
+        #     print(zone)
         # stars = multioutput_to_pandas(output_name)
         
-        radii = np.arange(0, 20+ZONE_WIDTH, ZONE_WIDTH)
-        sigma_star = [zone.history["mstar"][-1] for zone in multiout.zones]
-        print(sigma_star)
+        radii = np.arange(0, 20, ZONE_WIDTH)
+        sigma_star = [multiout.zones['zone%s' % i].history["mstar"][-1] for i in range(len(radii))]
+        # print(sigma_star)
         # sigma_star = np.zeros(radii.shape)
         # for i, radius in enumerate(radii):
         #     area = np.pi * ((radius + ZONE_WIDTH)**2 - radius**2)

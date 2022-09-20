@@ -24,7 +24,7 @@ class twoinfall_tau_star(J21_sf_law):
         spitoni_params = np.genfromtxt('%s/spitoni_twoinfall.dat' % (
             os.path.abspath(os.path.dirname(__file__))))
         self.radius = radius
-        self.onset = polyfit(radius, spitoni_params, 9)
+        self.onset = 4#polyfit(radius, spitoni_params, 9)
         super().__init__(area, mode = mode, **kwargs)
         
     def __call__(self, time, mgas):
