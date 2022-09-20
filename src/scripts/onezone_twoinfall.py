@@ -55,6 +55,7 @@ def main(overwrite=True):
         sz = vice.singlezone(name=output,
                              tau_star=models.twoinfall_tau_star(area, galr_mean),
                              func=twoinfall_gradient(galr_mean),
+                             # eta=vice.milkyway.default_mass_loading(galr),
                              **kwargs)
         sz.run(simtime, overwrite=overwrite)
         plot_vice_onezone(output, fig=fig, axs=axs, label='%s kpc' % galr,

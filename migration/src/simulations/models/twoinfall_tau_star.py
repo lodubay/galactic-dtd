@@ -30,6 +30,8 @@ class twoinfall_tau_star(J21_sf_law):
     def __call__(self, time, mgas):
         mgas_dependence = super().__call__(time, mgas) / self.molecular(time)
         return mgas_dependence * self.time_dependence(time)
+        # return self.time_dependence(time)
+        # return mgas_dependence
 
     def time_dependence(self, time):
         r"""
