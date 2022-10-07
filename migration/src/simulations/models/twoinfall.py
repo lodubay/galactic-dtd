@@ -22,19 +22,22 @@ class twoinfall(double_exponential):
         self.first.timescale = 0.1#polyfit(radius, spitoni_params, 3)
         self.second.timescale = 4#polyfit(radius, spitoni_params, 5)
         self.onset = 4#polyfit(radius, spitoni_params, 9)
+        # self.onset = 2 + radius / 4
         # thin_to_thick = polyfit(radius, spitoni_params, 7)
         # self.first.timescale = self.timescale1(radius)
         # self.second.timescale = self.timescale2(radius)
         # self.onset = self.tmax(radius)
         # thin_to_thick = self.thin_to_thick(radius)
+        # thin_to_thick = m.exp(radius * (1 / 2 - 1 / 2.5)) / 0.27
         # self.ratio = thin_to_thick * self.timescale_ratio()
+        # print(self.ratio)
         self.ratio = 0.1
         # print(self.ratio)
         area = m.pi * ((radius + dr/2) ** 2 - (radius - dr/2) ** 2)
         self.first.norm /= area
         self.second.norm /= area
         prefactor = normalize_ifrmode(self, gradient, radius, dt = dt,
-            dr = dr, outflows = False, which_tau_star = 'spitoni21')
+            dr = dr, outflows = True, which_tau_star = 'johnson21')
         # Spitoni's parameters produce an infall rate in terms of mass, but
         # the multizone simulations take surface mass density
         # prefactor /= m.pi * ((radius + dr/2) ** 2 - (radius - dr/2) ** 2)

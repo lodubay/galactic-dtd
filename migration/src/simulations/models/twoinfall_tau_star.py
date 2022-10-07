@@ -25,6 +25,7 @@ class twoinfall_tau_star(J21_sf_law):
             os.path.abspath(os.path.dirname(__file__))))
         self.radius = radius
         self.onset = 4#polyfit(radius, spitoni_params, 9)
+        # self.onset = 2 + radius / 4
         super().__init__(area, mode = mode, **kwargs)
         
     def __call__(self, time, mgas):
@@ -51,8 +52,11 @@ class twoinfall_tau_star(J21_sf_law):
         """
         if time < self.onset:
             return 1 / self.sfe1
+            # return 0.5
         else:
             return 1 / self.sfe2
+            # return 1.
+        # return 1.
       
     @property
     def sfe1(self):
@@ -60,10 +64,7 @@ class twoinfall_tau_star(J21_sf_law):
         float
             The SFE of the first (high-alpha) infall in Gyr^-1.
         """
-        if self.radius < 8.:
-            return 4 - (self.radius / 4)
-        else:
-            return 2
+        return max(4. - (self.radius / 4), 2.)
         
     @property
     def sfe2(self):
@@ -71,4 +72,4 @@ class twoinfall_tau_star(J21_sf_law):
         float
             The SFE of the second (low-alpha) infall in Gyr^-1.
         """
-        return max(2 - (self.radius / 8), 1e-6)
+        return max(2. - (self.radius / 8), 0.5)

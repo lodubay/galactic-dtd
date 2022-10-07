@@ -16,13 +16,13 @@ class conroy22_tau_star(J21_sf_law):
     replaces it with the model by Conroy et al. (2022).
     """
     def __init__(self, area, t1=2.5, t2=3.7, slope=3, tau_star_init=50, 
-                 tau_star_final=2.36, **kwargs):
+                 tau_star_final=2.36, mode = "ifr", **kwargs):
         self.t1 = t1
         self.t2 = t2
         self.slope = slope
         self.tau_star_init = tau_star_init
         self.tau_star_final = tau_star_final
-        super().__init__(area, **kwargs)
+        super().__init__(area, mode = mode, **kwargs)
         
     def __call__(self, time, mgas):
         mgas_dependence = super().__call__(time, mgas) / self.molecular(time)

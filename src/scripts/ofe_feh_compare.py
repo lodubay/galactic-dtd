@@ -57,4 +57,4 @@ if __name__ == '__main__':
     # temporary sys arguments - replace with argparse later
     evolution = sys.argv[1]
     RIa = sys.argv[2]
-    main('/'.join(['diffusion', evolution, RIa]))
+    main('/'.join(['post-process', evolution, RIa]))

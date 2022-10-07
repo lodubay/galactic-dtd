@@ -102,13 +102,13 @@ class diskmodel(vice.milkyway):
             from vice.yields.presets import JW20
             vice.yields.sneia.settings['fe'] *= 10**0.1
         # Set the SF mode - infall vs star formation rate
-        if spec.lower() in ["twoinfall", "conroy22"]:
+        if spec.lower() in ["twoinfall", "conroy22", "expifr", "staticifr"]:
             self.mode = "ifr"
             for zone in self.zones: zone.Mg0 = 0
         else:
             self.mode = "sfr"
         # Remove outflows in the two-infall case (per Spitoni et al. 2021)
-        if spec.lower() == "twoinfall":
+        if spec.lower() == "twoinfall" or spec.lower() == "expifr" or spec.lower() == "staticifr":
             self.mass_loading = self.no_outflow_mass_loading
         # Set the Type Ia delay time distribution
         dtd = delay_time_distribution(dist = RIa, tmin = delay, **RIa_kwargs)
@@ -125,6 +125,8 @@ class diskmodel(vice.milkyway):
                 elif spec.lower() == "twoinfall":
                     self.zones[i].tau_star = models.twoinfall_tau_star(area, 
                         mean_radius)
+                else:
+                    self.zones[i].tau_star = J21_sf_law(area, mode = self.mode)
 
     def run(self, *args, **kwargs):
         out = super().run(*args, **kwargs)
@@ -201,6 +203,8 @@ class star_formation_history:
                 "outerburst":         models.outerburst,
                 "twoinfall":          models.twoinfall,
                 "conroy22":           models.exponential_ifrmode,
+                "expifr":             models.exponential_ifrmode,
+                "staticifr":          models.static_ifrmode,
             }[spec.lower()]((i + 0.5) * zone_width, dr = zone_width, dt = dt))
             i += 1
 

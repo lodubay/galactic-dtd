@@ -13,7 +13,7 @@ from utils import discrete_colormap, get_color_list, setup_discrete_colorbar, \
     get_bin_centers
 from _globals import END_TIME, GALR_BINS, ZONE_WIDTH
 
-def main(evolution, RIa='powerlaw_slope11', cmap_name='plasma_r'):
+def main(evolution, RIa='test', cmap_name='plasma_r'):
     output = paths.data / 'migration' / 'post-process' / evolution / RIa
     fname = 'sfh_%s.png' % evolution
     plot_by_zone(output, fname=fname, zone_width=ZONE_WIDTH, cmap_name=cmap_name)
@@ -42,7 +42,7 @@ def plot_by_zone(output, galr_bins=GALR_BINS, zone_width=ZONE_WIDTH,
     plt.close()
 
 
-def plot_history(axs, output, zone, color=None, label=None):
+def plot_history(axs, output, zone, color=None, label=None, zone_width=ZONE_WIDTH):
     r"""
     Plot IFR, SFR, Mgas, and SFE timescale for the given VICE multioutput and
     zone.
@@ -57,11 +57,16 @@ def plot_history(axs, output, zone, color=None, label=None):
     color : str or None, optional
         Plot color. The default is None.
     """
+    radius = zone * zone_width
+    area = np.pi * ((radius + zone_width)**2 - radius**2)
     history = vice.history(str(Path('%s.vice' % output) / ('zone%i' % zone)))
-    axs[0,0].plot(history['time'], history['ifr'],
-                  color=color, label=label)
-    axs[0,1].plot(history['time'], history['sfr'], color=color)
-    axs[1,0].plot(history['time'], history['mgas'], color=color)
+    time = np.array(history['time'])
+    infall_surface = np.array(history['ifr']) / area
+    axs[0,0].plot(time, infall_surface, color=color, label=label)
+    sf_surface = np.array(history['sfr']) / area
+    axs[0,1].plot(time, sf_surface, color=color)
+    gas_surface = np.array(history['mgas']) / area
+    axs[1,0].plot(time, gas_surface, color=color)
     tau_star = [history['mgas'][i+1] / history['sfr'][i+1] * 1e-9 for i in range(
                 len(history['time']) - 1)]
     axs[1,1].plot(history['time'][1:], tau_star, color=color)
@@ -70,10 +75,10 @@ def plot_history(axs, output, zone, color=None, label=None):
 def setup_axes(tmax=END_TIME):
     fig, axs = plt.subplots(2, 2, sharex=True, figsize=(7, 7))
 
-    axs[0,0].set_title(r'Infall Rate [$M_{\odot}\,\rm{yr}^{-1}$]')
+    axs[0,0].set_title(r'Infall Surface Density [$M_{\odot}\,\rm{yr}^{-1}\,\rm{kpc}^{-2}$]')
     axs[0,0].set_xlim((-1, tmax+1))
-    axs[0,1].set_title(r'Star Formation Rate [$M_{\odot}\,\rm{yr}^{-1}$]')
-    axs[1,0].set_title(r'Gas Mass [$M_{\odot}$]')
+    axs[0,1].set_title(r'Star Formation Surface Density [$M_{\odot}\,\rm{yr}^{-1}\,\rm{kpc}^{-2}$]')
+    axs[1,0].set_title(r'Gas Surface Density [$M_{\odot}\,\rm{kpc}^{-2}$]')
     axs[1,0].set_xlabel('Time [Gyr]')
     axs[1,1].set_title(r'Star Formation Efficiency Timescale [Gyr]')
     axs[1,1].set_yscale('log')
