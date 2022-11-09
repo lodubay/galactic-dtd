@@ -12,16 +12,16 @@ plt.rcParams['axes.prop_cycle'] = plt.cycler('color', paultol.bright.colors)
 
 DELAY = 0.04 # minimum Ia delay time in Gyr
 DTD_LIST = [
-    dtds.powerlaw(slope=-1.1, tmin=DELAY),
     dtds.greggio05_single(tmin=DELAY),
     dtds.greggio05_approximate.from_defaults('wide'),
-    dtds.prompt(peak=0.05, stdev=0.015, timescale=5, tmin=DELAY)
+    dtds.prompt(peak=0.05, stdev=0.015, timescale=5, tmin=DELAY),
+    dtds.powerlaw(slope=-1.1, tmin=DELAY),
 ]
 LABELS = [
-    "Cosmic Ia rate (MG17)",
-    "Single degenerate (G05)",
-    "Double degenerate (G05)",
-    "Two-population (MDP06)"
+    r"Mass accretion$^1$",
+    r"White dwarf merger$^1$",
+    r"Two-population model$^2$",
+    r"Cosmic Ia rate$^3$",
 ]
 # COLORS = [
     # paultol.muted.colors[0],
@@ -32,8 +32,8 @@ LABELS = [
 LINE_STYLES = [
     '-',
     '--',
-    ':',
-    '-.'
+    '-.',
+    ':'
 ]
 
 def main():
@@ -46,7 +46,7 @@ def main():
     ax.set_xscale('log')
     ax.set_yscale('log')
     ax.set_ylim((5e-12, 3e-8))
-    ax.set_xlabel('Years after starburst')
+    ax.set_xlabel('Years after star formation')
     ax.set_ylabel(r'Normalized Type Ia supernova rate')
     ax.legend(frameon=False, loc='upper right', fontsize=8, handlelength=1.75)
     fig.savefig(paths.figures / 'dtd_grfp.png')
