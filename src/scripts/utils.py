@@ -362,7 +362,8 @@ def multioutput_to_pandas(output_name, data_dir=paths.data/'migration'):
     return stars
 
 def filter_multioutput_stars(stars, galr_lim=(0, 20), absz_lim=(0, 5),
-                             zone_width=ZONE_WIDTH, min_mass=1.0):
+                             zone_width=ZONE_WIDTH, min_mass=1.0, 
+                             zone_origin=False):
     """
     Slice DataFrame of stars within a given Galactic region of radius and
     z-height.
@@ -379,6 +380,8 @@ def filter_multioutput_stars(stars, galr_lim=(0, 20), absz_lim=(0, 5),
         Width of each simulation zone in kpc
     min_mass : float, optional
         Minimum mass of stellar particle
+    zone_origin : bool, optional
+        If True, filter by star's original zone instead of final zone
 
     Returns
     -------
