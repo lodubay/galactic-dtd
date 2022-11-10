@@ -4,7 +4,7 @@ Johnson et al. (2021).
 """
 
 from .conroy22_tau_star import conroy22_tau_star
-from .twoinfall_tau_star import twoinfall_tau_star
+from .spitoni21_tau_star import spitoni21_tau_star
 from ..._globals import MAX_SF_RADIUS, END_TIME, M_STAR_MW
 import vice
 from vice.toolkit import J21_sf_law
@@ -77,7 +77,7 @@ def normalize_ifrmode(time_dependence, radial_gradient, radius, dt = 0.01,
     """
     area = m.pi * ((radius + dr)**2 - radius**2)
     if which_tau_star.lower() == 'spitoni21':
-        tau_star = twoinfall_tau_star(area, radius)
+        tau_star = spitoni21_tau_star(area, radius)
     elif which_tau_star.lower() == 'conroy22':
         tau_star = conroy22_tau_star(area)
     elif which_tau_star.lower() == 'johnson21':
