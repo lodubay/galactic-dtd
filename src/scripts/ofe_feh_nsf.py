@@ -14,8 +14,8 @@ from _globals import END_TIME
 
 OUTPUTS = ["diffusion/lateburst/powerlaw_slope11",
            "diffusion/conroy22/powerlaw_slope11",
-           "diffusion/twoinfall/powerlaw_slope11",
-           "post-process/twoinfall/powerlaw_slope11"]
+           "diffusion/spitoni21/powerlaw_slope11",
+           "post-process/spitoni21/powerlaw_slope11"]
 DATA_DIR = paths.data / "migration"
 GALR_BINS = [(4, 6), (8, 10), (12, 15)]
 FIGSIZE = (5, 6)
@@ -38,7 +38,7 @@ def main():
     # SFH labels
     for ax, label in zip(axs[:,1], LABELS):
         ax.set_title(label)
-    plt.savefig(paths.figures / "ofe_feh_nsf.png", dpi=300)
+    plt.savefig(paths.figures / "ofe_feh_nsf.pdf", dpi=300)
     plt.close()
         
         
