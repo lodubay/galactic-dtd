@@ -27,12 +27,12 @@ LABELS = ["Late-burst SFH", "Conroy+ 2022 SFE", "Two-infall w/ migration", "Two-
 
 def main():
     fig, axs = setup_axes(figsize=FIGSIZE, xlim=FEH_LIM, ylim_list=OFE_LIM_LIST)
-    norm = Normalize(vmin=0, vmax=END_TIME)
+    norm = Normalize(vmin=-2, vmax=END_TIME)
     cax = setup_colorbar(fig, CMAP, norm, label="Age [Gyr]")
     
     for i, output in enumerate(OUTPUTS):
         stars = multioutput_to_pandas(output, DATA_DIR)
-        plot_stars(stars, axs[i,:], galr_bins=GALR_BINS, cmap=CMAP, 
+        plot_stars(stars, axs[i,:], galr_bins=GALR_BINS, cmap=CMAP, norm=norm,
                    zone_origin=("post-process" in output))
                    
     # SFH labels
@@ -43,7 +43,7 @@ def main():
         
         
 def plot_stars(stars, axs, galr_bins=[(4, 6), (8, 10), (12, 15)], cmap="winter",
-               zone_origin=False):
+               norm=None, zone_origin=False):
     """
     Plot [O/Fe] vs [Fe/H] color-coded by age for the given star particles.
     
@@ -60,9 +60,8 @@ def plot_stars(stars, axs, galr_bins=[(4, 6), (8, 10), (12, 15)], cmap="winter",
         filtered = filter_multioutput_stars(stars, galr_lim=galr_lim, 
                                             zone_origin=zone_origin)
         sample = sample_dataframe(filtered, 10000)
-        ax.scatter(sample["[fe/h]"], sample["[o/fe]"], s=0.1,
-                   c=sample["age"], cmap=cmap, 
-                   norm=Normalize(vmin=0, vmax=END_TIME), 
+        ax.scatter(sample["[fe/h]"], sample["[o/fe]"], s=0.5,
+                   c=sample["age"], cmap=cmap, norm=norm,
                    rasterized=True, edgecolor="none")
 
 
@@ -88,6 +87,7 @@ def setup_colorbar(fig, cmap, norm, label=""):
     cbar = fig.colorbar(ScalarMappable(norm, cmap), cax)
     cbar.set_label(label)
     cax.yaxis.set_minor_locator(MultipleLocator(0.5))
+    cax.set_ylim((0, None))
     return cax
 
 
