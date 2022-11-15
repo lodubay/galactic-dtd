@@ -26,9 +26,6 @@ class spitoni21(double_exponential):
         self.onset = polyfit(radius, spitoni_params, 9)
         thin_to_thick_ratio = polyfit(radius, spitoni_params, 7)
         self.ratio = thin_to_thick_ratio * self.timescale_ratio()
-        # area = m.pi * ((radius + dr/2) ** 2 - (radius - dr/2) ** 2)
-        # self.first.norm /= area
-        # self.second.norm /= area
         prefactor = normalize_ifrmode(self, gradient, radius, dt = dt,
             dr = dr, outflows = False, which_tau_star = 'spitoni21')
         # Spitoni's parameters produce an infall rate in terms of mass, but

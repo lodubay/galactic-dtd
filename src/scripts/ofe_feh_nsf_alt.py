@@ -10,7 +10,7 @@ from matplotlib.ticker import MultipleLocator
 import paths
 from utils import multioutput_to_pandas, filter_multioutput_stars, \
     sample_dataframe
-from _globals import END_TIME
+from _globals import END_TIME, ZONE_WIDTH
 
 OUTPUTS = ["diffusion/conroy22/powerlaw_slope11",
            "diffusion/spitoni21/powerlaw_slope11",
@@ -22,12 +22,13 @@ FEH_LIM = (-2.6, 1)
 OFE_LIM_LIST = [(-0.1, 0.75), (-0.2, 0.5), (-0.2, 0.5)]
 CMAP = "plasma_r"
 LABELS = ["Exponential infall w/ Conroy+ 2022 SFE", "Two-infall w/ mixing", "Two-infall no mixing"]
+GALR_MAX = 15.5
 
 
 def main():
     fig, axs = setup_axes(figsize=FIGSIZE, xlim=FEH_LIM, ylim_list=OFE_LIM_LIST)
-    norm = Normalize(vmin=-2, vmax=END_TIME)
-    cax = setup_colorbar(fig, CMAP, norm, label="Age [Gyr]")
+    norm = Normalize(vmin=-2, vmax=GALR_MAX)
+    cax = setup_colorbar(fig, CMAP, norm, label="Birth radius [kpc]")
     
     for i, output in enumerate(OUTPUTS):
         stars = multioutput_to_pandas(output, DATA_DIR)
@@ -37,7 +38,7 @@ def main():
     # SFH labels
     for ax, label in zip(axs[:,1], LABELS):
         ax.set_title(label)
-    plt.savefig(paths.figures / "ofe_feh_nsf.pdf", dpi=300)
+    plt.savefig(paths.figures / "ofe_feh_nsf_alt.png", dpi=300)
     plt.close()
         
         
@@ -60,7 +61,7 @@ def plot_stars(stars, axs, galr_bins=[(4, 6), (8, 10), (12, 15)], cmap="winter",
                                             zone_origin=zone_origin)
         sample = sample_dataframe(filtered, 10000)
         ax.scatter(sample["[fe/h]"], sample["[o/fe]"], s=0.5,
-                   c=sample["age"], cmap=cmap, norm=norm,
+                   c=sample["zone_origin"] * ZONE_WIDTH, cmap=cmap, norm=norm,
                    rasterized=True, edgecolor="none")
 
 
