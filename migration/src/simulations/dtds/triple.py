@@ -30,13 +30,17 @@ class triple:
         self._name = 'triple_delay{:03d}'.format(int(tmin * 1000))
     
     def __call__(self, time):
+        R_plateau = 10 ** LOG_PLATEAU
+        R_peak = 10 ** LOG_PEAK
         if time <= self.trise:
-            return self.norm * 10 ** LOG_PLATEAU
+            return self.norm * R_plateau 
         elif time <= self.tpeak:
-            rise_slope = (LOG_PEAK - LOG_PLATEAU) / (LOG_T_PEAK - LOG_T_RISE)
-            return self.norm * 10 ** LOG_PEAK * (time / self.tpeak) ** rise_slope
+            timescale = -self.tpeak / m.log(1e-4) # small number to bring the exponential rise as close as possible to the peak
+            return self.norm * (R_plateau + (R_peak - R_plateau) * (1 - m.exp(-(time - self.trise) / timescale)))
+            # rise_slope = (LOG_PEAK - LOG_PLATEAU) / (LOG_T_PEAK - LOG_T_RISE)
+            # return self.norm * 10 ** LOG_PEAK * (time / self.tpeak) ** rise_slope
         else:
-            return self.norm * 10 ** LOG_PEAK * (time / self.tpeak) ** DECLINE_SLOPE
+            return self.norm * R_peak * (time / self.tpeak) ** DECLINE_SLOPE
 
     def normalize(self, tmin, tmax, dt=1e-3):
         """
