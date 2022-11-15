@@ -55,10 +55,16 @@ class styles:
         'color': paultol.vibrant.colors[2],
         'line': ':',
     }
+    triple = {
+        'func': dtds.triple(tmin=DELAY),
+        'label': r'Triple-system evolution',
+        'color': paultol.vibrant.colors[3],
+        'line': '-'
+    }
 
 # distributions = [styles.prompt, styles.plaw_steep, styles.plaw, styles.plateau, 
 #                  styles.exp, styles.exp_long, styles.plateau_long]
-distributions = [styles.plaw, styles.plateau, styles.exp_long, styles.prompt]
+distributions = [styles.plaw, styles.plateau, styles.exp_long, styles.prompt, styles.triple]
 
 def main():
     fig, ax = plt.subplots(figsize=(3.25, 3.25), tight_layout=True)
