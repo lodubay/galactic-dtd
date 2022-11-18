@@ -67,4 +67,8 @@ class triple:
             integral += self.__call__(time) * dt
             time += dt
         return 1 / integral
+
+    @property
+    def name(self):
+        return self._name
     
