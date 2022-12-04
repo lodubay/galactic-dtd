@@ -21,6 +21,7 @@ THICK_TO_THIN_RATIO = 0.27 # at r = 0
 class twoinfall(double_exponential):
 
     def __init__(self, radius, dt = 0.01, dr = 0.1):
+        super().__init__(onset=SECOND_ONSET, ratio=1) # dummy ratio value
         # Calculate the amplitude ratio of infalls
         thin_to_thick = (1 / THICK_TO_THIN_RATIO) * m.exp(radius * (
             1 / THICK_DISK_SCALE_RADIUS - 1 / THIN_DISK_SCALE_RADIUS))
