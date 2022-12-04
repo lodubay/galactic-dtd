@@ -105,9 +105,9 @@ def normalize_ifrmode(time_dependence, radial_gradient, radius, dt = 0.01,
         times.append(time)
         time += dt
     sfh = vice.toolkit.interpolation.interp_scheme_1d(times, sfh)
-    if radius >= 8. and radius < 8.1:
-        np.savetxt('/mnt/c/Users/dubay.11/Repos/galactic-dtd/sfh_prenorm.txt',
-                   np.array([times, [sfh(t) for t in times]]))
+    # if radius >= 8. and radius < 8.1:
+    #     np.savetxt('/mnt/c/Users/dubay.11/Repos/galactic-dtd/sfh_prenorm.txt',
+    #                np.array([times, [sfh(t) for t in times]]))
     return normalize(sfh, radial_gradient, radius, dt = dt, dr = dr,
         recycling = recycling)
 
