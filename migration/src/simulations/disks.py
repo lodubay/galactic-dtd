@@ -96,7 +96,7 @@ class diskmodel(vice.milkyway):
         # Set the yields
         if spec.lower() == "conroy22":
             from .yields import conroy22
-        elif spec.lower() == "twoinfall":
+        elif spec.lower() == "spitoni21":
             from .yields import twoinfall
         else:
             from vice.yields.presets import JW20
@@ -122,9 +122,9 @@ class diskmodel(vice.milkyway):
                 area = m.pi * (self.annuli[i + 1]**2 - self.annuli[i]**2)
                 if spec.lower() == "conroy22":
                     self.zones[i].tau_star = models.conroy22_tau_star(area)
-                elif spec.lower() == "twoinfall":
-                    self.zones[i].tau_star = models.twoinfall_tau_star(area, 
-                        mean_radius)
+                # elif spec.lower() == "twoinfall":
+                #     self.zones[i].tau_star = models.twoinfall_tau_star(area, 
+                #         mean_radius)
                 elif spec.lower() == "spitoni21":
                     self.zones[i].tau_star = models.spitoni21_tau_star(area, 
                         mean_radius)
