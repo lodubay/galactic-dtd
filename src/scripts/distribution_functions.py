@@ -106,7 +106,7 @@ def setup_axes(ncols=2, figure_width=3.25, xlabel='', xlim=None,
     figure_height = ax_height * nrows + 1
     fig, axs = plt.subplots(nrows, ncols, sharex=True, sharey=False,
                             figsize=(figure_width, figure_height))
-    fig.subplots_adjust(left=0.12, top=0.95, right=0.97, bottom=0.27,
+    fig.subplots_adjust(left=0.12, top=0.93, right=0.97, bottom=0.22,
                         wspace=0.07, hspace=0.07)
     # Format x-axis
     axs[0,0].set_xlim(xlim)
@@ -135,7 +135,7 @@ def setup_axes(ncols=2, figure_width=3.25, xlabel='', xlim=None,
         axs[i,0].set_ylabel(r'$%s - %s$ kpc' % absz_lim)
     # Add colorbar on bottom
     cmap, norm = discrete_colormap(cmap_name, galr_bins)
-    cax = plt.axes([0.5 - (cbar_width / 2), 0.11, cbar_width, 0.02])
+    cax = plt.axes([0.5 - (cbar_width / 2), 0.09, cbar_width, 0.02])
     cbar = fig.colorbar(ScalarMappable(norm, cmap), cax,
                         orientation='horizontal')
     cbar.set_label('Galactocentric radius [kpc]')
