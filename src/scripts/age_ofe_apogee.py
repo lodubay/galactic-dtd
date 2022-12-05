@@ -67,30 +67,17 @@ def plot_scatter_hist_grid(data):
     return fig, axs
 
 
-def plot_medians(axs, data, age_lim=AGE_LIM, age_bin_width=1, ofe_lim=OFE_LIM, ofe_bin_width=0.05):
-    # age_bins = np.arange(age_lim[0], age_lim[1]+age_bin_width, age_bin_width)
-    # data['AGE_BIN'] = pd.cut(data['ASTRONN_AGE'], age_bins,
-    #                          labels=get_bin_centers(age_bins))
+def plot_medians(axs, data, ofe_lim=OFE_LIM, ofe_bin_width=0.05):
     ofe_bins = np.arange(ofe_lim[0], ofe_lim[1]+ofe_bin_width, ofe_bin_width)
-    # print(ofe_bins)
     data['OFE_BIN'] = pd.cut(data['O_FE'], ofe_bins, 
                              labels=get_bin_centers(ofe_bins))
-    # print(data['OFE_BIN'])
     for i, row in enumerate(axs):
         absz_lim = (ABSZ_BINS[-(i+2)], ABSZ_BINS[-(i+1)])
         for j, ax in enumerate(row):
             galr_lim = (GALR_BINS[j], GALR_BINS[j+1])
             subset = apogee_region(data, galr_lim, absz_lim)
-            # print(subset)
-            # ofe_grouped = subset.groupby('AGE_BIN')['O_FE']
-            # ofe_median = ofe_grouped.median()
             age_grouped = subset.groupby('OFE_BIN')['ASTRONN_AGE']
             age_median = age_grouped.median()
-            # print(age_median)
-            # ax.errorbar(ofe_median.index, ofe_median,
-            #             xerr=age_bin_width/2, 
-            #             yerr=(ofe_median - ofe_grouped.quantile(0.16), 
-            #                   ofe_grouped.quantile(0.84) - ofe_median),
             ax.errorbar(age_median, age_median.index, 
                         xerr=(age_median - age_grouped.quantile(0.16),
                               age_grouped.quantile(0.84) - age_median),
