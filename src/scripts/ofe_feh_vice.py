@@ -49,9 +49,9 @@ def plot_ofe_feh_stars(stars, cmap):
         absz_lim = (ABSZ_BINS[-(i+2)], ABSZ_BINS[-(i+1)])
         for j, ax in enumerate(row):
             galr_lim = (GALR_BINS[j], GALR_BINS[j+1])
-            sample = filter_multioutput_stars(stars, galr_lim, absz_lim,
+            subset = filter_multioutput_stars(stars, galr_lim, absz_lim,
                                               ZONE_WIDTH)
-            # sample = sample_dataframe(subset, 10000)
+            sample = sample_dataframe(subset, 10000)
             # Scatter plot of random sample of stellar particles
             ax.scatter(sample['[fe/h]'], sample['[o/fe]'], s=0.1,
                        c=sample['zone_origin'] * ZONE_WIDTH, cmap=cmap,

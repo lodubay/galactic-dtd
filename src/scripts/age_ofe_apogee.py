@@ -10,16 +10,17 @@ from matplotlib.colors import LogNorm
 from matplotlib.ticker import MultipleLocator
 from _globals import GALR_BINS, ABSZ_BINS
 from ofe_feh_vice import setup_colorbar
+from ofe_feh_apogee import read_kde, save_kde, kde2D, kde_path
 import paths
 from utils import import_astroNN, apogee_region, select_giants, scatter_hist, \
     get_bin_centers
 
 NBINS = 50
 GALR_BINS = GALR_BINS[:-1]
-AGE_LIM = (0, 14)
+AGE_LIM = (-1, 14)
 OFE_LIM = (-0.15, 0.55)
 
-def main(verbose=True):
+def main(verbose=True, cmap='RdPu'):
     if verbose:
         print('Importing astroNN data...')
     data = select_giants(import_astroNN())
@@ -29,7 +30,8 @@ def main(verbose=True):
     fig, axs = plot_scatter_hist_grid(data)
     if verbose:
         print('Plotting medians...')
-    plot_medians(axs, data, age_lim=(0, 11))
+    plot_contours(axs, data, cmap=cmap)
+    plot_medians(axs, data)
     output = paths.figures / 'age_ofe_apogee.pdf'
     plt.savefig(output, dpi=300)
     plt.close()
@@ -60,8 +62,8 @@ def plot_scatter_hist_grid(data):
                 ax.set_xlabel('Age [Gyr]')
             if j == 0:
                 ax.set_ylabel('[O/Fe]')
-                ax.text(0.59, 0.9, r'$%s\leq |z| < %s$' % absz_lim,
-                        transform=ax.transAxes, size=8, ha='right', va='top')
+                ax.text(0.1, 0.9, r'$%s\leq |z| < %s$' % absz_lim,
+                        transform=ax.transAxes, size=8, ha='left', va='top')
             if i == 0:
                 ax.set_title(r'$%s\leq R_{\rm{Gal}} < %s$ kpc'% galr_lim)
     return fig, axs
@@ -85,6 +87,38 @@ def plot_medians(axs, data, ofe_lim=OFE_LIM, ofe_bin_width=0.05):
                         color='r', linestyle='none', capsize=1, elinewidth=0.5,
                         capthick=0.5, marker='o', markersize=2,
             )
+
+
+def plot_contours(axs, data, cmap='Greys', linewidths=0.5):
+    """
+    Add contours of APOGEE abundances to axes.
+
+    Parameters
+    ----------
+    axs : list of axes
+    filename : str
+        Path to APOGEE data file
+    cmap_name : str
+        Name of colormap to apply to contours
+    """
+    for i, row in enumerate(axs):
+        absz_lim = (ABSZ_BINS[-(i+2)], ABSZ_BINS[-(i+1)])
+        for j, ax in enumerate(row):
+            galr_lim = (GALR_BINS[j], GALR_BINS[j+1])
+            path = kde_path(galr_lim, absz_lim, 
+                            savedir='../data/APOGEE/kde/age_ofe')
+            if path.exists():
+                xx, yy, logz = read_kde(path)
+            else:
+                subset = apogee_region(data, galr_lim, absz_lim)
+                xx, yy, logz = kde2D(subset['ASTRONN_AGE'], subset['O_FE'], 0.03,
+                                     xbins=20j)
+                # Scale by total number of stars in region
+                logz += np.log(subset.shape[0])
+                save_kde(xx, yy, logz, path)
+            # Contour levels in log-likelihood space
+            levels = np.arange(8, 11, 0.5)
+            ax.contour(xx, yy, logz, levels, cmap=cmap, linewidths=linewidths)
 
 
 def normalize_colorbar(data, vmin=10):

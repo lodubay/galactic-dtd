@@ -79,7 +79,8 @@ def plot_contours(axs, data, cmap='Greys', linewidths=0.5):
         absz_lim = (ABSZ_BINS[-(i+2)], ABSZ_BINS[-(i+1)])
         for j, ax in enumerate(row):
             galr_lim = (GALR_BINS[j], GALR_BINS[j+1])
-            path = kde_path(galr_lim, absz_lim)
+            path = kde_path(galr_lim, absz_lim,
+                            savedir='../data/APOGEE/kde/ofe_feh')
             if path.exists():
                 xx, yy, logz = read_kde(path)
             else:
@@ -120,7 +121,7 @@ def kde_path(galr_lim, absz_lim, savedir='../data/APOGEE/kde'):
     """
     Generate file name for the KDE of the given region.
     """
-    filename = 'ofe_feh_r%s-%s_z%s-%s.dat' % (galr_lim[0], galr_lim[1],
+    filename = 'r%s-%s_z%s-%s.dat' % (galr_lim[0], galr_lim[1],
                                               absz_lim[0], absz_lim[1])
     return Path(savedir) / filename
 
