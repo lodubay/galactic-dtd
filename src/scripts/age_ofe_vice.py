@@ -18,7 +18,7 @@ from _globals import GALR_BINS, ABSZ_BINS, ZONE_WIDTH
 
 NBINS = 50
 GALR_BINS = GALR_BINS[:-1]
-AGE_LIM = (0, 14)
+AGE_LIM = (0.2, 20)
 OFE_LIM = (-0.15, 0.55)
 
 def main(output_name, data_dir='../data/migration', cmap='winter'):
@@ -192,8 +192,9 @@ def setup_axes(rows, cols, width=8, xlim=None, ylim=None):
     # Configure axis limits and ticks (will be applied to all axes)
     axs[0,0].set_xlim(xlim)
     axs[0,0].set_ylim(ylim)
-    axs[0,0].xaxis.set_major_locator(MultipleLocator(5))
-    axs[0,0].xaxis.set_minor_locator(MultipleLocator(1))
+    axs[0,0].set_xscale('log')
+    # axs[0,0].xaxis.set_major_locator(MultipleLocator(5))
+    # axs[0,0].xaxis.set_minor_locator(MultipleLocator(1))
     axs[0,0].yaxis.set_major_locator(MultipleLocator(0.1))
     axs[0,0].yaxis.set_minor_locator(MultipleLocator(0.02))
     return fig, axs
