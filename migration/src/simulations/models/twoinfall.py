@@ -10,13 +10,15 @@ from .gradient import gradient
 import math as m
 import os
 
-FIRST_TIMESCALE = 0.1 # Gyr
+# FIRST_TIMESCALE = 0.1 # Gyr
+FIRST_TIMESCALE = 1 # Gyr
 SECOND_TIMESCALE = 4. # Gyr
 SECOND_ONSET = 4. # Gyr
 
 THIN_DISK_SCALE_RADIUS = 2.5 # kpc
 THICK_DISK_SCALE_RADIUS = 2.0 # kpc
-THICK_TO_THIN_RATIO = 0.27 # at r = 0
+# THICK_TO_THIN_RATIO = 0.27 # at r = 0
+THICK_TO_THIN_RATIO = 1.
 
 class twoinfall(double_exponential):
 
