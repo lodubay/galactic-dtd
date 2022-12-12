@@ -825,3 +825,36 @@ def setup_discrete_colorbar(fig, cmap, norm, label='', width=0.6):
                         orientation='horizontal')
     cbar.set_label(label)
     return cax
+
+
+# =============================================================================
+# MATHEMATICAL / DATA UTILITY FUNCTIONS
+# =============================================================================
+
+def weighted_quantile(df, val, weight, quantile=0.5):
+    """
+    Calculate the quantile of a pandas column weighted by another column.
+    
+    Parameters
+    ----------
+    df : pandas.DataFrame
+    val : str
+        Name of values column.
+    weight : str
+        Name of weights column.
+    quantile : float, optional
+        The quantile to calculate. Must be in [0,1]. The default is 0.5.
+    
+    Returns
+    -------
+    wq : float
+        The weighted quantile of the dataframe column.
+    """
+    if quantile >= 0 and quantile <= 1:
+        df_sorted = df.sort_values(val)
+        cumsum = df_sorted[weight].cumsum()
+        cutoff = df_sorted[weight].sum() * quantile
+        wq = df_sorted[cumsum >= cutoff][val].iloc[0]
+        return wq
+    else:
+        raise ValueError("Quantile must be in range [0,1].")

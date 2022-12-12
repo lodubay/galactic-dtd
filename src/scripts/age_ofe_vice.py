@@ -13,7 +13,7 @@ from matplotlib.cm import ScalarMappable
 import vice
 import paths
 from utils import multioutput_to_pandas, filter_multioutput_stars, \
-    sample_dataframe, get_bin_centers
+    sample_dataframe, get_bin_centers, weighted_quantile
 from _globals import GALR_BINS, ABSZ_BINS, ZONE_WIDTH
 
 NBINS = 50
@@ -106,6 +106,9 @@ def plot_medians(axs, stars, ofe_lim=OFE_LIM, ofe_bin_width=0.05):
             galr_lim = (GALR_BINS[j], GALR_BINS[j+1])
             subset = filter_multioutput_stars(stars, galr_lim, absz_lim,
                                               ZONE_WIDTH)
+            # WIP
+            # wm = lambda x: weighted_quantile(x, 'age', 'mass', quantile=0.5)
+            # print(subset.groupby('odf_bin').agg(median=(wm))
             age_grouped = subset.groupby('odf_bin')['age']
             age_median = age_grouped.median()
             ax.errorbar(age_median, age_median.index, 
