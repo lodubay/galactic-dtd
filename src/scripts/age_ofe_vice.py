@@ -100,6 +100,7 @@ def plot_medians(axs, stars, ofe_lim=OFE_LIM, ofe_bin_width=0.05):
     ofe_bins = np.arange(ofe_lim[0], ofe_lim[1]+ofe_bin_width, ofe_bin_width)
     stars['odf_bin'] = pd.cut(stars['[o/fe]'], ofe_bins, 
                              labels=get_bin_centers(ofe_bins))
+    stars['mass_weighted_age'] = stars['age'] * stars['mass']
     for i, row in enumerate(axs):
         absz_lim = (ABSZ_BINS[-(i+2)], ABSZ_BINS[-(i+1)])
         for j, ax in enumerate(row):
@@ -110,6 +111,7 @@ def plot_medians(axs, stars, ofe_lim=OFE_LIM, ofe_bin_width=0.05):
             # wm = lambda x: weighted_quantile(x, 'age', 'mass', quantile=0.5)
             # print(subset.groupby('odf_bin').agg(median=(wm))
             age_grouped = subset.groupby('odf_bin')['age']
+            age_weighted_grouped = subset.groupby('odf_bin')['mass_weighted_age']
             age_median = age_grouped.median()
             ax.errorbar(age_median, age_median.index, 
                         xerr=(age_median - age_grouped.quantile(0.16),
