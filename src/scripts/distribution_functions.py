@@ -104,7 +104,7 @@ def setup_axes(ncols=2, figure_width=3.25, xlabel='', xlim=None,
     ax_width = (figure_width - 0.25) / ncols
     ax_height = ax_width / panel_aspect_ratio
     figure_height = ax_height * nrows + 1
-    fig, axs = plt.subplots(nrows, ncols, sharex=True, sharey=False,
+    fig, axs = plt.subplots(nrows, ncols, sharex=True, sharey='row',
                             figsize=(figure_width, figure_height))
     fig.subplots_adjust(left=0.12, top=0.93, right=0.97, bottom=0.22,
                         wspace=0.07, hspace=0.07)
