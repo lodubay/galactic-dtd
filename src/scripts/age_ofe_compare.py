@@ -11,7 +11,8 @@ import matplotlib.pyplot as plt
 from utils import multioutput_to_pandas
 from age_ofe_vice import plot_age_ofe_stars, plot_post_process_tracks, \
     setup_axes
-from age_ofe_apogee import plot_medians, plot_contours
+from age_ofe_vice import plot_medians as plot_vice_medians
+from age_ofe_apogee import plot_medians as plot_astroNN_medians
 from utils import import_astroNN, select_giants
 import paths
 
@@ -37,6 +38,8 @@ def main(output_name, migration_dir='../data/migration',
     # Plot simulation output
     print('Plotting VICE stars')
     fig, axs = plot_age_ofe_stars(stars, stars_cmap)
+    # Plot VICE median ages
+    plot_vice_medians(axs, stars)
     # Import APOGEE data
     print('Importing APOGEE')
     apogee_data = select_giants(import_astroNN())
@@ -44,11 +47,10 @@ def main(output_name, migration_dir='../data/migration',
     # print('Plotting APOGEE contours')
     # plot_contours(axs, apogee_data, apogee_cmap, linewidths=0.5)
     print('Plotting APOGEE medians')
-    plot_medians(axs, apogee_data)
+    plot_astroNN_medians(axs, apogee_data)
     # Add post-process abundance track
     print('Plotting abundance tracks')
-    # plot_post_process_track(output_name, axs, galr=8, data_dir=migration_dir)
-    plot_post_process_tracks(output_name, axs, data_dir=migration_dir)
+    # plot_post_process_tracks(output_name, axs, data_dir=migration_dir)
     # fig.suptitle(output_name)
     migration, evolution, RIa = output_name.split('/')[-3:]
     plt.savefig(paths.figures / ('age_ofe/%s_%s.png' % (evolution, RIa)), dpi=300)

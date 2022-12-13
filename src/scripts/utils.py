@@ -851,10 +851,18 @@ def weighted_quantile(df, val, weight, quantile=0.5):
         The weighted quantile of the dataframe column.
     """
     if quantile >= 0 and quantile <= 1:
-        df_sorted = df.sort_values(val)
-        cumsum = df_sorted[weight].cumsum()
-        cutoff = df_sorted[weight].sum() * quantile
-        wq = df_sorted[cumsum >= cutoff][val].iloc[0]
-        return wq
+        if df.shape[0] == 0:
+            return np.nan
+        else:
+            df_sorted = df.sort_values(val)
+            # print(df_sorted)
+            # print(df_sorted.shape)
+            cumsum = df_sorted[weight].cumsum()
+            # print(cumsum)
+            cutoff = df_sorted[weight].sum() * quantile
+            # print(cutoff)
+            # print(df_sorted[cumsum >= cutoff][val])
+            wq = df_sorted[cumsum >= cutoff][val].iloc[0]
+            return wq
     else:
         raise ValueError("Quantile must be in range [0,1].")

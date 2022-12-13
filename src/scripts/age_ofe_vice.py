@@ -33,7 +33,8 @@ def main(output_name, data_dir='../data/migration', cmap='winter'):
     fig, axs = plot_age_ofe_stars(stars, cmap)
     plot_post_process_tracks(output_name, axs, data_dir=data_dir)
     plot_medians(axs, stars)
-    plt.savefig(paths.figures / 'age_ofe_vice.png', dpi=300)
+    fname = '%s_%s.png' % tuple(output_name.split('/')[1:])
+    plt.savefig(paths.figures / 'age_ofe' / fname, dpi=300)
     plt.close()
 
 
@@ -97,6 +98,11 @@ def plot_post_process_tracks(output_name, axs, data_dir='../data/migration'):
 
 
 def plot_medians(axs, stars, ofe_lim=OFE_LIM, ofe_bin_width=0.05):
+    # Lambda functions for weighted quantiles
+    wm = lambda x: weighted_quantile(x, 'age', 'mass', quantile=0.5)
+    wl = lambda x: weighted_quantile(x, 'age', 'mass', quantile=0.16)
+    wu = lambda x: weighted_quantile(x, 'age', 'mass', quantile=0.84)
+    
     ofe_bins = np.arange(ofe_lim[0], ofe_lim[1]+ofe_bin_width, ofe_bin_width)
     stars['odf_bin'] = pd.cut(stars['[o/fe]'], ofe_bins, 
                              labels=get_bin_centers(ofe_bins))
@@ -107,15 +113,25 @@ def plot_medians(axs, stars, ofe_lim=OFE_LIM, ofe_bin_width=0.05):
             galr_lim = (GALR_BINS[j], GALR_BINS[j+1])
             subset = filter_multioutput_stars(stars, galr_lim, absz_lim,
                                               ZONE_WIDTH)
-            # WIP
-            # wm = lambda x: weighted_quantile(x, 'age', 'mass', quantile=0.5)
-            # print(subset.groupby('odf_bin').agg(median=(wm))
-            age_grouped = subset.groupby('odf_bin')['age']
-            age_weighted_grouped = subset.groupby('odf_bin')['mass_weighted_age']
-            age_median = age_grouped.median()
-            ax.errorbar(age_median, age_median.index, 
-                        xerr=(age_median - age_grouped.quantile(0.16),
-                              age_grouped.quantile(0.84) - age_median),
+            # Mass-weighted median and standard deviation of ages
+            grouped = subset.groupby('odf_bin')
+            age_median = grouped.apply(wm)
+            age_lower = grouped.apply(wl)
+            age_upper = grouped.apply(wu)
+            # Separate bins with very little mass and plot with different marker
+            mtot = grouped['mass'].sum()
+            low_mass_bins = mtot[mtot < 0.01 * mtot.sum()].index
+            high_mass_bins = mtot[mtot >= 0.01 * mtot.sum()].index
+            ax.errorbar(age_median[low_mass_bins], low_mass_bins, 
+                        xerr=(age_median[low_mass_bins] - age_lower[low_mass_bins], 
+                              age_upper[low_mass_bins] - age_median[low_mass_bins]),
+                        yerr=ofe_bin_width/2,
+                        color='k', linestyle='none', capsize=1, elinewidth=0.25,
+                        capthick=0.25, marker='x', markersize=2, markeredgewidth=0.5,
+            )
+            ax.errorbar(age_median[high_mass_bins], high_mass_bins, 
+                        xerr=(age_median[high_mass_bins] - age_lower[high_mass_bins], 
+                              age_upper[high_mass_bins] - age_median[high_mass_bins]),
                         yerr=ofe_bin_width/2,
                         color='k', linestyle='none', capsize=1, elinewidth=0.5,
                         capthick=0.5, marker='o', markersize=2,

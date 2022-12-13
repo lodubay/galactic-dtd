@@ -80,13 +80,33 @@ def plot_medians(axs, data, ofe_lim=OFE_LIM, ofe_bin_width=0.05):
             subset = apogee_region(data, galr_lim, absz_lim)
             age_grouped = subset.groupby('OFE_BIN')['ASTRONN_AGE']
             age_median = age_grouped.median()
-            ax.errorbar(age_median, age_median.index, 
-                        xerr=(age_median - age_grouped.quantile(0.16),
-                              age_grouped.quantile(0.84) - age_median),
+            age_lower = age_grouped.quantile(0.16)
+            age_upper = age_grouped.quantile(0.84)
+            # Separate bins with very little mass and plot with different marker
+            counts = age_grouped.count()
+            low_count_bins = counts[counts < 0.01 * counts.sum()].index
+            high_count_bins = counts[counts >= 0.01 * counts.sum()].index
+            ax.errorbar(age_median[low_count_bins], low_count_bins, 
+                        xerr=(age_median[low_count_bins] - age_lower[low_count_bins], 
+                              age_upper[low_count_bins] - age_median[low_count_bins]),
+                        yerr=ofe_bin_width/2,
+                        color='r', linestyle='none', capsize=1, elinewidth=0.25,
+                        capthick=0.25, marker='x', markersize=2, markeredgewidth=0.5,
+            )
+            ax.errorbar(age_median[high_count_bins], high_count_bins, 
+                        xerr=(age_median[high_count_bins] - age_lower[high_count_bins], 
+                              age_upper[high_count_bins] - age_median[high_count_bins]),
                         yerr=ofe_bin_width/2,
                         color='r', linestyle='none', capsize=1, elinewidth=0.5,
                         capthick=0.5, marker='o', markersize=2,
             )
+            # ax.errorbar(age_median, age_median.index, 
+            #             xerr=(age_median - age_grouped.quantile(0.16),
+            #                   age_grouped.quantile(0.84) - age_median),
+            #             yerr=ofe_bin_width/2,
+            #             color='r', linestyle='none', capsize=1, elinewidth=0.5,
+            #             capthick=0.5, marker='o', markersize=2,
+            # )
 
 
 def plot_contours(axs, data, cmap='Greys', linewidths=0.5):
