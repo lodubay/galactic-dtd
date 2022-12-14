@@ -68,8 +68,12 @@ def select_giants(data, logg_col='LOGG', teff_col='TEFF'):
     giants : pandas.DataFrame
         APOGEE allStar data with cuts
     """
-    return data[(data[logg_col] < 4) & (data[teff_col] < 5500) & 
-                ~((data[logg_col] > 3) & (data[teff_col] < 4000))]
+    giants = data[(data[logg_col] > 1) & (data[logg_col] < 3.8) & 
+                  (data[teff_col] > 3500) & (data[teff_col] < 5500) & 
+    # exclude the lower-left corner which may contain main sequence stars
+                  ~((data[logg_col] > 3) & (data[teff_col] < 4000))]
+    giants.reset_index(inplace=True)
+    return giants
 
 def import_astroNN(verbose=False, allStar_name=allStar_file_name):
     """
@@ -195,9 +199,15 @@ def rename_astroNN_columns(astroNN):
     astroNN.columns = cols_new
     return astroNN
 
-def import_allStar(verbose=False, name=allStar_file_name):
+def import_allStar(verbose=False, name=allStar_file_name, only_giants=True):
     """
     Import APOGEE allStar data and, if necessary, export for faster re-use.
+    
+    Parameters
+    ----------
+    only_giants : bool
+        If True, makes cuts in log(g) and Teff to return only the giant sample.
+        If False, returns all main sample stars. The default is True.
     """
     clean_df_path = paths.data / 'APOGEE' / 'allStarLite-dr17-synspec-clean.csv'
     try:
@@ -208,11 +218,11 @@ def import_allStar(verbose=False, name=allStar_file_name):
         if verbose:
             print('Clean allStar file not found, generating from source')
         raw = fits_to_pandas(paths.data / 'APOGEE' / name, hdu=1)
-        df = clean_allStar(raw)
+        df = clean_allStar(raw, only_giants=only_giants)
         df.to_csv(clean_df_path, index=False)
     return df
 
-def clean_allStar(df):
+def clean_allStar(df, snr=80, only_giants=True):
     """
     Import APOGEE AllStar file and convert it to a pandas DataFrame.
 
@@ -220,6 +230,11 @@ def clean_allStar(df):
     ----------
     df : pandas.DataFrame
         The unmodified, freshly converted DataFrame of the allStar file
+    snr : float
+        The minimum signal-to-noise threshold
+    only_giants : bool
+        If True, makes cuts in log(g) and Teff to return only the giant sample.
+        If False, returns all main sample stars. The default is True.
 
     Returns
     -------
@@ -232,6 +247,10 @@ def clean_allStar(df):
     # Weed out bad flags
     fatal_flags = (2**23) # STAR_BAD
     df = df[df['ASPCAPFLAG'] & fatal_flags == 0]
+    # Cut low-S/N targets
+    df = df[df['SNREV'] > snr]
+    # Limit to giants
+    if only_giants: df = select_giants(df)
     # Replace NaN stand-in values with NaN
     df.replace(99.999, np.nan, inplace=True)
     # Replace NaN in certain columns with empty string

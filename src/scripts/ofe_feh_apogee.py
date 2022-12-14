@@ -16,17 +16,17 @@ from utils import import_allStar, apogee_region, scatter_hist
 global NBINS
 NBINS = 50
 
-def main(cmap='RdPu', verbose=True):
+def main(cmap='winter', verbose=True):
     if verbose:
         print('Importing allStar data...')
-    data = import_allStar()
+    data = import_allStar(only_giants=True)
     if verbose:
         print('Plotting 2D histograms...')
     fig, axs = plot_scatter_hist_grid(data)
     if verbose:
         print('Plotting contours...')
     plot_contours(axs, data, cmap=cmap)
-    output = paths.figures / 'ofe_feh_apogee.pdf'
+    output = paths.figures / 'ofe_feh_apogee.png'
     plt.savefig(output, dpi=300)
     plt.close()
     if verbose:
@@ -63,7 +63,8 @@ def plot_scatter_hist_grid(data):
     return fig, axs
 
 
-def plot_contours(axs, data, cmap='Greys', linewidths=0.5):
+def plot_contours(axs, data, bandwidth=0.02, cmap='Greys', colors=None, 
+                  linewidths=0.5, linestyles=None):
     """
     Add contours of APOGEE abundances to axes.
 
@@ -80,19 +81,23 @@ def plot_contours(axs, data, cmap='Greys', linewidths=0.5):
         for j, ax in enumerate(row):
             galr_lim = (GALR_BINS[j], GALR_BINS[j+1])
             path = kde_path(galr_lim, absz_lim,
-                            savedir='../data/APOGEE/kde/ofe_feh')
+                            savedir='../data/APOGEE/kde/ofe_feh/')
             if path.exists():
                 xx, yy, logz = read_kde(path)
             else:
                 subset = apogee_region(data, galr_lim, absz_lim)
-                xx, yy, logz = kde2D(subset['FE_H'], subset['O_FE'], 0.03)
+                subset = subset.copy().dropna(axis=0, subset=['FE_H', 'O_FE'])
+                xx, yy, logz = kde2D(subset['FE_H'], subset['O_FE'], bandwidth)
                 # Scale by total number of stars in region
-                logz += np.log(subset.shape[0])
+                # logz += np.log(subset.shape[0])
                 save_kde(xx, yy, logz, path)
-            # Contour levels in log-likelihood space
-            levels = np.arange(10, 14, 0.5)
-            ax.contour(xx, yy, logz, levels, cmap=cmap, linewidths=linewidths)
-
+            # Contour levels
+            scaled_density = np.exp(logz) / np.max(np.exp(logz))
+            levels = np.exp(-0.5 * np.array([2, 1.5, 1, 0.5])**2)
+            contours = ax.contour(xx, yy, scaled_density, levels, cmap=cmap, 
+                                  linewidths=linewidths, linestyles=linestyles,
+                                  colors=colors)
+            
 
 def read_kde(path):
     """
@@ -122,7 +127,7 @@ def kde_path(galr_lim, absz_lim, savedir='../data/APOGEE/kde'):
     Generate file name for the KDE of the given region.
     """
     filename = 'r%s-%s_z%s-%s.dat' % (galr_lim[0], galr_lim[1],
-                                              absz_lim[0], absz_lim[1])
+                                      absz_lim[0], absz_lim[1])
     return Path(savedir) / filename
 
 
@@ -155,7 +160,7 @@ def kde2D(x, y, bandwidth, xbins=100j, ybins=100j, **kwargs):
     xy_sample = np.vstack([yy.ravel(), xx.ravel()]).T
     xy_train  = np.vstack([y, x]).T
 
-    kde_skl = KernelDensity(bandwidth=bandwidth, **kwargs)
+    kde_skl = KernelDensity(kernel='gaussian', bandwidth=bandwidth, **kwargs)
     kde_skl.fit(xy_train)
 
     # score_samples() returns the log-likelihood of the samples

@@ -100,13 +100,6 @@ def plot_medians(axs, data, ofe_lim=OFE_LIM, ofe_bin_width=0.05):
                         color='r', linestyle='none', capsize=1, elinewidth=0.5,
                         capthick=0.5, marker='o', markersize=2,
             )
-            # ax.errorbar(age_median, age_median.index, 
-            #             xerr=(age_median - age_grouped.quantile(0.16),
-            #                   age_grouped.quantile(0.84) - age_median),
-            #             yerr=ofe_bin_width/2,
-            #             color='r', linestyle='none', capsize=1, elinewidth=0.5,
-            #             capthick=0.5, marker='o', markersize=2,
-            # )
 
 
 def plot_contours(axs, data, cmap='Greys', linewidths=0.5):
