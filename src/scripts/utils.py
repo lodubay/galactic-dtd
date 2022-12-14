@@ -418,7 +418,7 @@ def filter_multioutput_stars(stars, galr_lim=(0, 20), absz_lim=(0, 5),
     subset.reset_index(inplace=True)
     return subset
 
-def sample_dataframe(df, n):
+def sample_dataframe(df, n, weights=None):
     """
     Randomly sample n unique rows from a pandas DataFrame.
 
@@ -427,6 +427,8 @@ def sample_dataframe(df, n):
     df : pandas DataFrame
     n : int
         Number of random samples to draw
+    weights : array
+        Probability weights of the given DataFrame
 
     Returns
     -------
@@ -437,7 +439,7 @@ def sample_dataframe(df, n):
         # Initialize default numpy random number generator
         rng = default_rng()
         # Randomly sample without replacement
-        rand_indices = rng.choice(df.index, size=n, replace=False)
+        rand_indices = rng.choice(df.index, size=n, replace=False, p=weights)
         sample = df.loc[rand_indices]
         return sample.reset_index()
     else:
