@@ -60,7 +60,7 @@ class greggio05_double:
         Static method to calculate the maximum gravitational delay time
     """
 
-    def __init__(self, scheme, beta_sep=0., beta_grav=-0.75, efficiency=1.,
+    def __init__(self, scheme='wide', beta_sep=0., beta_grav=-0.75, efficiency=1.,
                  dt=1e-3, nsamples=100, mlr='larson1974', progress=True,
                  **kwargs):
         """

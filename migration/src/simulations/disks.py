@@ -255,6 +255,7 @@ class delay_time_distribution:
             "exponential":      dtds.exponential,
             "prompt":           dtds.prompt,
             "greggio05_single": dtds.greggio05_single,
+            "greggio05_double": dtds.greggio05_double,
             "triple":           dtds.triple,
         }[dist.lower()](tmin=tmin, tmax=tmax, **kwargs)
 
