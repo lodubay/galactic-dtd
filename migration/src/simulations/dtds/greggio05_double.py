@@ -155,7 +155,7 @@ class greggio05_double:
         TypeError
             If the time passed as a parameter is not a float.
         """
-        if isinstance(time, float):
+        if isinstance(time, Number):
             if time >= 0:
                 if time < self.t_min:
                     return 0
@@ -166,7 +166,7 @@ class greggio05_double:
             else:
                 raise ValueError('Time must be positive.')
         else:
-            raise TypeError('Parameter "time" must be a float. Got: %s' \
+            raise TypeError('Parameter "time" must be numeric. Got: %s' \
                             % type(time))
                 
     @property
