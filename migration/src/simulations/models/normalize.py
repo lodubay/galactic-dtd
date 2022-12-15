@@ -4,14 +4,15 @@ Johnson et al. (2021).
 """
 
 from .conroy22_tau_star import conroy22_tau_star
-from .twoinfall_tau_star import twoinfall_tau_star
+from .spitoni21_tau_star import spitoni21_tau_star
 from ..._globals import MAX_SF_RADIUS, END_TIME, M_STAR_MW
 import vice
 from vice.toolkit import J21_sf_law
 import math as m
+import numpy as np
 
 
-def normalize(time_dependence, radial_gradient, radius, dt = 0.01, dr = 0.5,
+def normalize(time_dependence, radial_gradient, radius, dt = 0.01, dr = 0.1,
               recycling = 0.4):
     r"""
     Determine the prefactor on the surface density of star formation as a
@@ -32,7 +33,7 @@ def normalize(time_dependence, radial_gradient, radius, dt = 0.01, dr = 0.5,
         The galactocentric radius to evaluate the normalization at.
     dt : real number [default : 0.01]
         The timestep size in Gyr.
-    dr : real number [default : 0.5]
+    dr : real number [default : 0.1]
         The width of each annulus in kpc.
     recycling : real number [default : 0.4]
         The instantaneous recycling mass fraction for a single stellar
@@ -76,11 +77,11 @@ def normalize_ifrmode(time_dependence, radial_gradient, radius, dt = 0.01,
     """
     area = m.pi * ((radius + dr)**2 - radius**2)
     if which_tau_star.lower() == 'spitoni21':
-        tau_star = twoinfall_tau_star(area, radius)
+        tau_star = spitoni21_tau_star(area, radius)
     elif which_tau_star.lower() == 'conroy22':
         tau_star = conroy22_tau_star(area)
     elif which_tau_star.lower() == 'johnson21':
-        tau_star = J21_sf_law(area)
+        tau_star = J21_sf_law(area, mode = 'ifr')
     else:
         raise TypeError('Unrecognized prescription for tau_star!')
     # tau_star = {
@@ -104,6 +105,9 @@ def normalize_ifrmode(time_dependence, radial_gradient, radius, dt = 0.01,
         times.append(time)
         time += dt
     sfh = vice.toolkit.interpolation.interp_scheme_1d(times, sfh)
+    # if radius >= 8. and radius < 8.1:
+    #     np.savetxt('/mnt/c/Users/dubay.11/Repos/galactic-dtd/sfh_prenorm.txt',
+    #                np.array([times, [sfh(t) for t in times]]))
     return normalize(sfh, radial_gradient, radius, dt = dt, dr = dr,
         recycling = recycling)
 

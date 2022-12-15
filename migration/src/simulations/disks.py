@@ -96,19 +96,19 @@ class diskmodel(vice.milkyway):
         # Set the yields
         if spec.lower() == "conroy22":
             from .yields import conroy22
-        elif spec.lower() == "twoinfall":
+        elif spec.lower() == "spitoni21":
             from .yields import twoinfall
         else:
             from vice.yields.presets import JW20
             vice.yields.sneia.settings['fe'] *= 10**0.1
         # Set the SF mode - infall vs star formation rate
-        if spec.lower() in ["twoinfall", "conroy22"]:
+        if spec.lower() in ["twoinfall", "conroy22", "expifr", "staticifr", "spitoni21"]:
             self.mode = "ifr"
             for zone in self.zones: zone.Mg0 = 0
         else:
             self.mode = "sfr"
         # Remove outflows in the two-infall case (per Spitoni et al. 2021)
-        if spec.lower() == "twoinfall":
+        if spec.lower() == "spitoni21" or spec.lower() == "expifr" or spec.lower() == "staticifr":
             self.mass_loading = self.no_outflow_mass_loading
         # Set the Type Ia delay time distribution
         dtd = delay_time_distribution(dist = RIa, tmin = delay, **RIa_kwargs)
@@ -122,9 +122,14 @@ class diskmodel(vice.milkyway):
                 area = m.pi * (self.annuli[i + 1]**2 - self.annuli[i]**2)
                 if spec.lower() == "conroy22":
                     self.zones[i].tau_star = models.conroy22_tau_star(area)
-                elif spec.lower() == "twoinfall":
-                    self.zones[i].tau_star = models.twoinfall_tau_star(area, 
+                # elif spec.lower() == "twoinfall":
+                #     self.zones[i].tau_star = models.twoinfall_tau_star(area, 
+                #         mean_radius)
+                elif spec.lower() == "spitoni21":
+                    self.zones[i].tau_star = models.spitoni21_tau_star(area, 
                         mean_radius)
+                else:
+                    self.zones[i].tau_star = J21_sf_law(area, mode = self.mode)
 
     def run(self, *args, **kwargs):
         out = super().run(*args, **kwargs)
@@ -200,7 +205,10 @@ class star_formation_history:
                 "lateburst":          models.lateburst,
                 "outerburst":         models.outerburst,
                 "twoinfall":          models.twoinfall,
+                "spitoni21":          models.spitoni21,
                 "conroy22":           models.exponential_ifrmode,
+                "expifr":             models.exponential_ifrmode,
+                "staticifr":          models.static_ifrmode,
             }[spec.lower()]((i + 0.5) * zone_width, dr = zone_width, dt = dt))
             i += 1
 

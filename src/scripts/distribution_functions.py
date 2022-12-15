@@ -56,7 +56,7 @@ def plot_distributions(func, data, axs, label='', cmap_name='plasma_r',
                 dist, bin_edges = func(data, galr_lim, absz_lim)
                 ax.plot(get_bin_centers(bin_edges), dist, 
                         color=colors[j], linewidth=1)
-        axs[0].set_title(label)
+        axs[0].set_title(label, va='top', pad=18)
     else:
         raise ValueError('Mismatch between axes and z-height bins.')
     

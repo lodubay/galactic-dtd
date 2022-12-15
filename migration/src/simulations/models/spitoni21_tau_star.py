@@ -9,7 +9,7 @@ import numpy as np
 from vice.toolkit import J21_sf_law
 from .utils import polyfit
 
-class twoinfall_tau_star(J21_sf_law):
+class spitoni21_tau_star(J21_sf_law):
     r"""
     An implementation of the Spitoni et al. (2021) SFE timescale model.
     
@@ -24,14 +24,12 @@ class twoinfall_tau_star(J21_sf_law):
         spitoni_params = np.genfromtxt('%s/spitoni_twoinfall.dat' % (
             os.path.abspath(os.path.dirname(__file__))))
         self.radius = radius
-        self.onset = 4#polyfit(radius, spitoni_params, 9)
+        self.onset = polyfit(radius, spitoni_params, 9)
         super().__init__(area, mode = mode, **kwargs)
         
     def __call__(self, time, mgas):
         mgas_dependence = super().__call__(time, mgas) / self.molecular(time)
         return mgas_dependence * self.time_dependence(time)
-        # return self.time_dependence(time)
-        # return mgas_dependence
 
     def time_dependence(self, time):
         r"""
@@ -60,10 +58,7 @@ class twoinfall_tau_star(J21_sf_law):
         float
             The SFE of the first (high-alpha) infall in Gyr^-1.
         """
-        if self.radius < 8.:
-            return 4 - (self.radius / 4)
-        else:
-            return 2
+        return max(4. - (self.radius / 4), 2.)
         
     @property
     def sfe2(self):
@@ -71,4 +66,4 @@ class twoinfall_tau_star(J21_sf_law):
         float
             The SFE of the second (low-alpha) infall in Gyr^-1.
         """
-        return max(2 - (self.radius / 8), 1e-6)
+        return max(2. - (self.radius / 8), 0.5)

@@ -27,7 +27,8 @@ def main(evolution, RIa, migration=MIGRATION):
 def plot_multiple_comparison(outputs, labels, output_dir=paths.data/'migration',
                              cmap_name='plasma_r', verbose=False, 
                              fname='mdf_ofe_multiple.png',
-                             double_line_titles=False):
+                             double_line_titles=False, figure_width=7.,
+                             panel_aspect_ratio=1.5, cbar_width=0.6):
     """
     One-stop function to generate a complete plot comparing the MDFs of
     multiple VICE multi-zone outputs to the APOGEE MDF.
@@ -54,9 +55,11 @@ def plot_multiple_comparison(outputs, labels, output_dir=paths.data/'migration',
     """
         
     # Set up plot
-    fig, axs = setup_axes(ncols=len(outputs)+1, figure_width=7., 
-                          xlabel='[O/Fe]', xlim=OFE_LIM, 
-                          major_tick_spacing=0.2, cmap_name=cmap_name)
+    fig, axs = setup_axes(ncols=len(outputs)+1, figure_width=figure_width, 
+                          xlabel=r'[$\alpha$/Fe]', xlim=OFE_LIM, 
+                          major_tick_spacing=0.2, cmap_name=cmap_name,
+                          panel_aspect_ratio=panel_aspect_ratio,
+                          cbar_width=cbar_width)
     if double_line_titles:
         # Allow room for two-line axis titles
         fig.subplots_adjust(top=0.9)
