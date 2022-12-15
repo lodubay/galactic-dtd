@@ -106,7 +106,7 @@ def setup_axes(ncols=2, figure_width=3.25, xlabel='', xlim=None,
     figure_height = ax_height * nrows + 1
     fig, axs = plt.subplots(nrows, ncols, sharex=True, sharey='row',
                             figsize=(figure_width, figure_height))
-    fig.subplots_adjust(left=0.12, top=0.93, right=0.97, bottom=0.22,
+    fig.subplots_adjust(left=0.14, top=0.93, right=0.97, bottom=0.22,
                         wspace=0.07, hspace=0.07)
     # Format x-axis
     axs[0,0].set_xlim(xlim)
@@ -127,8 +127,8 @@ def setup_axes(ncols=2, figure_width=3.25, xlabel='', xlim=None,
         # Set bottom ticks pointing out
         ax.tick_params(axis='x', which='both', direction='out')
     # Add common y-axis label
-    fig.text(0.03, 0.58, r'Distance from Galactic midplane $|z|$',
-              ha='center', va='center', rotation='vertical')
+    fig.text(0.02, 0.58, r'Distance from Galactic midplane $|z|$',
+              ha='left', va='center', rotation='vertical')
     # Label rows
     for i in range(len(absz_bins)-1):
         absz_lim = tuple(absz_bins[-(i+2):len(absz_bins)-i])

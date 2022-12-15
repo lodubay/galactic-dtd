@@ -60,6 +60,8 @@ def plot_multiple_comparison(outputs, labels, output_dir=paths.data/'migration',
                           major_tick_spacing=0.2, cmap_name=cmap_name,
                           panel_aspect_ratio=panel_aspect_ratio,
                           cbar_width=cbar_width)
+    # Adjust spacing
+    fig.subplots_adjust(left=0.08, bottom=0.2)
     if double_line_titles:
         # Allow room for two-line axis titles
         fig.subplots_adjust(top=0.9)
