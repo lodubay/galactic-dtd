@@ -63,7 +63,7 @@ def plot_distributions(func, data, axs, label='', cmap_name='plasma_r',
 
 def setup_axes(ncols=2, figure_width=3.25, xlabel='', xlim=None, 
                major_tick_spacing=1, galr_bins=GALR_BINS, absz_bins=ABSZ_BINS, 
-               cbar_width=0.6, cmap_name='plasma_r'):
+               cbar_width=0.6, cmap_name='plasma_r', panel_aspect_ratio=1.5):
     """
     Set up matplotlib figure and axes for the distribution plot.
     
@@ -90,6 +90,9 @@ def setup_axes(ncols=2, figure_width=3.25, xlabel='', xlim=None,
     cbar_width : float, optional
         The width of the colorbar as a fraction of the figure size. The default
         is 0.6.
+    panel_aspect_ratio : float, optional
+        The aspect ratio of the panels, equal to the panel width divided by
+        the panel height. The default is 1.5.
         
     Returns
     -------
@@ -99,12 +102,12 @@ def setup_axes(ncols=2, figure_width=3.25, xlabel='', xlim=None,
     # Determine figure dimensions
     nrows = len(absz_bins) - 1
     ax_width = (figure_width - 0.25) / ncols
-    ax_height = ax_width / 1.5
+    ax_height = ax_width / panel_aspect_ratio
     figure_height = ax_height * nrows + 1
-    fig, axs = plt.subplots(nrows, ncols, sharex=True, sharey=True,
+    fig, axs = plt.subplots(nrows, ncols, sharex=True, sharey='row',
                             figsize=(figure_width, figure_height))
-    fig.subplots_adjust(left=0.07, top=0.93, right=0.97, bottom=0.22,
-                        wspace=0.07, hspace=0.)
+    fig.subplots_adjust(left=0.12, top=0.93, right=0.97, bottom=0.22,
+                        wspace=0.07, hspace=0.07)
     # Format x-axis
     axs[0,0].set_xlim(xlim)
     axs[0,0].xaxis.set_major_locator(MultipleLocator(major_tick_spacing))
@@ -123,10 +126,13 @@ def setup_axes(ncols=2, figure_width=3.25, xlabel='', xlim=None,
         ax.tick_params(top=False, which='both')
         # Set bottom ticks pointing out
         ax.tick_params(axis='x', which='both', direction='out')
+    # Add common y-axis label
+    fig.text(0.03, 0.58, r'Distance from Galactic midplane $|z|$',
+              ha='center', va='center', rotation='vertical')
     # Label rows
     for i in range(len(absz_bins)-1):
         absz_lim = tuple(absz_bins[-(i+2):len(absz_bins)-i])
-        axs[i,0].set_ylabel(r'$|z| = %s - %s$' % absz_lim)
+        axs[i,0].set_ylabel(r'$%s - %s$ kpc' % absz_lim)
     # Add colorbar on bottom
     cmap, norm = discrete_colormap(cmap_name, galr_bins)
     cax = plt.axes([0.5 - (cbar_width / 2), 0.09, cbar_width, 0.02])
