@@ -1,3 +1,11 @@
 # Font style
 font.family: sans-serif
 mathtext.fontset: dejavusans
+# Font size
+font.size: 12
+legend.fontsize: 12
+legend.title_fontsize: 12
+axes.labelsize: 16
+axes.titlesize: 16
+xtick.labelsize: 12
+ytick.labelsize: 12

@@ -15,6 +15,7 @@ from utils import import_allStar, apogee_region, scatter_hist
 
 global NBINS
 NBINS = 50
+DEFAULT_LINESTYLES = ['dotted', 'dashed', 'solid']
 
 def main(cmap='winter', verbose=True):
     if verbose:
@@ -25,7 +26,7 @@ def main(cmap='winter', verbose=True):
     fig, axs = plot_scatter_hist_grid(data)
     if verbose:
         print('Plotting contours...')
-    plot_contours(axs, data, cmap=cmap)
+    plot_contours_grid(axs, data, cmap=cmap, colors=None)
     output = paths.figures / 'ofe_feh_apogee.png'
     plt.savefig(output, dpi=300)
     plt.close()
@@ -63,8 +64,8 @@ def plot_scatter_hist_grid(data):
     return fig, axs
 
 
-def plot_contours(axs, data, bandwidth=0.02, cmap='Greys', colors=None, 
-                  linewidths=0.5, linestyles=None):
+def plot_contours_grid(axs, data, bandwidth=0.02, cmap=None, colors='k', 
+                  linewidths=0.5, linestyles=DEFAULT_LINESTYLES):
     """
     Add contours of APOGEE abundances to axes.
 
@@ -80,22 +81,49 @@ def plot_contours(axs, data, bandwidth=0.02, cmap='Greys', colors=None,
         absz_lim = (ABSZ_BINS[-(i+2)], ABSZ_BINS[-(i+1)])
         for j, ax in enumerate(row):
             galr_lim = (GALR_BINS[j], GALR_BINS[j+1])
-            path = kde_path(galr_lim, absz_lim,
-                            savedir='../data/APOGEE/kde/ofe_feh/')
-            if path.exists():
-                xx, yy, logz = read_kde(path)
-            else:
-                subset = apogee_region(data, galr_lim, absz_lim)
-                subset = subset.copy().dropna(axis=0, subset=['FE_H', 'O_FE'])
-                xx, yy, logz = kde2D(subset['FE_H'], subset['O_FE'], bandwidth)
-                save_kde(xx, yy, logz, path)
-            # scale the linear density to the max value
-            scaled_density = np.exp(logz) / np.max(np.exp(logz))
-            # contour levels at 0.5, 1, 1.5, and 2 sigma
-            levels = np.exp(-0.5 * np.array([3, 2, 1])**2)
-            contours = ax.contour(xx, yy, scaled_density, levels, cmap=cmap, 
-                                  linewidths=linewidths, linestyles=linestyles,
-                                  colors=colors)
+            plot_contours(ax, data, bandwidth=bandwidth, absz_lim=absz_lim,
+                          galr_lim=galr_lim, cmap=cmap, colors=colors,
+                          linewidths=linewidths, linestyles=linestyles)
+            
+
+def plot_contours(ax, data, bandwidth=0.02, absz_lim=(0, 5), galr_lim=(0, 20),
+                  overwrite=False, **kwargs):
+    """
+    Plot APOGEE density contours in the specified region.
+    
+    Parameters
+    ----------
+    ax : matplotlib.axes.Axes
+        Axis object on which to draw contours.
+    data : pandas.DataFrame
+        APOGEE data containing columns 'FE_H' and 'O_FE'.
+    bandwidth : float
+        Kernel density estimate bandwidth. A larger number will produce
+        smoother contour lines. The default is 0.02.
+    absz_lim : tuple
+        Limits on absolute Galactic z-height in kpc. The default is (0, 5).
+    galr_lim : tuple
+        Limits on Galactocentric radius in kpc. The default is (0, 20).
+    overwrite : bool
+        If True, force re-generate the 2D KDE and save the output.
+    **kwargs passed to matplotlib.axes.Axes.contour().
+    """
+    # Path to save 2D KDE for faster plot times
+    path = kde_path(galr_lim, absz_lim, savedir='../data/APOGEE/kde/ofe_feh/')
+    if path.exists() and not overwrite:
+        xx, yy, logz = read_kde(path)
+    else:
+        # Limit to specified Galactic region
+        subset = apogee_region(data, galr_lim, absz_lim)
+        subset = subset.copy().dropna(axis=0, subset=['FE_H', 'O_FE'])
+        xx, yy, logz = kde2D(subset['FE_H'], subset['O_FE'], bandwidth)
+        save_kde(xx, yy, logz, path)
+    # scale the linear density to the max value
+    scaled_density = np.exp(logz) / np.max(np.exp(logz))
+    # contour levels at 1, 2, and 3 sigma
+    levels = np.exp(-0.5 * np.array([3, 2, 1])**2)
+    contours = ax.contour(xx, yy, scaled_density, levels, **kwargs)
+    return contours
             
 
 def read_kde(path):
