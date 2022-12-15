@@ -95,6 +95,7 @@ def main(verbose=False, overwrite=False, cmap='winter'):
     axs[0].yaxis.set_minor_locator(MultipleLocator(0.05))
     
     plt.savefig(paths.figures / 'presentation_plot01.png', dpi=300)
+    plt.close()
 
 
 def normalize_colorbar(stars):

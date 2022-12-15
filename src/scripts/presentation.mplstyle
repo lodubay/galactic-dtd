@@ -9,3 +9,9 @@ axes.labelsize: 16
 axes.titlesize: 16
 xtick.labelsize: 12
 ytick.labelsize: 12
+# Line widths
+axes.linewidth: 0.8
+xtick.major.width: 0.8
+xtick.minor.width: 0.5
+ytick.major.width: 0.8
+ytick.minor.width: 0.5

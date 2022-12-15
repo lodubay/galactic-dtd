@@ -14,7 +14,7 @@ MAJOR_MINOR_RATIO = 5.
 
     
 def plot_distributions(func, data, axs, label='', cmap_name='plasma_r',
-                       galr_bins=GALR_BINS, absz_bins=ABSZ_BINS):
+                       galr_bins=GALR_BINS, absz_bins=ABSZ_BINS, linewidth=1):
     """
     Plot distributions of data binned by galactic radius and z-height.
     
@@ -43,6 +43,8 @@ def plot_distributions(func, data, axs, label='', cmap_name='plasma_r',
     galr_bins : list, optional
         Bin edges of galactic radius in kpc. The default is 
         [3, 5, 7, 9, 11, 13, 15].
+    linewidth : float, optional
+        The plot line width. The default is 1.
     """
     cmap = plt.get_cmap(cmap_name)
     colors = get_color_list(cmap, galr_bins)
@@ -55,7 +57,7 @@ def plot_distributions(func, data, axs, label='', cmap_name='plasma_r',
                 galr_lim = galr_bins[j:j+2]
                 dist, bin_edges = func(data, galr_lim, absz_lim)
                 ax.plot(get_bin_centers(bin_edges), dist, 
-                        color=colors[j], linewidth=1)
+                        color=colors[j], linewidth=linewidth)
         axs[0].set_title(label, va='top', pad=18)
     else:
         raise ValueError('Mismatch between axes and z-height bins.')
@@ -128,7 +130,8 @@ def setup_axes(ncols=2, figure_width=3.25, xlabel='', xlim=None,
         ax.tick_params(axis='x', which='both', direction='out')
     # Add common y-axis label
     fig.text(0.02, 0.58, r'Distance from Galactic midplane $|z|$',
-              ha='left', va='center', rotation='vertical')
+             ha='left', va='center', rotation='vertical', 
+             size=plt.rcParams['axes.labelsize'])
     # Label rows
     for i in range(len(absz_bins)-1):
         absz_lim = tuple(absz_bins[-(i+2):len(absz_bins)-i])

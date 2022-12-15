@@ -80,7 +80,8 @@ def plot_multiple_comparison(outputs, labels, output_dir=paths.data/'migration',
         plot_distributions(vice_mdf, stars, axs[:,col+1], 
                            label=labels[col], cmap_name=cmap_name)
             
-    axs[0,0].set_ylim((0, None))
+    for ax in axs[:,0]:
+        ax.set_ylim((0, None))
     plt.savefig(paths.figures / fname, dpi=300)
     plt.close()
     if verbose:
