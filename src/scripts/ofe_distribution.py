@@ -42,7 +42,7 @@ def plot_multiple_comparison(outputs, labels, output_dir=paths.data/'migration',
         The parent directory for all VICE multizone outputs. The default is
         '../data/migration'.
     cmap_name : str, optional
-        Name of the colormap to use. The default is 'cmap_r'.
+        Name of the colormap to use. The default is 'plasma_r'.
     verbose : bool, optional
         If True, print status updates. The default is False
     fname : str, optional
@@ -62,18 +62,18 @@ def plot_multiple_comparison(outputs, labels, output_dir=paths.data/'migration',
         fig.subplots_adjust(top=0.9)
     
     # Plot
+    if verbose:
+        print('Plotting [O/Fe] distribution from APOGEE...')
+    apogee_data = import_allStar()
+    plot_distributions(apogee_mdf, apogee_data, axs[:,0], 
+                       label='APOGEE DR17', cmap_name=cmap_name)
+    
     for col, output in enumerate(outputs):
         if verbose:
             print('Plotting [O/Fe] distribution from %s...' % output)
         stars = multioutput_to_pandas(Path(output_dir) / output)
-        plot_distributions(vice_mdf, stars, axs[:,col], 
+        plot_distributions(vice_mdf, stars, axs[:,col+1], 
                            label=labels[col], cmap_name=cmap_name)
-    
-    if verbose:
-        print('Plotting [O/Fe] distribution from APOGEE...')
-    apogee_data = import_allStar()
-    plot_distributions(apogee_mdf, apogee_data, axs[:,col+1], 
-                       label='APOGEE DR17', cmap_name=cmap_name)
             
     axs[0,0].set_ylim((0, None))
     plt.savefig(paths.figures / fname, dpi=300)

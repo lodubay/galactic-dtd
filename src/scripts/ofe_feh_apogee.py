@@ -92,7 +92,7 @@ def plot_contours(axs, data, bandwidth=0.02, cmap='Greys', colors=None,
             # scale the linear density to the max value
             scaled_density = np.exp(logz) / np.max(np.exp(logz))
             # contour levels at 0.5, 1, 1.5, and 2 sigma
-            levels = np.exp(-0.5 * np.array([2, 1.5, 1, 0.5])**2)
+            levels = np.exp(-0.5 * np.array([3, 2, 1])**2)
             contours = ax.contour(xx, yy, scaled_density, levels, cmap=cmap, 
                                   linewidths=linewidths, linestyles=linestyles,
                                   colors=colors)

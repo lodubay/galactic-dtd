@@ -99,7 +99,7 @@ def plot_single_comparison(output, output_dir=paths.data/'migration',
     label : str, optional
         Title of VICE column. The default is 'VICE'.
     cmap_name : str
-        Name of the colormap to use. The default is 'cmap_r'.
+        Name of the colormap to use. The default is 'plasma_r'.
     verbose : bool
         If True, print status updates. The default is False
     fname : str, optional
