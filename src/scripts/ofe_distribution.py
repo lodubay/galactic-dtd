@@ -134,7 +134,8 @@ def plot_single_comparison(output, output_dir=paths.data/'migration',
     if fname == '':
         fname = '%s_%s.png' % tuple(output.split('/')[1:])
             
-    axs[0,0].set_ylim((0, None))
+    for ax in axs[:,0]:
+        ax.set_ylim((0, None))
     plt.savefig(paths.figures / 'mdf_ofe' / fname, dpi=300)
     plt.close()
     if verbose:

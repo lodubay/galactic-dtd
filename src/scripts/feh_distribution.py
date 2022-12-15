@@ -135,7 +135,8 @@ def plot_single_comparison(output, output_dir=paths.data/'migration',
         print('Done! Plot is located at src/tex/figures/mdf_feh/%s' % fname)
         
 
-def vice_mdf(stars, galr_lim=(0, 20), absz_lim=(0, 2)):
+def vice_mdf(stars, galr_lim=(0, 20), absz_lim=(0, 2), xlim=FEH_LIM,
+             bin_width=BIN_WIDTH, smooth_width=SMOOTH_WIDTH):
     """
     Calculate the MDF in [Fe/H] of a region of a VICE multizone output.
     
@@ -147,6 +148,12 @@ def vice_mdf(stars, galr_lim=(0, 20), absz_lim=(0, 2)):
         Limits of region in galactic radius (kpc). The default is (0, 20).
     absz_lim : tuple, optional
         Limits of region in galactic z-height (kpc). The default is (0, 2).
+    xlim : tuple, optional
+        Minimum and maximum abundance values. The default is (-1.1, 0.6).
+    bin_width : float, optional
+        Width of histogram bins in x-axis units. The default is 0.01
+    smooth_width : float, optional
+        Width of boxcar smoothing in x-axis units. The default is 0.2.
     
     Returns
     -------
@@ -156,35 +163,8 @@ def vice_mdf(stars, galr_lim=(0, 20), absz_lim=(0, 2)):
         [Fe/H] bins including left and right edges, of length len(dndt)+1.
     """
     subset = filter_multioutput_stars(stars, galr_lim, absz_lim, min_mass=0)
-    mdf, bin_edges = gen_mdf(subset, range=FEH_LIM, bin_width=BIN_WIDTH)
-    mdf_smooth = box_smooth(mdf, bin_edges, SMOOTH_WIDTH)
-    return mdf_smooth, bin_edges
-
-
-def apogee_mdf(data, galr_lim=(0, 20), absz_lim=(0, 2)):
-    """
-    Calculate the MDF in [Fe/H] of a region of astroNN data.
-    
-    Parameters
-    ----------
-    data : pandas.DataFrame
-        Data from APOGEE DR17.
-    galr_lim : tuple, optional
-        Limits of region in galactic radius (kpc). The default is (0, 20).
-    absz_lim : tuple, optional
-        Limits of region in galactic z-height (kpc). The default is (0, 2).
-    
-    Returns
-    -------
-    mdf_smooth : numpy.ndarray
-        Boxcar-smoothed MDF.
-    bin_edges : numpy.ndarray
-        [Fe/H] bins including left and right edges, of length len(dndt)+1.
-    """
-    subset = apogee_region(data, galr_lim, absz_lim)
-    bin_edges = np.arange(FEH_LIM[0], FEH_LIM[1] + BIN_WIDTH, BIN_WIDTH)
-    mdf, _ = np.histogram(subset['FE_H'], bins=bin_edges, density=True)
-    mdf_smooth = box_smooth(mdf, bin_edges, SMOOTH_WIDTH)
+    mdf, bin_edges = gen_mdf(subset, range=xlim, bin_width=bin_width)
+    mdf_smooth = box_smooth(mdf, bin_edges, smooth_width)
     return mdf_smooth, bin_edges
 
 
@@ -216,6 +196,40 @@ def gen_mdf(stars, col='[fe/h]', range=None, bin_width=0.05):
     # Normalize
     mdf /= (mdf.sum() * bin_width)
     return mdf, bins
+
+
+def apogee_mdf(data, galr_lim=(0, 20), absz_lim=(0, 2), xlim=FEH_LIM,
+               bin_width=BIN_WIDTH, smooth_width=SMOOTH_WIDTH):
+    """
+    Calculate the MDF in [Fe/H] of a region of astroNN data.
+    
+    Parameters
+    ----------
+    data : pandas.DataFrame
+        Data from APOGEE DR17.
+    galr_lim : tuple, optional
+        Limits of region in galactic radius (kpc). The default is (0, 20).
+    absz_lim : tuple, optional
+        Limits of region in galactic z-height (kpc). The default is (0, 2).
+    xlim : tuple, optional
+        Minimum and maximum abundance values. The default is (-1.1, 0.6).
+    bin_width : float, optional
+        Width of histogram bins in x-axis units. The default is 0.01
+    smooth_width : float, optional
+        Width of boxcar smoothing in x-axis units. The default is 0.2.
+    
+    Returns
+    -------
+    mdf_smooth : numpy.ndarray
+        Boxcar-smoothed MDF.
+    bin_edges : numpy.ndarray
+        [Fe/H] bins including left and right edges, of length len(dndt)+1.
+    """
+    subset = apogee_region(data, galr_lim, absz_lim)
+    bin_edges = np.arange(xlim[0], xlim[1] + bin_width, bin_width)
+    mdf, _ = np.histogram(subset['FE_H'], bins=bin_edges, density=True)
+    mdf_smooth = box_smooth(mdf, bin_edges, smooth_width)
+    return mdf_smooth, bin_edges
 
 
 def box_smooth(hist, bins, width):
