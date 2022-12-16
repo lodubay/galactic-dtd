@@ -14,7 +14,8 @@ MAJOR_MINOR_RATIO = 5.
 
     
 def plot_distributions(func, data, axs, label='', cmap_name='plasma_r',
-                       galr_bins=GALR_BINS, absz_bins=ABSZ_BINS, linewidth=1):
+                       galr_bins=GALR_BINS, absz_bins=ABSZ_BINS, linewidth=1,
+                       func_kwargs={}):
     """
     Plot distributions of data binned by galactic radius and z-height.
     
@@ -45,6 +46,8 @@ def plot_distributions(func, data, axs, label='', cmap_name='plasma_r',
         [3, 5, 7, 9, 11, 13, 15].
     linewidth : float, optional
         The plot line width. The default is 1.
+    func_kwargs : dict
+        Keyword arguments passed to func()
     """
     cmap = plt.get_cmap(cmap_name)
     colors = get_color_list(cmap, galr_bins)
@@ -55,7 +58,7 @@ def plot_distributions(func, data, axs, label='', cmap_name='plasma_r',
             absz_lim = absz_bins[-(i+2):len(absz_bins)-i]
             for j in range(len(galr_bins)-1):
                 galr_lim = galr_bins[j:j+2]
-                dist, bin_edges = func(data, galr_lim, absz_lim)
+                dist, bin_edges = func(data, galr_lim, absz_lim, **func_kwargs)
                 ax.plot(get_bin_centers(bin_edges), dist, 
                         color=colors[j], linewidth=linewidth)
         axs[0].set_title(label, va='top', pad=18)

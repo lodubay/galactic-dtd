@@ -1,14 +1,17 @@
+# Default figure size and resolution
+figure.figsize: 11, 4.5
+figure.dpi: 300
 # Font style
 font.family: sans-serif
 mathtext.fontset: dejavusans
 # Font size
-font.size: 12
-legend.fontsize: 12
-legend.title_fontsize: 12
-axes.labelsize: 16
-axes.titlesize: 16
-xtick.labelsize: 12
-ytick.labelsize: 12
+font.size: 16
+legend.fontsize: 16
+legend.title_fontsize: 16
+axes.labelsize: 20
+axes.titlesize: 20
+xtick.labelsize: 16
+ytick.labelsize: 16
 # Line widths
 axes.linewidth: 0.8
 xtick.major.width: 0.8
