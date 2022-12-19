@@ -1,6 +1,7 @@
 """
-Plot #1 for my AAS 241 talk. This script plots [O/Fe] vs [Fe/H] of stellar
-particles from a VICE multi-zone run with the inside-out SFH and power law DTD.
+Plot for my AAS 241 talk. This script plots [O/Fe] vs the age of stellar
+particles from a VICE multi-zone run with the Conroy+ 2022 SFH and two
+different DTDs.
 Two regions are included: midplane and out-of-plane, both in the solar annulus.
 """
 
@@ -10,8 +11,8 @@ from matplotlib.ticker import MultipleLocator
 from matplotlib.colors import Normalize
 from matplotlib.cm import ScalarMappable
 from utils import import_allStar, multioutput_to_pandas, \
-    filter_multioutput_stars, sample_dataframe
-from ofe_feh_apogee import plot_contours
+    filter_multioutput_stars, sample_dataframe, weighted_quantile
+from age_ofe_apogee import plot_medians
 import paths
 from _globals import ZONE_WIDTH
 
@@ -19,7 +20,7 @@ from _globals import ZONE_WIDTH
 plt.style.use('presentation.mplstyle')
 
 # Plot parameters
-FEH_LIM = (-1.4, 0.6)
+AGE_LIM = (0, 14)
 OFE_LIM = (-0.25, 0.65)
 ABSZ_BINS = [(0, 0.5), (0.5, 2)] # kpc
 GALR_LIM = (7, 9) # kpc
@@ -67,11 +68,15 @@ def main(verbose=False, overwrite=False, cmap='winter'):
         sample_weights = subset['mass'] / subset['mass'].sum()
         sample = sample_dataframe(subset, 10000, weights=sample_weights)
         # Scatter plot of random sample of stellar particles
-        scatters = ax.scatter(sample['[fe/h]'], sample['[o/fe]'], s=1,
+        scatters = ax.scatter(sample['age'], sample['[o/fe]'], s=1,
                               c=sample['zone_origin'] * ZONE_WIDTH, cmap=cmap,
                               norm=norm, rasterized=True, edgecolor='none')
+        # Scatter plot of random sample of stellar particles
+        ax.scatter(sample['age'], sample['[o/fe]'], s=0.1,
+                   c=sample['zone_origin'] * ZONE_WIDTH, cmap=cmap,
+                   norm=norm, rasterized=True, edgecolor='none')
         
-        # APOGEE contours
+        # APOGEE medians
         contours = plot_contours(ax, apogee_data, overwrite=overwrite,
                                  absz_lim=absz_lim, galr_lim=galr_lim, 
                                  colors='k', linestyles=[':', '--', '-'],

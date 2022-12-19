@@ -53,7 +53,9 @@ def plot_age_ofe_stars(stars, cmap):
             galr_lim = (GALR_BINS[j], GALR_BINS[j+1])
             subset = filter_multioutput_stars(stars, galr_lim, absz_lim,
                                               ZONE_WIDTH)
-            sample = sample_dataframe(subset, 10000)
+            # weight random sample by particle mass
+            sample_weights = subset['mass'] / subset['mass'].sum()
+            sample = sample_dataframe(subset, 10000, weights=sample_weights)
             # Scatter plot of random sample of stellar particles
             ax.scatter(sample['age'], sample['[o/fe]'], s=0.1,
                        c=sample['zone_origin'] * ZONE_WIDTH, cmap=cmap,

@@ -75,7 +75,8 @@ def select_giants(data, logg_col='LOGG', teff_col='TEFF'):
     giants.reset_index(inplace=True)
     return giants
 
-def import_astroNN(verbose=False, allStar_name=allStar_file_name):
+def import_astroNN(verbose=False, allStar_name=allStar_file_name, 
+                   only_giants=True):
     """
     Import the joint data table of APOGEE allStar and astroNN.
     
@@ -86,6 +87,12 @@ def import_astroNN(verbose=False, allStar_name=allStar_file_name):
     ----------
     verbose : bool, optional
         If True, print verbose progress messages. The default is False.
+    allStar_name : str, optional
+        Name of the APOGEE allStar file. The default is 
+        'allStarLite-dr17-synspec.fits'
+    only_giants : bool
+        If True, makes cuts in log(g) and Teff to return only the giant sample.
+        If False, returns all main sample stars. The default is True.
         
     Returns
     -------
