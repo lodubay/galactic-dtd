@@ -109,7 +109,7 @@ def import_astroNN(verbose=False, allStar_name=allStar_file_name,
         # Important! Data can only be cleaned *after* joining the two sets
         allStar = fits_to_pandas(paths.data / 'APOGEE' / allStar_name, hdu=1)
         joined = join_astroNN(allStar)
-        joined = clean_allStar(joined)
+        joined = clean_allStar(joined, only_giants=only_giants)
         joined.to_csv(joined_path, index=False)
     return joined
 
@@ -225,7 +225,7 @@ def import_allStar(verbose=False, name=allStar_file_name, only_giants=True):
         if verbose:
             print('Clean allStar file not found, generating from source')
         raw = fits_to_pandas(paths.data / 'APOGEE' / name, hdu=1)
-        df = clean_allStar(raw, only_giants=only_giants)
+        df = clean_allStar(raw.copy(), only_giants=only_giants)
         df.to_csv(clean_df_path, index=False)
     return df
 

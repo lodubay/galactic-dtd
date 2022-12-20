@@ -20,7 +20,7 @@ plt.style.use('presentation.mplstyle')
 
 # Plot parameters
 FEH_LIM = (-1.4, 0.6)
-OFE_LIM = (-0.25, 0.65)
+OFE_LIM = (-0.15, 0.55)
 ABSZ_BINS = [(0, 0.5), (0.5, 2)] # kpc
 GALR_LIM = (7, 9) # kpc
 
