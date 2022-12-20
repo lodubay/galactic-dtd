@@ -6,7 +6,51 @@ plots, e.g., showing [O/Fe] vs [Fe/H] over a range of Galactic regions.
 import matplotlib.pyplot as plt
 from matplotlib.colors import Normalize
 from matplotlib.cm import ScalarMappable
+from utils import sample_dataframe
 from _globals import GALR_BINS, ABSZ_BINS, TWO_COLUMN_WIDTH
+
+
+def plot_vice_sample(ax, stars, xcol, ycol, zcol='galr_origin', 
+                     cmap=None, norm=None, sampled=True, 
+                     nsamples=10000, markersize=0.1):
+    """
+    Generate a scatter plot of specified parameters from VICE multizone data.
+    
+    Parameters
+    ----------
+    ax : matplotlib.axes.Axes
+        Axes on which to draw the scatter plot.
+    stars : pandas.DataFrame
+        VICE multizone stars data, usually a subset defined by a particular
+        Galactic region.
+    xcol : str
+        Name of data column for x-axis values, e.g. '[fe/h]'.
+    ycol : str
+        Name of data column for y-axis values, e.g. '[o/fe]'.
+    zcol : str, optional
+        Name of data column for color mapping. The default is 'galr_origin'.
+    cmap : str or matplotlib.colors.Colormap, optional
+        Colormap to color-code the scattered points. The default is None.
+    norm : matplotlib.colors.Normalize, optional
+        Normalization of the color-bar mapping. The default is None.
+    sampled : bool, optional
+        If True, sample the VICE stars (weighted by mass) instead of plotting 
+        them all. The default is True.
+    nsamples : int, optional
+        Number of stellar populations to sample from the VICE output. The
+        default is 10000.
+    markersize : float, optional
+        Size of scatter plot markers. The default is 0.1.
+    """
+    if sampled:
+        # weight random sample by particle mass
+        sample_weights = stars['mass'] / stars['mass'].sum()
+        sample = sample_dataframe(stars, nsamples, weights=sample_weights)
+    else:
+        sample = stars.copy()
+    # Scatter plot of stellar particles
+    ax.scatter(sample[xcol], sample[ycol], c=sample[zcol], s=markersize,
+               cmap=cmap, norm=norm, rasterized=True, edgecolor='none')
 
 
 def setup_colorbar(fig, cmap=None, vmin=None, vmax=None, label='', 

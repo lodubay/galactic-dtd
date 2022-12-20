@@ -101,7 +101,7 @@ def import_astroNN(verbose=False, allStar_name=allStar_file_name,
     joined_path = paths.data / 'APOGEE' / 'allStarLite-astroNN-dr17-clean.csv'
     try:
         if verbose:
-            print('Importing from %s' % joined_path)
+            print('Importing APOGEE+astroNN data from %s' % joined_path)
         joined = pd.read_csv(joined_path, dtype={'MEMBER': 'object'})
     except FileNotFoundError:
         if verbose:
@@ -384,6 +384,8 @@ def multioutput_to_pandas(output_name, data_dir=paths.data/'migration'):
     analogdata = analogdata[analogdata['time_origin'] <= tmax]
     # Combine relevant data
     stars[['analog_id', 'zfinal']] = analogdata[['analog_id', 'zfinal']]
+    # Convert zone to radius
+    stars['galr_origin'] = stars['zone_origin'] * ZONE_WIDTH
     stars.dropna(how='any', inplace=True)
     return stars
 
@@ -886,13 +888,8 @@ def weighted_quantile(df, val, weight, quantile=0.5):
             return np.nan
         else:
             df_sorted = df.sort_values(val)
-            # print(df_sorted)
-            # print(df_sorted.shape)
             cumsum = df_sorted[weight].cumsum()
-            # print(cumsum)
             cutoff = df_sorted[weight].sum() * quantile
-            # print(cutoff)
-            # print(df_sorted[cumsum >= cutoff][val])
             wq = df_sorted[cumsum >= cutoff][val].iloc[0]
             return wq
     else:

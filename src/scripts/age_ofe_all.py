@@ -2,7 +2,7 @@
 Plot age vs [O/Fe] from all multizone runs
 """
 
-from age_ofe_compare import main
+from age_ofe import main
 
 SFH_LIST = [
     'insideout', 
@@ -19,9 +19,10 @@ DTD_LIST = [
     'plateau_width1000_slope11', 
     'prompt_peak050_stdev015_timescale30'
 ]
+MIGRATION = 'diffusion'
 
 for evolution in SFH_LIST:
     for RIa in DTD_LIST:
-        output_name = '/'.join(['diffusion', evolution, RIa])
-        print('\n%s' % output_name)
-        main('/'.join(['diffusion', evolution, RIa]))
+        output_name = '/'.join([MIGRATION, evolution, RIa])
+        print('\n%s.vice' % output_name)
+        main(evolution, RIa, migration=MIGRATION, log=True, verbose=True)
