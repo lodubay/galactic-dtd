@@ -7,124 +7,123 @@ Two regions are included: midplane and out-of-plane, both in the solar annulus.
 
 import argparse
 import matplotlib.pyplot as plt
-from matplotlib.ticker import MultipleLocator
+from matplotlib.ticker import MultipleLocator, FormatStrFormatter
 from matplotlib.colors import Normalize
 from matplotlib.cm import ScalarMappable
-from utils import import_allStar, multioutput_to_pandas, \
-    filter_multioutput_stars, sample_dataframe, weighted_quantile
-from age_ofe_apogee import plot_medians
+from utils import import_astroNN, apogee_region, multioutput_to_pandas, \
+    filter_multioutput_stars
+from scatter_plot_grid import setup_colorbar, plot_vice_sample
+from age_ofe import plot_vice_medians, plot_astroNN_medians
 import paths
 from _globals import ZONE_WIDTH
 
 # Custom presentation plot settings
 plt.style.use('presentation.mplstyle')
 
+OUTPUTS = ['diffusion/conroy22/powerlaw_slope14',
+           'diffusion/conroy22/exponential_timescale30',
+           # 'diffusion/conroy22/plateau_width300_slope11',
+           ]
+
 # Plot parameters
-AGE_LIM = (0, 14)
-OFE_LIM = (-0.25, 0.65)
-ABSZ_BINS = [(0, 0.5), (0.5, 2)] # kpc
+AGE_LIM_LINEAR = (-2, 12)
+AGE_LIM_LOG = (0.2, 20)
+OFE_LIM = (-0.15, 0.65)
+ABSZ_BINS = [(0.5, 2), (0, 0.5)] # kpc
 GALR_LIM = (7, 9) # kpc
 
-def main(verbose=False, overwrite=False, cmap='winter'):
-    # APOGEE data
-    if verbose:
-        print('Importing APOGEE allStar data...')
-    apogee_data = import_allStar(only_giants=True)
-    
-    # VICE output
-    if verbose:
-        print('Importing VICE stellar population data...')
-    stars = multioutput_to_pandas('diffusion/insideout/powerlaw_slope11')
+def main(verbose=False, log=False, cmap='winter'):
+    # Import APOGEE and astroNN data
+    astroNN_data = import_astroNN(verbose=verbose)
     
     # Set up figure and axes
-    fig, axs = plt.subplots(1, 2, sharex=True, sharey=True)
+    fig, axs = plt.subplots(2, 2, sharex=True, sharey=True, figsize=(8.5, 4.5))
     bounds = {
         'left': 0.1,
-        'bottom': 0.18,
+        'bottom': 0.15,
         'right': 0.85,
-        'top': 0.88,
+        'top': 0.9,
         'hspace': 0.05,
-        'wspace': 0.05
+        'wspace': 0.03
     }
     plt.subplots_adjust(**bounds)
+    cbar = setup_colorbar(fig, cmap=cmap, vmin=0, vmax=16, width=0.03,
+                          label=r'Birth radius [kpc]', labelpad=6)
+    cbar.ax.yaxis.set_major_locator(MultipleLocator(4))
+    cbar.ax.yaxis.set_minor_locator(MultipleLocator(1))
     
-    # Set up colorbar
-    # subset = filter_multioutput_stars(stars, galr_lim=GALR_LIM, absz_lim=(0, 2),
-    #                                   zone_width=ZONE_WIDTH)
-    norm = Normalize(vmin=0, vmax=16)
-    cax = plt.axes([bounds['right'] + bounds['wspace']/2.5, bounds['bottom'], 
-                    0.03, bounds['top'] - bounds['bottom']])
-    cbar = fig.colorbar(ScalarMappable(norm, cmap), cax)
-    cbar.set_label(r'Birth radius [kpc]', labelpad=6)
-    cax.yaxis.set_major_locator(MultipleLocator(4))
-    cax.yaxis.set_minor_locator(MultipleLocator(1))
-    
-    galr_lim = GALR_LIM
-    
-    for ax, absz_lim in zip(axs, ABSZ_BINS):
-        # Scatter plot of VICE abundances
-        subset = filter_multioutput_stars(stars, galr_lim, absz_lim, ZONE_WIDTH)
-        # weight random sample by particle mass
-        sample_weights = subset['mass'] / subset['mass'].sum()
-        sample = sample_dataframe(subset, 10000, weights=sample_weights)
-        # Scatter plot of random sample of stellar particles
-        scatters = ax.scatter(sample['age'], sample['[o/fe]'], s=1,
-                              c=sample['zone_origin'] * ZONE_WIDTH, cmap=cmap,
-                              norm=norm, rasterized=True, edgecolor='none')
-        # Scatter plot of random sample of stellar particles
-        ax.scatter(sample['age'], sample['[o/fe]'], s=0.1,
-                   c=sample['zone_origin'] * ZONE_WIDTH, cmap=cmap,
-                   norm=norm, rasterized=True, edgecolor='none')
+    for j, output in enumerate(OUTPUTS):
+        if verbose: 
+            print('Importing VICE multizone data from %s.vice' % output)
+        vice_stars = multioutput_to_pandas(output)
+        for i, absz_lim in enumerate(ABSZ_BINS):
+            ax = axs[i,j]
+            # Scatter plot of VICE abundances
+            vice_subset = filter_multioutput_stars(vice_stars, GALR_LIM, absz_lim, 
+                                                   ZONE_WIDTH)
+            plot_vice_sample(ax, vice_subset, 'age', '[o/fe]', markersize=1,
+                             cmap=cmap, norm=cbar.norm)
+            # Median stellar ages from astroNN
+            astroNN_subset = apogee_region(astroNN_data, GALR_LIM, absz_lim)
+            plot_astroNN_medians(ax, astroNN_subset.copy(), ofe_lim=OFE_LIM,
+                                 plot_low_count_bins=False, 
+                                 low_count_cutoff=0.01, label='astroNN')
+            # Median stellar ages from VICE
+            plot_vice_medians(ax, vice_subset.copy(), ofe_lim=OFE_LIM,
+                              plot_low_mass_bins=False, low_mass_cutoff=0.01,
+                              label='VICE')
         
-        # APOGEE medians
-        contours = plot_contours(ax, apogee_data, overwrite=overwrite,
-                                 absz_lim=absz_lim, galr_lim=galr_lim, 
-                                 colors='k', linestyles=[':', '--', '-'],
-                                 linewidths=0.5)
+            # Label z-height bins
+            if j == 0:
+                ax.text(0.05, 0.92, r'%s $\leq |z| <$ %s kpc' % absz_lim,
+                        transform=ax.transAxes, va='top', ha='left')
+            
+            if j == 1 and i == 0:
+                ax.legend(loc='upper left', frameon=False, markerscale=2,
+                          borderaxespad=0.2, handletextpad=0.4)
+        # ax.set_title(r'%s kpc $\leq |z| <$ %s kpc' % absz_lim, pad=12)
         
-        # Label z-height bins
-        ax.set_title(r'%s kpc $\leq |z| <$ %s kpc' % absz_lim, pad=12)
-        
-    # Contour legend
-    contour_labels = [r'$1\sigma$', r'$2\sigma$', r'$3\sigma$']
-    # for i, label in enumerate(contour_labels):
-    #     contours.collections[i].set_label(label)
-    contours.legend_elements()[0].reverse()
-    axs[0].legend(contours.legend_elements()[0], contour_labels, 
-                  loc='lower left', title='APOGEE\ncontours', frameon=False)
+    # Legend
         
     # Configure axes
-    axs[1].text(0.95, 0.92, r'%s kpc $\leq R_{\rm{Gal}} <$ %s kpc' % GALR_LIM,
-                transform=ax.transAxes, va='top', ha='right')
+    # axs[1].text(0.95, 0.92, r'%s kpc $\leq R_{\rm{Gal}} <$ %s kpc' % GALR_LIM,
+    #             transform=ax.transAxes, va='top', ha='right')
     # axs[0].set_title(r'%s kpc $\leq R_{\rm{Gal}} <$ %s kpc' % GALR_LIM)
+    axs[0,0].set_title(r'Power law ($t^{-1.4}$)')
+    axs[0,1].set_title(r'Exponential ($\tau=3$ Gyr)')
     
-    axs[0].set_xlabel('[Fe/H]', labelpad=6)
-    axs[1].set_xlabel('[Fe/H]', labelpad=6)
-    axs[0].set_xlim(FEH_LIM)
-    axs[0].xaxis.set_major_locator(MultipleLocator(0.5))
-    axs[0].xaxis.set_minor_locator(MultipleLocator(0.1))
+    for ax in axs[-1,:]:
+        ax.set_xlabel('Age [Gyr]')#, labelpad=6)
+    if log:
+        axs[0,0].set_xscale('log')
+        axs[0,0].set_xlim(AGE_LIM_LOG)
+        axs[0,0].xaxis.set_major_formatter(FormatStrFormatter('%d'))
+    else:
+        axs[0,0].set_xlim(AGE_LIM_LINEAR)
+        axs[0,0].xaxis.set_major_locator(MultipleLocator(5))
+        axs[0,0].xaxis.set_minor_locator(MultipleLocator(1))
     
-    axs[0].set_ylabel('[O/Fe]', labelpad=-6)
-    axs[0].set_ylim(OFE_LIM)
-    axs[0].yaxis.set_major_locator(MultipleLocator(0.2))
-    axs[0].yaxis.set_minor_locator(MultipleLocator(0.05))
+    for ax in axs[:,0]:
+        ax.set_ylabel('[O/Fe]', labelpad=6)
+    axs[0,0].set_ylim(OFE_LIM)
+    axs[0,0].yaxis.set_major_locator(MultipleLocator(0.2))
+    axs[0,0].yaxis.set_minor_locator(MultipleLocator(0.05))
     
-    plt.savefig(paths.figures / 'presentation_ofe_feh_insideout.png', dpi=300)
+    plt.savefig(paths.figures / 'presentation_age_ofe_conroy22.png', dpi=300)
     plt.close()
 
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(
-        prog='presentation_plot01.py',
-        description='Generate a plot of [O/Fe] vs [Fe/H] from select VICE' + \
-            ' outputs for my talk at AAS 241.'
+        prog='presentation_age_ofe_conroy22.py',
+        description='Generate a plot of [O/Fe] vs age from VICE outputs' + \
+            ' with the Conroy+ 2022 SFE for my talk at AAS 241.'
     )
     parser.add_argument('-v', '--verbose', action='store_true')
-    parser.add_argument('-o', '--overwrite', action='store_true',
-        help='Whether to overwrite saved 2D KDE data (takes longer)')
     parser.add_argument('-c', '--cmap', metavar='COLORMAP', type=str,
         default='winter',
         help='Name of colormap for color-coding VICE output (default: winter)')
+    parser.add_argument('-l', '--log', action='store_true',
+                        help='Plot age on a log scale')
     args = parser.parse_args()
-    # main(verbose=args.verbose, overwrite=args.overwrite, cmap=args.cmap)
     main(**vars(args))
