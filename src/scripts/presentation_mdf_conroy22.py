@@ -83,8 +83,8 @@ def main(verbose=False, cmap_name='viridis_r'):
         print('Plotting VICE [Fe/H] distribution from %s...' % output)
     stars = multioutput_to_pandas(output)
     plot_distributions(vice_mdf, stars, axs[:,1], linewidth=1.5,
-                       label='Power law', cmap_name=cmap, absz_bins=ABSZ_BINS,
-                       func_kwargs={'xlim': FEH_LIM})
+                       label=r'Power law ($t^{-1.1}$)', cmap_name=cmap, 
+                       absz_bins=ABSZ_BINS, func_kwargs={'xlim': FEH_LIM})
             
     for ax in axs[:,0]:
         ax.set_ylim((0, None))

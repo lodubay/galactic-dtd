@@ -20,7 +20,7 @@ plt.style.use('presentation.mplstyle')
 
 # Plot parameters
 FEH_LIM = (-1.4, 0.6)
-OFE_LIM = (-0.1, 0.6)
+OFE_LIM = (-0.1, 0.5)
 ABSZ_BINS = [(0, 0.5), (0.5, 2)] # kpc
 GALR_LIM = (7, 9) # kpc
 
@@ -78,7 +78,7 @@ def main(verbose=False, overwrite=False, cmap='winter'):
                                  linewidths=0.5)
         
         # Label z-height bins
-        ax.set_title(r'%s kpc $\leq |z| <$ %s kpc' % absz_lim, pad=12)
+        ax.set_title(r'$%s \leq |z| < %s$ kpc' % absz_lim, pad=12)
         
     # Contour legend
     contour_labels = [r'$1\sigma$', r'$2\sigma$', r'$3\sigma$']
@@ -89,7 +89,7 @@ def main(verbose=False, overwrite=False, cmap='winter'):
                   loc='lower left', title='APOGEE\ncontours', frameon=False)
         
     # Configure axes
-    axs[1].text(0.95, 0.92, r'%s kpc $\leq R_{\rm{Gal}} <$ %s kpc' % GALR_LIM,
+    axs[1].text(0.95, 0.92, r'$%s \leq R_{\rm{Gal}} < %s$ kpc' % GALR_LIM,
                 transform=ax.transAxes, va='top', ha='right')
     # axs[0].set_title(r'%s kpc $\leq R_{\rm{Gal}} <$ %s kpc' % GALR_LIM)
     

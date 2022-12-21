@@ -30,7 +30,7 @@ LABELS = [r'Power law ($t^{-1.1}$)',
           ]
 
 # Plot parameters
-AGE_LIM_LINEAR = (-2, 12)
+AGE_LIM_LINEAR = (-1, 13)
 AGE_LIM_LOG = (0.2, 20)
 OFE_LIM = (-0.15, 0.65)
 ABSZ_BINS = [(0.5, 2), (0, 0.5)] # kpc
