@@ -56,7 +56,7 @@ def plot_multiple_comparison(outputs, labels, output_dir=paths.data/'migration',
         
     # Set up plot
     fig, axs = setup_axes(ncols=len(outputs)+1, figure_width=figure_width, 
-                          xlabel=r'[$\alpha$/Fe]', xlim=OFE_LIM, 
+                          xlabel='[O/Fe]', xlim=OFE_LIM, 
                           major_tick_spacing=0.2, cmap_name=cmap_name,
                           panel_aspect_ratio=panel_aspect_ratio,
                           cbar_width=cbar_width)

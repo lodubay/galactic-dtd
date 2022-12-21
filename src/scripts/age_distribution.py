@@ -54,6 +54,7 @@ def plot_multiple_comparison(outputs, labels, output_dir=paths.data/'migration',
     fig, axs = setup_axes(ncols=len(outputs)+1, figure_width=7., 
                           xlabel='Age [Gyr]', xlim=(0, MAX_AGE), 
                           major_tick_spacing=5, cmap_name=cmap_name)
+    fig.subplots_adjust(left=0.1)
     if double_line_titles:
         # Allow room for two-line axis titles
         fig.subplots_adjust(top=0.9)
@@ -68,8 +69,8 @@ def plot_multiple_comparison(outputs, labels, output_dir=paths.data/'migration',
     
     if verbose:
         print('Plotting astroNN age distribution...')
-    astroNN_data = select_giants(import_astroNN())
-    plot_distributions(astroNN_adf, astroNN_data, axs[:,col+1], 
+    astroNN_data = import_astroNN()
+    plot_distributions(astroNN_adf, astroNN_data, axs[:,-1], 
                        label='astroNN', cmap_name=cmap_name)
             
     axs[0,0].set_ylim((0, None))

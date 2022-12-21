@@ -17,7 +17,7 @@ LABELS = ['Inside-Out',
 
 def main(verbose=False):
     outputs = ['diffusion/%s/%s' % (sfh, DTD_NAME) for sfh in SFH_LIST]
-    plot_multiple_comparison(outputs, LABELS, fname='adf_same_dtd.pdf', 
+    plot_multiple_comparison(outputs, LABELS, fname='adf_same_dtd.png', 
                              verbose=verbose)
 
 if __name__ == '__main__':
