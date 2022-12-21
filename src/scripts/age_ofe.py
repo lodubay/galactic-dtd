@@ -84,7 +84,8 @@ def main(evolution, RIa, migration='diffusion', verbose=False, cmap='winter',
 
 def plot_vice_medians(ax, stars, ofe_lim=OFE_LIM, ofe_bin_width=OFE_BIN_WIDTH,
                       plot_low_mass_bins=True, low_mass_cutoff=0.01,
-                      marker='s', small_marker='x', label=None, small_label=None):
+                      marker='s', small_marker='x', label=None, 
+                      small_label=None, markersize=2):
     """
     Plot median stellar ages binned by [O/Fe] from VICE multizone data.
     
@@ -113,6 +114,8 @@ def plot_vice_medians(ax, stars, ofe_lim=OFE_LIM, ofe_bin_width=OFE_BIN_WIDTH,
         The main scatter plot / error bar label. The default is None.
     small_label : str, optional
         The small scatter plot / error bar label. The default is None.
+    markersize : float, optional
+        The marker size. The default is 2.
     """
     # Lambda functions for weighted quantiles
     wm = lambda x: weighted_quantile(x, 'age', 'mass', quantile=0.5)
@@ -136,7 +139,7 @@ def plot_vice_medians(ax, stars, ofe_lim=OFE_LIM, ofe_bin_width=OFE_BIN_WIDTH,
                       age_upper[high_mass_bins] - age_median[high_mass_bins]),
                 yerr=ofe_bin_width/2,
                 color='k', linestyle='none', capsize=1, elinewidth=0.5,
-                capthick=0.5, marker=marker, markersize=2, label=label
+                capthick=0.5, marker=marker, markersize=markersize, label=label
     )
     # Plot bins with little stellar mass with smaller markers
     if plot_low_mass_bins:
@@ -146,7 +149,7 @@ def plot_vice_medians(ax, stars, ofe_lim=OFE_LIM, ofe_bin_width=OFE_BIN_WIDTH,
                           age_upper[low_mass_bins] - age_median[low_mass_bins]),
                     yerr=ofe_bin_width/2,
                     color='k', linestyle='none', capsize=1, elinewidth=0.25,
-                    capthick=0.25, marker=small_marker, markersize=2, 
+                    capthick=0.25, marker=small_marker, markersize=markersize, 
                     markeredgewidth=0.5, label=small_label
         )
 
@@ -154,7 +157,7 @@ def plot_vice_medians(ax, stars, ofe_lim=OFE_LIM, ofe_bin_width=OFE_BIN_WIDTH,
 def plot_astroNN_medians(ax, data, ofe_lim=OFE_LIM, ofe_bin_width=OFE_BIN_WIDTH,
                          plot_low_count_bins=True, low_count_cutoff=0.01,
                          marker='^', small_marker='2', label=None, 
-                         small_label=None):
+                         small_label=None, markersize=2):
     """
     Plot median stellar ages binned by [O/Fe] from astroNN data.
     
@@ -185,6 +188,8 @@ def plot_astroNN_medians(ax, data, ofe_lim=OFE_LIM, ofe_bin_width=OFE_BIN_WIDTH,
         The main scatter plot / error bar label. The default is None.
     small_label : str, optional
         The small scatter plot / error bar label. The default is None.
+    markersize : float, optional
+        The marker size. The default is 2.
     """
     # Define [O/Fe] bins
     ofe_bins = np.arange(ofe_lim[0], ofe_lim[1]+ofe_bin_width, ofe_bin_width)
@@ -202,7 +207,7 @@ def plot_astroNN_medians(ax, data, ofe_lim=OFE_LIM, ofe_bin_width=OFE_BIN_WIDTH,
                       age_upper[high_count_bins] - age_median[high_count_bins]),
                 yerr=ofe_bin_width/2,
                 color='r', linestyle='none', capsize=1, elinewidth=0.5,
-                capthick=0.5, marker=marker, markersize=2, label=label,
+                capthick=0.5, marker=marker, markersize=markersize, label=label,
     )
     # Plot bins with few stars with a different, smaller marker
     if plot_low_count_bins:
@@ -212,7 +217,7 @@ def plot_astroNN_medians(ax, data, ofe_lim=OFE_LIM, ofe_bin_width=OFE_BIN_WIDTH,
                           age_upper[low_count_bins] - age_median[low_count_bins]),
                     yerr=ofe_bin_width/2,
                     color='r', linestyle='none', capsize=1, elinewidth=0.25,
-                    capthick=0.25, marker=small_marker, markersize=2, 
+                    capthick=0.25, marker=small_marker, markersize=markersize, 
                     markeredgewidth=0.5, label=small_label,
         )
 

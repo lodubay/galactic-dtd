@@ -22,10 +22,12 @@ ABSZ_BINS = [0, 0.5, 2]
 
 OUTPUTS = ['diffusion/conroy22/powerlaw_slope11',
            'diffusion/conroy22/plateau_width300_slope11',
-           'diffusion/conroy22/exponential_timescale15']
-LABELS = ['Power law',
-          'Plateau',
-          'Exponential']
+           # 'diffusion/conroy22/exponential_timescale30'
+           ]
+LABELS = [r'Power law ($t^{-1.1}$)',
+          'Plateau (300 Myr)',
+          # 'Exponential',
+          ]
 
 def main(verbose=False, cmap_name='plasma_r'):
     output = 'diffusion/insideout/powerlaw_slope11'

@@ -20,10 +20,14 @@ from _globals import ZONE_WIDTH
 # Custom presentation plot settings
 plt.style.use('presentation.mplstyle')
 
-OUTPUTS = ['diffusion/conroy22/powerlaw_slope14',
-           'diffusion/conroy22/exponential_timescale30',
-           # 'diffusion/conroy22/plateau_width300_slope11',
+OUTPUTS = ['diffusion/conroy22/powerlaw_slope11',
+           # 'diffusion/conroy22/exponential_timescale30',
+            'diffusion/conroy22/plateau_width300_slope11',
            ]
+LABELS = [r'Power law ($t^{-1.1}$)',
+          # r'Exponential ($\tau=3$ Gyr)',
+          r'Plateau (300 Myr)',
+          ]
 
 # Plot parameters
 AGE_LIM_LINEAR = (-2, 12)
@@ -67,30 +71,28 @@ def main(verbose=False, log=False, cmap='winter'):
             astroNN_subset = apogee_region(astroNN_data, GALR_LIM, absz_lim)
             plot_astroNN_medians(ax, astroNN_subset.copy(), ofe_lim=OFE_LIM,
                                  plot_low_count_bins=False, 
-                                 low_count_cutoff=0.01, label='astroNN')
+                                 low_count_cutoff=0.01, label='astroNN',
+                                 markersize=4)
             # Median stellar ages from VICE
             plot_vice_medians(ax, vice_subset.copy(), ofe_lim=OFE_LIM,
                               plot_low_mass_bins=False, low_mass_cutoff=0.01,
-                              label='VICE')
+                              label='VICE', markersize=4)
         
             # Label z-height bins
             if j == 0:
-                ax.text(0.05, 0.92, r'%s $\leq |z| <$ %s kpc' % absz_lim,
+                ax.text(0.05, 0.92, r'$%s \leq |z| < %s$ kpc' % absz_lim,
                         transform=ax.transAxes, va='top', ha='left')
             
             if j == 1 and i == 0:
-                ax.legend(loc='upper left', frameon=False, markerscale=2,
+                ax.legend(loc='upper left', frameon=False,
                           borderaxespad=0.2, handletextpad=0.4)
         # ax.set_title(r'%s kpc $\leq |z| <$ %s kpc' % absz_lim, pad=12)
         
     # Legend
         
     # Configure axes
-    # axs[1].text(0.95, 0.92, r'%s kpc $\leq R_{\rm{Gal}} <$ %s kpc' % GALR_LIM,
-    #             transform=ax.transAxes, va='top', ha='right')
-    # axs[0].set_title(r'%s kpc $\leq R_{\rm{Gal}} <$ %s kpc' % GALR_LIM)
-    axs[0,0].set_title(r'Power law ($t^{-1.4}$)')
-    axs[0,1].set_title(r'Exponential ($\tau=3$ Gyr)')
+    for ax, label in zip(axs[0,:], LABELS):
+        ax.set_title(label)
     
     for ax in axs[-1,:]:
         ax.set_xlabel('Age [Gyr]')#, labelpad=6)

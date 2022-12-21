@@ -20,7 +20,7 @@ plt.style.use('presentation.mplstyle')
 
 # Plot parameters
 FEH_LIM = (-1.4, 0.6)
-OFE_LIM = (-0.15, 0.55)
+OFE_LIM = (-0.1, 0.6)
 ABSZ_BINS = [(0, 0.5), (0.5, 2)] # kpc
 GALR_LIM = (7, 9) # kpc
 
@@ -99,7 +99,7 @@ def main(verbose=False, overwrite=False, cmap='winter'):
     axs[0].xaxis.set_major_locator(MultipleLocator(0.5))
     axs[0].xaxis.set_minor_locator(MultipleLocator(0.1))
     
-    axs[0].set_ylabel('[O/Fe]', labelpad=-6)
+    axs[0].set_ylabel('[O/Fe]', labelpad=6)
     axs[0].set_ylim(OFE_LIM)
     axs[0].yaxis.set_major_locator(MultipleLocator(0.2))
     axs[0].yaxis.set_minor_locator(MultipleLocator(0.05))
