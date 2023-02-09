@@ -26,23 +26,26 @@ def main(dt=DT, nsamples=NSAMPLES, verbose=True):
             'func': dtds.greggio05_single(),
             'label': 'Single Degenerate',
             'color': paultol.muted.colors[5],
-            'line': '-'
+            'line': '-',
+            'offset': 3,
         }
         dd_wide = {
-            # 'func': dtds.greggio05_double('wide', dt=dt, nsamples=nsamples,
-            #                               progress=verbose),
-            'func': dtds.greggio05_approximate.from_defaults('wide'),
+            'func': dtds.greggio05_double('wide', dt=dt, nsamples=nsamples,
+                                          progress=verbose),
+            # 'func': dtds.greggio05_approximate.from_defaults('wide'),
             'label': 'Double Degenerate (WIDE)',
             'color': paultol.muted.colors[1],
             'line': '-',
+            'offset': 0.5,
         }
         dd_close = {
-            # 'func': dtds.greggio05_double('close', dt=dt, nsamples=nsamples,
-            #                               progress=verbose),
-            'func': dtds.greggio05_approximate.from_defaults('close'),
+            'func': dtds.greggio05_double('close', dt=dt, nsamples=nsamples,
+                                          progress=verbose),
+            # 'func': dtds.greggio05_approximate.from_defaults('close'),
             'label': 'Double Degenerate (CLOSE)',
             'color': paultol.muted.colors[3],
             'line': '-',
+            'offset': 1,
         }
         # Comparison DTDs
         plateau = {
@@ -50,36 +53,44 @@ def main(dt=DT, nsamples=NSAMPLES, verbose=True):
             'label': r'Plateau ($W=0.3$ Gyr)',
             'color': paultol.muted.colors[7],
             'line': '--',
+            'offset': 1,
         }
         plateau_long = {
             'func': dtds.plateau(width=1., slope=-1.1, tmin=DELAY),
             'label': r'Plateau ($W=1$ Gyr)',
             'color': paultol.muted.colors[6],
             'line': '--',
+            'offset': 0.5,
         }
         exp = {
             'func': dtds.exponential(timescale=1.5, tmin=DELAY),
             'label': r'Exponential ($\tau=1.5$ Gyr)',
             'color': paultol.muted.colors[0],
             'line': '--',
+            'offset': 3,
         }
     
     fig, ax = setup_axes()
-    tarr = np.arange(0.04, END_TIME, dt)
-    distributions = [styles.sd, styles.dd_close, styles.dd_wide, styles.plateau,
-                     styles.exp, styles.plateau_long]
+    tarr = np.logspace(np.log10(DELAY), np.log10(END_TIME), num=NSAMPLES)
+    distributions = [styles.sd, styles.exp, 
+                     styles.dd_close, styles.plateau, 
+                     styles.dd_wide, styles.plateau_long]
     
     for dtd in distributions:
         if verbose:
             print('Plotting', dtd['label'], 'DTD')
         func = dtd['func']
-        ax.plot(tarr, np.array([func(t) for t in tarr]), 
+        ax.plot(tarr, dtd['offset'] * np.array([func(t) for t in tarr]), 
                 label=dtd['label'], c=dtd['color'], ls=dtd['line'], lw=1)
 
-    ax.set_ylim((3e-2, 3e1))
-    ax.legend(loc='upper right', fontsize=8, handlelength=1.2, frameon=False)
+    # ax.set_ylim((3e-2, 3e1))
+    ax.set_ylim((3e-12, 4e-9))
+    ax.legend(loc='lower left', fontsize=8, handlelength=1.2, frameon=False, 
+              bbox_to_anchor=(0.1, 0.01))
+    ax.set_ylabel(r'Normalized SN Ia rate $\times$ factor')
 
     fig.savefig(paths.figures / 'dtd_greggio05.png', dpi=300)
+    fig.savefig(paths.figures / 'dtd_greggio05.pdf', dpi=300)
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(

@@ -23,6 +23,7 @@ def main():
         ax.plot(times, [func(t) / func(1) for t in times], 
                 label=dtd['label'], c=dtd['color'], ls=dtd['line'], lw=1)
     ax.set_ylim((3e-3, 3e2))
+    # ax.set_ylim((1e-12, 3e-8))
     ax.legend(frameon=False, loc='upper right', fontsize=8, handlelength=1.25)
     fig.savefig(paths.figures / 'delay_time_distributions.pdf')
     fig.savefig(paths.figures / 'delay_time_distributions.png')
@@ -89,8 +90,8 @@ def setup_axes():
     ax.set_xscale('log')
     ax.set_yscale('log')
     ax.xaxis.set_major_formatter(ScalarFormatter())
-    ax.set_xlabel('Time After Starburst [Gyr]')
-    ax.set_ylabel('Relative Normalized SN Ia Rate')
+    ax.set_xlabel('Time after starburst [Gyr]')
+    ax.set_ylabel('Relative normalized SN Ia rate')
     return fig, ax
     
 
