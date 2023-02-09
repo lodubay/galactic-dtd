@@ -3,11 +3,18 @@
 
 \usepackage{showyourwork}
 \usepackage{amsmath}
+\usepackage{amssymb}
 \usepackage{layouts}
+\usepackage{xcolor}
 % \usepackage{siunitx}
 
 % custom unit definitions
 % \DeclareSIUnit\year{yr}
+
+% user-defined commands
+\newcommand{\yes}{\textcolor{green}{\checkmark}}
+\newcommand{\meh}{\textcolor{black}{$\sim$}}
+\newcommand{\no}{\textcolor{red}{$\times$}}
 
 % Begin!
 \begin{document}
@@ -33,13 +40,8 @@
 \section{Methods}
 \label{sec:methods}
 
-\subsection{Accuracy of astroNN}
-\label{sec:astronn-quality}
-
-For $19784$ stars, or $\sim3.5\%$ of the sample, the astroNN [Fe/H] abundance estimate is $\gtrsim0.5$ dex lower than the value provided by ASPCAP. The vast majority of these stars are on the lower-main sequence according to \textit{Gaia} photometry, so we exclude stars with $\log(g) > 4$ in ASPCAP. In addition, 197 or $\sim3\%$ of stars with APOKASC-2 asteroseismic ages are reported to be $>5$ Gyr younger by astroNN. The APOKASC-2 age is unphysically high for many of these stars, often exceeding 15 Gyr. We identify prior mass loss as the cause of this discrepancy, so the astroNN ages are likely closer to the truth.
-
-\subsection{Measurements of the Type Ia Supernova Delay Time Distribution}
-\label{sec:dtd-measurements}
+\subsection{DTD Models}
+\label{sec:dtd-models}
 
 \begin{figure}
     \centering
@@ -49,37 +51,72 @@ For $19784$ stars, or $\sim3.5\%$ of the sample, the astroNN [Fe/H] abundance es
     \script{delay_time_distributions.py}
 \end{figure}
 
-\citet{Schonrich2009-RadialMixing} take their DTD to be an exponential with a 1.5 Gyr timescale, though this isn't strictly observationally motivated.
+\subsubsection{From Observations}
 
-\citet{Maoz2017-CosmicDTD} compare volumetric SN Ia rates to the cosmic star formation history. They get a power law with a slope of $-1.13\pm 0.06$ for field galaxies, and a slope of $-1.39^{+0.32}_{-0.05}$ for galaxy clusters.
+\citet{Maoz2014-Review}
+
+A typical form for the DTD is a power-law $t^\alpha$ where $\alpha\sim-1$. \citet{Maoz2017-CosmicDTD} compare volumetric SN Ia rates to the cosmic star formation history. They get a power law with a slope of $-1.13\pm 0.06$ for field galaxies, and a slope of $-1.39^{+0.32}_{-0.05}$ for galaxy clusters.
 
 \citet{Heringer2019-FieldGalaxyDTD} study the distribution of SNe Ia in field galaxies and get a power-law index of $-1.34^{+0.19}_{-0.17}$ which is closer to Maoz's cluster DTD.
 
-\citet{Stolger2020-ExponentialDTD} perform maximum likelihood estimations based on the cosmic star formation history and the star formation histories of individual galaxies. In both cases their best fit functions were approximately exponential, though they started with a skew-normal function so could not have ended up with a power law even if they wanted to. They don't actually report the timescale of this exponential, but based on the plots I'd say it's about 1.5 - 2 (1.7?) Gyr. Their best fit parameters make no sense to me as they don't report their units.
-
 \citet{Wiseman2021-DESRates} measure the SN Ia rate in the redshift range $0.2 < z < 0.6$ and get a similar power law to \citet{Maoz2017-CosmicDTD} with a slope of $-1.13 \pm 0.05$. They also find that slower-declining SNe have a steeper DTD slope.
 
-\begin{deluxetable}{lCl}
-\tablecaption{Sources of the various forms of delay time distribution.}
-\tablehead{
-\colhead{Name} & \colhead{Form} & \colhead{Source}
-}
-\startdata
-Field Galaxy Power-Law      & t^{-1.1}              & \citet{Maoz2017-CosmicDTD} \\   
-Galaxy Cluster Power-Law    & t^{-1.4}              & \citet{Maoz2017-CosmicDTD} \\
-Short Exponential           & e^{-t/1.5~\rm{Gyr}}  & \citet{Schonrich2009-RadialMixing} \\
-\enddata
-\end{deluxetable}
+Another commonly assumed functional form is an exponential. \citet{Schonrich2009-RadialMixing} take their DTD to be an exponential with a 1.5 Gyr timescale, though this isn't strictly observationally motivated.
 
-\section{Results}
-\label{sec:results}
+\citet{Stolger2020-ExponentialDTD} perform maximum likelihood estimations based on the cosmic star formation history and the star formation histories of individual galaxies. In both cases their best fit functions were approximately exponential, though they started with a skew-normal function so could not have ended up with a power law even if they wanted to. They don't actually report the timescale of this exponential, but based on the plots I'd say it's about 1.5 - 2 (1.7?) Gyr. Their best fit parameters make no sense to me as they don't report their units.
 
-\subsection{One-Zone Models}
+% \begin{deluxetable}{lCl}
+% \tablecaption{Sources of the various forms of delay time distribution.}
+% \tablehead{
+% \colhead{Name} & \colhead{Form} & \colhead{Source}
+% }
+% \startdata
+% Field Galaxy Power-Law      & t^{-1.1}              & \citet{Maoz2017-CosmicDTD} \\   
+% Galaxy Cluster Power-Law    & t^{-1.4}              & \citet{Maoz2017-CosmicDTD} \\
+% Short Exponential           & e^{-t/1.5~\rm{Gyr}}  & \citet{Schonrich2009-RadialMixing} \\
+% \enddata
+% \end{deluxetable}
+
+\subsubsection{Theoretical Models}
+
+\citet{Matteucci1986-SupernovaEnrichment}
+
+\citet{Greggio2005-AnalyticalRates}
+
+\citet{Rajamuthukumar2022-TripleEvolution}
+
+\citet{Schonrich2009-RadialMixing,Weinberg2017-ChemicalEquilibrium} assume an exponential with $\tau=1.5$ Gyr
+
+\begin{figure}
+    \centering
+    \includegraphics{figures/dtd_greggio05.pdf}
+    \caption{Analytical DTDs from \citet[][solid curves]{Greggio2005-AnalyticalRates} and close approximation simple functions (dashed curves).}
+    \label{fig:dtd-greggio05}
+\end{figure}
+
+\subsubsection{Our Models}
+
+We explore four different classes of DTD: a power-law, a broken power-law with an initial flat plateau, an exponential, and an exponential with a prompt Gaussian component, with one or two different parameterizations for each. Figure \ref{fig:dtds} presents these DTDs as a function of time since star formation.
+
+The power-law DTD is motivated by studies of the cosmic Ia rate \citep{Maoz2017-CosmicDTD,Wiseman2021-DESRates}, and we explore slopes of $\alpha=-1.1$ and $\alpha=-1.4$ which correspond to the field galaxy and galaxy cluster DTDs of \citet{Maoz2017-CosmicDTD}, respectively. We explore the broken power-law with plateau widths of 300 Myr and 1 Gyr \textemdash the first as a proxy for both 
+
+\subsection{APOGEE Data}
+\label{sec:apogee-data}
+
+\subsubsection{Accuracy of astroNN}
+\label{sec:astronn-quality}
+
+For $19784$ stars, or $\sim3.5\%$ of the sample, the astroNN [Fe/H] abundance estimate is $\gtrsim0.5$ dex lower than the value provided by ASPCAP. The vast majority of these stars are on the lower-main sequence according to \textit{Gaia} photometry, so we exclude stars with $\log(g) > 4$ in ASPCAP. In addition, 197 or $\sim3\%$ of stars with APOKASC-2 asteroseismic ages are reported to be $>5$ Gyr younger by astroNN. The APOKASC-2 age is unphysically high for many of these stars, often exceeding 15 Gyr. We identify prior mass loss as the cause of this discrepancy, so the astroNN ages are likely closer to the truth.
+
+\subsection{Chemical Evolution Models}
+\label{sec:vice-models}
+
+\section{Results from Single-Zone Models}
 \label{sec:onezone-results}
 
 All models are run for a duration of 13.2 Gyr with a simulation timestep of 0.01 Gyr.
 
-\subsubsection{The SN Ia Delay-Time Distribution}
+\subsection{The SN Ia Delay-Time Distribution}
 
 Adjusting the parameters of the DTD affects how steeply the abundance track in [Fe/H]-[O/Fe] space falls from its initial ``plateau'' and the location of the ``knee.'' Figure \ref{fig:onezone-slope-timescale} shows abundance tracks from one-zone models which assume different slopes of a power-law DTD or different timescales of an exponential DTD. A steeper power-law slope results in a steeper decline in [O/Fe] and a lower knee, as does a shorter exponential timescale. The consequence is that a very shallow power-law produces a similar abundance track to a very steep exponential, which suggests these models may be difficult to distinguish in this parameter space. However, these cases can be distinguished by their MDFs and [O/Fe] distributions, where the power-law DTD produces a narrower, less skewed distribution while the exponential DTD produces a broader, more skewed distribution. In the [O/Fe] distribution especially, an exponential DTD with a 6 Gyr timescale produces a large number of high-$\alpha$ stars.
 
@@ -101,7 +138,7 @@ Figure \ref{fig:onezone-dtd} compares the one-zone model outputs from the full r
     \script{onezone_dtd.py}
 \end{figure}
 
-\subsubsection{The Minimum SN Ia Delay Time}
+\subsection{The Minimum SN Ia Delay Time}
 
 Figure \ref{fig:onezone-dtd-delay} shows that the minimum SN Ia delay time has a much stronger effect on the abundance track and MDFs of models which assume a power-law DTD than models which assume an exponential, due to the much higher SN Ia rate in the power-law models at early times (see Figure \ref{fig:dtds}). Moreover, a power-law DTD with a long minimum delay may be observationally hard to distinguish from an exponential. 
 
@@ -113,7 +150,7 @@ Figure \ref{fig:onezone-dtd-delay} shows that the minimum SN Ia delay time has a
     \script{onezone_dtd_delay.py}
 \end{figure}
 
-\subsubsection{The Star Formation History}
+\subsection{The Star Formation History}
 
 Figure \ref{fig:onezone-delay-taustar} shows results from one-zone models with a power-law DTD which differ in their assumed minimum SN Ia delay time ($t_D$) or star formation efficiency timescale ($\tau_*$). In [Fe/H]-[O/Fe] space, doubling or halving the minimum delay time produces similar results to doubling or halving the SFE timescale. A shorter minimum delay time means SNe Ia will start to explode sooner after the star formation burst, giving less time for CCSNe to explode at the plateau of the abundance track. Similarly, a longer SFE timescale means fewer massive stars will be produced by the initial star formation burst, resulting in fewer CCSNe before the first SNe Ia explode. 
 
@@ -127,7 +164,7 @@ The minimum delay and SFE timescale have similar effects on the abundance tracks
     \script{onezone_delay_taustar.py}
 \end{figure}
 
-\subsubsection{Analytical Formulations}
+\subsection{Analytical Formulations}
 
 \citet{Greggio2005-AnalyticalRates} derives analytical DTDs for SD and DD progenitor systems from assumptions about binary stellar evolution and outcomes of mass exchange. They find that the parameters which have a large effect on the shape of the DTD are the distribution and range of stellar masses in progenitor systems; the efficiency of accretion in the SD scenario; and the distribution of separations at birth in the DD scenario. Figure \ref{fig:greggio05-dtd} shows the analytical DTDs for SD progenitors and two different prescriptions for DD progenitors (``WIDE'' and ``CLOSE''). In the ``WIDE'' scheme, it is assumed that there is a wide distribution of ratios $A/A_0$ of the separation of the DD system to the initial separation of the binary, and that the distributions of $A$ and total mass of the system $m_{\rm{DD}}$ are independent, so one cannot necessarily predict the total merge time of a system based on its initial parameters. In the ``CLOSE'' scheme, there is assumed to be a narrow distribution of $A/A_0$ and a correlation between $A$ and $m_{\rm{DD}}$, so the most massive binaries tend to merge quickly and the least massive merge last.
 
@@ -181,8 +218,66 @@ A multi-zone with the \citet{Greggio2005-AnalyticalRates} SD DTD produced nearly
     \script{onezone_prompt.py}
 \end{figure}
 
-\subsection{Multi-Zone Models}
+\section{Results from Multi-Zone Models}
 \label{sec:multizone-results}
+
+\section{Discussion}
+\label{sec:discussion}
+
+Picking the team.
+
+\begin{deluxetable*}{ll|cccc}
+\label{tab:results}
+\tablehead{
+\colhead{DTD} & \colhead{SFH} & \colhead{MDF} & \colhead{ODF} & \colhead{[Fe/H]--[O/Fe]} & \colhead{Age--[O/Fe]}
+}
+\startdata
+Power law               & Inside-out    & \meh  & \no   & \meh  & \no     \\
+($\alpha=-1.1$)         & Late burst    & \meh  & \no   & \meh  & \no     \\
+                        & Early burst   & \no   & \yes  & \meh  & \meh    \\
+                        & Two-infall    & \no   & \no   & \meh  & \no     \\
+\hline
+Power law               & Inside-out    & \meh  & \no   & \no   & \no     \\
+($\alpha=-1.4$)         & Late burst    & \meh  & \no   & \no   & \no     \\
+                        & Early burst   & \no   & \yes  & \no   & \meh    \\
+                        & Two-infall    & \no   & \no   & \no   & \no     \\
+\hline
+Exponential             & Inside-out    & \yes  & \no   & \yes  & \no     \\
+($\tau=1.5$ Gyr)        & Late burst    & \yes  & \no   & \yes  & \no     \\
+                        & Early burst   & \no   & \yes  & \meh  & \yes    \\
+                        & Two-infall    & \yes  & \meh  & \meh  & \meh    \\
+\hline
+Exponential             & Inside-out    & \yes  & \meh  & \yes  & \meh    \\
+($\tau=3$ Gyr)          & Late burst    & \yes  & \meh  & \yes  & \meh    \\
+                        & Early burst   & \no   & \yes  & \no   & \yes    \\
+                        & Two-infall    & \meh  & \meh  & \meh  & \meh    \\
+\hline
+Plateau                 & Inside-out    & \yes  & \meh  & \yes  & \no     \\
+($W=0.3$ Gyr)           & Late burst    & \yes  & \no   & \yes  & \no     \\
+                        & Early burst   & \no   & \yes  & \meh  & \yes    \\
+                        & Two-infall    & \yes  & \meh  & \yes  & \meh    \\
+\hline
+Plateau                 & Inside-out    & \meh  & \meh  & \yes  & \meh    \\
+($W=1.0$ Gyr)           & Late burst    & \meh  & \meh  & \yes  & \meh    \\
+                        & Early burst   & \no   & \yes  & \no   & \yes    \\
+                        & Two-infall    & \meh  & \meh  & \meh  & \meh    \\
+\hline
+Prompt                  & Inside-out    & \meh  & \no   & \no   & \no     \\
+($t_{50}=0.1$ Gyr)      & Late burst    & \meh  & \no   & \no   & \no     \\
+                        & Early burst   & \no   & \yes  & \no   & \yes    \\
+                        & Two-infall    & \yes  & \no   & \no   & \no     \\
+\hline
+Triple system           & Inside-out    & \yes  & \meh  & \meh  & \yes    \\
+($t_{\rm{max}}=1$ Gyr)  & Late burst    & \yes  & \yes  & \meh  & \meh    \\
+                        & Early burst   & \no   & \meh  & \no   & \yes    \\
+                        & Two-infall    & \meh  & \meh  & \meh  & \meh    \\
+\enddata
+\end{deluxetable*}
+
+\section{Conclusions}
+\label{sec:conclusions}
+
+\appendix
 
 \bibliography{bib}
 
