@@ -69,6 +69,7 @@ def main(overwrite=False):
 
     # axs[0].legend(frameon=False, loc='lower left', handlelength=1.2, fontsize=7)
     fig.savefig(paths.figures / 'onezone_dtd.png', dpi=300)
+    fig.savefig(paths.figures / 'onezone_dtd.pdf', dpi=300)
     plt.close()
 
 
