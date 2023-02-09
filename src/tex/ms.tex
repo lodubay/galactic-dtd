@@ -189,13 +189,13 @@ An implementation of these DTDs in a chemical evolution model requires numerical
 Our implementation of these best-fit approximations, as well as the original SD and DD formulations, is available in the GitHub repository for this paper.
 } These best-fit approximations are represented by the dashed curves in Figure \ref{fig:greggio05-dtd} \citep[see also Figure 8 in][]{Greggio2005-AnalyticalRates}. The difference between the true analytical DTDs and our best-fit approximations is small enough as to be irrelevant for our purposes, so for the rest of this section we rely on the best-fit approximations for faster simulations.
 
-\begin{figure}
-    \centering
-    \includegraphics{figures/greggio05_dtd.pdf}
-    \caption{Analytical DTDs computed by \citet{Greggio2005-AnalyticalRates}. The solid red curve represents the SD DTD for Chandrasekhar explosions, while the green and blue solid curves represent, respectively, the CLOSE and WIDE formulations of a DD DTD. The best-fit approximations for the DD DTDs (see Equation \ref{eq:greggio05-approx}) are represented by the dashed olive and cyan curves, respectively. All DTDs are normalized to unity.}
-    \label{fig:greggio05-dtd}
-    \script{greggio05_dtd.py}
-\end{figure}
+% \begin{figure}
+%     \centering
+%     \includegraphics{figures/greggio05_dtd.pdf}
+%     \caption{Analytical DTDs computed by \citet{Greggio2005-AnalyticalRates}. The solid red curve represents the SD DTD for Chandrasekhar explosions, while the green and blue solid curves represent, respectively, the CLOSE and WIDE formulations of a DD DTD. The best-fit approximations for the DD DTDs (see Equation \ref{eq:greggio05-approx}) are represented by the dashed olive and cyan curves, respectively. All DTDs are normalized to unity.}
+%     \label{fig:greggio05-dtd}
+%     \script{greggio05_dtd.py}
+% \end{figure}
 
 Figure \ref{fig:onezone-greggio05} shows the results of one-zone chemical evolution models with the \citet{Greggio2005-AnalyticalRates} DTDs. We assume $\eta=2.5$, $\tau_*=2$ Gyr, an inside-out SFH evaluated at a radius of 8 kpc, a continuous recycling approximation, and a minimum SN Ia delay of 40 Myr. We compare the SD, DD WIDE, and DD CLOSE schemes to standard power-law, broken power-law, and exponential DTDs. The SD and DD CLOSE DTDs follow nearly identical tracks in [O/Fe] vs [Fe/H]; however, their distributions on [O/Fe] differ at the low end. The SD DTD follows an exponential with a 1.5 Gyr timescale, whereas the DD CLOSE DTD is well-approximated by a broken power-law with an initial plateau of 350 Myr and a subsequent declining slope of -1.1. The WIDE prescription is likewise best approximated by a broken power-law, but with a longer plateau width of 1 Gyr. In all cases, the difference between the analytical DTD and the nearest broken power-law or exponential is likely too small to be observationally detectable, so in our multi-zone models we implement the more generic functions in lieu of the analytical DTDs.
 
