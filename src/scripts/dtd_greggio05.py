@@ -30,18 +30,18 @@ def main(dt=DT, nsamples=NSAMPLES, verbose=True):
             'offset': 3,
         }
         dd_wide = {
-            'func': dtds.greggio05_double('wide', dt=dt, nsamples=nsamples,
-                                          progress=verbose),
-            # 'func': dtds.greggio05_approximate.from_defaults('wide'),
+            # 'func': dtds.greggio05_double('wide', dt=dt, nsamples=nsamples,
+            #                               progress=verbose),
+            'func': dtds.greggio05_approximate.from_defaults('wide'),
             'label': 'Double Degenerate (WIDE)',
             'color': paultol.muted.colors[1],
             'line': '-',
             'offset': 0.5,
         }
         dd_close = {
-            'func': dtds.greggio05_double('close', dt=dt, nsamples=nsamples,
-                                          progress=verbose),
-            # 'func': dtds.greggio05_approximate.from_defaults('close'),
+            # 'func': dtds.greggio05_double('close', dt=dt, nsamples=nsamples,
+            #                               progress=verbose),
+            'func': dtds.greggio05_approximate.from_defaults('close'),
             'label': 'Double Degenerate (CLOSE)',
             'color': paultol.muted.colors[3],
             'line': '-',
@@ -80,11 +80,10 @@ def main(dt=DT, nsamples=NSAMPLES, verbose=True):
         if verbose:
             print('Plotting', dtd['label'], 'DTD')
         func = dtd['func']
-        ax.plot(tarr, dtd['offset'] * np.array([func(t) for t in tarr]), 
+        ax.plot(tarr, dtd['offset'] * 1e9 * np.array([func(t) for t in tarr]), 
                 label=dtd['label'], c=dtd['color'], ls=dtd['line'], lw=1)
 
-    # ax.set_ylim((3e-2, 3e1))
-    ax.set_ylim((3e-12, 4e-9))
+    ax.set_ylim((3e-3, 4))
     ax.legend(loc='lower left', fontsize=8, handlelength=1.2, frameon=False, 
               bbox_to_anchor=(0.1, 0.01))
     ax.set_ylabel(r'Normalized SN Ia rate $\times$ factor')

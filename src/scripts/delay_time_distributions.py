@@ -4,7 +4,7 @@ Plot the Type Ia supernova delay time distributions (DTDs) as a function of time
 
 import sys
 import matplotlib.pyplot as plt
-from matplotlib.ticker import ScalarFormatter
+from matplotlib.ticker import FuncFormatter
 import paths
 sys.path.append(str(paths.root))
 from migration.src.simulations import dtds
@@ -89,7 +89,8 @@ def setup_axes():
     fig, ax = plt.subplots(figsize=(3.25, 3.25), tight_layout=True)
     ax.set_xscale('log')
     ax.set_yscale('log')
-    ax.xaxis.set_major_formatter(ScalarFormatter())
+    ax.xaxis.set_major_formatter(FuncFormatter(lambda y, _: '{:g}'.format(y)))
+    ax.yaxis.set_major_formatter(FuncFormatter(lambda y, _: '{:g}'.format(y)))
     ax.set_xlabel('Time after starburst [Gyr]')
     ax.set_ylabel('Relative normalized SN Ia rate')
     return fig, ax
