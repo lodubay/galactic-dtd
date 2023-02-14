@@ -44,15 +44,13 @@ def main(overwrite=False):
 
     labels = [r'Power-Law ($\alpha=-1.1$)',
               r'Power-Law with 200 Myr plateau',
-              r'Exponential ($\tau=3$ Gyr)',
-              r'Exponential with prompt component',]
+              r'Exponential ($\tau=3$ Gyr)',]
     colors = [paultol.vibrant.colors[i] for i in [4, 0, 1, 2]]
 
     for delay, ls in zip(DELAYS, LINE_STYLES):
         distributions = [dtds.powerlaw(slope=-1.1, tmin=delay),
-                         dtds.plateau(width=delay+0.15, slope=-1.1, tmin=delay),
-                         dtds.exponential(timescale=3, tmin=delay),
-                         dtds.prompt(center=delay+0.01, timescale=3, tmin=delay)]
+                         dtds.plateau(width=0.3, slope=-1.1, tmin=delay),
+                         dtds.exponential(timescale=3, tmin=delay)]
         for i, dist in enumerate(distributions):
             if delay == DELAYS[0]:
                 label = labels[i]

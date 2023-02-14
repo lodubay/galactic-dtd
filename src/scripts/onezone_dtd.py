@@ -41,16 +41,19 @@ def main(overwrite=False):
 
     simtime = np.arange(0, END_TIME + DT, DT)
 
-    distributions = [dtds.powerlaw(slope=-1.1, tmin=DELAY),
-                     dtds.plateau(width=0.3, slope=-1.1, tmin=DELAY),
+    distributions = [dtds.triple(tmin=DELAY),
                      dtds.exponential(timescale=3, tmin=DELAY),
-                     dtds.prompt(peak=0.05, stdev=0.015, timescale=3, tmin=DELAY)]
-    labels = [r'Power-Law ($\alpha=-1.1$)',
-              r'Power-Law with 300 Myr plateau',
+                     dtds.plateau(width=0.3, slope=-1.1, tmin=DELAY),
+                     dtds.powerlaw(slope=-1.1, tmin=DELAY),
+                     dtds.prompt(peak=0.05, stdev=0.015, timescale=3, tmin=DELAY),
+                     ]
+    labels = [r'Triple-system evolution',
               r'Exponential ($\tau=3$ Gyr)',
-              r'Exponential with prompt component',]
-    colors = [paultol.vibrant.colors[i] for i in [4, 0, 1, 2]]
-    line_styles = ['-', '-.', '--', ':']
+              r'Plateau ($W=0.3$ Gyr)',
+              r'Power law ($\alpha=-1.1$)',
+              r'Prompt',]
+    colors = [paultol.vibrant.colors[i] for i in [5, 1, 0, 4, 2]]
+    line_styles = ['-', '-.', '--', ':', ':']
 
     for i, dist in enumerate(distributions):
         run_singlezone(str(output_dir / dist.name), simtime,
@@ -58,16 +61,16 @@ def main(overwrite=False):
                        RIa=dist, **STANDARD_PARAMS)
         plot_vice_onezone(str(output_dir / dist.name), fig=fig, axs=axs,
                           label=labels[i], color=colors[i],
-                          style_kw={'linestyle': line_styles[i],
+                          style_kw={'linestyle': '-',
                                     'linewidth': 1},
-                          marker_labels=(i==2)
+                          marker_labels=(i==0)
                           )
 
     # Adjust axis limits
     axs[0].set_xlim((-2.1, 0.6))
     axs[0].set_ylim((-0.1, 0.52))
 
-    # axs[0].legend(frameon=False, loc='lower left', handlelength=1.2, fontsize=7)
+    axs[0].legend(frameon=False, loc='lower left', handlelength=1.2, fontsize=7)
     fig.savefig(paths.figures / 'onezone_dtd.png', dpi=300)
     fig.savefig(paths.figures / 'onezone_dtd.pdf', dpi=300)
     plt.close()
