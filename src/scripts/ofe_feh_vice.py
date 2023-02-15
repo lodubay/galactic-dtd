@@ -164,8 +164,7 @@ def setup_colorbar(fig, cmap, norm, label=''):
     cax : colorbar axis
     """
     # Colorbar axis
-    plt.subplots_adjust(right=0.92, left=0.06, bottom=0.07, top=0.95,
-                        wspace=0.05, hspace=0.05)
+    plt.subplots_adjust(right=0.92)
     cax = plt.axes([0.93, 0.07, 0.02, 0.88])
     # Add colorbar
     cbar = fig.colorbar(ScalarMappable(norm, cmap), cax)
@@ -198,6 +197,9 @@ def setup_axes(rows, cols, width=8, xlim=None, ylim=None):
     """
     fig, axs = plt.subplots(rows, cols, figsize=(width, (width/cols)*rows),
                             sharex=True, sharey=True)
+    # Configure plot dimensions
+    plt.subplots_adjust(right=0.98, left=0.06, bottom=0.07, top=0.95,
+                        wspace=0.05, hspace=0.05)
     # Configure axis limits and ticks (will be applied to all axes)
     axs[0,0].set_xlim(xlim)
     axs[0,0].set_ylim(ylim)
