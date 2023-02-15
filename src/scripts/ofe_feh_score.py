@@ -1,11 +1,13 @@
 """
-This script scores how well a particular VICE model performes against APOGEE
+This script scores how well different VICE models performe against APOGEE
 data in the [O/Fe]-[Fe/H] plane. The score is based on the fraction of model
 points which fall within the APOGEE 2-sigma contours. Galactic regions are
 defined as they are in ofe_feh_vice.py and each region is given equal weight.
+An alternative score weights each region by the mass of the VICE stars.
 """
 
 import numpy as np
+import pandas as pd
 import matplotlib.pyplot as plt
 from utils import import_allStar, multioutput_to_pandas, filter_multioutput_stars
 from _globals import GALR_BINS, ABSZ_BINS, ZONE_WIDTH
@@ -14,17 +16,72 @@ from ofe_feh_apogee import plot_contours, kde_path, read_kde
 import paths
 
 GALR_BINS = GALR_BINS[:-1]
+SIGMA = 2
 
-def main(evolution, RIa, migration='diffusion', data_dir='../data/migration', 
-         verbose=True, sigma=2):
+SFHs = ['insideout', 'lateburst', 'conroy22', 'twoinfall']
+DTDs = ['powerlaw_slope11', 
+        'powerlaw_slope14', 
+        'exponential_timescale15',
+        'exponential_timescale30',
+        'plateau_width300_slope11',
+        'plateau_width1000_slope11',
+        'prompt_peak050_stdev015_timescale30',
+        'triple_delay040']
+
+def main(verbose=True, sigma=SIGMA):
+    # if verbose:
+    #     print('Importing APOGEE allStar data...')
+    # data = import_allStar(only_giants=True)
+    
+    summary_table = pd.DataFrame([], 
+        index=pd.MultiIndex.from_product([DTDs, SFHs], names=['DTD', 'SFH']),
+        columns=['Unweighted', 'Mass-weighted'],
+    )
+    
+    for evolution in SFHs:
+        for RIa in DTDs:
+            output_name = '/'.join(('diffusion', evolution, RIa))
+            scores = score_output(output_name, sigma=sigma, verbose=verbose)
+            summary_table.loc[RIa, evolution] = np.array(scores).round(3)
+    
+    if verbose: print(summary_table)
+    summary_table.to_csv(paths.figures / 'ofe_feh/scores/scores.csv')
+
+def score_output(output_name, data_dir='../data/migration', sigma=SIGMA,
+                 verbose=True):
+    """
+    Score the given VICE multizone output in the [O/Fe]-[Fe/H] plane by the 
+    fraction of stellar populations enclosed within the APOGEE 2-sigma contour.
+    
+    Parameters
+    ----------
+    output_name : str
+        VICE multizone output name, typically '<migration>/<evolution>/<RIa>'
+    data_dir : str, optional
+        Relative path to parent directory containing multizone outputs. The
+        default is '../data/migration'
+    sigma : float, optional
+        Standard deviation APOGEE contour to test against VICE. The default
+        is 2.
+    verbose : bool, optional
+        If True, print diagnostic info to terminal.
+    
+    Returns
+    -------
+    unweighted : float
+        Mean unweighted enclosed fraction of stars over all Galactic regions
+    weighted : float
+        Mean enclosed fraction, weighted by total mass of VICE stars in
+        each region
+    """
+    
     # Import VICE multi-zone output data
-    output_name = '/'.join([migration, evolution, RIa])
     if verbose: 
         print('Importing VICE multizone data from %s/%s.vice' \
               % (data_dir, output_name))
     stars = multioutput_to_pandas(output_name, data_dir)
     
-    # Test plot
+    # Set up diagnostic plot
     fig, axs = setup_axes(len(ABSZ_BINS)-1, len(GALR_BINS)-1)
     
     enclosed_fraction = []
@@ -33,13 +90,12 @@ def main(evolution, RIa, migration='diffusion', data_dir='../data/migration',
         absz_lim = (ABSZ_BINS[-(i+2)], ABSZ_BINS[-(i+1)])
         for j, ax in enumerate(row):
             galr_lim = (GALR_BINS[j], GALR_BINS[j+1])
-            if verbose:
-                print('RGal =', galr_lim, '|z| =', absz_lim)
             # Filter VICE stars by galactic region
             subset = filter_multioutput_stars(stars, galr_lim, absz_lim, 
                                               ZONE_WIDTH)
             # Import pre-generated 2D KDE of APOGEE data
-            path = kde_path(galr_lim, absz_lim, savedir='../data/APOGEE/kde/ofe_feh/')
+            path = kde_path(galr_lim, absz_lim, 
+                            savedir='../data/APOGEE/kde/ofe_feh/')
             xx, yy, logz = read_kde(path)
             scaled_density = np.exp(logz) / np.max(np.exp(logz))
             # density threshold for N-sigma contour
@@ -64,7 +120,6 @@ def main(evolution, RIa, migration='diffusion', data_dir='../data/migration',
                            weights=vice_hist.flatten(), cmap='Greys')
             # fraction of VICE stars enclosed within APOGEE 2-sigma contour
             contour_frac = np.sum(vice_hist[kde_mask] * dx * dy)
-            print(contour_frac)
             enclosed_fraction.append(contour_frac)
             subset_mass.append(np.sum(subset['mass']))
             # test plot
@@ -88,13 +143,21 @@ def main(evolution, RIa, migration='diffusion', data_dir='../data/migration',
     
     enclosed_fraction = np.array(enclosed_fraction)
     subset_mass = np.array(subset_mass)
-    print('Mean unweighted enclosed fraction:\n', np.mean(enclosed_fraction))
-    print('Mass-weighted mean enclosed fraction:\n', 
-          np.average(enclosed_fraction, weights=subset_mass))
+    unweighted = np.mean(enclosed_fraction)
+    if verbose:
+        print('Mean unweighted enclosed fraction:\n', unweighted)
+    weighted = np.average(enclosed_fraction, weights=subset_mass)
+    if verbose:
+        print('Mass-weighted mean enclosed fraction:\n', weighted)
     axs[0,0].set_xlim(FEH_LIM)
     axs[0,0].set_ylim(OFE_LIM)
-    fig.savefig(paths.figures / 'ofe_feh_score.png', dpi=300)
+    figname = '_'.join(output_name.split('/')[1:])
+    fig.savefig(paths.figures / ('ofe_feh/scores/%s.png' % figname), dpi=300)
+    plt.close()
+    
+    del stars
+    return unweighted, weighted
     
 
 if __name__ == '__main__':
-    main('conroy22', 'plateau_width1000_slope11')
+    main()

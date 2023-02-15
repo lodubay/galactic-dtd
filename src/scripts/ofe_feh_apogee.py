@@ -107,7 +107,46 @@ def plot_contours(ax, data, bandwidth=0.02, absz_lim=(0, 5), galr_lim=(0, 20),
     overwrite : bool
         If True, force re-generate the 2D KDE and save the output.
     **kwargs passed to matplotlib.axes.Axes.contour().
+    
+    Returns
+    -------
+    contours: matplotlib.contour.QuadContourSet
     """
+    xx, yy, logz = gen_kde(data, bandwidth=bandwidth, absz_lim=absz_lim, 
+                           galr_lim=galr_lim, overwrite=overwrite)
+    # scale the linear density to the max value
+    scaled_density = np.exp(logz) / np.max(np.exp(logz))
+    # contour levels at 1, 2, and 3 sigma
+    levels = np.exp(-0.5 * np.array([3, 2, 1])**2)
+    contours = ax.contour(xx, yy, scaled_density, levels, **kwargs)
+    return contours
+
+
+def gen_kde(data, bandwidth=0.02, absz_lim=(0, 5), galr_lim=(0, 20), 
+            overwrite=False):
+    """
+    Generate kernel density estimate (KDE) of APOGEE data, or import previously
+    saved KDE if it already exists.
+    
+    Parameters
+    ----------
+    data : pandas.DataFrame
+        APOGEE data containing columns 'FE_H' and 'O_FE'.
+    bandwidth : float
+        Kernel density estimate bandwidth. A larger number will produce
+        smoother contour lines. The default is 0.02.
+    absz_lim : tuple
+        Limits on absolute Galactic z-height in kpc. The default is (0, 5).
+    galr_lim : tuple
+        Limits on Galactocentric radius in kpc. The default is (0, 20).
+    overwrite : bool
+        If True, force re-generate the 2D KDE and save the output.
+    
+    Returns
+    -------
+    xx, yy, logz: tuple of numpy.array
+        Outputs of kde2D()
+    """    
     # Path to save 2D KDE for faster plot times
     path = kde_path(galr_lim, absz_lim, savedir='../data/APOGEE/kde/ofe_feh/')
     if path.exists() and not overwrite:
@@ -118,12 +157,7 @@ def plot_contours(ax, data, bandwidth=0.02, absz_lim=(0, 5), galr_lim=(0, 20),
         subset = subset.copy().dropna(axis=0, subset=['FE_H', 'O_FE'])
         xx, yy, logz = kde2D(subset['FE_H'], subset['O_FE'], bandwidth)
         save_kde(xx, yy, logz, path)
-    # scale the linear density to the max value
-    scaled_density = np.exp(logz) / np.max(np.exp(logz))
-    # contour levels at 1, 2, and 3 sigma
-    levels = np.exp(-0.5 * np.array([3, 2, 1])**2)
-    contours = ax.contour(xx, yy, scaled_density, levels, **kwargs)
-    return contours
+    return xx, yy, logz
             
 
 def read_kde(path):
