@@ -148,7 +148,7 @@ def gen_kde(data, bandwidth=0.02, absz_lim=(0, 5), galr_lim=(0, 20),
         Outputs of kde2D()
     """    
     # Path to save 2D KDE for faster plot times
-    path = kde_path(galr_lim, absz_lim, savedir='../data/APOGEE/kde/ofe_feh/')
+    path = kde_path(galr_lim, absz_lim, savedir=paths.data/'APOGEE/kde/ofe_feh/')
     if path.exists() and not overwrite:
         xx, yy, logz = read_kde(path)
     else:
@@ -183,7 +183,7 @@ def save_kde(xx, yy, logz, path):
             np.savetxt(f, arr)
 
 
-def kde_path(galr_lim, absz_lim, savedir='../data/APOGEE/kde'):
+def kde_path(galr_lim, absz_lim, savedir=paths.data/'APOGEE/kde'):
     """
     Generate file name for the KDE of the given region.
     """
