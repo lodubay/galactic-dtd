@@ -12,7 +12,7 @@ from utils import multioutput_to_pandas
 from ofe_feh_vice import plot_ofe_feh_stars, plot_post_process_track, \
     plot_post_process_tracks, setup_axes
 from ofe_feh_apogee import plot_contours_grid
-from utils import import_allStar
+from utils import import_apogee
 import paths
 
 def main(output_name, migration_dir='../data/migration',
@@ -39,7 +39,7 @@ def main(output_name, migration_dir='../data/migration',
     fig, axs = plot_ofe_feh_stars(stars, stars_cmap)
     # Import APOGEE data
     print('Importing APOGEE')
-    apogee_data = import_allStar()
+    apogee_data = import_apogee()
     print('Plotting APOGEE contours')
     plot_contours_grid(axs, apogee_data)
     # Add post-process abundance track

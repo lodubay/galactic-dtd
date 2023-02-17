@@ -13,7 +13,7 @@ from matplotlib.ticker import MultipleLocator, FormatStrFormatter
 import vice
 from scatter_plot_grid import setup_axes, setup_colorbar, plot_vice_sample
 from utils import multioutput_to_pandas, filter_multioutput_stars, \
-    get_bin_centers, weighted_quantile, import_astroNN, apogee_region
+    get_bin_centers, weighted_quantile, import_apogee, apogee_region
 from _globals import GALR_BINS, ABSZ_BINS, ZONE_WIDTH
 import paths
 
@@ -32,7 +32,7 @@ def main(evolution, RIa, migration='diffusion', verbose=False, cmap='winter',
               % (data_dir, output_name))
     vice_stars = multioutput_to_pandas(output_name, data_dir)
     # Import APOGEE and astroNN data
-    astroNN_data = import_astroNN(verbose=verbose)
+    apogee_data = import_apogee(verbose=verbose)
     
     # Set x-axis limits
     if log:
@@ -62,8 +62,8 @@ def main(evolution, RIa, migration='diffusion', verbose=False, cmap='winter',
             plot_vice_sample(ax, vice_subset, 'age', '[o/fe]', 
                              cmap=cmap, norm=cbar.norm)
             plot_vice_medians(ax, vice_subset.copy())
-            astroNN_subset = apogee_region(astroNN_data, galr_lim, absz_lim)
-            plot_astroNN_medians(ax, astroNN_subset.copy())
+            apogee_subset = apogee_region(apogee_data, galr_lim, absz_lim)
+            plot_astroNN_medians(ax, apogee_subset.copy())
                              
     # Set x-axis scale and ticks
     if log:

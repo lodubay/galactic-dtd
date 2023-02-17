@@ -11,7 +11,7 @@ import matplotlib.pyplot as plt
 import vice
 import paths
 from utils import multioutput_to_pandas, filter_multioutput_stars, \
-    import_allStar, apogee_region
+    import_apogee, apogee_region
 from distribution_functions import setup_axes, plot_distributions
 
 MIGRATION = 'diffusion'
@@ -71,7 +71,7 @@ def plot_multiple_comparison(outputs, labels, output_dir=paths.data/'migration',
     
     if verbose:
         print('Plotting MDF from APOGEE...')
-    apogee_data = import_allStar()
+    apogee_data = import_apogee()
     plot_distributions(apogee_mdf, apogee_data, axs[:,col+1], 
                        label='APOGEE DR17', cmap_name=cmap_name)
             
@@ -120,7 +120,7 @@ def plot_single_comparison(output, output_dir=paths.data/'migration',
     
     if verbose:
         print('Plotting APOGEE [Fe/H] distribution...')
-    apogee_data = import_allStar()
+    apogee_data = import_apogee()
     plot_distributions(apogee_mdf, apogee_data, axs[:,1], 
                        label='APOGEE DR17', cmap_name=cmap_name)
     

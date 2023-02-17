@@ -9,7 +9,7 @@ import matplotlib.pyplot as plt
 from matplotlib.ticker import MultipleLocator
 from matplotlib.colors import Normalize
 from matplotlib.cm import ScalarMappable
-from utils import import_allStar, multioutput_to_pandas, \
+from utils import import_apogee, multioutput_to_pandas, \
     filter_multioutput_stars, sample_dataframe
 from ofe_feh_apogee import plot_contours
 import paths
@@ -28,7 +28,7 @@ def main(verbose=False, overwrite=False, cmap='winter'):
     # APOGEE data
     if verbose:
         print('Importing APOGEE allStar data...')
-    apogee_data = import_allStar(only_giants=True)
+    apogee_data = import_apogee()
     
     # VICE output
     if verbose:

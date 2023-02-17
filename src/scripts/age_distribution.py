@@ -9,7 +9,7 @@ import matplotlib.pyplot as plt
 import vice
 import paths
 from utils import multioutput_to_pandas, filter_multioutput_stars, \
-    import_astroNN, select_giants, apogee_region
+    import_apogee, select_giants, apogee_region
 from distribution_functions import setup_axes, plot_distributions
 from _globals import DT, END_TIME
 
@@ -69,8 +69,8 @@ def plot_multiple_comparison(outputs, labels, output_dir=paths.data/'migration',
     
     if verbose:
         print('Plotting astroNN age distribution...')
-    astroNN_data = import_astroNN()
-    plot_distributions(astroNN_adf, astroNN_data, axs[:,-1], 
+    apogee_data = import_apogee()
+    plot_distributions(astroNN_adf, apogee_data, axs[:,-1], 
                        label='astroNN', cmap_name=cmap_name)
             
     axs[0,0].set_ylim((0, None))
@@ -118,8 +118,8 @@ def plot_single_comparison(output, output_dir=paths.data/'migration',
     
     if verbose:
         print('Plotting astroNN age distribution...')
-    astroNN_data = select_giants(import_astroNN())
-    plot_distributions(astroNN_adf, astroNN_data, axs[:,1], 
+    apogee_data = import_apogee()
+    plot_distributions(astroNN_adf, apogee_data, axs[:,1], 
                        label='astroNN', cmap_name=cmap_name)
     
     # Automatically generate plot filename if none is provided

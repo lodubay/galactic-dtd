@@ -7,7 +7,7 @@ import argparse
 import matplotlib.pyplot as plt
 from distribution_functions import setup_axes, plot_distributions
 from ofe_distribution import vice_mdf, apogee_mdf
-from utils import import_allStar, multioutput_to_pandas
+from utils import import_apogee, multioutput_to_pandas
 import paths
 
 # Custom presentation plot settings
@@ -34,7 +34,7 @@ def main(verbose=False, cmap='plasma_r'):
     
     if verbose:
         print('Plotting APOGEE [O/Fe] distribution...')
-    apogee_data = import_allStar()
+    apogee_data = import_apogee()
     plot_distributions(apogee_mdf, apogee_data, axs[:,1], linewidth=1.5,
                        label='APOGEE DR17', cmap_name=cmap, absz_bins=ABSZ_BINS)
             

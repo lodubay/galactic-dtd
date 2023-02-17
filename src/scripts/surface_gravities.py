@@ -1,6 +1,6 @@
 import numpy as np
 import matplotlib.pyplot as plt
-from utils import import_allStar, select_giants, get_bin_centers, \
+from utils import import_apogee, select_giants, get_bin_centers, \
     discrete_colormap, setup_discrete_colorbar, get_color_list
 from ofe_feh_apogee import apogee_region
 from _globals import GALR_BINS, ABSZ_BINS
@@ -9,7 +9,7 @@ import paths
 BIN_WIDTH = 0.1
 
 def main(cmap_name='plasma_r'):
-    data = select_giants(import_allStar())
+    data = import_apogee()
     fig, axs = setup_axes()
     cmap, norm = discrete_colormap(cmap_name, GALR_BINS)
     cax = setup_discrete_colorbar(fig, cmap, norm, 

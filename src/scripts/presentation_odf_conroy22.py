@@ -9,7 +9,7 @@ from matplotlib.ticker import MultipleLocator
 from matplotlib.cm import ScalarMappable
 from distribution_functions import plot_distributions
 from ofe_distribution import vice_mdf, apogee_mdf
-from utils import import_allStar, multioutput_to_pandas, discrete_colormap
+from utils import import_apogee, multioutput_to_pandas, discrete_colormap
 from _globals import GALR_BINS
 import paths
 
@@ -83,7 +83,7 @@ def main(verbose=False, cmap_name='plasma_r'):
    
     if verbose:
         print('Plotting APOGEE [O/Fe] distribution...')
-    apogee_data = import_allStar()
+    apogee_data = import_apogee()
     plot_distributions(apogee_mdf, apogee_data, axs[:,0], linewidth=1.5,
                        label='APOGEE', cmap_name=cmap, absz_bins=ABSZ_BINS)
     

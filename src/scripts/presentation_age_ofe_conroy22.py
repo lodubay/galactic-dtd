@@ -10,7 +10,7 @@ import matplotlib.pyplot as plt
 from matplotlib.ticker import MultipleLocator, FormatStrFormatter
 from matplotlib.colors import Normalize
 from matplotlib.cm import ScalarMappable
-from utils import import_astroNN, apogee_region, multioutput_to_pandas, \
+from utils import import_apogee, apogee_region, multioutput_to_pandas, \
     filter_multioutput_stars
 from scatter_plot_grid import setup_colorbar, plot_vice_sample
 from age_ofe import plot_vice_medians, plot_astroNN_medians
@@ -38,7 +38,7 @@ GALR_LIM = (7, 9) # kpc
 
 def main(verbose=False, log=False, cmap='winter'):
     # Import APOGEE and astroNN data
-    astroNN_data = import_astroNN(verbose=verbose)
+    astroNN_data = import_apogee(verbose=verbose)
     
     # Set up figure and axes
     fig, axs = plt.subplots(2, 2, sharex=True, sharey=True, figsize=(8.5, 4.5))

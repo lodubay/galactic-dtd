@@ -15,10 +15,8 @@ import paths
 from _globals import ZONE_WIDTH
 
 # =============================================================================
-# APOGEE / ASTRONN DATA IMPORT AND UTILITY FUNCTIONS
+# MAKING THE APOGEE DR17 SAMPLE
 # =============================================================================
-
-allStar_file_name = 'allStarLite-dr17-synspec.fits'
 
 def apogee_region(data, galr_lim=(0, 20), absz_lim=(0, 5)):
     """
@@ -50,227 +48,198 @@ def apogee_region(data, galr_lim=(0, 20), absz_lim=(0, 5)):
     subset.reset_index(inplace=True)
     return subset
 
-def select_giants(data, logg_col='LOGG', teff_col='TEFF'):
-    """
-    Select stars in the RGB and red clump by cuts in log(g) and Teff.
-    
-    Parameters
-    ----------
-    data : pandas.DataFrame
-        APOGEE allStar data
-    logg_col : str, optional
-        Name of column containing surface gravities. The default is 'LOGG'.
-    teff_col : str, optional
-        Name of column containing effective temperatures. The default is 'TEFF'.
-    
-    Returns
-    -------
-    giants : pandas.DataFrame
-        APOGEE allStar data with cuts
-    """
-    giants = data[(data[logg_col] > 1) & (data[logg_col] < 3.8) & 
-                  (data[teff_col] > 3500) & (data[teff_col] < 5500) & 
-    # exclude the lower-left corner which may contain main sequence stars
-                  ~((data[logg_col] > 3) & (data[teff_col] < 4000))]
-    giants.reset_index(inplace=True)
-    return giants
 
-def import_astroNN(verbose=False, allStar_name=allStar_file_name, 
-                   only_giants=True):
+def import_apogee(name='sample.csv', parent_dir=paths.data/'APOGEE', 
+                  verbose=False):
     """
-    Import the joint data table of APOGEE allStar and astroNN.
-    
-    If no joint table exists, import each data set separately and join them, 
-    then export the result as a CSV file.
+    Import combined and cut sample of APOGEE data, generating first if needed.
     
     Parameters
     ----------
-    verbose : bool, optional
-        If True, print verbose progress messages. The default is False.
-    allStar_name : str, optional
-        Name of the APOGEE allStar file. The default is 
-        'allStarLite-dr17-synspec.fits'
-    only_giants : bool
-        If True, makes cuts in log(g) and Teff to return only the giant sample.
-        If False, returns all main sample stars. The default is True.
-        
-    Returns
-    -------
-    pandas.DataFrame
-    """
-    joined_path = paths.data / 'APOGEE' / 'allStarLite-astroNN-dr17-clean.csv'
-    try:
-        if verbose:
-            print('Importing APOGEE+astroNN data from %s' % joined_path)
-        joined = pd.read_csv(joined_path, dtype={'MEMBER': 'object'})
-    except FileNotFoundError:
-        if verbose:
-            print('No complete CSV found, importing and joining from source')
-        # Important! Data can only be cleaned *after* joining the two sets
-        allStar = fits_to_pandas(paths.data / 'APOGEE' / allStar_name, hdu=1)
-        joined = join_astroNN(allStar)
-        joined = clean_allStar(joined, only_giants=only_giants)
-        joined.to_csv(joined_path, index=False)
-    return joined
-
-def join_astroNN(allStar, name='apogee_astroNN-DR17.fits'):
-    """
-    Import the astroNN dataset and join it with the APOGEE allStar dataset.
-    
-    This relies on allStar and astroNN having exactly the same number of rows
-    and in the same order, which should be the case if they haven't been
-    changed.
-    
-    Parameters
-    ----------
-    allStar : pandas.DataFrame
-        The APOGEE allStar dataset
     name : str, optional
-        Name of the astroNN fits file
-    
+        Name of CSV file containing sample data. The default is 'sample.csv'.
+    parent_dir : str or pathlib.Path, optional
+        The parent directory containing APOGEE data files. The default is
+        '../data/APOGEE/'.
+    verbose : bool, optional
+        Whether to print verbose output to terminal. The default is False.
+
     Returns
     -------
-    pandas.DataFrame
+    df : pandas.DataFrame
+        DataFrame containing combined and cut sample of APOGEE data.
     """
-    astroNN = fits_to_pandas(paths.data / 'APOGEE' / name)
-    astroNN = rename_astroNN_columns(astroNN)
-    # Add a few more abundance combinations
-    subtract_abundances(astroNN, 'O_H', 'FE_H', prefix='ASTRONN_')
-    subtract_abundances(astroNN, 'MG_H', 'FE_H', prefix='ASTRONN_')
-    subtract_abundances(astroNN, 'TI_H', 'FE_H', prefix='ASTRONN_')
-    subtract_abundances(astroNN, 'C_H', 'N_H', prefix='ASTRONN_')
-    joined = allStar.join(astroNN.drop('APOGEE_ID', axis=1))
-    return joined
-    
-def subtract_abundances(data, abund1, abund2, prefix=''):
-    """
-    Subtract one abundance measurement from another to calculate the ratio
-    of the numerators.
-    
-    Parameters
-    ----------
-    data : pandas.DataFrame
-        DataFrame containing abundance data
-    abund1 : str
-        Name of abundance from which abund2 is subtracted, in the format 'X_Z'
-        (e.g., 'O_FE').
-    abund2 : str
-        Name of abundance to subtract from abund1, in the format 'Y_Z' 
-        (e.g. 'FE_H').
-    prefix : str, optional
-        Prefix to abundance column names. The default is ''.
-        
-    Returns
-    -------
-    pandas.DataFrame
-        Abundance data with new column of combined abundances
-    """
-    abund1_name = prefix + abund1
-    abund2_name = prefix + abund2
-    result_name = prefix + abund1.split('_')[0] + '_' + abund2.split('_')[0]
-    data[result_name] = data[abund1_name] - data[abund2_name]
-    abund1_err = abund1_name + '_ERR'
-    abund2_err = abund2_name + '_ERR'
-    result_err = result_name + '_ERR'
-    data[result_err] = quad_add(data[abund1_err], data[abund2_err])
-    return data
-
-def quad_add(arr1, arr2):
-    """
-    Add two input arrays in quadrature.
-    """
-    return np.sqrt(arr1**2 + arr2**2)
-
-def rename_astroNN_columns(astroNN):
-    """
-    Select relevant astroNN columns and rename them to avoid conflicts
-    
-    Parameters
-    ----------
-    astroNN : pandas.DataFrame
-        DataFrame generated from astroNN fits file
-    
-    Returns
-    -------
-    pandas.DataFrame
-    """
-    cols = ['APOGEE_ID'] + astroNN.columns[5:49].tolist()
-    cols += ['weighted_dist', 'weighted_dist_error', 'age_lowess_correct', 
-             'age_total_error']
-    cols += ['galr', 'galphi', 'galz']
-    astroNN = astroNN[cols].copy()
-    cols_new = ['APOGEE_ID'] + ['ASTRONN_'+name for name in cols[1:45]]
-    cols_new += ['ASTRONN_DIST', 'ASTRONN_DIST_ERR', 'ASTRONN_AGE', 
-                 'ASTRONN_AGE_ERR']
-    cols_new += ['ASTRONN_'+name.upper() for name in cols[49:]]
-    astroNN.columns = cols_new
-    return astroNN
-
-def import_allStar(verbose=False, name=allStar_file_name, only_giants=True):
-    """
-    Import APOGEE allStar data and, if necessary, export for faster re-use.
-    
-    Parameters
-    ----------
-    only_giants : bool
-        If True, makes cuts in log(g) and Teff to return only the giant sample.
-        If False, returns all main sample stars. The default is True.
-    """
-    clean_df_path = paths.data / 'APOGEE' / 'allStarLite-dr17-synspec-clean.csv'
+    sample_file_path = parent_dir / name
     try:
         if verbose:
-            print('Importing from %s' % clean_df_path)
-        df = pd.read_csv(clean_df_path, dtype={'MEMBER': 'object'})
+            print('Reading APOGEE sample from', sample_file_path)
+        df = pd.read_csv(sample_file_path)
     except FileNotFoundError:
         if verbose:
-            print('Clean allStar file not found, generating from source')
-        raw = fits_to_pandas(paths.data / 'APOGEE' / name, hdu=1)
-        df = clean_allStar(raw.copy(), only_giants=only_giants)
-        df.to_csv(clean_df_path, index=False)
+            print('Sample file at', sample_file_path, 'not found.\n' + \
+                  'Importing APOGEE catalog and generating sample...')
+        df = gen_apogee_sample(parent_dir=parent_dir, verbose=verbose)
+        df.to_csv(sample_file_path)
+        if verbose:
+            print('Done.')
     return df
 
-def clean_allStar(df, snr=80, only_giants=True):
-    """
-    Import APOGEE AllStar file and convert it to a pandas DataFrame.
 
+def gen_apogee_sample(parent_dir=paths.data/'APOGEE', verbose=False):
+    """
+    Make selection cuts to APOGEE sample and combine with age catalogs.
+    
+    Parameters
+    ----------
+    parent_dir : str or pathlib.Path, optional
+        The parent directory containing APOGEE data files. The default is
+        '../data/APOGEE/'.
+    verbose : bool, optional
+        Whether to print verbose output to terminal. The default is False.
+    
+    Returns
+    -------
+    sample : pandas.DataFrame
+    """
+    if verbose: print('Importing allStar file...')
+    apogee_catalog = fits_to_pandas(parent_dir / 
+                                    'allStarLite-dr17-synspec.fits', hdu=1)
+    # Add ages from row-matched datasets BEFORE any cuts
+    # Add ages from astroNN (Leung & Bovy 2019)
+    if verbose: print('Joining with astroNN age catalog...')
+    astroNN_catalog = fits_to_pandas(parent_dir / 'apogee_astroNN-DR17.fits')
+    full_catalog = join_astroNN_ages(apogee_catalog, astroNN_catalog)
+    # Add ages from Leung et al. (2023)
+    if verbose: print('Joining with latent age catalog...')
+    leung23_catalog = pd.read_csv(parent_dir / 'nn_latent_age_dr17.csv')
+    full_catalog = join_latent_ages(full_catalog, leung23_catalog)
+    if verbose: print('Implementing quality cuts...')
+    sample = apogee_quality_cuts(full_catalog)
+    sample = apogee_galactocentric_coords(sample)
+    sample = drop_apogee_columns(sample)
+    return sample
+
+
+def join_astroNN_ages(apogee_df, astroNN_df):
+    """
+    Join the recommended age from astroNN to the row-matched APOGEE dataset.
+    
+    Parameters
+    ----------
+    apogee_df : pandas.DataFrame
+        Full APOGEE dataset without cuts
+    astroNN_df : pandas.DataFrame
+        astroNN dataset
+    
+    Returns
+    -------
+    joined_df : pandas.DataFrame
+        APOGEE dataset with astroNN ages
+    """
+    cols = ['age_lowess_correct', 'age_total_error']
+    astroNN_ages = astroNN_df[cols].copy()
+    astroNN_ages.columns = ['ASTRONN_AGE', 'ASTRONN_AGE_ERR']
+    joined = apogee_df.join(astroNN_ages)
+    return joined
+
+
+def join_latent_ages(apogee_df, leung23_df):
+    """
+    Join ages from Leung et al. (2023) to the row-matched APOGEE dataset.
+    
+    Parameters
+    ----------
+    apogee_df : pandas.DataFrame
+        Full APOGEE dataset without cuts
+    leung23_df : pandas.DataFrame
+        Dataset from Leung et al. (2023)
+    
+    Returns
+    -------
+    joined_df : pandas.DataFrame
+        APOGEE dataset with astroNN ages
+    """
+    cols = ['Age', 'Age_Error']
+    latent_ages = leung23_df[cols].copy()
+    latent_ages.columns = ['LATENT_AGE', 'LATENT_AGE_ERR']
+    joined = apogee_df.join(latent_ages)
+    return joined
+
+
+def apogee_quality_cuts(df, snr=80):
+    """
+    Make quality cuts on the APOGEE catalog.
+    
     Parameters
     ----------
     df : pandas.DataFrame
-        The unmodified, freshly converted DataFrame of the allStar file
-    snr : float
-        The minimum signal-to-noise threshold
-    only_giants : bool
-        If True, makes cuts in log(g) and Teff to return only the giant sample.
-        If False, returns all main sample stars. The default is True.
-
+        Full APOGEE catalog
+    snr : int, optional
+        Minimum S/N. The default is 80.
+    
     Returns
     -------
-    df : pandas DataFrame
+    df : pandas.DataFrame
     """
-    # df = fits_to_pandas(paths.data / 'APOGEE' / name, hdu=1)
     # Limit to main red star sample
     df = df[df['EXTRATARG'] == 0]
-    df.drop(columns=['EXTRATARG'], inplace=True)
     # Weed out bad flags
     fatal_flags = (2**23) # STAR_BAD
     df = df[df['ASPCAPFLAG'] & fatal_flags == 0]
     # Cut low-S/N targets
     df = df[df['SNREV'] > snr]
     # Limit to giants
-    if only_giants: df = select_giants(df)
+    df = df[(df['LOGG'] > 1) & (df['LOGG'] < 3.8) & 
+            (df['TEFF'] > 3500) & (df['TEFF'] < 5500) & 
+    # exclude the lower-left corner which may contain main sequence stars
+            ~((df['LOGG'] > 3) & (df['TEFF'] < 4000))]
     # Replace NaN stand-in values with NaN
     df.replace(99.999, np.nan, inplace=True)
-    # Replace NaN in certain columns with empty string
-    df.replace({'ASPCAPFLAGS': np.nan, 'MEMBER': np.nan}, '', inplace=True)
+    df.reset_index(inplace=True, drop=True)
+    return df
+
+
+def apogee_galactocentric_coords(df):
+    """
+    Add columns to the APOGEE dataset with galactocentric coordinates
+    
+    Parameters
+    ----------
+    df : pandas.DataFrame
+        APOGEE dataset containing galactic longitude, latitutde, and Gaia
+        photogeometric distances
+    
+    Returns
+    -------
+    df : pandas.DataFrame
+        Same as input with three new columns:
+          - 'GALR': galactocentric radius in kpc
+          - 'GALPHI': galactocentric azimuth in degrees
+          - 'GALZ': height above the Galactic midplane in kpc
+    """
     # Calculate galactocentric coordinates based on galactic l, b and Gaia dist
     galr, galphi, galz = galactic_to_galactocentric(
         df['GLON'], df['GLAT'], df['GAIAEDR3_R_MED_PHOTOGEO']/1000
     )
-    df['GALR'] = galr
-    df['GALPHI'] = galphi
-    df['GALZ'] = galz
-    df.reset_index(inplace=True, drop=True)
+    df['GALR'] = galr # kpc
+    df['GALPHI'] = galphi # deg
+    df['GALZ'] = galz # kpc
     return df
+
+
+def drop_apogee_columns(df):
+    """
+    Drop unneeded columns from the APOGEE dataset
+    """
+    cols = ['APOGEE_ID', 'RA', 'DEC', 'GALR', 'GALPHI', 'GALZ', 'SNREV',
+            'TEFF', 'TEFF_ERR', 'LOGG', 'LOGG_ERR', 'FE_H', 'FE_H_ERR',
+            'O_FE', 'O_FE_ERR', 'ASTRONN_AGE', 'ASTRONN_AGE_ERR', 
+            'LATENT_AGE', 'LATENT_AGE_ERR']
+    return df[cols].copy()
+
+# =============================================================================
+# DATA UTILITY FUNCTIONS
+# =============================================================================
 
 def fits_to_pandas(path, **kwargs):
     """
@@ -295,6 +264,7 @@ def fits_to_pandas(path, **kwargs):
     df = decode(table[cols].to_pandas())
     return df
 
+
 def decode(df):
     """
     Decode DataFrame with byte strings into ordinary strings.
@@ -308,6 +278,14 @@ def decode(df):
     for col in str_df:
         df[col] = str_df[col]
     return df
+
+
+def quad_add(arr1, arr2):
+    """
+    Add two input arrays in quadrature.
+    """
+    return np.sqrt(arr1**2 + arr2**2)
+    
 
 def galactic_to_galactocentric(l, b, distance):
     r"""

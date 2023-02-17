@@ -3,13 +3,13 @@ This script scores how well different VICE models performe against APOGEE
 data in the [O/Fe]-[Fe/H] plane. The score is based on the fraction of model
 points which fall within the APOGEE 2-sigma contours. Galactic regions are
 defined as they are in ofe_feh_vice.py and each region is given equal weight.
-An alternative score weights each region by the mass of the VICE stars.
+An alternative score weights each region by the APOGEE sample size.
 """
 
 import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
-from utils import import_allStar, multioutput_to_pandas, \
+from utils import import_apogee, multioutput_to_pandas, \
     filter_multioutput_stars, apogee_region
 from _globals import GALR_BINS, ABSZ_BINS, ZONE_WIDTH
 from ofe_feh_vice import setup_axes, FEH_LIM, OFE_LIM
@@ -32,7 +32,7 @@ DTDs = ['powerlaw_slope11',
 def main(verbose=True, sigma=SIGMA):
     if verbose:
         print('Importing APOGEE allStar data...')
-    apogee_data = import_allStar(only_giants=True)
+    apogee_data = import_apogee()
     
     summary_table = pd.DataFrame([], 
         index=pd.MultiIndex.from_product([DTDs, SFHs], names=['DTD', 'SFH']),

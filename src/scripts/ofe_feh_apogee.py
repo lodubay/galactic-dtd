@@ -11,7 +11,7 @@ from sklearn.neighbors import KernelDensity
 from ofe_feh_vice import GALR_BINS, ABSZ_BINS, FEH_LIM, OFE_LIM
 from ofe_feh_vice import setup_axes, setup_colorbar
 import paths
-from utils import import_allStar, apogee_region, scatter_hist
+from utils import import_apogee, apogee_region, scatter_hist
 
 global NBINS
 NBINS = 50
@@ -20,7 +20,7 @@ DEFAULT_LINESTYLES = ['dotted', 'dashed', 'solid']
 def main(cmap='winter', verbose=True):
     if verbose:
         print('Importing allStar data...')
-    data = import_allStar(only_giants=True)
+    data = import_apogee()
     if verbose:
         print('Plotting 2D histograms...')
     fig, axs = plot_scatter_hist_grid(data)
