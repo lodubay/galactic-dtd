@@ -22,9 +22,15 @@ AGE_LIM_LINEAR = (-1, 14)
 AGE_LIM_LOG = (0.2, 20)
 OFE_LIM = (-0.15, 0.55)
 OFE_BIN_WIDTH = 0.05
+AGE_SOURCES = ['F18', # Feuillet et al. 2018
+               'M19', # Mackereth et al. 2019, astroNN
+               'L23'] # Leung et al. 2023, variational encoder-decoder
+AGE_LABELS = {'F18': 'Feuillet et al. 2018',
+              'M19': 'Mackereth et al. 2019',
+              'L23': 'Leung et al. 2023'}
 
 def main(evolution, RIa, migration='diffusion', verbose=False, cmap='winter',
-         data_dir='../data/migration', log=False):
+         data_dir='../data/migration', log=False, ages='M19'):
     # Import VICE multi-zone output data
     output_name = '/'.join(['diffusion', evolution, RIa])
     if verbose: 
@@ -33,6 +39,11 @@ def main(evolution, RIa, migration='diffusion', verbose=False, cmap='winter',
     vice_stars = multioutput_to_pandas(output_name, data_dir)
     # Import APOGEE and astroNN data
     apogee_data = import_apogee(verbose=verbose)
+    # Age data source
+    if ages == 'L23':
+        age_col = 'LATENT_AGE'
+    else:
+        age_col = 'ASTRONN_AGE'
     
     # Set x-axis limits
     if log:
@@ -62,8 +73,17 @@ def main(evolution, RIa, migration='diffusion', verbose=False, cmap='winter',
             plot_vice_sample(ax, vice_subset, 'age', '[o/fe]', 
                              cmap=cmap, norm=cbar.norm)
             plot_vice_medians(ax, vice_subset.copy())
-            apogee_subset = apogee_region(apogee_data, galr_lim, absz_lim)
-            plot_astroNN_medians(ax, apogee_subset.copy())
+            # Plot Feuillet+ 2018 ages in Solar neighborhood only
+            if ages == 'F18':
+                if absz_lim == (0, 0.5) and galr_lim == (7, 9):
+                    plot_feuillet_medians(ax)
+            else:
+                apogee_subset = apogee_region(apogee_data, galr_lim, absz_lim)
+                plot_astroNN_medians(ax, apogee_subset.copy(), age_col=age_col,
+                                     label=ages)
+            # Add legend to top-right panel
+            if i==0 and j==len(row)-1:
+                ax.legend(loc='upper left', frameon=False)
                              
     # Set x-axis scale and ticks
     if log:
@@ -78,13 +98,13 @@ def main(evolution, RIa, migration='diffusion', verbose=False, cmap='winter',
     axs[0,0].yaxis.set_minor_locator(MultipleLocator(0.05))
     
     # Output figure
-    fname = '%s_%s.png' % (evolution, RIa)
+    fname = '%s_%s_%s.png' % (evolution, RIa, ages)
     fig.savefig(paths.figures / 'age_ofe' / fname, dpi=300)
 
 
 def plot_vice_medians(ax, stars, ofe_lim=OFE_LIM, ofe_bin_width=OFE_BIN_WIDTH,
                       plot_low_mass_bins=True, low_mass_cutoff=0.01,
-                      marker='s', small_marker='x', label=None, 
+                      marker='s', small_marker='x', label='VICE', 
                       small_label=None, markersize=2):
     """
     Plot median stellar ages binned by [O/Fe] from VICE multizone data.
@@ -157,7 +177,7 @@ def plot_vice_medians(ax, stars, ofe_lim=OFE_LIM, ofe_bin_width=OFE_BIN_WIDTH,
 def plot_astroNN_medians(ax, data, ofe_lim=OFE_LIM, ofe_bin_width=OFE_BIN_WIDTH,
                          plot_low_count_bins=True, low_count_cutoff=0.01,
                          marker='^', small_marker='2', label=None, 
-                         small_label=None, markersize=2):
+                         small_label=None, markersize=2, age_col='ASTRONN_AGE'):
     """
     Plot median stellar ages binned by [O/Fe] from astroNN data.
     
@@ -190,12 +210,14 @@ def plot_astroNN_medians(ax, data, ofe_lim=OFE_LIM, ofe_bin_width=OFE_BIN_WIDTH,
         The small scatter plot / error bar label. The default is None.
     markersize : float, optional
         The marker size. The default is 2.
+    age_col : str, optional
+        Name of column containing ages. The default is 'ASTRONN_AGE'
     """
     # Define [O/Fe] bins
     ofe_bins = np.arange(ofe_lim[0], ofe_lim[1]+ofe_bin_width, ofe_bin_width)
     data['OFE_BIN'] = pd.cut(data['O_FE'], ofe_bins, 
                              labels=get_bin_centers(ofe_bins))
-    age_grouped = data.groupby('OFE_BIN')['ASTRONN_AGE']
+    age_grouped = data.groupby('OFE_BIN')[age_col]
     age_median = age_grouped.median()
     age_lower = age_grouped.quantile(0.16)
     age_upper = age_grouped.quantile(0.84)
@@ -220,6 +242,40 @@ def plot_astroNN_medians(ax, data, ofe_lim=OFE_LIM, ofe_bin_width=OFE_BIN_WIDTH,
                     capthick=0.25, marker=small_marker, markersize=markersize, 
                     markeredgewidth=0.5, label=small_label,
         )
+        
+
+def plot_feuillet_medians(ax, file=paths.data/'feuillet2018/age_alpha.dat',
+                          marker='^', markersize=2, label='F18'):
+    """
+    Plot median ages for [O/Fe] bins from Feuillet et al. 2018.
+    
+    Parameters
+    ----------
+    ax : matplotlib.axes.Axes
+        Axis on which to plot the medians.
+    file : str or pathlib.Path
+        Filename containing summary data. The default is 
+        '../data/feuillet2018/age_alpha.dat'.
+    marker : str, optional
+        The marker style for the high-count bins. The default is '^', an upwards
+        pointing triangle.
+    markersize : float, optional
+        The marker size. The default is 2.
+    label : str, optional
+        The main scatter plot / error bar label. The default is 'F18'.
+    """
+    data = np.genfromtxt(file)
+    ofe_mean = (data[:,1] + data[:,0])/2
+    age_median = 10**data[:,2] * 1e-9
+    age_upper = 10**(data[:,2]+data[:,3]) * 1e-9
+    age_lower = 10**(data[:,2]-data[:,3]) * 1e-9
+    ax.errorbar(age_median, ofe_mean, 
+                xerr=(age_median - age_lower, age_upper - age_median),
+                yerr=(ofe_mean - data[:,0], data[:,1] - ofe_mean), 
+                color='r', linestyle='none', capsize=1, elinewidth=0.5,
+                capthick=0.5, marker=marker, markersize=markersize, label=label,
+    )
+    
 
 
 if __name__ == '__main__':
@@ -242,5 +298,7 @@ if __name__ == '__main__':
         help='Name of colormap for color-coding VICE output (default: winter)')
     parser.add_argument('-l', '--log', action='store_true',
                         help='Plot age on a log scale')
+    parser.add_argument('-a', '--ages', choices=AGE_SOURCES, default='M19',
+                        help='Source for age data (options: F18, M19, L23)')
     args = parser.parse_args()
     main(**vars(args))
