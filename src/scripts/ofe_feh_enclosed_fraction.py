@@ -71,14 +71,13 @@ def score_output(output_name, apogee_data, sigma=SIGMA, verbose=True):
     unweighted : float
         Mean unweighted enclosed fraction of stars over all Galactic regions
     weighted : float
-        Mean enclosed fraction, weighted by total mass of VICE stars in
-        each region
+        Mean enclosed fraction, weighted by total number of APOGEE stars
+        in each region
     """
     
     # Import VICE multi-zone output data
     if verbose: 
-        print('Importing VICE multizone data from %s/%s.vice' \
-              % ((str(paths.migration)), output_name))
+        print('Importing VICE multizone data from %s.vice' % output_name)
     stars = multioutput_to_pandas(output_name)
     
     # Set up diagnostic plot
