@@ -879,7 +879,7 @@ def setup_discrete_colorbar(fig, cmap, norm, label='', width=0.6):
 # 2D KERNEL DENSITY ESTIMATE
 # =============================================================================
 
-def cross_entropy(logp, logq):
+def cross_entropy(pk, qk):
     """
     Calculate the cross entropy between two distributions.
     
@@ -888,25 +888,24 @@ def cross_entropy(logp, logq):
     
     Parameters
     ----------
-    logp : numpy.ndarray
-        The discrete natural log probability distribution.
-    logq : numpy.ndarray
-        The natural log probability distribution against which to compute the 
-        cross entropy.
+    pk : numpy.ndarray
+        The discrete probability distribution.
+    qk : numpy.ndarray
+        The probability distribution against which to compute the cross entropy.
         
     Returns
     -------
     CE : float
         The cross entropy of the input distributions
     """
-    if logp.shape != logq.shape:
+    if pk.shape != qk.shape:
         raise ValueError('Arrays logp and logq must have the same shape.')
-    pk = np.exp(logp)
-    qk = np.exp(logq)
     # Normalize distributions
-    logp -= np.log(np.sum(pk))
-    logq -= np.log(np.sum(qk))
-    return -np.sum(pk * logq)
+    pk /= np.sum(pk)
+    qk /= np.sum(qk)
+    # Mask array 0s with smallest non-zero value
+    qk[qk == 0] = np.min(qk[qk > 0])
+    return -np.sum(pk * np.log(qk))
 
 
 def kde2D(x, y, bandwidth, xbins=100j, ybins=100j, **kwargs):

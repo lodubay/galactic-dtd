@@ -6,6 +6,7 @@ populations from multizone runs and APOGEE.
 import numpy as np
 import math as m
 import pandas as pd
+import matplotlib.pyplot as plt
 from scipy.stats import entropy
 from ofe_feh_apogee import gen_kde as apogee_kde
 from utils import cross_entropy, kde2D, filter_multioutput_stars, \
@@ -100,11 +101,17 @@ def ce_regions(output_name, apogee_data, galr_bins=GALR_BINS[:-1],
             # KDE of VICE subset
             xx, yy, vice_logz = kde2D(vice_subset['[fe/h]'], vice_subset['[o/fe]'],
                                       bandwidth, xbins=xx, ybins=yy)
+            dx = xx[1,0] - xx[0,0]
+            dy = yy[0,1] - yy[0,0]
+            # print(np.sum(np.exp(vice_logz) * dx * dy))
             # Calculate cross entropy
             # ce = entropy(pk) + entropy(pk, qk)
-            ce = cross_entropy(apogee_logz, vice_logz)
+            ce = cross_entropy(np.exp(apogee_logz), 
+                               np.exp(vice_logz))
             cedf.iloc[i, j] = ce
             ce_list.append(ce)
+            if verbose:
+                print('\tCE =', ce)
             
             # Plot
             ax = axs[i,j]
@@ -140,6 +147,7 @@ def ce_regions(output_name, apogee_data, galr_bins=GALR_BINS[:-1],
     axs[0,0].set_ylim(OFE_LIM)
     figname = '_'.join(output_name.split('/')[1:])
     fig.savefig(paths.figures / ('ofe_feh/cross_entropy/%s.png' % figname), dpi=300)
+    plt.close()
     
     unweighted = np.mean(ce_list)
     if verbose:
