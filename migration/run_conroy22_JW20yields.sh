@@ -36,8 +36,8 @@ for i in ${!DTD_LIST[@]}; do
 	for MIGR in ${MIGR_LIST[@]}; do
 		DTD=${DTD_LIST[$i]}
 		DTD_PARAM=${DTD_PARAMS[$i]}
-		NAME=../src/data/migration/$MIGR/$EVOL/${DTD_NAMES[$i]}
+		NAME=../src/data/migration/$MIGR/$EVOL"_JW20yields"/${DTD_NAMES[$i]}
 		echo $NAME
-		python simulations.py -f --nstars=8 --migration=$MIGR --evolution=$EVOL --yields="C22" --RIa=$DTD --RIa-params=$DTD_PARAM --minimum-delay=0.04 --name=$NAME
+		python simulations.py -f --nstars=8 --migration=$MIGR --evolution=$EVOL --yields="JW20" --RIa=$DTD --RIa-params=$DTD_PARAM --minimum-delay=0.04 --name=$NAME
 	done
 done
