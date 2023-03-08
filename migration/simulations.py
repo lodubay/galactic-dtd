@@ -14,6 +14,7 @@ _EVOLUTION_MODELS_ = ["static", "insideout", "lateburst", "outerburst",
                       "twoinfall", "conroy22", "expifr"]
 _DELAY_MODELS_ = ["powerlaw", "plateau", "prompt",
                   "exponential", "greggio05_single", "triple"]
+_YIELD_SETS_ = ["JW20", "S21", "C22"]
 
 def parse():
     r"""
@@ -29,16 +30,19 @@ def parse():
     parser.add_argument("--migration",
         help = "The migration model to assume. (Default: diffusion)",
         type = str,
+        choices = _MIGRATION_MODELS_,
         default = "diffusion")
 
     parser.add_argument("--evolution",
         help = "The evolutionary history to assume (Default: insideout)",
         type = str,
+        choices = _EVOLUTION_MODELS_,
         default = "insideout")
 
     parser.add_argument("--RIa",
         help = "The SN Ia delay-time distribution to assume (Default: powerlaw)",
         type = str,
+        choices = _DELAY_MODELS_,
         default = "powerlaw")
 
     parser.add_argument("--RIa-params",
@@ -78,6 +82,12 @@ underscores. (Default: \"fe_o\")""",
         help = "The width of each annulus in kpc. (Default: 0.1)",
         type = float,
         default = 0.1)
+    
+    parser.add_argument("--yields",
+        help = "The nucleosynthetic yield set to use. (Default: 'JW20')",
+        type = str,
+        choices = _YIELD_SETS_,
+        default = "JW20")
 
     return parser
 
@@ -108,7 +118,8 @@ def model(args):
         spec = args.evolution,
         RIa = args.RIa,
         RIa_kwargs = RIa_kwargs,
-        delay = args.minimum_delay
+        delay = args.minimum_delay,
+        yields = args.yields
     )
     if args.migration == "post-process":
         kwargs["simple"] = True
@@ -129,5 +140,5 @@ def main():
         overwrite = args.force, pickle = False)
 
 
-if __name__ == "__main__": main()
-
+if __name__ == "__main__": 
+    main()

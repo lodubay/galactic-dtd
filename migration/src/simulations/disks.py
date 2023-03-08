@@ -79,7 +79,7 @@ class diskmodel(vice.milkyway):
     """
 
     def __init__(self, zone_width = 0.1, name = "diskmodel", spec = "static",
-        verbose = True, migration_mode = "diffusion",
+        verbose = True, migration_mode = "diffusion", yields="JW20",
         delay = 0.04, RIa = "powerlaw", RIa_kwargs={}, **kwargs):
         super().__init__(zone_width = zone_width, name = name,
             verbose = verbose, **kwargs)
@@ -94,9 +94,9 @@ class diskmodel(vice.milkyway):
         self.evolution = star_formation_history(spec = spec,
             zone_width = zone_width)
         # Set the yields
-        if spec.lower() == "conroy22":
+        if yields == "C22":
             from .yields import conroy22
-        elif spec.lower() == "spitoni21":
+        elif yields == "S21":
             from .yields import twoinfall
         else:
             from vice.yields.presets import JW20
