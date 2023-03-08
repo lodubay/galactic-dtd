@@ -38,7 +38,7 @@ def main(verbose=True):
         for RIa in DTDs:
             output_name = '/'.join(('diffusion', evolution, RIa))
             scores = ce_regions(output_name, apogee_data, verbose=verbose)
-            summary_table.loc[RIa, evolution] = np.array(scores).round(0)
+            summary_table.loc[RIa, evolution] = np.array(scores).round(2)
     
     if verbose: print(summary_table)
     summary_table.to_csv(paths.figures / 'ofe_feh/cross_entropy/scores.csv')
@@ -101,13 +101,7 @@ def ce_regions(output_name, apogee_data, galr_bins=GALR_BINS[:-1],
             # KDE of VICE subset
             xx, yy, vice_logz = kde2D(vice_subset['[fe/h]'], vice_subset['[o/fe]'],
                                       bandwidth, xbins=xx, ybins=yy)
-            dx = xx[1,0] - xx[0,0]
-            dy = yy[0,1] - yy[0,0]
-            # print(np.sum(np.exp(vice_logz) * dx * dy))
-            # Calculate cross entropy
-            # ce = entropy(pk) + entropy(pk, qk)
-            ce = cross_entropy(np.exp(apogee_logz), 
-                               np.exp(vice_logz))
+            ce = cross_entropy(np.exp(apogee_logz), np.exp(vice_logz))
             cedf.iloc[i, j] = ce
             ce_list.append(ce)
             if verbose:
@@ -140,13 +134,14 @@ def ce_regions(output_name, apogee_data, galr_bins=GALR_BINS[:-1],
             if i == 0:
                 ax.set_title(r'$%s\leq R_{\rm{Gal}} < %s$ kpc'% galr_lim)
             # Label cross entropy
-            ax.text(0.9, 0.9, r'CE=%s' % round(ce),
+            ax.text(0.9, 0.9, r'CE=%.02f' % ce,
                     transform=ax.transAxes, size=8, ha='right', va='top')
     
     axs[0,0].set_xlim(FEH_LIM)
     axs[0,0].set_ylim(OFE_LIM)
     figname = '_'.join(output_name.split('/')[1:])
-    fig.savefig(paths.figures / ('ofe_feh/cross_entropy/%s.png' % figname), dpi=300)
+    fig.savefig(paths.figures / ('ofe_feh/cross_entropy/%s.png' % figname), 
+                dpi=300)
     plt.close()
     
     unweighted = np.mean(ce_list)
