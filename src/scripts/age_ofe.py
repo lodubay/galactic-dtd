@@ -22,7 +22,7 @@ AGE_LIM_LINEAR = (-1, 14)
 AGE_LIM_LOG = (0.2, 20)
 OFE_LIM = (-0.15, 0.55)
 OFE_BIN_WIDTH = 0.05
-AGE_SOURCES = ['F18', # Feuillet et al. 2018
+AGE_SOURCES = ['F18', # Feuillet et al. 2018, solar neighborhood only
                'M19', # Mackereth et al. 2019, astroNN
                'L23'] # Leung et al. 2023, variational encoder-decoder
 AGE_LABELS = {'F18': 'Feuillet et al. 2018',
@@ -30,7 +30,7 @@ AGE_LABELS = {'F18': 'Feuillet et al. 2018',
               'L23': 'Leung et al. 2023'}
 
 def main(evolution, RIa, migration='diffusion', verbose=False, cmap='winter',
-         data_dir='../data/migration', log=False, ages='M19'):
+         data_dir='../data/migration', log=False, ages='L23'):
     # Import VICE multi-zone output data
     output_name = '/'.join(['diffusion', evolution, RIa])
     if verbose: 
@@ -298,7 +298,7 @@ if __name__ == '__main__':
         help='Name of colormap for color-coding VICE output (default: winter)')
     parser.add_argument('-l', '--log', action='store_true',
                         help='Plot age on a log scale')
-    parser.add_argument('-a', '--ages', choices=AGE_SOURCES, default='M19',
+    parser.add_argument('-a', '--ages', choices=AGE_SOURCES, default='L23',
                         help='Source for age data (options: F18, M19, L23)')
     args = parser.parse_args()
     main(**vars(args))

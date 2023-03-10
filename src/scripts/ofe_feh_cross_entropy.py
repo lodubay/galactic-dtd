@@ -26,7 +26,6 @@ DTDs = ['powerlaw_slope11',
         'triple_delay040']
 
 def main(verbose=True):
-    output_name = 'diffusion/insideout/powerlaw_slope11'
     apogee_data = import_apogee(verbose=verbose)
     
     summary_table = pd.DataFrame([], 

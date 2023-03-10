@@ -17,7 +17,8 @@ DTD_LIST = [
     'exponential_timescale30', 
     'plateau_width300_slope11', 
     'plateau_width1000_slope11', 
-    'prompt_peak050_stdev015_timescale30'
+    'prompt_peak050_stdev015_timescale30',
+    'triple_delay040'
 ]
 MIGRATION = 'diffusion'
 

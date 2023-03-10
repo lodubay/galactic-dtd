@@ -46,7 +46,7 @@ def apogee_region(data, galr_lim=(0, 20), absz_lim=(0, 5)):
                   (data['GALR'] < galr_max) &
                   (data['GALZ'].abs() >= absz_min) &
                   (data['GALZ'].abs() < absz_max)]
-    subset.reset_index(inplace=True)
+    subset.reset_index(inplace=True, drop=True)
     return subset
 
 
@@ -446,7 +446,7 @@ def filter_multioutput_stars(stars, galr_lim=(0, 20), absz_lim=(0, 5),
     subset.reset_index(inplace=True)
     return subset
 
-def sample_dataframe(df, n, weights=None):
+def sample_dataframe(df, n, weights=None, reset=True):
     """
     Randomly sample n unique rows from a pandas DataFrame.
 
@@ -455,8 +455,10 @@ def sample_dataframe(df, n, weights=None):
     df : pandas DataFrame
     n : int
         Number of random samples to draw
-    weights : array
+    weights : array, optional
         Probability weights of the given DataFrame
+    reset : bool, optional
+        If True, reset sample DataFrame index
 
     Returns
     -------
@@ -469,7 +471,9 @@ def sample_dataframe(df, n, weights=None):
         # Randomly sample without replacement
         rand_indices = rng.choice(df.index, size=n, replace=False, p=weights)
         sample = df.loc[rand_indices]
-        return sample.reset_index()
+        if reset:
+            sample.reset_index(inplace=True, drop=True)
+        return sample
     else:
         raise TypeError('Expected pandas DataFrame.')
 
