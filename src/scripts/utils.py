@@ -9,6 +9,7 @@ from numpy.random import default_rng
 import pandas as pd
 import matplotlib.pyplot as plt
 from matplotlib.colors import Normalize, BoundaryNorm, LogNorm
+from matplotlib.ticker import MultipleLocator
 from matplotlib.cm import ScalarMappable
 from astropy.table import Table
 import vice
@@ -731,6 +732,45 @@ class NormalIMF:
 # PLOTTING FUNCTIONS
 # =============================================================================
 
+
+def axes_grid(rows, cols, width=8, xlim=None, ylim=None):
+    """
+    Set up a blank grid of axes plus a colorbar axis.
+
+    Parameters
+    ----------
+    rows : int
+        Number of rows of axes
+    cols : int
+        Number of columns of axes
+    width : float, optional
+        Width of the figure in inches. The default is 8 in.
+    xlim : tuple or None, optional
+        Limits of x-axis for all axes
+    ylim : tuple or None, optional
+        Limits of y-axis for all axes
+
+    Returns
+    -------
+    fig : matplotlib figure
+    axs : list of axes
+    cax : axis object for colorbar
+    """
+    fig, axs = plt.subplots(rows, cols, figsize=(width, (width/cols)*rows),
+                            sharex=True, sharey=True)
+    # Configure plot dimensions
+    plt.subplots_adjust(right=0.98, left=0.05, bottom=0.09, top=0.94,
+                        wspace=0.05, hspace=0.05)
+    # Configure axis limits and ticks (will be applied to all axes)
+    axs[0,0].set_xlim(xlim)
+    axs[0,0].set_ylim(ylim)
+    # axs[0,0].xaxis.set_major_locator(MultipleLocator(0.5))
+    # axs[0,0].xaxis.set_minor_locator(MultipleLocator(0.1))
+    # axs[0,0].yaxis.set_major_locator(MultipleLocator(0.2))
+    # axs[0,0].yaxis.set_minor_locator(MultipleLocator(0.05))
+    return fig, axs
+
+
 def scatter_hist(ax, x, y, xlim=None, ylim=None, log_norm=True, cmap='gray',
                  cmin=10, vmin=None, vmax=None, nbins=50, color='k',
                  rasterized=True):
@@ -880,7 +920,7 @@ def setup_discrete_colorbar(fig, cmap, norm, label='', width=0.6):
     return cax
                
 # =============================================================================
-# 2D KERNEL DENSITY ESTIMATE
+# DISTRIBUTION STATISTICS
 # =============================================================================
 
 def cross_entropy(pk, qk):
@@ -910,6 +950,34 @@ def cross_entropy(pk, qk):
     # Mask array 0s with smallest non-zero value
     qk[qk == 0] = np.min(qk[qk > 0])
     return -np.sum(pk * np.log(qk))
+
+
+def kl_divergence(pk, qk, dx):
+    r"""
+    Calculate the Kullback-Leibler (KL) divergence between two distributions.
+    
+    For a continuous random variable, KL divergence is defined to be
+    $D_{\rm{KL}}(P\parallel Q) = \int_{-\infty}^{\infty} p(x)\log(p(x)/q(x))dx$
+    
+    Parameters
+    ----------
+    pk : numpy.ndarray
+        Probability density of the observed (true) distribution.
+    qk : numpy.ndarray
+        Probability density of the model distribution.
+    dx : float
+        Integration step of the observed variable.
+    
+    Returns
+    -------
+    kl : float
+        The KL divergence between the two distributions, which is 0 if they
+        are identical and positive otherwise.
+    """
+    # mask zeroes with smallest non-zero value
+    pk_nz = np.where(pk != 0, pk, np.min(pk[pk > 0]))
+    qk_nz = np.where(qk != 0, qk, np.min(qk[qk > 0]))
+    return np.sum(pk_nz * np.log(pk_nz / qk_nz) * dx)
 
 
 def kde2D(x, y, bandwidth, xbins=100j, ybins=100j, **kwargs):
