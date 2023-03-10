@@ -11,7 +11,7 @@ import paths
 from utils import multioutput_to_pandas, filter_multioutput_stars, \
     import_apogee, apogee_region
 from distribution_functions import setup_axes, plot_distributions
-from feh_distribution import gen_mdf, box_smooth
+from feh_distribution import vice_mdf, apogee_mdf
 
 MIGRATION = 'diffusion'
 OFE_LIM = (-0.1, 0.5)
@@ -70,15 +70,19 @@ def plot_multiple_comparison(outputs, labels, output_dir=paths.data/'migration',
     if verbose:
         print('Plotting [O/Fe] distribution from APOGEE...')
     apogee_data = import_apogee()
-    plot_distributions(apogee_mdf, apogee_data, axs[:,0], 
-                       label='APOGEE DR17', cmap_name=cmap_name)
+    plot_distributions(apogee_mdf, apogee_data, 'O_FE', axs[:,0], 
+                       label='APOGEE DR17', cmap_name=cmap_name,
+                       func_kwargs={'xlim': OFE_LIM, 'bin_width': BIN_WIDTH,
+                                    'smooth_width': SMOOTH_WIDTH})
     
     for col, output in enumerate(outputs):
         if verbose:
             print('Plotting [O/Fe] distribution from %s...' % output)
         stars = multioutput_to_pandas(Path(output_dir) / output)
-        plot_distributions(vice_mdf, stars, axs[:,col+1], 
-                           label=labels[col], cmap_name=cmap_name)
+        plot_distributions(vice_mdf, stars, '[o/fe]', axs[:,col+1], 
+                           label=labels[col], cmap_name=cmap_name,
+                           func_kwargs={'xlim': OFE_LIM, 'bin_width': BIN_WIDTH,
+                                        'smooth_width': SMOOTH_WIDTH})
             
     for ax in axs[:,0]:
         ax.set_ylim((0, None))
@@ -121,14 +125,18 @@ def plot_single_comparison(output, output_dir=paths.data/'migration',
     if verbose:
         print('Plotting [O/Fe] distribution from %s...' % output)
     stars = multioutput_to_pandas(Path(output_dir) / output)
-    plot_distributions(vice_mdf, stars, axs[:,0], 
-                       label='VICE', cmap_name=cmap_name)
+    plot_distributions(vice_mdf, stars, '[o/fe]', axs[:,0], 
+                       label='VICE', cmap_name=cmap_name,
+                       func_kwargs={'xlim': OFE_LIM, 'bin_width': BIN_WIDTH,
+                                    'smooth_width': SMOOTH_WIDTH})
     
     if verbose:
         print('Plotting APOGEE [O/Fe] distribution...')
     apogee_data = import_apogee()
-    plot_distributions(apogee_mdf, apogee_data, axs[:,1], 
-                       label='APOGEE DR17', cmap_name=cmap_name)
+    plot_distributions(apogee_mdf, apogee_data, 'O_FE', axs[:,1], 
+                       label='APOGEE DR17', cmap_name=cmap_name,
+                       func_kwargs={'xlim': OFE_LIM, 'bin_width': BIN_WIDTH,
+                                    'smooth_width': SMOOTH_WIDTH})
     
     # Automatically generate plot filename if none is provided
     if fname == '':
@@ -140,60 +148,6 @@ def plot_single_comparison(output, output_dir=paths.data/'migration',
     plt.close()
     if verbose:
         print('Done! Plot is located at src/tex/figures/mdf_ofe/%s' % fname)
-        
-
-def vice_mdf(stars, galr_lim=(0, 20), absz_lim=(0, 2)):
-    """
-    Calculate the MDF in [O/Fe] of a region of a VICE multizone output.
-    
-    Parameters
-    ----------
-    stars : pandas.DataFrame
-        Data from a VICE multizone run.
-    galr_lim : tuple, optional
-        Limits of region in galactic radius (kpc). The default is (0, 20).
-    absz_lim : tuple, optional
-        Limits of region in galactic z-height (kpc). The default is (0, 2).
-    
-    Returns
-    -------
-    mdf_smooth : numpy.ndarray
-        MBoxcar-smoothed MDF.
-    bin_edges : numpy.ndarray
-        [O/Fe] bins including left and right edges, of length len(dndt)+1.
-    """
-    subset = filter_multioutput_stars(stars, galr_lim, absz_lim, min_mass=0)
-    mdf, bin_edges = gen_mdf(subset, col='[o/fe]', range=OFE_LIM, 
-                             bin_width=BIN_WIDTH)
-    mdf_smooth = box_smooth(mdf, bin_edges, SMOOTH_WIDTH)
-    return mdf_smooth, bin_edges
-
-
-def apogee_mdf(data, galr_lim=(0, 20), absz_lim=(0, 2)):
-    """
-    Calculate the MDF in [O/Fe] of a region of astroNN data.
-    
-    Parameters
-    ----------
-    data : pandas.DataFrame
-        Data from APOGEE DR17.
-    galr_lim : tuple, optional
-        Limits of region in galactic radius (kpc). The default is (0, 20).
-    absz_lim : tuple, optional
-        Limits of region in galactic z-height (kpc). The default is (0, 2).
-    
-    Returns
-    -------
-    mdf_smooth : numpy.ndarray
-        Boxcar-smoothed MDF.
-    bin_edges : numpy.ndarray
-        [O/Fe] bins including left and right edges, of length len(dndt)+1.
-    """
-    subset = apogee_region(data, galr_lim, absz_lim)
-    bin_edges = np.arange(OFE_LIM[0], OFE_LIM[1] + BIN_WIDTH, BIN_WIDTH)
-    mdf, _ = np.histogram(subset['O_FE'], bins=bin_edges, density=True)
-    mdf_smooth = box_smooth(mdf, bin_edges, SMOOTH_WIDTH)
-    return mdf_smooth, bin_edges
 
 
 if __name__ == '__main__':

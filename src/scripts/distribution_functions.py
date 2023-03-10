@@ -3,6 +3,7 @@ This file contains generic functions for plotting distributions of data
 binned by galactic radius and z-height.
 """
 
+import inspect
 import matplotlib.pyplot as plt
 from matplotlib.ticker import MultipleLocator
 from matplotlib.cm import ScalarMappable
@@ -13,7 +14,7 @@ from _globals import ABSZ_BINS, GALR_BINS
 MAJOR_MINOR_RATIO = 5.
 
     
-def plot_distributions(func, data, axs, label='', cmap_name='plasma_r',
+def plot_distributions(func, data, col, axs, label='', cmap_name='plasma_r',
                        galr_bins=GALR_BINS, absz_bins=ABSZ_BINS, linewidth=1,
                        func_kwargs={}):
     """
@@ -30,6 +31,8 @@ def plot_distributions(func, data, axs, label='', cmap_name='plasma_r',
     data : pandas.DataFrame
         Data (e.g. from VICE or APOGEE) from which to generate the 
         distributions.
+    col : str
+        Column name of abundance data to plot.
     axs : list of matplotlib.axes.Axes
         Axes on which to plot the age distributions, the length of which must
         correspond to len(absz_bins)-1 (3 by default); usually a single
@@ -58,7 +61,8 @@ def plot_distributions(func, data, axs, label='', cmap_name='plasma_r',
             absz_lim = absz_bins[-(i+2):len(absz_bins)-i]
             for j in range(len(galr_bins)-1):
                 galr_lim = galr_bins[j:j+2]
-                dist, bin_edges = func(data, galr_lim, absz_lim, **func_kwargs)
+                dist, bin_edges = func(data, col=col, galr_lim=galr_lim, 
+                                       absz_lim=absz_lim, **func_kwargs)
                 ax.plot(get_bin_centers(bin_edges), dist, 
                         color=colors[j], linewidth=linewidth)
         axs[0].set_title(label, va='top', pad=18)

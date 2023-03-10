@@ -977,7 +977,7 @@ def kl_divergence(pk, qk, dx):
     # mask zeroes with smallest non-zero value
     pk_nz = np.where(pk != 0, pk, np.min(pk[pk > 0]))
     qk_nz = np.where(qk != 0, qk, np.min(qk[qk > 0]))
-    return np.sum(pk_nz * np.log(pk_nz / qk_nz) * dx)
+    return np.sum(np.where(pk != 0, pk * np.log(pk_nz / qk_nz) * dx, 0))
 
 
 def kde2D(x, y, bandwidth, xbins=100j, ybins=100j, **kwargs):

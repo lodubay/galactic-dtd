@@ -66,13 +66,13 @@ def plot_multiple_comparison(outputs, labels, output_dir=paths.data/'migration',
         if verbose:
             print('Plotting MDF from %s...' % output)
         stars = multioutput_to_pandas(Path(output_dir) / output)
-        plot_distributions(vice_mdf, stars, axs[:,col], 
+        plot_distributions(vice_mdf, stars, '[fe/h]', axs[:,col], 
                            label=labels[col], cmap_name=cmap_name)
     
     if verbose:
         print('Plotting MDF from APOGEE...')
     apogee_data = import_apogee()
-    plot_distributions(apogee_mdf, apogee_data, axs[:,col+1], 
+    plot_distributions(apogee_mdf, apogee_data, 'FE_H', axs[:,col+1], 
                        label='APOGEE DR17', cmap_name=cmap_name)
             
     axs[0,0].set_ylim((0, None))
@@ -115,13 +115,13 @@ def plot_single_comparison(output, output_dir=paths.data/'migration',
     if verbose:
         print('Plotting [Fe/H] distribution from %s...' % output)
     stars = multioutput_to_pandas(Path(output_dir) / output)
-    plot_distributions(vice_mdf, stars, axs[:,0], 
+    plot_distributions(vice_mdf, stars, '[fe/h]', axs[:,0], 
                        label='VICE', cmap_name=cmap_name)
     
     if verbose:
         print('Plotting APOGEE [Fe/H] distribution...')
     apogee_data = import_apogee()
-    plot_distributions(apogee_mdf, apogee_data, axs[:,1], 
+    plot_distributions(apogee_mdf, apogee_data, 'FE_H', axs[:,1], 
                        label='APOGEE DR17', cmap_name=cmap_name)
     
     # Automatically generate plot filename if none is provided
@@ -135,8 +135,8 @@ def plot_single_comparison(output, output_dir=paths.data/'migration',
         print('Done! Plot is located at src/tex/figures/mdf_feh/%s' % fname)
         
 
-def vice_mdf(stars, galr_lim=(0, 20), absz_lim=(0, 2), xlim=FEH_LIM,
-             bin_width=BIN_WIDTH, smooth_width=SMOOTH_WIDTH):
+def vice_mdf(stars, col='[fe/h]', galr_lim=(0, 20), absz_lim=(0, 2), 
+             xlim=FEH_LIM, bin_width=BIN_WIDTH, smooth_width=SMOOTH_WIDTH):
     """
     Calculate the MDF in [Fe/H] of a region of a VICE multizone output.
     
@@ -144,6 +144,9 @@ def vice_mdf(stars, galr_lim=(0, 20), absz_lim=(0, 2), xlim=FEH_LIM,
     ----------
     stars : pandas.DataFrame
         Data from a VICE multizone run.
+    col : str, optional
+        Column for which to generate a distribution function. The default is
+        '[fe/h]'.
     galr_lim : tuple, optional
         Limits of region in galactic radius (kpc). The default is (0, 20).
     absz_lim : tuple, optional
@@ -151,7 +154,7 @@ def vice_mdf(stars, galr_lim=(0, 20), absz_lim=(0, 2), xlim=FEH_LIM,
     xlim : tuple, optional
         Minimum and maximum abundance values. The default is (-1.1, 0.6).
     bin_width : float, optional
-        Width of histogram bins in x-axis units. The default is 0.01
+        Width of histogram bins in x-axis units. The default is 0.01.
     smooth_width : float, optional
         Width of boxcar smoothing in x-axis units. The default is 0.2.
     
@@ -163,7 +166,7 @@ def vice_mdf(stars, galr_lim=(0, 20), absz_lim=(0, 2), xlim=FEH_LIM,
         [Fe/H] bins including left and right edges, of length len(dndt)+1.
     """
     subset = filter_multioutput_stars(stars, galr_lim, absz_lim, min_mass=0)
-    mdf, bin_edges = gen_mdf(subset, range=xlim, bin_width=bin_width)
+    mdf, bin_edges = gen_mdf(subset, col=col, range=xlim, bin_width=bin_width)
     mdf_smooth = box_smooth(mdf, bin_edges, smooth_width)
     return mdf_smooth, bin_edges
 
@@ -198,8 +201,8 @@ def gen_mdf(stars, col='[fe/h]', range=None, bin_width=0.05):
     return mdf, bins
 
 
-def apogee_mdf(data, galr_lim=(0, 20), absz_lim=(0, 2), xlim=FEH_LIM,
-               bin_width=BIN_WIDTH, smooth_width=SMOOTH_WIDTH):
+def apogee_mdf(data, col='FE_H', galr_lim=(0, 20), absz_lim=(0, 2), 
+               xlim=FEH_LIM, bin_width=BIN_WIDTH, smooth_width=SMOOTH_WIDTH):
     """
     Calculate the MDF in [Fe/H] of a region of astroNN data.
     
@@ -207,6 +210,8 @@ def apogee_mdf(data, galr_lim=(0, 20), absz_lim=(0, 2), xlim=FEH_LIM,
     ----------
     data : pandas.DataFrame
         Data from APOGEE DR17.
+    col : str, optional
+        Column name of desired abundance data. The default is 'FE_H'.
     galr_lim : tuple, optional
         Limits of region in galactic radius (kpc). The default is (0, 20).
     absz_lim : tuple, optional
@@ -214,7 +219,7 @@ def apogee_mdf(data, galr_lim=(0, 20), absz_lim=(0, 2), xlim=FEH_LIM,
     xlim : tuple, optional
         Minimum and maximum abundance values. The default is (-1.1, 0.6).
     bin_width : float, optional
-        Width of histogram bins in x-axis units. The default is 0.01
+        Width of histogram bins in x-axis units. The default is 0.01.
     smooth_width : float, optional
         Width of boxcar smoothing in x-axis units. The default is 0.2.
     
@@ -227,7 +232,7 @@ def apogee_mdf(data, galr_lim=(0, 20), absz_lim=(0, 2), xlim=FEH_LIM,
     """
     subset = apogee_region(data, galr_lim, absz_lim)
     bin_edges = np.arange(xlim[0], xlim[1] + bin_width, bin_width)
-    mdf, _ = np.histogram(subset['FE_H'], bins=bin_edges, density=True)
+    mdf, _ = np.histogram(subset[col], bins=bin_edges, density=True)
     mdf_smooth = box_smooth(mdf, bin_edges, smooth_width)
     return mdf_smooth, bin_edges
 

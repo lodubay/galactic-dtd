@@ -22,9 +22,9 @@ DTDs = ['powerlaw_slope11',
         'prompt_peak050_stdev015_timescale30',
         'triple_delay040']
 
-FEH_LIM = (-2., 1.)
-BIN_WIDTH = 0.01 # width of MDF bins
-SMOOTHING = 0.2 # width of boxcar smoothing
+OFE_LIM = (-0.1, 0.7)
+BIN_WIDTH = 0.005 # width of MDF bins
+SMOOTHING = 0.05 # width of boxcar smoothing
 
 def main(verbose=True):
     apogee_data = import_apogee(verbose=verbose)
@@ -37,13 +37,13 @@ def main(verbose=True):
     for evolution in SFHs:
         for RIa in DTDs:
             output_name = '/'.join(('diffusion', evolution, RIa))
-            kld_mean = mean_kld(output_name, apogee_data, xlim=FEH_LIM, 
+            kld_mean = mean_kld(output_name, apogee_data, xlim=OFE_LIM, 
                                 bin_width=BIN_WIDTH, smooth_width=SMOOTHING, 
                                 verbose=verbose, diagnostic=True)
             summary_table.loc[RIa, evolution] = np.array(kld_mean).round(3)
     
     if verbose: print(summary_table)
-    summary_table.to_csv(paths.figures / 'mdf_feh/kl_divergence/scores.csv')
+    summary_table.to_csv(paths.figures / 'mdf_ofe/kl_divergence/scores.csv')
 
 
 def mean_kld(output_name, apogee_data, weighted=True, verbose=False,
@@ -64,7 +64,7 @@ def mean_kld(output_name, apogee_data, weighted=True, verbose=False,
         If True, print verbose output. The default is False.
     diagnostic : bool, optional
         If True, create a diagnostic plot which is saved in 
-        figures/mdf_feh/kld/. The default is False.
+        figures/mdf_ofe/kld/. The default is False.
         
     **kwargs passed to vice_mdf() and apogee_mdf()
     xlim : tuple, optional
@@ -83,7 +83,7 @@ def mean_kld(output_name, apogee_data, weighted=True, verbose=False,
     
     # Initialize figure
     if diagnostic:
-        fig, axs = axes_grid(len(ABSZ_BINS)-1, len(GALR_BINS)-1, xlim=FEH_LIM, ylim=(0, 3))
+        fig, axs = axes_grid(len(ABSZ_BINS)-1, len(GALR_BINS)-1, xlim=OFE_LIM, ylim=(0, 3))
     
     kld_list = []
     weights = []
@@ -94,9 +94,9 @@ def mean_kld(output_name, apogee_data, weighted=True, verbose=False,
             if verbose:
                 print('|z| =', absz_lim, ', Rgal =', galr_lim)
             
-            vice_dist, bin_edges = vice_mdf(vice_stars,'[fe/h]', galr_lim, 
+            vice_dist, bin_edges = vice_mdf(vice_stars, '[o/fe]', galr_lim, 
                                             absz_lim, **kwargs)
-            apogee_dist, bin_edges = apogee_mdf(apogee_data, 'FE_H', galr_lim, 
+            apogee_dist, bin_edges = apogee_mdf(apogee_data, 'O_FE', galr_lim, 
                                                 absz_lim, **kwargs)
             dx = bin_edges[1] - bin_edges[0]
             kld = kl_divergence(apogee_dist, vice_dist, dx)
@@ -119,9 +119,9 @@ def mean_kld(output_name, apogee_data, weighted=True, verbose=False,
                 ax.plot(xarr, apogee_dist, 'r--', label='APOGEE', linewidth=1)
                 # Label axes
                 if i == len(ABSZ_BINS)-2:
-                    ax.set_xlabel('[Fe/H]')
+                    ax.set_xlabel('[O/Fe]')
                 if j == 0:
-                    ax.set_ylabel('p([Fe/H])')
+                    ax.set_ylabel('p([O/Fe])')
                     ax.text(0.1, 0.5, r'$%s\leq |z| < %s$ kpc' % absz_lim,
                             transform=ax.transAxes, size=8, va='center', ha='left', rotation=90)
                 if i == 0:
@@ -134,7 +134,7 @@ def mean_kld(output_name, apogee_data, weighted=True, verbose=False,
     if diagnostic:
         axs[0,-1].legend(frameon=False, loc='upper left', handlelength=1.3)
         figname = '_'.join(output_name.split('/')[1:])
-        plt.savefig(paths.figures / ('mdf_feh/kl_divergence/%s.png' % figname),
+        plt.savefig(paths.figures / ('mdf_ofe/kl_divergence/%s.png' % figname),
                     dpi=300)
         plt.close()
                 
