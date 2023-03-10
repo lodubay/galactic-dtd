@@ -22,7 +22,7 @@ DTDs = ['powerlaw_slope11',
         'prompt_peak050_stdev015_timescale30',
         'triple_delay040']
 
-OFE_LIM = (-0.1, 0.7)
+OFE_LIM = (-0.2, 0.7)
 BIN_WIDTH = 0.005 # width of MDF bins
 SMOOTHING = 0.05 # width of boxcar smoothing
 
@@ -83,7 +83,8 @@ def mean_kld(output_name, apogee_data, weighted=True, verbose=False,
     
     # Initialize figure
     if diagnostic:
-        fig, axs = axes_grid(len(ABSZ_BINS)-1, len(GALR_BINS)-1, xlim=OFE_LIM, ylim=(0, 3))
+        fig, axs = axes_grid(len(ABSZ_BINS)-1, len(GALR_BINS)-1, 
+                             xlim=OFE_LIM, ylim=(0, 10))
     
     kld_list = []
     weights = []
@@ -122,7 +123,7 @@ def mean_kld(output_name, apogee_data, weighted=True, verbose=False,
                     ax.set_xlabel('[O/Fe]')
                 if j == 0:
                     ax.set_ylabel('p([O/Fe])')
-                    ax.text(0.1, 0.5, r'$%s\leq |z| < %s$ kpc' % absz_lim,
+                    ax.text(0.06, 0.5, r'$%s\leq |z| < %s$ kpc' % absz_lim,
                             transform=ax.transAxes, size=8, va='center', ha='left', rotation=90)
                 if i == 0:
                     ax.set_title(r'$%s\leq R_{\rm{Gal}} < %s$ kpc'% galr_lim)
