@@ -8,7 +8,8 @@ SFH_LIST = [
     'insideout', 
     'lateburst', 
     'conroy22', 
-    'twoinfall'
+    'twoinfall',
+    'conroy22_JW20yields'
 ]
 DTD_LIST = [
     'powerlaw_slope11', 

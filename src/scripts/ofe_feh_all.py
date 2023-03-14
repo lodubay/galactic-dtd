@@ -1,6 +1,6 @@
 from ofe_feh_compare import main
 
-for evolution in ['insideout', 'lateburst', 'conroy22', 'twoinfall']:
+for evolution in ['insideout', 'lateburst', 'conroy22', 'twoinfall', 'conroy22_JW20yields']:
     for RIa in ['powerlaw_slope11', 
                 'powerlaw_slope14', 
                 'exponential_timescale15',
