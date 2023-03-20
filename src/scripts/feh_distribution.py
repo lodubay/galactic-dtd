@@ -156,19 +156,21 @@ def vice_mdf(stars, col='[fe/h]', galr_lim=(0, 20), absz_lim=(0, 2),
     bin_width : float, optional
         Width of histogram bins in x-axis units. The default is 0.01.
     smooth_width : float, optional
-        Width of boxcar smoothing in x-axis units. The default is 0.2.
+        Width of boxcar smoothing in x-axis units. If 0, the distribution will
+        not be smoothed. The default is 0.2.
     
     Returns
     -------
-    mdf_smooth : numpy.ndarray
-        MBoxcar-smoothed MDF.
+    mdf : numpy.ndarray
+        Boxcar-smoothed MDF.
     bin_edges : numpy.ndarray
         [Fe/H] bins including left and right edges, of length len(dndt)+1.
     """
     subset = filter_multioutput_stars(stars, galr_lim, absz_lim, min_mass=0)
     mdf, bin_edges = gen_mdf(subset, col=col, range=xlim, bin_width=bin_width)
-    mdf_smooth = box_smooth(mdf, bin_edges, smooth_width)
-    return mdf_smooth, bin_edges
+    if smooth_width > 0:
+        mdf = box_smooth(mdf, bin_edges, smooth_width)
+    return mdf, bin_edges
 
 
 def gen_mdf(stars, col='[fe/h]', range=None, bin_width=0.05):
@@ -221,11 +223,12 @@ def apogee_mdf(data, col='FE_H', galr_lim=(0, 20), absz_lim=(0, 2),
     bin_width : float, optional
         Width of histogram bins in x-axis units. The default is 0.01.
     smooth_width : float, optional
-        Width of boxcar smoothing in x-axis units. The default is 0.2.
+        Width of boxcar smoothing in x-axis units. If 0, the distribution will
+        not be smoothed. The default is 0.2.
     
     Returns
     -------
-    mdf_smooth : numpy.ndarray
+    mdf : numpy.ndarray
         Boxcar-smoothed MDF.
     bin_edges : numpy.ndarray
         [Fe/H] bins including left and right edges, of length len(dndt)+1.
@@ -233,8 +236,9 @@ def apogee_mdf(data, col='FE_H', galr_lim=(0, 20), absz_lim=(0, 2),
     subset = apogee_region(data, galr_lim, absz_lim)
     bin_edges = np.arange(xlim[0], xlim[1] + bin_width, bin_width)
     mdf, _ = np.histogram(subset[col], bins=bin_edges, density=True)
-    mdf_smooth = box_smooth(mdf, bin_edges, smooth_width)
-    return mdf_smooth, bin_edges
+    if smooth_width > 0:
+        mdf = box_smooth(mdf, bin_edges, smooth_width)
+    return mdf, bin_edges
 
 
 def box_smooth(hist, bins, width):
