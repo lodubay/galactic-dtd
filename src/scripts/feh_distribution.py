@@ -136,7 +136,8 @@ def plot_single_comparison(output, output_dir=paths.data/'migration',
         
 
 def vice_mdf(stars, col='[fe/h]', galr_lim=(0, 20), absz_lim=(0, 2), 
-             xlim=FEH_LIM, bin_width=BIN_WIDTH, smooth_width=SMOOTH_WIDTH):
+             xlim=FEH_LIM, bin_width=BIN_WIDTH, smooth_width=SMOOTH_WIDTH,
+             smoothing=True):
     """
     Calculate the MDF in [Fe/H] of a region of a VICE multizone output.
     
@@ -158,6 +159,9 @@ def vice_mdf(stars, col='[fe/h]', galr_lim=(0, 20), absz_lim=(0, 2),
     smooth_width : float, optional
         Width of boxcar smoothing in x-axis units. If 0, the distribution will
         not be smoothed. The default is 0.2.
+    smoothing : bool, optional
+        If True, apply boxcar smoothing to the distribution according to
+        smooth_width. The default is True.
     
     Returns
     -------
@@ -168,7 +172,7 @@ def vice_mdf(stars, col='[fe/h]', galr_lim=(0, 20), absz_lim=(0, 2),
     """
     subset = filter_multioutput_stars(stars, galr_lim, absz_lim, min_mass=0)
     mdf, bin_edges = gen_mdf(subset, col=col, range=xlim, bin_width=bin_width)
-    if smooth_width > 0:
+    if smoothing and smooth_width > 0:
         mdf = box_smooth(mdf, bin_edges, smooth_width)
     return mdf, bin_edges
 
@@ -204,7 +208,8 @@ def gen_mdf(stars, col='[fe/h]', range=None, bin_width=0.05):
 
 
 def apogee_mdf(data, col='FE_H', galr_lim=(0, 20), absz_lim=(0, 2), 
-               xlim=FEH_LIM, bin_width=BIN_WIDTH, smooth_width=SMOOTH_WIDTH):
+               xlim=FEH_LIM, bin_width=BIN_WIDTH, smooth_width=SMOOTH_WIDTH,
+               smoothing=True):
     """
     Calculate the MDF in [Fe/H] of a region of astroNN data.
     
@@ -225,6 +230,9 @@ def apogee_mdf(data, col='FE_H', galr_lim=(0, 20), absz_lim=(0, 2),
     smooth_width : float, optional
         Width of boxcar smoothing in x-axis units. If 0, the distribution will
         not be smoothed. The default is 0.2.
+    smoothing : bool, optional
+        If True, apply boxcar smoothing to the distribution according to
+        smooth_width. The default is True.
     
     Returns
     -------
@@ -236,7 +244,7 @@ def apogee_mdf(data, col='FE_H', galr_lim=(0, 20), absz_lim=(0, 2),
     subset = apogee_region(data, galr_lim, absz_lim)
     bin_edges = np.arange(xlim[0], xlim[1] + bin_width, bin_width)
     mdf, _ = np.histogram(subset[col], bins=bin_edges, density=True)
-    if smooth_width > 0:
+    if smoothing and smooth_width > 0:
         mdf = box_smooth(mdf, bin_edges, smooth_width)
     return mdf, bin_edges
 
