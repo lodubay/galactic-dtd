@@ -46,7 +46,7 @@ def apogee_region(data, galr_lim=(0, 20), absz_lim=(0, 5)):
     subset = data[(data['GALR'] >= galr_min) &
                   (data['GALR'] < galr_max) &
                   (data['GALZ'].abs() >= absz_min) &
-                  (data['GALZ'].abs() < absz_max)]
+                  (data['GALZ'].abs() < absz_max)].copy()
     subset.reset_index(inplace=True, drop=True)
     return subset
 
@@ -365,6 +365,41 @@ def weighted_quantile(df, val, weight, quantile=0.5):
             return wq
     else:
         raise ValueError("Quantile must be in range [0,1].")
+        
+
+def group_by_bins(df, bin_col, bins=10):
+    """
+    Bin a DataFrame column and group data by those bins.
+    
+    Parameters
+    ----------
+    df : pandas.DataFrame
+    bin_col : str
+        Column name by which to bin the data.
+    bins : int or array-like
+        If an int is provided, the number of bins between the min and max
+        data values. If an array, the bin edges to use. The default is 10.
+    
+    Returns
+    -------
+    df : pandas.DataFrameGroupBy
+        A groupby object that contains information about the groups.
+    """
+    # Handle different types for "bins" parameter
+    if isinstance(bins, int):
+        bin_edges = np.linspace(df[bin_col].min(), df[bin_col].max(), bins)
+    elif isinstance(bins, (list, np.ndarray, pd.Series)):
+        bin_edges = np.array(bins)
+    else:
+        raise ValueError('Parameter "bins" must be int or array-like.')
+    # segment and sort data into bins
+    bin_centers = get_bin_centers(bin_edges)
+    df.insert(len(df.columns), 
+              'bin', 
+              pd.cut(df[bin_col], bin_edges, labels=bin_centers))
+    # group data by bins
+    return df.groupby('bin')
+        
         
 # =============================================================================
 # VICE MULTIZONE INPUT AND UTILITY FUNCTIONS

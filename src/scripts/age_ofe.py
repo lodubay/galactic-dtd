@@ -13,7 +13,8 @@ from matplotlib.ticker import MultipleLocator, FormatStrFormatter
 import vice
 from scatter_plot_grid import setup_axes, setup_colorbar, plot_vice_sample
 from utils import multioutput_to_pandas, filter_multioutput_stars, \
-    get_bin_centers, weighted_quantile, import_apogee, apogee_region
+    get_bin_centers, weighted_quantile, import_apogee, apogee_region, \
+    group_by_bins
 from _globals import GALR_BINS, ABSZ_BINS, ZONE_WIDTH
 import paths
 
@@ -143,11 +144,12 @@ def plot_vice_medians(ax, stars, ofe_lim=OFE_LIM, ofe_bin_width=OFE_BIN_WIDTH,
     wu = lambda x: weighted_quantile(x, 'age', 'mass', quantile=0.84)
     # Define [O/Fe] bins
     ofe_bins = np.arange(ofe_lim[0], ofe_lim[1]+ofe_bin_width, ofe_bin_width)
-    stars['odf_bin'] = pd.cut(stars['[o/fe]'], ofe_bins, 
-                              labels=get_bin_centers(ofe_bins))
-    stars['mass_weighted_age'] = stars['age'] * stars['mass']
+    # stars['odf_bin'] = pd.cut(stars['[o/fe]'], ofe_bins, 
+    #                           labels=get_bin_centers(ofe_bins))
+    # stars['mass_weighted_age'] = stars['age'] * stars['mass']
     # Mass-weighted median and standard deviation of ages
-    grouped = stars.groupby('odf_bin')
+    # grouped = stars.groupby('odf_bin')
+    grouped = group_by_bins(stars, '[o/fe]', bins=ofe_bins)
     age_median = grouped.apply(wm)
     age_lower = grouped.apply(wl)
     age_upper = grouped.apply(wu)
@@ -215,9 +217,10 @@ def plot_astroNN_medians(ax, data, ofe_lim=OFE_LIM, ofe_bin_width=OFE_BIN_WIDTH,
     """
     # Define [O/Fe] bins
     ofe_bins = np.arange(ofe_lim[0], ofe_lim[1]+ofe_bin_width, ofe_bin_width)
-    data['OFE_BIN'] = pd.cut(data['O_FE'], ofe_bins, 
-                             labels=get_bin_centers(ofe_bins))
-    age_grouped = data.groupby('OFE_BIN')[age_col]
+    # data['OFE_BIN'] = pd.cut(data['O_FE'], ofe_bins, 
+    #                          labels=get_bin_centers(ofe_bins))
+    # age_grouped = data.groupby('OFE_BIN')[age_col]
+    age_grouped = group_by_bins(data, 'O_FE', bins=ofe_bins)[age_col]
     age_median = age_grouped.median()
     age_lower = age_grouped.quantile(0.16)
     age_upper = age_grouped.quantile(0.84)
