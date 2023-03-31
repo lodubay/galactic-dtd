@@ -89,12 +89,16 @@ def score_model(output_name, apogee_data):
                                     ofe_lim=OFE_LIM, ofe_bin_width=OFE_BIN_WIDTH)
             scores.append(d_rms)
             weights.append(apogee_subset.shape[0])
+            del apogee_subset
+            del vice_subset
     
     axs[0,-1].legend()
     axs[0,0].xaxis.set_minor_locator(MultipleLocator(1))
     figname = '_'.join(output_name.split('/')[1:])
     plt.savefig(paths.figures / ('age_ofe/scores/%s.png' % figname), dpi=300)
+    plt.close()
     
+    del vice_stars    
     return np.average(scores, weights=weights)
     
     
