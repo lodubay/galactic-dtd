@@ -7,31 +7,25 @@ from ofe_distribution import plot_multiple_comparison
 
 MIGRATION = 'diffusion'
 SFH_NAME = 'insideout'
-PRIMARY_DTD_LIST = ['powerlaw_slope11',
-                    'plateau_width300_slope11',
-                    'exponential_timescale15',
-                    'prompt_peak050_stdev015_timescale30']
-PRIMARY_LABELS = ['Power-Law\n($\\alpha=-1.1$)',
-                  'Broken Power-Law\n($W=300$ Myr)',
-                  'Exponential\n($\\tau=1.5$ Gyr)',
-                  'Prompt ($\\mu=50$ Myr)\n+ Exponential ($\\tau=3$ Gyr)']
-SECONDARY_DTD_LIST = ['powerlaw_slope14',
-                      'plateau_width1000_slope11',
-                      'exponential_timescale30']
-SECONDARY_LABELS = ['Power-Law\n($\\alpha=-1.4$)',
-                    'Broken Power-Law\n($W=1$ Gyr)',
-                    'Exponential\n($\\tau=3$ Gyr)']
+PRIMARY_DTD_LIST = [
+    'exponential_timescale15',
+    'powerlaw_slope11',
+    'plateau_width300_slope11',
+    # 'exponential_timescale15',
+    # 'triple_delay040',
+]
+PRIMARY_LABELS = [
+    'Exponential DTD\n($\\tau=1.5$ Gyr)',
+    'Power law DTD\n($\\alpha=-1.1$)',
+    'Plateau DTD\n($W=300$ Myr)',
+    # 'Exponential\n($\\tau=1.5$ Gyr)',
+    # 'Triple-System Evolution\n(Rajamuthukumar+ 2022)',
+]
 
 def main(verbose=False):
-    primary_outputs = ['%s/%s/%s' % (MIGRATION, SFH_NAME, dtd) for dtd in \
-                       PRIMARY_DTD_LIST]
-    plot_multiple_comparison(primary_outputs, PRIMARY_LABELS, 
-                             fname='mdf_ofe_insideout_1.pdf', 
-                             verbose=verbose, double_line_titles=True)
-    secondary_outputs = ['%s/%s/%s' % (MIGRATION, SFH_NAME, dtd) for dtd in \
-                         SECONDARY_DTD_LIST]
-    plot_multiple_comparison(secondary_outputs, SECONDARY_LABELS, 
-                             fname='mdf_ofe_insideout_2.pdf', 
+    outputs = ['%s/%s/%s' % (MIGRATION, SFH_NAME, dtd) for dtd in PRIMARY_DTD_LIST]
+    plot_multiple_comparison(outputs, PRIMARY_LABELS, 
+                             fname='mdf_ofe_insideout_alt.png', 
                              verbose=verbose, double_line_titles=True)
 
 if __name__ == '__main__':

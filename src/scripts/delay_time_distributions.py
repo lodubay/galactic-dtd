@@ -16,17 +16,19 @@ DELAY = 0.04 # minimum Ia delay time in Gyr
 def main():
     fig, ax= setup_axes()
     times = [t*0.001 for t in range(40, 13200)]
-    distributions = [styles.prompt, styles.plaw, styles.plateau, 
-                     styles.exp, styles.triple]
+    # distributions = [styles.prompt, styles.plaw, styles.plateau, 
+    #                  styles.exp, styles.triple]
+    distributions = [styles.plaw, styles.plateau, styles.exp]
     for dtd in distributions:
         func = dtd['func']
         ax.plot(times, [func(t) / func(1) for t in times], 
                 label=dtd['label'], c=dtd['color'], ls=dtd['line'], lw=1)
-    ax.set_ylim((3e-3, 3e2))
+    # ax.set_ylim((3e-3, 3e2))
+    ax.set_ylim((0.01, 100))
     # ax.set_ylim((1e-12, 3e-8))
     ax.legend(frameon=False, loc='upper right', fontsize=8, handlelength=1.25)
-    fig.savefig(paths.figures / 'delay_time_distributions.pdf')
-    fig.savefig(paths.figures / 'delay_time_distributions.png')
+    # fig.savefig(paths.figures / 'delay_time_distributions.pdf')
+    fig.savefig(paths.figures / 'delay_time_distributions_alt.png')
     plt.close()
 
 
@@ -91,8 +93,8 @@ def setup_axes():
     ax.set_yscale('log')
     ax.xaxis.set_major_formatter(FuncFormatter(lambda y, _: '{:g}'.format(y)))
     ax.yaxis.set_major_formatter(FuncFormatter(lambda y, _: '{:g}'.format(y)))
-    ax.set_xlabel('Time after starburst [Gyr]')
-    ax.set_ylabel('Relative normalized SN Ia rate')
+    ax.set_xlabel('Time after star formation [Gyr]')
+    ax.set_ylabel('Relative SN Ia rate')
     return fig, ax
     
 
