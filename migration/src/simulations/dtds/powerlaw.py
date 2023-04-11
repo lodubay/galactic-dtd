@@ -35,11 +35,16 @@ class powerlaw:
         """
         self.slope = slope
         self.coeff = coeff
+        self.tmin = tmin
+        self.tmax = tmax
         self.norm = self.normalize(tmin, tmax)
         self._name = 'powerlaw_slope{:02d}'.format(int(10 * abs(slope)))
 
     def __call__(self, time):
-        return self.coeff * self.norm * (time ** self.slope)
+        if time >= self.tmin and time < self.tmax:
+            return self.coeff * self.norm * (time ** self.slope)
+        else:
+            return 0
 
     def normalize(self, tmin, tmax):
         intslope = self.slope + 1 # The slope of the integral

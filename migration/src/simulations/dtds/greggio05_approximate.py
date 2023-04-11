@@ -42,7 +42,7 @@ class greggio05_approximate:
     def __init__(self, tsplit=1., slope1=-0.19, slope2=-0.91,
                  rise_strength=1.7, rise_timescale=8.4e-2,
                  tail_strength=0.85, tail_timescale=8.8e-2, normalize=True,
-                 name='greggio05_approx'):
+                 name='greggio05_approx', **kwargs):
         """
         Parameters
         ----------
@@ -65,6 +65,7 @@ class greggio05_approximate:
         name : str, optional
             Identifying name for chemical evolution model runs. The default is
             'greggio05_approx'.
+        **kwargs passed to self.normalize()
         """
         self._name = name
         self.tsplit = tsplit
@@ -75,7 +76,7 @@ class greggio05_approximate:
                                         offset=self.tsplit)
         self.norm = 1
         if normalize:
-            self.norm = self.normalize()
+            self.norm = self.normalize(**kwargs)
 
     def __call__(self, time):
         """
@@ -106,12 +107,12 @@ class greggio05_approximate:
                             % type(time))
 
     @classmethod
-    def from_defaults(cls, scheme):
+    def from_defaults(cls, scheme, **kwargs):
         params = {
             'wide': WIDE_PARAMS,
             'close': CLOSE_PARAMS
         }[scheme]
-        return cls(name='greggio05_approx_%s' % scheme, **params)
+        return cls(name='greggio05_approx_%s' % scheme, **params, **kwargs)
 
     @classmethod
     def fit_to_model(cls, scheme, tmin=0.04, tmax=END_TIME, tstep=0.01,
