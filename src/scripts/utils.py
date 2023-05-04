@@ -441,6 +441,7 @@ def multioutput_to_pandas(output_name, data_dir=paths.data/'migration',
     stars.dropna(how='any', inplace=True)
     return stars
 
+
 def filter_multioutput_stars(stars, galr_lim=(0, 20), absz_lim=(0, 5),
                              zone_width=ZONE_WIDTH, min_mass=1.0, 
                              zone_origin=False):
@@ -482,6 +483,7 @@ def filter_multioutput_stars(stars, galr_lim=(0, 20), absz_lim=(0, 5),
     subset.reset_index(inplace=True)
     return subset
 
+
 def sample_dataframe(df, n, weights=None, reset=True):
     """
     Randomly sample n unique rows from a pandas DataFrame.
@@ -512,6 +514,12 @@ def sample_dataframe(df, n, weights=None, reset=True):
         return sample
     else:
         raise TypeError('Expected pandas DataFrame.')
+        
+
+def convolve_uncertainty(x, err):
+    """
+    """
+    pass
 
 # =============================================================================
 # FILE NAMING AND STRING FORMATTING
@@ -694,74 +702,6 @@ def run_singlezone(name, simtime, overwrite=False, **kwargs):
             sz.run(simtime, overwrite=overwrite)
     return sz
 
-# =============================================================================
-# VICE FUNCTION WRAPPERS
-# =============================================================================
-
-class NormalIMF:
-    """
-    A normalized initial mass function (IMF).
-    """
-    def __init__(self, which='kroupa', m_lower=0.08, m_upper=100, dm=0.01):
-        """
-        Initialize the IMF.
-
-        Parameters
-        ----------
-        which : string, optional
-            Which version of the IMF to use. Must be one of 'salpeter' or
-            'kroupa'. The default is 'kroupa'
-        m_lower : float, optional
-            Lower limit of integration in solar masses. The default is 0.08.
-        m_upper : TYPE, optional
-            Upper limit of integration in solar masses. The default is 100.
-        dm : TYPE, optional
-            Integration step in solar masses. The default is 0.01.
-        """
-        select = {
-            'salpeter': vice.imf.salpeter,
-            'kroupa': vice.imf.kroupa
-        }
-        if which in select.keys():
-            self.dm = dm
-            self.masses = np.arange(m_lower, m_upper + dm, dm)
-            self._imf = select[which]
-            self.norm = 1
-            self.norm = 1 / self.integrate()
-        else:
-            raise ValueError('IMF must be either "kroupa" or "salpeter".')
-
-    def __call__(self, mass):
-        """
-        Calculate the normalized IMF at a given stellar mass.
-
-        Parameters
-        ----------
-        mass : float
-            Stellar mass in solar masses.
-
-        Returns
-        -------
-        float
-            The normalized value of the IMF at that stellar mass.
-        """
-        return self.norm * self._imf(mass)
-
-    def integrate(self):
-        """
-        float
-            The integral of the IMF
-        """
-        integral = sum([self.__call__(m) * self.dm for m in self.masses])
-        return integral
-
-    def weighted_mean(self):
-        """
-        Calculate the average stellar mass of the IMF.
-        """
-        weights = np.array([self.__call__(m) for m in self.masses])
-        weighted_mean = np.average(self.masses, weights=weights)
-        return weighted_mean
     
 # =============================================================================
 # PLOTTING FUNCTIONS
