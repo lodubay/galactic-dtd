@@ -81,7 +81,7 @@ def import_apogee(name='sample.csv', parent_dir=paths.data/'APOGEE',
             print('Sample file at', sample_file_path, 'not found.\n' + \
                   'Importing APOGEE catalog and generating sample...')
         df = gen_apogee_sample(parent_dir=parent_dir, verbose=verbose)
-        df.to_csv(sample_file_path)
+        df.to_csv(sample_file_path, index=False)
         if verbose:
             print('Done.')
     return df
@@ -161,9 +161,10 @@ def join_latent_ages(apogee_df, leung23_df):
     joined_df : pandas.DataFrame
         APOGEE dataset with astroNN ages
     """
-    cols = ['Age', 'Age_Error']
+    cols = ['LogAge', 'LogAge_Error', 'Age', 'Age_Error']
     latent_ages = leung23_df[cols].copy()
-    latent_ages.columns = ['LATENT_AGE', 'LATENT_AGE_ERR']
+    latent_ages.columns = ['LOG_LATENT_AGE', 'LOG_LATENT_AGE_ERR', 
+                           'LATENT_AGE', 'LATENT_AGE_ERR']
     joined = apogee_df.join(latent_ages)
     return joined
 
@@ -236,7 +237,8 @@ def drop_apogee_columns(df):
     cols = ['APOGEE_ID', 'RA', 'DEC', 'GALR', 'GALPHI', 'GALZ', 'SNREV',
             'TEFF', 'TEFF_ERR', 'LOGG', 'LOGG_ERR', 'FE_H', 'FE_H_ERR',
             'O_FE', 'O_FE_ERR', 'ASTRONN_AGE', 'ASTRONN_AGE_ERR', 
-            'LATENT_AGE', 'LATENT_AGE_ERR']
+            'LATENT_AGE', 'LATENT_AGE_ERR', 'LOG_LATENT_AGE', 
+            'LOG_LATENT_AGE_ERR']
     return df[cols].copy()
 
 # =============================================================================
@@ -953,6 +955,55 @@ def kl_divergence(pk, qk, dx):
     pk_nz = np.where(pk != 0, pk, np.min(pk[pk > 0]))
     qk_nz = np.where(qk != 0, qk, np.min(qk[qk > 0]))
     return np.sum(np.where(pk != 0, pk * np.log(pk_nz / qk_nz) * dx, 0))
+
+
+def kl_div_2D(x, y):
+    """
+    Compute the Kullback-Leibler divergence between two multivariate samples.
+    
+    Parameters
+    ----------
+    x : 2D array (n,d)
+        Samples from distribution P, which typically represents the true
+        distribution.
+    y : 2D array (m,d)
+        Samples from distribution Q, which typically represents the approximate
+        distribution.
+        
+    Returns
+    -------
+    out : float
+        The estimated Kullback-Leibler divergence D(P||Q).
+        
+    References
+    ----------
+    Pérez-Cruz, F. Kullback-Leibler divergence estimation of
+        continuous distributions IEEE International Symposium on Information
+        Theory, 2008.
+    Source: https://mail.python.org/pipermail/scipy-user/2011-May/029521.html
+    """
+    from scipy.spatial import cKDTree as KDTree
+
+    # Check the dimensions are consistent
+    x = np.atleast_2d(x)
+    y = np.atleast_2d(y)
+
+    n,d = x.shape
+    m,dy = y.shape
+
+    assert(d == dy)
+
+    # Build a KD tree representation of the samples and find the nearest neighbour
+    # of each point in x.
+    xtree = KDTree(x)
+    ytree = KDTree(y)
+
+    # Get the first two nearest neighbours for x, since the closest one is the
+    # sample itself.
+    r = xtree.query(x, k=2, eps=.01, p=2)[0][:,1]
+    s = ytree.query(x, k=1, eps=.01, p=2)[0]
+
+    return np.log(s/r).sum() * d / n + np.log(m / (n - 1.))
 
 
 def kde2D(x, y, bandwidth, xbins=100j, ybins=100j, **kwargs):

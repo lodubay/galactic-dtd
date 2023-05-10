@@ -9,7 +9,7 @@ import matplotlib.pyplot as plt
 import vice
 import paths
 from utils import multioutput_to_pandas, filter_multioutput_stars, \
-    import_apogee, select_giants, apogee_region
+    import_apogee, apogee_region
 from distribution_functions import setup_axes, plot_distributions
 from _globals import DT, END_TIME
 
@@ -187,7 +187,7 @@ def astroNN_adf(data, galr_lim=(3, 15), absz_lim=(0, 2)):
 
 
 def age_distribution(stars, bin_width=BIN_WIDTH, end_time=END_TIME, dt=DT, 
-                     **kwargs):
+                     age_col='age', **kwargs):
     """
     Calculate the distribution of ages in a VICE multizone output.
     
@@ -199,6 +199,8 @@ def age_distribution(stars, bin_width=BIN_WIDTH, end_time=END_TIME, dt=DT,
         Simulation end time in Gyr. The default is 13.2
     dt : float, optional
         Simulation time step in Gyr. The default is 0.01
+    age_col : str, optional
+        Name of column containing ages. The default is 'age'.
     kwargs : dict, optional
         Keyword arguments passed to mean_stellar_mass
         
@@ -213,13 +215,13 @@ def age_distribution(stars, bin_width=BIN_WIDTH, end_time=END_TIME, dt=DT,
     bin_centers = 0.5 * (bins[:-1] + bins[1:])
     # Create dummy entries to count at least 0 mass at every age
     temp_df = pd.DataFrame({
-        'age': bins[:-1], 
+        age_col: bins[:-1], 
         'mass': np.zeros(bins[:-1].shape)
     })
     stars = pd.concat([stars, temp_df])
-    stars['age'] = np.round(stars['age'], decimals=2)
+    stars[age_col] = np.round(stars[age_col], decimals=2)
     # Sum stellar mass in each bin
-    mass_total, _ = np.histogram(stars['age'], bins=bins, 
+    mass_total, _ = np.histogram(stars[age_col], bins=bins, 
                                  weights=stars['mass'])
     # Calculate remaining stellar mass today
     mass_remaining = mass_total * (1 - np.array(
