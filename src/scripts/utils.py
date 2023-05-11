@@ -384,9 +384,10 @@ def group_by_bins(df, bin_col, bins=10):
     
     Returns
     -------
-    df : pandas.DataFrameGroupBy
+    grouped : pandas.DataFrameGroupBy
         A groupby object that contains information about the groups.
     """
+    df = df.copy()
     # Handle different types for "bins" parameter
     if isinstance(bins, int):
         bin_edges = np.linspace(df[bin_col].min(), df[bin_col].max(), bins)
@@ -401,6 +402,83 @@ def group_by_bins(df, bin_col, bins=10):
               pd.cut(df[bin_col], bin_edges, labels=bin_centers))
     # group data by bins
     return df.groupby('bin')
+
+
+def get_bin_centers(bin_edges):
+    """
+    Calculate the centers of bins defined by the given bin edges.
+    
+    Parameters
+    ----------
+    bin_edges : array-like of length N
+        Edges of bins, including the left-most and right-most bounds.
+     
+    Returns
+    -------
+    bin_centers : numpy.ndarray of length N-1
+        Centers of bins
+    """
+    bin_edges = np.array(bin_edges, dtype=float)
+    if len(bin_edges) > 1:
+        return 0.5 * (bin_edges[:-1] + bin_edges[1:])
+    else:
+        raise ValueError('The length of bin_edges must be at least 2.')
+
+
+def sample_dataframe(df, n, weights=None, reset=True):
+    """
+    Randomly sample n unique rows from a pandas DataFrame.
+
+    Parameters
+    ----------
+    df : pandas DataFrame
+    n : int
+        Number of random samples to draw
+    weights : array, optional
+        Probability weights of the given DataFrame
+    reset : bool, optional
+        If True, reset sample DataFrame index
+
+    Returns
+    -------
+    pandas DataFrame
+        Re-indexed DataFrame of n sampled rows
+    """
+    if isinstance(df, pd.DataFrame):
+        # Initialize default numpy random number generator
+        rng = default_rng()
+        # Randomly sample without replacement
+        rand_indices = rng.choice(df.index, size=n, replace=False, p=weights)
+        sample = df.loc[rand_indices]
+        if reset:
+            sample.reset_index(inplace=True, drop=True)
+        return sample
+    else:
+        raise TypeError('Expected pandas DataFrame.')
+
+
+def median_standard_error(x, B=1000):
+    """
+    Use bootstrapping to calculate the standard error of the median.
+    
+    Parameters
+    ----------
+    x : array-like
+        Data array.
+    B : int, optional
+        Number of bootstrap samples. The default is 1000.
+    
+    Returns
+    -------
+    float
+        Standard error of the median.
+    """
+    rng = np.random.default_rng()
+    # Randomly sample input array *with* replacement, all at once
+    samples = rng.choice(x, size=len(x) * B, replace=True).reshape((B, len(x)))
+    medians = np.median(samples, axis=1)
+    # The standard error is the standard deviation of the medians
+    return np.std(medians)
         
         
 # =============================================================================
@@ -485,43 +563,6 @@ def filter_multioutput_stars(stars, galr_lim=(0, 20), absz_lim=(0, 5),
     subset.reset_index(inplace=True)
     return subset
 
-
-def sample_dataframe(df, n, weights=None, reset=True):
-    """
-    Randomly sample n unique rows from a pandas DataFrame.
-
-    Parameters
-    ----------
-    df : pandas DataFrame
-    n : int
-        Number of random samples to draw
-    weights : array, optional
-        Probability weights of the given DataFrame
-    reset : bool, optional
-        If True, reset sample DataFrame index
-
-    Returns
-    -------
-    pandas DataFrame
-        Re-indexed DataFrame of n sampled rows
-    """
-    if isinstance(df, pd.DataFrame):
-        # Initialize default numpy random number generator
-        rng = default_rng()
-        # Randomly sample without replacement
-        rand_indices = rng.choice(df.index, size=n, replace=False, p=weights)
-        sample = df.loc[rand_indices]
-        if reset:
-            sample.reset_index(inplace=True, drop=True)
-        return sample
-    else:
-        raise TypeError('Expected pandas DataFrame.')
-        
-
-def convolve_uncertainty(x, err):
-    """
-    """
-    pass
 
 # =============================================================================
 # FILE NAMING AND STRING FORMATTING
@@ -805,27 +846,6 @@ def scatter_hist(ax, x, y, xlim=None, ylim=None, log_norm=True, cmap='gray',
     # Plot
     ax.scatter(x, y, c=color, s=0.5, rasterized=rasterized, edgecolor='none')
     return ax.hist2d(x, y, bins=[xbins, ybins], cmap=cmap, norm=norm, cmin=cmin)
-
-
-def get_bin_centers(bin_edges):
-    """
-    Calculate the centers of bins defined by the given bin edges.
-    
-    Parameters
-    ----------
-    bin_edges : array-like of length N
-        Edges of bins, including the left-most and right-most bounds.
-     
-    Returns
-    -------
-    bin_centers : numpy.ndarray of length N-1
-        Centers of bins
-    """
-    bin_edges = np.array(bin_edges, dtype=float)
-    if len(bin_edges) > 1:
-        return 0.5 * (bin_edges[:-1] + bin_edges[1:])
-    else:
-        raise ValueError('The length of bin_edges must be at least 2.')
 
 
 def get_color_list(cmap, bins):
