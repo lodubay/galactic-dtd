@@ -2,19 +2,19 @@
 Functions used by many plotting scripts.
 """
 
-import math as m
+# import math as m
 from pathlib import Path
 import numpy as np
 from numpy.random import default_rng
 import pandas as pd
 import matplotlib.pyplot as plt
 from matplotlib.colors import Normalize, BoundaryNorm, LogNorm
-from matplotlib.ticker import MultipleLocator
+# from matplotlib.ticker import MultipleLocator
 from matplotlib.cm import ScalarMappable
 from astropy.table import Table
 import vice
 import paths
-from _globals import ZONE_WIDTH
+from _globals import ZONE_WIDTH, ERROR_FIT_DEG, ERROR_FIT_RANGE
 
 # =============================================================================
 # MAKING THE APOGEE DR17 SAMPLE
@@ -240,6 +240,50 @@ def drop_apogee_columns(df):
             'LATENT_AGE', 'LATENT_AGE_ERR', 'LOG_LATENT_AGE', 
             'LOG_LATENT_AGE_ERR']
     return df[cols].copy()
+
+
+def get_error_fit(col, overwrite=False, data=None,
+                  save_dir=paths.data/'APOGEE/error_fit', **kwargs):
+    """
+    Get polynomial fit to APOGEE errors on the given column.
+    
+    Parameters
+    ----------
+    col : str
+        Column name of APOGEE parameter.
+    overwrite : bool, optional
+        If True, overwrite saved fit coefficients. The default is False.
+    data : pandas.DataFrame or NoneType, optional
+        APOGEE data. The default is None, in which case the sample file will
+        be imported.
+    save_dir : pathlib.Path or str, optional
+        Path to save text file with polynomial coeffients. The default is
+        paths.data/APOGEE/error_fit.
+    kwargs : passed to error_fit()
+    
+    Returns
+    -------
+    func : function
+        Polynomial function of error on the APOGEE parameter.
+    """
+    if col in ['FE_H', 'O_FE', 'LOG_LATENT_AGE']:
+        fname = col + '.dat'
+        path = Path(save_dir) / fname
+        if path.exists() and not overwrite:
+            p = np.loadtxt(path)
+        else:
+            # Import APOGEE data if not provided
+            try:
+                data[col]
+            except:
+                data = import_apogee()
+            p = error_fit(data, col, ERROR_FIT_DEG[col], 
+                          range=ERROR_FIT_RANGE[col])
+            np.savetxt(path, p)
+        return np.poly1d(p)
+    else:
+        raise ValueError('Provided column has no defaults.')
+
 
 # =============================================================================
 # DATA UTILITY FUNCTIONS
@@ -479,7 +523,49 @@ def median_standard_error(x, B=1000):
     medians = np.median(samples, axis=1)
     # The standard error is the standard deviation of the medians
     return np.std(medians)
-        
+
+
+def error_fit(df, col, deg, err_col='', bins=30, range=None):
+    """
+    Fit a polynomial to the error in a parameter as a function of that parameter.
+    
+    Parameters
+    ----------
+    df : pandas.DataFrame
+    col : str
+        Name of parameter column
+    deg : int
+        Degree of polynomial to fit
+    err_col : str, optional
+        Name of parameter error column. If '', assumed to be col+'_ERR'. The
+        default is None.
+    bins : int
+        Number of bins to divide data by the parameter. The default is 30.
+    range : tuple or NoneType, optional
+        Parameter range to include data. If None, include the entire data range.
+        The default is None.
+    
+    Returns
+    -------
+    p : numpy.ndarray
+        Polynomial coefficients, highest power first.
+    """
+    df = df.copy()
+    if err_col in ('', None):
+        err_col = col + '_ERR'
+    if range is not None:
+        df = df[(df[col] >= range[0]) & (df[col] < range[1])]
+    
+    grouped = group_by_bins(df, col, bins=bins)
+    # index labels are bin centers
+    medians = grouped[err_col].median()
+    # standard error of the medians
+    median_errs = grouped[err_col].apply(median_standard_error)
+    
+    # model fit
+    p = np.polyfit(medians.index, medians, deg, w=1/median_errs)
+    return p
+
         
 # =============================================================================
 # VICE MULTIZONE INPUT AND UTILITY FUNCTIONS
@@ -519,6 +605,44 @@ def multioutput_to_pandas(output_name, data_dir=paths.data/'migration',
     # Convert zone to radius
     stars['galr_origin'] = stars['zone_origin'] * ZONE_WIDTH
     stars.dropna(how='any', inplace=True)
+    return stars
+
+
+def model_uncertainties(stars):
+    """
+    Forward-model uncertainties in VICE output based on APOGEE uncertainties.
+    
+    Parameters
+    ----------
+    stars : pandas.DataFrame
+        VICE multi-zone output or a subset thereof.
+        
+    Returns
+    -------
+    stars : pandas.DataFrame
+        Same as input with additional (noisy) columns.
+    """
+    rng = np.random.default_rng()
+    # Import polynomial fit function for [fe/h]
+    feh_err_fit = get_error_fit('FE_H')
+    # Generate random scatter based on polynomial fit
+    feh_noise = rng.normal(loc=np.zeros(stars.shape[0]), 
+                           scale=feh_err_fit(stars['[fe/h]']), 
+                           size=stars.shape[0])
+    stars['[fe/h]'] = stars['[fe/h]'] + feh_noise
+    # Same for [o/fe]
+    ofe_err_fit = get_error_fit('O_FE')
+    ofe_noise = rng.normal(loc=np.zeros(stars.shape[0]), 
+                           scale=ofe_err_fit(stars['[o/fe]']), 
+                           size=stars.shape[0])
+    stars['[o/fe]'] = stars['[o/fe]'] + ofe_noise
+    # Same for age (eliminate age 0 populations)
+    stars = stars[stars['age'] > 0].copy()
+    log_age_err_fit = get_error_fit('LOG_LATENT_AGE')
+    log_age_noise = rng.normal(loc=np.zeros(stars.shape[0]), 
+                               scale=log_age_err_fit(np.log10(stars['age'])), 
+                               size=stars.shape[0])
+    stars['age'] = stars['age'] * 10 ** log_age_noise
     return stars
 
 

@@ -10,8 +10,9 @@ from matplotlib.colors import Normalize
 from matplotlib.cm import ScalarMappable
 import vice
 from utils import multioutput_to_pandas, filter_multioutput_stars, \
-    sample_dataframe
+    sample_dataframe, model_uncertainties
 from _globals import GALR_BINS, ABSZ_BINS, ZONE_WIDTH
+import paths
 
 global FEH_LIM
 global OFE_LIM
@@ -29,10 +30,14 @@ def main(output_name, data_dir='../data/migration', cmap='winter'):
     """
     # Import multioutput stars data
     stars = multioutput_to_pandas(output_name, data_dir)
+    stars = filter_multioutput_stars(stars, galr_lim=(3, 20), 
+                                     zone_width=ZONE_WIDTH)
+    # Model parameter uncertainties
+    stars = model_uncertainties(stars)
     fig, axs = plot_ofe_feh_stars(stars, cmap)
     plot_post_process_track(output_name, axs, galr=8, data_dir=data_dir)
     plot_post_process_tracks(output_name, axs, data_dir=data_dir)
-    plt.savefig('ofe_feh_vice.pdf', dpi=300)
+    plt.savefig(paths.figures / 'ofe_feh_vice.png', dpi=300)
     plt.close()
 
 
