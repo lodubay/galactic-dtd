@@ -8,7 +8,8 @@ import math as m
 import pandas as pd
 import matplotlib.pyplot as plt
 from utils import kl_div_2D, filter_multioutput_stars, \
-    apogee_region, multioutput_to_pandas, import_apogee, sample_dataframe
+    apogee_region, multioutput_to_pandas, import_apogee, sample_dataframe, \
+    model_uncertainties
 from ofe_feh_vice import setup_axes, FEH_LIM, OFE_LIM
 from _globals import GALR_BINS, ABSZ_BINS, ZONE_WIDTH
 import paths
@@ -67,6 +68,7 @@ def kld_regions(output_name, apogee_data, galr_bins=GALR_BINS[:-1],
         in each region
     """
     vice_stars = multioutput_to_pandas(output_name, verbose=verbose)
+    vice_stars = model_uncertainties(vice_stars.copy())
     # Initialize figure
     fig, axs = setup_axes(len(absz_bins)-1, len(galr_bins)-1)
     
@@ -128,8 +130,9 @@ def kld_regions(output_name, apogee_data, galr_bins=GALR_BINS[:-1],
             ax.text(0.9, 0.9, r'KLD=%.02f' % kld,
                     transform=ax.transAxes, size=8, ha='right', va='top')
             # Add legend to top-right panel
-            if i==0 and j==len(rows)-1:
-                ax.legend(loc='upper left', frameon=False)
+            if i==0 and j==len(cols)-1:
+                ax.legend(loc='lower left', frameon=False,
+                          borderpad=0., handletextpad=0.2, markerscale=5.)
     
     axs[0,0].set_xlim(FEH_LIM)
     axs[0,0].set_ylim(OFE_LIM)

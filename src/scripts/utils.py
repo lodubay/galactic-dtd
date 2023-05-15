@@ -623,6 +623,8 @@ def model_uncertainties(stars):
         Same as input with additional (noisy) columns.
     """
     rng = np.random.default_rng()
+    # Eliminate mass=0 populations (unphysical metallicities)
+    stars = stars[stars['mass'] >= 1.].copy()
     # Import polynomial fit function for [fe/h]
     feh_err_fit = get_error_fit('FE_H')
     # Generate random scatter based on polynomial fit
@@ -636,7 +638,7 @@ def model_uncertainties(stars):
                            scale=ofe_err_fit(stars['[o/fe]']), 
                            size=stars.shape[0])
     stars['[o/fe]'] = stars['[o/fe]'] + ofe_noise
-    # Same for age (eliminate age 0 populations)
+    # Same for age (eliminate age=0 populations)
     stars = stars[stars['age'] > 0].copy()
     log_age_err_fit = get_error_fit('LOG_LATENT_AGE')
     log_age_noise = rng.normal(loc=np.zeros(stars.shape[0]), 

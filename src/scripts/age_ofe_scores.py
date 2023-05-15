@@ -14,7 +14,9 @@ import pandas as pd
 import matplotlib.pyplot as plt
 from matplotlib.ticker import MultipleLocator
 from scatter_plot_grid import setup_axes
-from utils import import_apogee, apogee_region, multioutput_to_pandas, filter_multioutput_stars, weighted_quantile, group_by_bins, get_bin_centers
+from utils import import_apogee, apogee_region, multioutput_to_pandas, \
+    filter_multioutput_stars, weighted_quantile, group_by_bins, \
+    get_bin_centers, model_uncertainties
 from _globals import GALR_BINS, ABSZ_BINS, ZONE_WIDTH
 import paths
 
@@ -59,7 +61,8 @@ def main():
         for evolution in SFHs:
             for RIa in DTDs:
                 output_name = '/'.join(('diffusion', evolution, RIa))
-                summary_table.loc[RIa, evolution] = score_model(output_name, apogee_data)
+                scores = score_model(output_name, apogee_data)
+                summary_table.loc[RIa, evolution] = scores
                 t.update()
     
     print(summary_table)
@@ -72,6 +75,7 @@ def score_model(output_name, apogee_data):
     matches APOGEE data in the Age-[O/Fe] plane.
     """
     vice_stars = multioutput_to_pandas(output_name)
+    vice_stars = model_uncertainties(vice_stars.copy())
     
     fig, axs = setup_axes(xlim=(0, 10), ylim=OFE_LIM, 
                           xlabel='Age difference [Gyr]', ylabel='[O/Fe]')
