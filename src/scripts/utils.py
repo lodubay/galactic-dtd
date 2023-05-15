@@ -12,6 +12,7 @@ from matplotlib.colors import Normalize, BoundaryNorm, LogNorm
 # from matplotlib.ticker import MultipleLocator
 from matplotlib.cm import ScalarMappable
 from astropy.table import Table
+from astropy.io import fits
 import vice
 import paths
 from _globals import ZONE_WIDTH, ERROR_FIT_DEG, ERROR_FIT_RANGE
@@ -283,6 +284,55 @@ def get_error_fit(col, overwrite=False, data=None,
         return np.poly1d(p)
     else:
         raise ValueError('Provided column has no defaults.')
+        
+
+def feuillet2019_data(filename):
+    r"""
+    Obtain the Feuillet et al. (2019) [1]_ data.
+
+    Parameters
+    ----------
+    filename : ``str``
+        The relative path to the file containing the data for a given region.
+
+    Returns
+    -------
+    age : ``list``
+        The mean ages of stars in Gyr in bins of abundance, assuming a gaussian
+        distribution in log-age.
+    abundance : ``list``
+        The abundances at which the mean ages are measured. Same length as
+        ``age``.
+    age_disp : ``list``
+        The standard deviation of the age in Gyr distribution in each bin of
+        abundance, assuming a gaussian distribution in log-age. Same length as
+        ``age``.
+    abundance_disp : ``list``
+        The width of the bin in abundance, centered on each element of the
+        ``abundance`` array.
+
+    .. [1] Feuillet et al. (2019), MNRAS, 489, 1724
+    """
+    raw = fits.open(filename)
+    abundance = len(raw[1].data) * [0.]
+    abundance_disp = len(raw[1].data) * [0.]
+    age = len(raw[1].data) * [0.]
+    age_disp = [len(raw[1].data) * [0.], len(raw[1].data) * [0.]]
+    for i in range(len(raw[1].data)):
+        if raw[1].data["nstars"][i] > 15:
+            abundance[i] = (raw[1].data["bin_ab"][i] +
+                raw[1].data["bin_ab_max"][i]) / 2.
+            abundance_disp[i] = (raw[1].data["bin_ab_max"][i] -
+                raw[1].data["bin_ab"][i]) / 2.
+            age[i] = 10**(raw[1].data["mean_age"][i] - 9) # converts yr to Gyr
+            age_disp[0][i] = age[i] - 10**(raw[1].data["mean_age"][i] -
+                raw[1].data["age_disp"][i] - 9)
+            age_disp[1][i] = 10**(raw[1].data["mean_age"][i] +
+                raw[1].data["age_disp"][i] - 9) - age[i]
+        else:
+            abundance[i] = abundance_disp[i] = float("nan")
+            age[i] = age_disp[0][i] = age_disp[1][i] = float("nan")
+    return [age, abundance, age_disp, abundance_disp]
 
 
 # =============================================================================
@@ -566,6 +616,40 @@ def error_fit(df, col, deg, err_col='', bins=30, range=None):
     p = np.polyfit(medians.index, medians, deg, w=1/median_errs)
     return p
 
+
+def model_uncertainty(x, err, how='linear'):
+    """
+    Apply Gaussian uncertainty to the given data array.
+    
+    Parameters
+    ----------
+    x : array-like
+        Input (clean) data.
+    err : float
+        Standard deviation of the Gaussian.
+    how : str, optional
+        How the uncertainty should be applied to the data. Options are 'linear',
+        'logarithmic' or 'log', and 'fractional' or 'frac'. The default is 
+        'linear'.
+    
+    Returns
+    -------
+    y : array-like
+        Noisy data, with same dimensions as x.
+    """
+    rng = np.random.default_rng()
+    noise = rng.normal(loc=0, scale=err, size=x.shape[0])
+    if how.lower() == 'linear':
+        y = x + noise
+    elif how.lower() in ['logarithmic', 'log']:
+        y = x * 10 ** noise
+    elif how.lower() in ['fractional', 'frac']:
+        y = x * (1 + noise)
+    else:
+        raise ValueError('Parameter "how" must be one of ("linear", ' + 
+                         '"logarithmic", "log", "fractional", "frac")')
+    return y    
+
         
 # =============================================================================
 # VICE MULTIZONE INPUT AND UTILITY FUNCTIONS
@@ -629,21 +713,21 @@ def model_uncertainties(stars):
     feh_err_fit = get_error_fit('FE_H')
     # Generate random scatter based on polynomial fit
     feh_noise = rng.normal(loc=np.zeros(stars.shape[0]), 
-                           scale=feh_err_fit(stars['[fe/h]']), 
-                           size=stars.shape[0])
+                            scale=feh_err_fit(stars['[fe/h]']), 
+                            size=stars.shape[0])
     stars['[fe/h]'] = stars['[fe/h]'] + feh_noise
     # Same for [o/fe]
     ofe_err_fit = get_error_fit('O_FE')
     ofe_noise = rng.normal(loc=np.zeros(stars.shape[0]), 
-                           scale=ofe_err_fit(stars['[o/fe]']), 
-                           size=stars.shape[0])
+                            scale=ofe_err_fit(stars['[o/fe]']), 
+                            size=stars.shape[0])
     stars['[o/fe]'] = stars['[o/fe]'] + ofe_noise
     # Same for age (eliminate age=0 populations)
     stars = stars[stars['age'] > 0].copy()
     log_age_err_fit = get_error_fit('LOG_LATENT_AGE')
     log_age_noise = rng.normal(loc=np.zeros(stars.shape[0]), 
-                               scale=log_age_err_fit(np.log10(stars['age'])), 
-                               size=stars.shape[0])
+                                scale=log_age_err_fit(np.log10(stars['age'])), 
+                                size=stars.shape[0])
     stars['age'] = stars['age'] * 10 ** log_age_noise
     return stars
 

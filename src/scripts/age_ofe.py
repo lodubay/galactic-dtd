@@ -13,8 +13,8 @@ from matplotlib.ticker import MultipleLocator, FormatStrFormatter
 import vice
 from scatter_plot_grid import setup_axes, setup_colorbar, plot_vice_sample
 from utils import multioutput_to_pandas, filter_multioutput_stars, \
-    get_bin_centers, weighted_quantile, import_apogee, apogee_region, \
-    group_by_bins
+    weighted_quantile, import_apogee, apogee_region, \
+    group_by_bins, model_uncertainty, feuillet2019_data
 from _globals import GALR_BINS, ABSZ_BINS, ZONE_WIDTH
 import paths
 
@@ -23,15 +23,19 @@ AGE_LIM_LINEAR = (-1, 14)
 AGE_LIM_LOG = (0.2, 20)
 OFE_LIM = (-0.15, 0.55)
 OFE_BIN_WIDTH = 0.05
-AGE_SOURCES = ['F18', # Feuillet et al. 2018, solar neighborhood only
+AGE_SOURCES = ['F19', # Feuillet et al. 2018, solar neighborhood only
                'M19', # Mackereth et al. 2019, astroNN
                'L23'] # Leung et al. 2023, variational encoder-decoder
-AGE_LABELS = {'F18': 'Feuillet et al. 2018',
+AGE_LABELS = {'F19': 'Feuillet et al. 2018',
               'M19': 'Mackereth et al. 2019',
               'L23': 'Leung et al. 2023'}
 
 def main(evolution, RIa, migration='diffusion', verbose=False, cmap='winter',
-         data_dir='../data/migration', log=False, ages='L23'):
+         data_dir='../data/migration', log=False, ages='L23', 
+         uncertainties=False):
+    # Error handling
+    if ages not in AGE_SOURCES:
+        raise ValueError('Parameter "ages" must be in %s.' % AGE_SOURCES)
     # Import VICE multi-zone output data
     output_name = '/'.join(['diffusion', evolution, RIa])
     if verbose: 
@@ -40,11 +44,37 @@ def main(evolution, RIa, migration='diffusion', verbose=False, cmap='winter',
     vice_stars = multioutput_to_pandas(output_name, data_dir)
     # Import APOGEE and astroNN data
     apogee_data = import_apogee(verbose=verbose)
+    # Model uncertainties
+    if uncertainties:
+        # [O/Fe] uncertainty 
+        ofe_err = apogee_data['O_FE_ERR'].median()
+        vice_stars['[o/fe]'] = model_uncertainty(vice_stars['[o/fe]'], ofe_err)
+        # age uncertainty
+        if ages == 'F19':
+            age_err = 0.15 # Feuillet et al. 2016 ApJ 817 40
+            age_err_method = 'logarithmic'
+        elif ages == 'M19':
+            age_err = (apogee_data['ASTRONN_AGE_ERR'] / 
+                       apogee_data['ASTRONN_AGE']).median()
+            age_err_method = 'fractional'
+        else: # L23
+            age_err = apogee_data['LOG_LATENT_AGE_ERR'].median()
+            age_err_method = 'logarithmic'
+        vice_stars['age'] = model_uncertainty(vice_stars['age'], age_err,
+                                              how=age_err_method)
     # Age data source
     if ages == 'L23':
         age_col = 'LATENT_AGE'
     else:
         age_col = 'ASTRONN_AGE'
+    
+    # Feuillet+ 2019 ages require specific regions
+    if ages == 'F19':
+        local_galr_bins = [5, 7, 9, 11, 13]
+        local_absz_bins = [0, 0.5, 1, 2]
+    else:
+        local_galr_bins = GALR_BINS
+        local_absz_bins = ABSZ_BINS
     
     # Set x-axis limits
     if log:
@@ -54,7 +84,8 @@ def main(evolution, RIa, migration='diffusion', verbose=False, cmap='winter',
     
     # Set up figure
     fig, axs = setup_axes(xlim=age_lim, ylim=OFE_LIM, 
-                          xlabel='Age [Gyr]', ylabel='[O/Fe]')
+                          xlabel='Age [Gyr]', ylabel='[O/Fe]',
+                          galr_bins=local_galr_bins, absz_bins=local_absz_bins)
     cbar = setup_colorbar(fig, cmap=cmap, vmin=0, vmax=15.5, 
                           label=r'Birth $R_{\rm{Gal}}$ [kpc]')
     cbar.ax.yaxis.set_minor_locator(MultipleLocator(0.5))
@@ -63,9 +94,9 @@ def main(evolution, RIa, migration='diffusion', verbose=False, cmap='winter',
     if verbose: 
         print('Plotting [O/Fe] vs age in galactic regions...')
     for i, row in enumerate(axs):
-        absz_lim = (ABSZ_BINS[-(i+2)], ABSZ_BINS[-(i+1)])
+        absz_lim = (local_absz_bins[-(i+2)], local_absz_bins[-(i+1)])
         for j, ax in enumerate(row):
-            galr_lim = (GALR_BINS[j], GALR_BINS[j+1])
+            galr_lim = (local_galr_bins[j], local_galr_bins[j+1])
             if verbose:
                 print('\tRGal=%s kpc, |z|=%s kpc' \
                       % (str(galr_lim), str(absz_lim)))
@@ -74,17 +105,16 @@ def main(evolution, RIa, migration='diffusion', verbose=False, cmap='winter',
             plot_vice_sample(ax, vice_subset, 'age', '[o/fe]', 
                              cmap=cmap, norm=cbar.norm)
             plot_vice_medians(ax, vice_subset.copy())
-            # Plot Feuillet+ 2018 ages in Solar neighborhood only
-            if ages == 'F18':
-                if absz_lim == (0, 0.5) and galr_lim == (7, 9):
-                    plot_feuillet_medians(ax)
+            # Plot Feuillet+ 2019 ages
+            if ages == 'F19':
+                plot_feuillet2019(ax, galr_lim, absz_lim)
             else:
                 apogee_subset = apogee_region(apogee_data, galr_lim, absz_lim)
                 plot_astroNN_medians(ax, apogee_subset.copy(), age_col=age_col,
                                      label=ages)
             # Add legend to top-right panel
             if i==0 and j==len(row)-1:
-                ax.legend(loc='upper left', frameon=False)
+                ax.legend(loc='upper left', frameon=False, handletextpad=0.2)
                              
     # Set x-axis scale and ticks
     if log:
@@ -247,39 +277,45 @@ def plot_astroNN_medians(ax, data, ofe_lim=OFE_LIM, ofe_bin_width=OFE_BIN_WIDTH,
         )
         
 
-def plot_feuillet_medians(ax, file=paths.data/'feuillet2018/age_alpha.dat',
-                          marker='^', markersize=2, label='F18'):
-    """
-    Plot median ages for [O/Fe] bins from Feuillet et al. 2018.
-    
+def plot_feuillet2019(ax, galr_lim, absz_lim, **kwargs):
+    r"""
+    Plot the age-[X/Y] relation as reported by Feuillet et al. (2019) [1]_.
+
     Parameters
     ----------
-    ax : matplotlib.axes.Axes
-        Axis on which to plot the medians.
-    file : str or pathlib.Path
-        Filename containing summary data. The default is 
-        '../data/feuillet2018/age_alpha.dat'.
-    marker : str, optional
-        The marker style for the high-count bins. The default is '^', an upwards
-        pointing triangle.
-    markersize : float, optional
-        The marker size. The default is 2.
-    label : str, optional
-        The main scatter plot / error bar label. The default is 'F18'.
-    """
-    data = np.genfromtxt(file)
-    ofe_mean = (data[:,1] + data[:,0])/2
-    age_median = 10**data[:,2] * 1e-9
-    age_upper = 10**(data[:,2]+data[:,3]) * 1e-9
-    age_lower = 10**(data[:,2]-data[:,3]) * 1e-9
-    ax.errorbar(age_median, ofe_mean, 
-                xerr=(age_median - age_lower, age_upper - age_median),
-                yerr=(ofe_mean - data[:,0], data[:,1] - ofe_mean), 
-                color='r', linestyle='none', capsize=1, elinewidth=0.5,
-                capthick=0.5, marker=marker, markersize=markersize, label=label,
-    )
-    
+    ax : ``axes``
+        The matplotlib subplot to plot on.
+    element_x : ``str`` [case-insensitive]
+        The element X in age-[X/Y] relation.
+    element_y : ``str`` [case-insensitive]
+        The element Y in age-[X/Y] relation.
+    min_rgal : ``float``
+        Minimum galactocentric radius in kpc defining the region.
+    max_rgal : ``float``
+        Maximum galactocentric radius in kpc defining the region.
+    min_absz : ``float``
+        Minimum height above/below the disk midplane |z| in kpc defining the
+        region.
+    max_absz : ``float``
+        Maximum height above/below the disk midplane |z| in kpc defining the
+        region.
+    label : ``bool`` [default : False]
+        Whether or not to produce a legend handle for the plotted points with
+        error bars.
+    kwargs : varying types
+        Additional keyword arguments to pass to ``pyplot.errorbar``.
 
+    .. [1] Feuillet et al. (2019), MNRAS, 489, 1742
+    """
+    fname = 'ELEM_GAUSS_AGE_%02d_%02d_%02d_%02d_alpha.fits' % (
+        galr_lim[0], galr_lim[1], 10 * absz_lim[0], 10 * absz_lim[1])
+    datapath = paths.data / 'feuillet2019' / 'age_alpha' / fname
+    age, ofe, age_disp, ofe_disp = feuillet2019_data(datapath)
+    ax.errorbar(age, ofe, xerr=age_disp, yerr=ofe_disp,
+                color='r', linestyle='none', capsize=1, elinewidth=0.5,
+                capthick=0.5, marker='^', markersize=2, 
+                label='F19', **kwargs)
+    
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(
@@ -302,6 +338,8 @@ if __name__ == '__main__':
     parser.add_argument('-l', '--log', action='store_true',
                         help='Plot age on a log scale')
     parser.add_argument('-a', '--ages', choices=AGE_SOURCES, default='L23',
-                        help='Source for age data (options: F18, M19, L23)')
+                        help='Source for age data (options: F19, M19, L23)')
+    parser.add_argument('-u', '--uncertainties', action='store_true',
+                        help='Model APOGEE uncertainties in VICE output')
     args = parser.parse_args()
     main(**vars(args))
