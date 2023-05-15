@@ -104,14 +104,14 @@ def main(evolution, RIa, migration='diffusion', verbose=False, cmap='winter',
                                                    absz_lim, ZONE_WIDTH)
             plot_vice_sample(ax, vice_subset, 'age', '[o/fe]', 
                              cmap=cmap, norm=cbar.norm)
-            plot_vice_medians(ax, vice_subset.copy())
             # Plot Feuillet+ 2019 ages
             if ages == 'F19':
                 plot_feuillet2019(ax, galr_lim, absz_lim)
             else:
                 apogee_subset = apogee_region(apogee_data, galr_lim, absz_lim)
-                plot_astroNN_medians(ax, apogee_subset.copy(), age_col=age_col,
-                                     label=ages)
+                plot_astroNN_medians(ax, apogee_subset, 
+                                     age_col=age_col, label=ages)
+            plot_vice_medians(ax, vice_subset, label='VICE')
             # Add legend to top-right panel
             if i==0 and j==len(row)-1:
                 ax.legend(loc='upper left', frameon=False, handletextpad=0.2)
