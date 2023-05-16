@@ -31,20 +31,56 @@ AGE_LABELS = {'F19': 'Feuillet et al. 2019',
               'M19': 'Mackereth et al. 2019',
               'L23': 'Leung et al. 2023'}
 
-def main(evolution, RIa, migration='diffusion', verbose=False, cmap='winter',
-         data_dir='../data/migration', log=False, ages='L23', score=False,
-         uncertainties=False):
-    # Error handling
-    if ages not in AGE_SOURCES:
-        raise ValueError('Parameter "ages" must be in %s.' % AGE_SOURCES)
-        
+def main(evolution, RIa, migration='diffusion', data_dir='../data/migration',
+         ages='L23', verbose=False, **kwargs):
     # Import VICE multi-zone output data
     output_name = '/'.join(['diffusion', evolution, RIa])
     vice_stars = multioutput_to_pandas(output_name, data_dir, verbose=verbose)
-    
     # Import APOGEE and astroNN data
     apogee_data = import_apogee(verbose=verbose)
+    # Main plot function
+    fname = '%s_%s_%s.png' % (evolution, RIa, ages)
+    plot_age_ofe(vice_stars, apogee_data, fname=fname, ages=ages, 
+                 verbose=verbose, **kwargs)
+
+
+def plot_age_ofe(vice_stars, apogee_data, fname='age_ofe.png', ages='L23', 
+                 cmap='winter', log=False, score=False, uncertainties=False, 
+                 verbose=False):
+    """
+    Plot a grid of [O/Fe] vs age across multiple Galactic regions.
     
+    Parameters
+    ----------
+    vice_stars : pandas.DataFrame
+    apogee_data : pandas.DataFrame
+    fname : str, optional
+        File name (excluding parent directory) of plot output. The default is
+        'age_ofe.png'.
+    ages : str, optional
+        Source for age data. Must be one of ('F19', 'M19', 'L23'). The default
+        is 'L23'.
+    cmap : str, optional
+        Name of colormap for scatterplot. The default is 'winter'.
+    log : bool, optional
+        If True, plot the x (age) axis on a log scale. The default is False.
+    score : bool, optional
+        If True, calculate a numerical score for how well the VICE output
+        matches the age data. The default is False.
+    uncertainties : bool, optional
+        If True, convolve VICE output data with observational uncertainties
+        from APOGEE and age data. The default is False.
+    verbose : bool, optional
+        If True, print verbose output to the terminal. The default is False.
+        
+    Returns
+    -------
+    float
+        If scores==True, the weighted average score across all regions.
+    """
+    # Error handling
+    if ages not in AGE_SOURCES:
+        raise ValueError('Parameter "ages" must be in %s.' % AGE_SOURCES)
     # Model uncertainties
     if uncertainties:
         if verbose:
@@ -146,7 +182,6 @@ def main(evolution, RIa, migration='diffusion', verbose=False, cmap='winter',
     axs[0,0].yaxis.set_minor_locator(MultipleLocator(0.05))
     
     # Output figure
-    fname = '%s_%s_%s.png' % (evolution, RIa, ages)
     save_dir = paths.debug / 'age_ofe'
     if not save_dir.exists():
         save_dir.mkdir()
@@ -176,6 +211,11 @@ def rms_median_diff(vice_stars, apogee_data, age_col='LATENT_AGE',
         Outermost bounds on [O/Fe]. The default is (-0.15, 0.55).
     ofe_bin_width : float, optional
         The [O/Fe] bin width in dex. The default is 0.05.
+        
+    Returns
+    -------
+    d_rms : float
+        Root-mean-square of the difference in median ages in each [O/Fe] bin.
     """
     ofe_bins = np.arange(ofe_lim[0], ofe_lim[1]+ofe_bin_width, ofe_bin_width)
     # bin APOGEE ages by [O/Fe]
