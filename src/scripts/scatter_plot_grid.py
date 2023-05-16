@@ -83,7 +83,7 @@ def setup_colorbar(fig, cmap=None, vmin=None, vmax=None, label='',
         Colorbar object
     """
     # Adjust subplots
-    plt.subplots_adjust(right=0.98 - (width + pad + 0.03))
+    plt.subplots_adjust(right=fig.subplotpars.right - (width + pad + 0.03))
     # Define colorbar axis
     height = fig.subplotpars.top - fig.subplotpars.bottom
     cax = plt.axes([fig.subplotpars.right + pad, fig.subplotpars.bottom, 
