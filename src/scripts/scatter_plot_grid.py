@@ -82,6 +82,8 @@ def setup_colorbar(fig, cmap=None, vmin=None, vmax=None, label='',
     cbar : matplotlib.colorbar.Colorbar
         Colorbar object
     """
+    # Adjust subplots
+    plt.subplots_adjust(right=0.98 - (width + pad + 0.03))
     # Define colorbar axis
     height = fig.subplotpars.top - fig.subplotpars.bottom
     cax = plt.axes([fig.subplotpars.right + pad, fig.subplotpars.bottom, 
@@ -96,7 +98,7 @@ def setup_colorbar(fig, cmap=None, vmin=None, vmax=None, label='',
 def setup_axes(galr_bins=GALR_BINS[:-1], absz_bins=ABSZ_BINS,
                width=TWO_COLUMN_WIDTH, xlim=None, ylim=None,
                xlabel='', ylabel='', xlabelpad=0., ylabelpad=0.,
-               row_label_pos=(0.1, 0.85)):
+               row_label_pos=(0.07, 0.88), spacing=0.):
     """
     Set up a blank grid of axes with a default subplot spacing.
 
@@ -120,7 +122,10 @@ def setup_axes(galr_bins=GALR_BINS[:-1], absz_bins=ABSZ_BINS,
         The x- and y-axis label pad in points. The default is 0.
     row_label_pos : tuple, optional
         The (x, y) position, in axis coordinates, of the row label text.
-        The default is (0.1, 0.85).
+        The default is (0.07, 0.88).
+    spacing : float, optional
+        Sets the wspace and hspace parameters in subplots_adjust. The default
+        is 0.
 
     Returns
     -------
@@ -131,8 +136,8 @@ def setup_axes(galr_bins=GALR_BINS[:-1], absz_bins=ABSZ_BINS,
     cols = len(galr_bins) - 1
     fig, axs = plt.subplots(rows, cols, figsize=(width, (width/cols)*rows),
                             sharex=True, sharey=True)
-    plt.subplots_adjust(right=0.92, left=0.06, bottom=0.07, top=0.95,
-                        wspace=0.05, hspace=0.05)
+    plt.subplots_adjust(right=0.98, left=0.06, bottom=0.07, top=0.95,
+                        wspace=spacing, hspace=spacing)
     # Axis limits
     axs[0,0].set_xlim(xlim)
     axs[0,0].set_ylim(ylim)
@@ -144,7 +149,7 @@ def setup_axes(galr_bins=GALR_BINS[:-1], absz_bins=ABSZ_BINS,
         # Label bins in z-height
         absz_lim = (absz_bins[-(i+2)], absz_bins[-(i+1)])
         ax.text(row_label_pos[0], row_label_pos[1], 
-                r'$%s\leq |z| < %s$' % absz_lim,
+                r'$%s\leq |z| < %s$ kpc' % absz_lim,
                 transform=ax.transAxes)
     # Label bins in Rgal
     for i, ax in enumerate(axs[0]):

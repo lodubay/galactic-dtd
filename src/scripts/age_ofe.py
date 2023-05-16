@@ -1,7 +1,8 @@
 """
 This script plots a grid of panels showing [O/Fe] vs age in multiple galactic
 regions. The plot includes a sample of VICE stellar populations, mass-weighted 
-medians of the VICE output, and the median estimated ages from astroNN.
+medians of the VICE output, and the median estimated ages from Feuillet et al. 
+(2019), Mackereth et al. (2019; astroNN), or Leung et al. (2023).
 """
 
 import argparse
@@ -19,39 +20,41 @@ from _globals import GALR_BINS, ABSZ_BINS, ZONE_WIDTH
 import paths
 
 GALR_BINS = GALR_BINS[:-1]
-AGE_LIM_LINEAR = (-1, 14)
-AGE_LIM_LOG = (0.2, 20)
+AGE_LIM_LINEAR = (-1, 15)
+AGE_LIM_LOG = (0.3, 20)
 OFE_LIM = (-0.15, 0.55)
 OFE_BIN_WIDTH = 0.05
-AGE_SOURCES = ['F19', # Feuillet et al. 2018, solar neighborhood only
+AGE_SOURCES = ['F19', # Feuillet et al. 2019, solar neighborhood only
                'M19', # Mackereth et al. 2019, astroNN
                'L23'] # Leung et al. 2023, variational encoder-decoder
-AGE_LABELS = {'F19': 'Feuillet et al. 2018',
+AGE_LABELS = {'F19': 'Feuillet et al. 2019',
               'M19': 'Mackereth et al. 2019',
               'L23': 'Leung et al. 2023'}
 
 def main(evolution, RIa, migration='diffusion', verbose=False, cmap='winter',
-         data_dir='../data/migration', log=False, ages='L23', 
+         data_dir='../data/migration', log=False, ages='L23', score=False,
          uncertainties=False):
     # Error handling
     if ages not in AGE_SOURCES:
         raise ValueError('Parameter "ages" must be in %s.' % AGE_SOURCES)
+        
     # Import VICE multi-zone output data
     output_name = '/'.join(['diffusion', evolution, RIa])
-    if verbose: 
-        print('Importing VICE multizone data from %s/%s.vice' \
-              % (data_dir, output_name))
-    vice_stars = multioutput_to_pandas(output_name, data_dir)
+    vice_stars = multioutput_to_pandas(output_name, data_dir, verbose=verbose)
+    
     # Import APOGEE and astroNN data
     apogee_data = import_apogee(verbose=verbose)
+    
     # Model uncertainties
     if uncertainties:
+        if verbose:
+            print('Modeling uncertainties...')
         # [O/Fe] uncertainty 
         ofe_err = apogee_data['O_FE_ERR'].median()
         vice_stars['[o/fe]'] = model_uncertainty(vice_stars['[o/fe]'], ofe_err)
         # age uncertainty
         if ages == 'F19':
-            age_err = 0.15 # Feuillet et al. 2016 ApJ 817 40
+            age_err = 0.15 # Feuillet et al. (2016), ApJ, 817, 40
             age_err_method = 'logarithmic'
         elif ages == 'M19':
             age_err = (apogee_data['ASTRONN_AGE_ERR'] / 
@@ -85,10 +88,14 @@ def main(evolution, RIa, migration='diffusion', verbose=False, cmap='winter',
     # Set up figure
     fig, axs = setup_axes(xlim=age_lim, ylim=OFE_LIM, 
                           xlabel='Age [Gyr]', ylabel='[O/Fe]',
+                          xlabelpad=2, ylabelpad=4,
                           galr_bins=local_galr_bins, absz_bins=local_absz_bins)
     cbar = setup_colorbar(fig, cmap=cmap, vmin=0, vmax=15.5, 
-                          label=r'Birth $R_{\rm{Gal}}$ [kpc]')
+                          label=r'Birth $R_{\rm{Gal}}$ [kpc]', pad=0.02)
     cbar.ax.yaxis.set_minor_locator(MultipleLocator(0.5))
+    
+    scores = []
+    weights = []
     
     # Plot sampled points and medians
     if verbose: 
@@ -103,18 +110,28 @@ def main(evolution, RIa, migration='diffusion', verbose=False, cmap='winter',
             vice_subset = filter_multioutput_stars(vice_stars, galr_lim, 
                                                    absz_lim, ZONE_WIDTH)
             plot_vice_sample(ax, vice_subset, 'age', '[o/fe]', 
-                             cmap=cmap, norm=cbar.norm)
+                              cmap=cmap, norm=cbar.norm)
             # Plot Feuillet+ 2019 ages
             if ages == 'F19':
                 plot_feuillet2019(ax, galr_lim, absz_lim)
             else:
                 apogee_subset = apogee_region(apogee_data, galr_lim, absz_lim)
                 plot_astroNN_medians(ax, apogee_subset, 
-                                     age_col=age_col, label=ages)
+                                     age_col=age_col, label=AGE_LABELS[ages])
             plot_vice_medians(ax, vice_subset, label='VICE')
+            # Score how well the distributions align based on the RMS of the
+            # difference in medians in each [O/Fe] bin
+            if score and (ages in ('M19', 'L23')):
+                d_rms = rms_median_diff(vice_subset, apogee_subset, 
+                                        age_col=age_col)
+                ax.text(0.07, 0.67, r'$\Delta_{\rm{RMS}}=%.02f$' % d_rms, 
+                        transform=ax.transAxes)
+                scores.append(d_rms)
+                weights.append(apogee_subset.shape[0])
             # Add legend to top-right panel
             if i==0 and j==len(row)-1:
-                ax.legend(loc='upper left', frameon=False, handletextpad=0.2)
+                ax.legend(loc='upper left', frameon=False, handletextpad=0.1,
+                          borderpad=0.2, handlelength=1.5)
                              
     # Set x-axis scale and ticks
     if log:
@@ -130,7 +147,53 @@ def main(evolution, RIa, migration='diffusion', verbose=False, cmap='winter',
     
     # Output figure
     fname = '%s_%s_%s.png' % (evolution, RIa, ages)
-    fig.savefig(paths.figures / 'age_ofe' / fname, dpi=300)
+    save_dir = paths.debug / 'age_ofe'
+    if not save_dir.exists():
+        save_dir.mkdir()
+    fig.savefig(save_dir / fname, dpi=300)
+    plt.close()
+    
+    # Return overall model score
+    if score:
+        return np.average(scores, weights=weights)
+
+
+def rms_median_diff(vice_stars, apogee_data, age_col='LATENT_AGE', 
+                    ofe_lim=OFE_LIM, ofe_bin_width=OFE_BIN_WIDTH):
+    """
+    Calculate the RMS of the difference in medians between VICE and data ages.
+    
+    Parameters
+    ----------
+    vice_stars : pandas.DataFrame
+        VICE multizone stars data, typically a subset of a galactic region.
+    apogee_data : pandas.DataFrame
+        APOGEE data with ages, typically a subset of a galactic region.
+    age_col : str, optional
+        Name of column with age data in apogee_data. The default is 'LATENT_AGE'
+        which is the Leung et al. (2023) ages.
+    ofe_lim : tuple, optional
+        Outermost bounds on [O/Fe]. The default is (-0.15, 0.55).
+    ofe_bin_width : float, optional
+        The [O/Fe] bin width in dex. The default is 0.05.
+    """
+    ofe_bins = np.arange(ofe_lim[0], ofe_lim[1]+ofe_bin_width, ofe_bin_width)
+    # bin APOGEE ages by [O/Fe]
+    apogee_grouped = group_by_bins(apogee_data, 'O_FE', ofe_bins)[age_col]
+    apogee_medians = apogee_grouped.median()
+    # count all APOGEE stars in each bin
+    apogee_counts = apogee_grouped.count()
+    # bin mass-weighted VICE ages by [O/Fe]
+    vice_grouped = group_by_bins(vice_stars, '[o/fe]', bins=ofe_bins)
+    # weighted medians of VICE
+    wm = lambda x: weighted_quantile(x, 'age', 'mass', quantile=0.5)
+    vice_medians = vice_grouped.apply(wm)
+    # RMS of median difference
+    notna = (pd.notna(apogee_medians) & pd.notna(vice_medians))
+    median_diffs = vice_medians[notna] - apogee_medians[notna]
+    d_rms = np.sqrt(np.average(median_diffs**2, weights=apogee_counts[notna]))
+    
+    return d_rms
 
 
 def plot_vice_medians(ax, stars, ofe_lim=OFE_LIM, ofe_bin_width=OFE_BIN_WIDTH,
@@ -174,11 +237,7 @@ def plot_vice_medians(ax, stars, ofe_lim=OFE_LIM, ofe_bin_width=OFE_BIN_WIDTH,
     wu = lambda x: weighted_quantile(x, 'age', 'mass', quantile=0.84)
     # Define [O/Fe] bins
     ofe_bins = np.arange(ofe_lim[0], ofe_lim[1]+ofe_bin_width, ofe_bin_width)
-    # stars['odf_bin'] = pd.cut(stars['[o/fe]'], ofe_bins, 
-    #                           labels=get_bin_centers(ofe_bins))
-    # stars['mass_weighted_age'] = stars['age'] * stars['mass']
     # Mass-weighted median and standard deviation of ages
-    # grouped = stars.groupby('odf_bin')
     grouped = group_by_bins(stars, '[o/fe]', bins=ofe_bins)
     age_median = grouped.apply(wm)
     age_lower = grouped.apply(wl)
@@ -247,9 +306,6 @@ def plot_astroNN_medians(ax, data, ofe_lim=OFE_LIM, ofe_bin_width=OFE_BIN_WIDTH,
     """
     # Define [O/Fe] bins
     ofe_bins = np.arange(ofe_lim[0], ofe_lim[1]+ofe_bin_width, ofe_bin_width)
-    # data['OFE_BIN'] = pd.cut(data['O_FE'], ofe_bins, 
-    #                          labels=get_bin_centers(ofe_bins))
-    # age_grouped = data.groupby('OFE_BIN')[age_col]
     age_grouped = group_by_bins(data, 'O_FE', bins=ofe_bins)[age_col]
     age_median = age_grouped.median()
     age_lower = age_grouped.quantile(0.16)
@@ -333,13 +389,17 @@ if __name__ == '__main__':
                         help='Name of migration prescription')
     parser.add_argument('-v', '--verbose', action='store_true')
     parser.add_argument('-c', '--cmap', metavar='COLORMAP', type=str,
-        default='winter',
-        help='Name of colormap for color-coding VICE output (default: winter)')
+                        default='winter',
+                        help='Name of colormap for color-coding VICE ' + \
+                             'output (default: winter)')
     parser.add_argument('-l', '--log', action='store_true',
                         help='Plot age on a log scale')
     parser.add_argument('-a', '--ages', choices=AGE_SOURCES, default='L23',
                         help='Source for age data (options: F19, M19, L23)')
     parser.add_argument('-u', '--uncertainties', action='store_true',
                         help='Model APOGEE uncertainties in VICE output')
+    parser.add_argument('-s', '--score', action='store_true',
+                        help='Numerically score the match between VICE ' + \
+                             'output and data.')
     args = parser.parse_args()
     main(**vars(args))
