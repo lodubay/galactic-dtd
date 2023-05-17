@@ -27,9 +27,9 @@ OFE_BIN_WIDTH = 0.05
 AGE_SOURCES = ['F19', # Feuillet et al. 2019, solar neighborhood only
                'M19', # Mackereth et al. 2019, astroNN
                'L23'] # Leung et al. 2023, variational encoder-decoder
-AGE_LABELS = {'F19': 'Feuillet et al. 2019',
-              'M19': 'Mackereth et al. 2019',
-              'L23': 'Leung et al. 2023'}
+AGE_LABELS = {'F19': 'Feuillet et al. (2019)',
+              'M19': 'Mackereth et al. (2019)',
+              'L23': 'Leung et al. (2023)'}
 
 def main(evolution, RIa, migration='diffusion', data_dir='../data/migration',
          ages='L23', verbose=False, **kwargs):
@@ -46,7 +46,7 @@ def main(evolution, RIa, migration='diffusion', data_dir='../data/migration',
 
 def plot_age_ofe(vice_stars, apogee_data, fname='age_ofe.png', ages='L23', 
                  cmap='winter', log=False, score=False, uncertainties=False, 
-                 verbose=False):
+                 verbose=False, save_dir=paths.debug/'age_ofe'):
     """
     Plot a grid of [O/Fe] vs age across multiple Galactic regions.
     
@@ -72,6 +72,8 @@ def plot_age_ofe(vice_stars, apogee_data, fname='age_ofe.png', ages='L23',
         from APOGEE and age data. The default is False.
     verbose : bool, optional
         If True, print verbose output to the terminal. The default is False.
+    savedir : str or pathlib.Path, optional
+        Parent directory to save the plot. The default is ../debug/age_ofe/.
         
     Returns
     -------
@@ -182,7 +184,6 @@ def plot_age_ofe(vice_stars, apogee_data, fname='age_ofe.png', ages='L23',
     axs[0,0].yaxis.set_minor_locator(MultipleLocator(0.05))
     
     # Output figure
-    save_dir = paths.debug / 'age_ofe'
     if not save_dir.exists():
         save_dir.mkdir()
     fig.savefig(save_dir / fname, dpi=300)
@@ -410,7 +411,7 @@ def plot_feuillet2019(ax, galr_lim, absz_lim, **kwargs):
     ax.errorbar(age, ofe, xerr=age_disp, yerr=ofe_disp,
                 color='r', linestyle='none', capsize=1, elinewidth=0.5,
                 capthick=0.5, marker='^', markersize=2, 
-                label='F19', **kwargs)
+                label=AGE_LABELS['F19'], **kwargs)
     
 
 if __name__ == '__main__':
