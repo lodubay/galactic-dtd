@@ -11,7 +11,7 @@ import matplotlib.pyplot as plt
 import vice
 import paths
 from utils import multioutput_to_pandas, filter_multioutput_stars, \
-    import_apogee, apogee_region
+    import_apogee, apogee_region, box_smooth
 from distribution_functions import setup_axes, plot_distributions
 
 MIGRATION = 'diffusion'
@@ -247,27 +247,6 @@ def apogee_mdf(data, col='FE_H', galr_lim=(0, 20), absz_lim=(0, 2),
     if smoothing and smooth_width > 0:
         mdf = box_smooth(mdf, bin_edges, smooth_width)
     return mdf, bin_edges
-
-
-def box_smooth(hist, bins, width):
-    """
-    Box-car smoothing function for a pre-generated histogram.
-
-    Parameters
-    ----------
-    bins : array-like
-        Bins dividing the histogram, including the end. Length must be 1 more
-        than the length of hist, and bins must be evenly spaced.
-    hist : array-like
-        Histogram of data
-    width : float
-        Width of the box-car smoothing function in data units
-    """
-    bin_width = bins[1] - bins[0]
-    box_width = int(width / bin_width)
-    box = np.ones(box_width) / box_width
-    hist_smooth = np.convolve(hist, box, mode='same')
-    return hist_smooth
 
 
 if __name__ == '__main__':
