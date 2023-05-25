@@ -1,5 +1,5 @@
-
 from vice.toolkit import hydrodisk
+from .._globals import END_TIME, ZONE_WIDTH
 
 
 class diskmigration(hydrodisk.hydrodiskstars):
@@ -92,3 +92,42 @@ class diskmigration(hydrodisk.hydrodiskstars):
 		else:
 			raise TypeError("Must be a boolean. Got: %s" % (type(value)))
 
+
+class gaussian_migration:
+    def __init__(self, zone_width=ZONE_WIDTH):
+        self.zone_width = zone_width
+        
+    def __call__(self, zone, tform, time):
+        Rform = self.zone_width * (zone + 0.5)
+        age = END_TIME - tform
+        if tform == time:
+            while True: # ensure Rfinal > 0
+                dR = sample_gaussian(loc=0, scale=migr_scale(age, rform))
+                Rfinal = Rform + dR
+                if Rfinal > 0:
+                    break
+            self.dR = dR
+        else:
+            return some_interpolator(Rform, Rform + self.dR)
+        
+    def migr_scale(age, rform):
+        r"""
+        A prescription for $\sigma_{\Delta R}$, the scale of the Gaussian 
+        distribution of radial migration.
+        
+        $$ \sigma_{\Delta R} = 1.35 (R_\rm{form}/8\,\rm{kpc})^{0.61} 
+        (\tau/1\,\rm{Gyr})^{0.33} $$
+        
+        Parameters
+        ----------
+        age : float or array-like
+            Age of the stellar population in Gyr.
+        rform : float or array-like
+            Formation radius of the stellar population in kpc.
+        
+        Returns
+        -------
+        float or array-like
+            Scale factor for radial migration $\sigma_{\Delta R}$.
+        """
+        return 1.35 * (age ** 0.33) * (rform / 8) ** 0.61
