@@ -94,29 +94,50 @@ class diskmigration(hydrodisk.hydrodiskstars):
             raise TypeError("Must be a boolean. Got: %s" % (type(value)))
 
 
-class gaussian_migration(diskmigration):
+class gaussian_migration:
     r"""
     Inherits file read/write functionality from ``diskmigration``.
     """
-    def __init__(self, radbins, zone_width=ZONE_WIDTH, filename="stars.out",
-                 **kwargs):
+    def __init__(self, radbins, zone_width=ZONE_WIDTH, filename="stars.out"):
+        self.radial_bins = radbins
         self.zone_width = zone_width
-        super().__init__(radbins, mode=None, filename=filename, **kwargs)
+        # super().__init__(radbins, mode=None, filename=filename, **kwargs)
+        if isinstance(filename, str):
+            self._file = open(filename, 'w')
+            # Same format as above for compatibility
+            self._file.write("# zone_origin\ttime_origin\tanalog_id\tzfinal\n")
+        else:
+            raise TypeError("Filename must be a string. Got: %s" % (
+                type(filename)))
+
+        # Multizone object automatically swaps this to True in setting up
+        # its stellar population zone histories
+        self.write = False
         
     def __call__(self, zone, tform, time):
         Rform = self.zone_width * (zone + 0.5)
         age = END_TIME - tform
         if tform == time:
-            # Randomly draw migration distance dR based on age & Rform
-            while True: # ensure Rfinal > 0
-                dR = random.gauss(loc=0, scale=self.migr_scale(age, Rform))
-                Rfinal = Rform + dR
-                if Rfinal > 0:
-                    break
+            if age > 0:
+                # Randomly draw migration distance dR based on age & Rform
+                while True: # ensure 0 < Rfinal <= Rmax
+                    dR = random.gauss(mu=0., sigma=self.migr_scale(age, Rform))
+                    Rfinal = Rform + dR
+                    if Rfinal > 0. and Rfinal <= self.radial_bins[-1]:
+                        break
+            else:
+                # Stars born in the last simulation timestep won't migrate
+                dR = 0.
             self.dR = dR
             # Randomly draw final midplane distance and write to file
             if self.write:
-                finalz = random.expovariate(1 / self.scale_height(age, Rform))
+                if age > 0:
+                    finalz = random.expovariate(
+                        1. / self.scale_height(age, Rform)
+                    )
+                else:
+                    # Stars born in the last simulation timestep won't migrate
+                    finalz = 0.
                 analog_id = -1
                 self._file.write("%d\t%.2f\t%d\t%.2f\n" % (zone, tform,
                     analog_id, finalz))
@@ -127,7 +148,32 @@ class gaussian_migration(diskmigration):
             # Interpolate between Rform and Rfinal at current time
             R = self.interpolator(Rform, Rform + self.dR, tform, time)
             return int((R / self.zone_width) - 0.5)
+
+    def close_file(self):
+        r"""
+        Closes the output file - should be called after the multizone model
+        simulation runs.
+        """
+        self._file.close()
+
+    @property
+    def write(self):
+        r"""
+        Type : bool
+
+        Whether or not to write out to the extra star particle data output
+        file. For internal use by the vice.multizone object only.
+        """
+        return self._write
+
+    @write.setter
+    def write(self, value):
+        if isinstance(value, bool):
+            self._write = value
+        else:
+            raise TypeError("Must be a boolean. Got: %s" % (type(value)))
     
+    @staticmethod
     def interpolator(Rform, Rfinal, tform, time):
         r"""
         Interpolate between the formation and final radius following the fit
@@ -152,6 +198,7 @@ class gaussian_migration(diskmigration):
         tfrac = (time - tform) / (END_TIME - tform)
         return Rform + (Rfinal - Rform) * (tfrac ** 0.33)
         
+    @staticmethod
     def migr_scale(age, Rform):
         r"""
         A prescription for $\sigma_{\Delta R}$, the scale of the Gaussian 
@@ -174,6 +221,7 @@ class gaussian_migration(diskmigration):
         """
         return 1.35 * (age ** 0.33) * (Rform / 8) ** 0.61
     
+    @staticmethod
     def scale_height(age, Rform):
         r"""
         The scale height $h_z$ as a function of age and formation radius:

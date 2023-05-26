@@ -9,7 +9,8 @@ import src
 # from vice import milkyway
 # import sys
 
-_MIGRATION_MODELS_ = ["diffusion", "linear", "post-process", "sudden"]
+_MIGRATION_MODELS_ = ["diffusion", "linear", "post-process", "sudden", 
+                      "gaussian"]
 _EVOLUTION_MODELS_ = ["static", "insideout", "lateburst", "outerburst",
                       "twoinfall", "conroy22", "expifr"]
 _DELAY_MODELS_ = ["powerlaw", "plateau", "prompt",
