@@ -27,7 +27,7 @@ DTD_NAMES=(
 	"prompt_peak050_stdev015_timescale30"
 )
 EVOL_LIST=("insideout" "lateburst" "twoinfall" "conroy22")
-MIGR = "gaussian"
+MIGR="gaussian"
 
 for EVOL in ${EVOL_LIST[@]}; do
 	for i in ${!DTD_LIST[@]}; do
