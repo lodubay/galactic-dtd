@@ -30,12 +30,10 @@ EVOL_LIST=("insideout" "lateburst" "twoinfall" "conroy22")
 
 for EVOL in ${EVOL_LIST[@]}; do
 	for i in ${!DTD_LIST[@]}; do
-		for MIGR in ${MIGR_LIST[@]}; do
-			DTD=${DTD_LIST[$i]}
-			DTD_PARAM=${DTD_PARAMS[$i]}
-			NAME=../src/data/migration/$MIGR/$EVOL/${DTD_NAMES[$i]}
-			echo $NAME
-			python simulations.py -f --nstars=8 --migration="gaussian" --evolution=$EVOL --RIa=$DTD --RIa-params=$DTD_PARAM --minimum-delay=0.04 --name=$NAME
-		done
+        DTD=${DTD_LIST[$i]}
+        DTD_PARAM=${DTD_PARAMS[$i]}
+        NAME=../src/data/migration/$MIGR/$EVOL/${DTD_NAMES[$i]}
+        echo $NAME
+        python simulations.py -f --nstars=8 --migration="gaussian" --evolution=$EVOL --RIa=$DTD --RIa-params=$DTD_PARAM --minimum-delay=0.04 --name=$NAME
 	done
 done
