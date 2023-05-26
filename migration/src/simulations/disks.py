@@ -16,7 +16,7 @@ Johnson et al. (2021) figures. Current: %s""" % (vice.__version__))
 else: pass
 from vice.toolkit import hydrodisk, J21_sf_law
 from .._globals import END_TIME, MAX_SF_RADIUS, ZONE_WIDTH
-from . import migration
+from .migration import diskmigration, gaussian_migration
 from . import models
 from . import dtds
 from .models.utils import get_bin_number, interpolate
@@ -58,6 +58,7 @@ class diskmodel(vice.milkyway):
         - "linear"
         - "sudden"
         - "post-process"
+        - "gaussian"
 
     delay : ``float`` [default : 0.04]
         Minimum SN Ia delay time in Gyr.
@@ -88,9 +89,14 @@ class diskmodel(vice.milkyway):
         else:
             Nstars = 2 * int(MAX_SF_RADIUS / zone_width * END_TIME / self.dt *
                 self.n_stars)
-        self.migration.stars = migration.diskmigration(self.annuli,
-            N = Nstars, mode = migration_mode,
-            filename = "%s_analogdata.out" % (name))
+        if migration_mode == "gaussian":
+            self.migration.stars = gaussian_migration(self.annuli, 
+                    zone_width = zone_width, N = Nstars, 
+                    filename = "%s_analogdata.out" % (name))
+        else:
+            self.migration.stars = diskmigration(self.annuli,
+                    N = Nstars, mode = migration_mode,
+                    filename = "%s_analogdata.out" % (name))
         self.evolution = star_formation_history(spec = spec,
             zone_width = zone_width)
         # Set the yields
