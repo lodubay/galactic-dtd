@@ -33,7 +33,7 @@ def main(output_name, data_dir='../data/migration', cmap='winter'):
     stars = filter_multioutput_stars(stars, galr_lim=(3, 20), 
                                      zone_width=ZONE_WIDTH)
     # Model parameter uncertainties
-    stars = model_uncertainties(stars)
+    # stars = model_uncertainties(stars)
     fig, axs = plot_ofe_feh_stars(stars, cmap)
     plot_post_process_track(output_name, axs, galr=8, data_dir=data_dir)
     plot_post_process_tracks(output_name, axs, data_dir=data_dir)
@@ -219,4 +219,4 @@ if __name__ == '__main__':
     # temporary sys arguments - replace with argparse later
     evolution = sys.argv[1]
     RIa = sys.argv[2]
-    main('/'.join(['diffusion', evolution, RIa]))
+    main('/'.join(['gaussian', evolution, RIa]))
