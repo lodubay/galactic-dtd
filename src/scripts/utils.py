@@ -656,7 +656,7 @@ def model_uncertainty(x, err, how='linear'):
 # =============================================================================
 
 def multioutput_to_pandas(output_name, data_dir=paths.data/'migration', 
-                          verbose=False):
+                          verbose=False, zone_width=ZONE_WIDTH):
     """
     Convert VICE multizone stars output to pandas DataFrame (slow).
 
@@ -687,7 +687,8 @@ def multioutput_to_pandas(output_name, data_dir=paths.data/'migration',
     # Combine relevant data
     stars[['analog_id', 'zfinal']] = analogdata[['analog_id', 'zfinal']]
     # Convert zone to radius
-    stars['galr_origin'] = stars['zone_origin'] * ZONE_WIDTH
+    stars['galr_origin'] = stars['zone_origin'] * zone_width
+    stars['galr_final'] = stars['zone_final'] * zone_width
     stars.dropna(how='any', inplace=True)
     return stars
 
