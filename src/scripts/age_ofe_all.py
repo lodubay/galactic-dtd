@@ -9,6 +9,7 @@ from age_ofe import plot_age_ofe
 from utils import import_apogee, multioutput_to_pandas
 import paths
 
+MIGR_LIST = ['diffusion', 'gaussian']
 AGE_SOURCES = ['M19', 'L23']
 SFH_LIST = [
     'insideout', 
@@ -39,23 +40,26 @@ def main():
         columns=AGE_SOURCES,
     )
     
-    with tqdm(total=len(SFH_LIST) * len(DTD_LIST) * len(AGE_SOURCES)) as t:
-        for evolution in SFH_LIST:
-            for RIa in DTD_LIST:
-                # Import VICE multi-zone output data
-                output_name = '/'.join([MIGRATION, evolution, RIa])
-                vice_stars = multioutput_to_pandas(output_name, DATA_DIR, 
-                                                   verbose=True)
-                scores = []
-                for age_source in AGE_SOURCES:
-                    print(evolution, RIa, age_source)
-                    fname = '%s_%s_%s.png' % (evolution, RIa, age_source)
-                    score = plot_age_ofe(vice_stars, apogee_data, fname=fname, 
-                                         ages=age_source, log=True, score=True,
-                                         uncertainties=True, verbose=True)
-                    scores.append(score)
-                    t.update()
-                summary_table.loc[RIa, evolution] = scores
+    with tqdm(total=len(MIGR_LIST) * len(SFH_LIST) * len(DTD_LIST) * len(AGE_SOURCES)) as t:
+        for migration in MIGR_LIST:
+            for evolution in SFH_LIST:
+                for RIa in DTD_LIST:
+                    # Import VICE multi-zone output data
+                    output_name = '/'.join([MIGRATION, evolution, RIa])
+                    vice_stars = multioutput_to_pandas(output_name, DATA_DIR, 
+                                                       verbose=True)
+                    scores = []
+                    for age_source in AGE_SOURCES:
+                        print(migration, evolution, RIa, age_source)
+                        fname = '%s_%s.png' % (RIa, age_source)
+                        save_dir = paths.debug / 'age_ofe' / migration / evolution
+                        score = plot_age_ofe(vice_stars, apogee_data, fname=fname, 
+                                             ages=age_source, log=True, score=True,
+                                             uncertainties=True, verbose=True,
+                                             save_dir=save_dir)
+                        scores.append(score)
+                        t.update()
+                    summary_table.loc[RIa, evolution] = scores
     
     print('\n-----------------------------------\n')
     print(summary_table)

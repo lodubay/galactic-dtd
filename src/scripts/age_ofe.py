@@ -34,14 +34,15 @@ AGE_LABELS = {'F19': 'Feuillet et al. (2019)',
 def main(evolution, RIa, migration='diffusion', data_dir='../data/migration',
          ages='L23', verbose=False, **kwargs):
     # Import VICE multi-zone output data
-    output_name = '/'.join(['diffusion', evolution, RIa])
+    output_name = '/'.join([migration, evolution, RIa])
     vice_stars = multioutput_to_pandas(output_name, data_dir, verbose=verbose)
     # Import APOGEE and astroNN data
     apogee_data = import_apogee(verbose=verbose)
     # Main plot function
-    fname = '%s_%s_%s.png' % (evolution, RIa, ages)
+    fname = '%s_%s.png' % (RIa, ages)
+    save_dir = paths.debug / 'age_ofe' / migration / evolution
     plot_age_ofe(vice_stars, apogee_data, fname=fname, ages=ages, 
-                 verbose=verbose, **kwargs)
+                 verbose=verbose, save_dir=save_dir, **kwargs)
 
 
 def plot_age_ofe(vice_stars, apogee_data, fname='age_ofe.png', ages='L23', 
@@ -185,7 +186,7 @@ def plot_age_ofe(vice_stars, apogee_data, fname='age_ofe.png', ages='L23',
     
     # Output figure
     if not save_dir.exists():
-        save_dir.mkdir()
+        save_dir.mkdir(parents=True)
     fig.savefig(save_dir / fname, dpi=300)
     plt.close()
     
@@ -425,7 +426,7 @@ if __name__ == '__main__':
     parser.add_argument('RIa', metavar='DTD',
                         help='Name of delay time distribution model')
     parser.add_argument('--migration', '-m', metavar='MIGR', 
-                        choices=['diffusion', 'post-process'], 
+                        choices=['diffusion', 'post-process', 'gaussian'], 
                         default='diffusion',
                         help='Name of migration prescription')
     parser.add_argument('-v', '--verbose', action='store_true')
