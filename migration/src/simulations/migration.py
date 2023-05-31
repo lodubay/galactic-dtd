@@ -1,4 +1,5 @@
 import random
+import math as m
 from vice.toolkit import hydrodisk
 from .._globals import END_TIME, ZONE_WIDTH
 
@@ -98,9 +99,11 @@ class gaussian_migration:
     r"""
     Inherits file read/write functionality from ``diskmigration``.
     """
-    def __init__(self, radbins, zone_width=ZONE_WIDTH, filename="stars.out"):
+    def __init__(self, radbins, zone_width=ZONE_WIDTH, end_time=END_TIME,
+                 filename="stars.out"):
         self.radial_bins = radbins
         self.zone_width = zone_width
+        self.end_time = end_time
         # super().__init__(radbins, mode=None, filename=filename, **kwargs)
         if isinstance(filename, str):
             self._file = open(filename, 'w')
@@ -116,7 +119,7 @@ class gaussian_migration:
         
     def __call__(self, zone, tform, time):
         Rform = self.zone_width * (zone + 0.5)
-        age = END_TIME - tform
+        age = self.end_time - tform
         if tform == time:
             if age > 0:
                 # Randomly draw migration distance dR based on age & Rform
@@ -128,16 +131,17 @@ class gaussian_migration:
             else:
                 # Stars born in the last simulation timestep won't migrate
                 dR = 0.
+                Rfinal = Rform
             self.dR = dR
             # Randomly draw final midplane distance and write to file
             if self.write:
-                if age > 0:
-                    finalz = random.expovariate(
-                        1. / self.scale_height(age, Rform)
-                    )
-                else:
-                    # Stars born in the last simulation timestep won't migrate
-                    finalz = 0.
+                # list of midplane distances 
+                zlist = [i * 0.01 for i in range(-500, 501)]
+                # vertical scale height based on age and Rfinal
+                hz = self.scale_height(age, Rfinal)
+                # draw from sech-squared distribution
+                finalz = random.choices(zlist, k=1, 
+                    cum_weights=self.sech_squared_cdf(zlist, hz))
                 analog_id = -1
                 self._file.write("%d\t%.2f\t%d\t%.2f\n" % (zone, tform,
                     analog_id, finalz))
@@ -173,8 +177,7 @@ class gaussian_migration:
         else:
             raise TypeError("Must be a boolean. Got: %s" % (type(value)))
     
-    @staticmethod
-    def interpolator(Rform, Rfinal, tform, time):
+    def interpolator(self, Rform, Rfinal, tform, time):
         r"""
         Interpolate between the formation and final radius following the fit
         to the h277 data, $\Delta R \propto t^{0.33}$.
@@ -195,7 +198,7 @@ class gaussian_migration:
         float
             Radius at the current simulation time in kpc.
         """
-        tfrac = (time - tform) / (END_TIME - tform)
+        tfrac = (time - tform) / (self.end_time - tform)
         return Rform + (Rfinal - Rform) * (tfrac ** 0.33)
         
     @staticmethod
@@ -222,24 +225,54 @@ class gaussian_migration:
         return 1.35 * (age ** 0.33) * (Rform / 8) ** 0.61
     
     @staticmethod
-    def scale_height(age, Rform):
+    def scale_height(age, Rfinal):
         r"""
-        The scale height $h_z$ as a function of age and formation radius:
+        The scale height $h_z$ as a function of age and final radius:
         
-        $$ h_z = 0.18 (R_\rm{form}/8\,\rm{kpc})^{1.15} 
-        (\tau/1\,\rm{Gyr})^{0.63} $$
+        $$ h_z = (0.25\,\rm{kpc}) 
+        \exp\Big(\frac{(\tau-5\,\rm{Gyr})}{7.0\,\rm{Gyr}}\Big) 
+        \exp\Big(\frac{(R_{\rm{final}}-8\,\rm{kpc})}{6.0\,\rm{kpc}}\Big) $$
         
         Parameters
         ----------
         age : float or array-like
             Age in Gyr.
-        rform : float or array-like
-            Formation radius $R_{\rm{form}}$ in kpc.
+        Rfinal : float or array-like
+            Final radius $R_{\rm{final}}$ in kpc.
         
         Returns
         -------
         float
             Scale height $h_z$ in kpc.
         """
-        return 0.18 * (age ** 0.63) * (Rform / 8) ** 1.15
+        return 0.25 * m.exp((age - 5.) / 7.) * m.exp((Rfinal - 8.) / 6.)
+        # return 0.18 * (age ** 0.63) * (Rform / 8) ** 1.15
+        
+    @staticmethod
+    def sech_squared_cdf(x, scale):
+        r"""
+        The cumulative distribution function (CDF) of the hyperbolic sec-square
+        probability distribution function (PDF), which determines the density
+        of stars as a function of distance from the midplane $z$. For some
+        scaling $h_z$, the PDF is
+        
+        $$ \rm{PDF}(z) = \frac{1}{4 h_z} \cosh^{-2}\Big(\frac{z}{2 h_z}\Big) $$
+        
+        and the CDF is
+        
+        $$ \rm{CDF}(z) = \frac{1}{1 + e^{-z / h_z}} $$
+        
+        Parameters
+        ----------
+        x : float
+            Independent variable.
+        scale : float
+            Width of the sech-squared distribution, with the same units as x.
+        
+        Returns
+        -------
+        float
+            The value of the CDF at the given x.
+        """
+        return 1 / (1 + m.exp(-x / scale))
         
