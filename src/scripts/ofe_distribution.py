@@ -28,7 +28,8 @@ def plot_multiple_comparison(outputs, labels, output_dir=paths.data/'migration',
                              cmap_name='plasma_r', verbose=False, 
                              fname='mdf_ofe_multiple.png',
                              double_line_titles=False, figure_width=7.,
-                             panel_aspect_ratio=1.5, cbar_width=0.6):
+                             panel_aspect_ratio=1.5, cbar_width=0.6,
+                             smooth_width=SMOOTH_WIDTH):
     """
     One-stop function to generate a complete plot comparing the MDFs of
     multiple VICE multi-zone outputs to the APOGEE MDF.
@@ -73,7 +74,7 @@ def plot_multiple_comparison(outputs, labels, output_dir=paths.data/'migration',
     plot_distributions(apogee_mdf, apogee_data, 'O_FE', axs[:,0], 
                        label='APOGEE DR17', cmap_name=cmap_name,
                        func_kwargs={'xlim': OFE_LIM, 'bin_width': BIN_WIDTH,
-                                    'smooth_width': SMOOTH_WIDTH})
+                                    'smooth_width': smooth_width})
     
     for col, output in enumerate(outputs):
         if verbose:
@@ -82,7 +83,7 @@ def plot_multiple_comparison(outputs, labels, output_dir=paths.data/'migration',
         plot_distributions(vice_mdf, stars, '[o/fe]', axs[:,col+1], 
                            label=labels[col], cmap_name=cmap_name,
                            func_kwargs={'xlim': OFE_LIM, 'bin_width': BIN_WIDTH,
-                                        'smooth_width': SMOOTH_WIDTH})
+                                        'smooth_width': smooth_width})
             
     for ax in axs[:,0]:
         ax.set_ylim((0, None))

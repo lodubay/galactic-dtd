@@ -5,9 +5,9 @@ h277 analog and Gaussian migration schemes.
 
 from ofe_distribution import plot_multiple_comparison
 
-# SFH = 'conroy22_JW20yields'
-SFH = 'insideout'
-DTD = 'exponential_timescale15'
+SFH = 'conroy22_JW20yields'
+# SFH = 'insideout'
+DTD = 'plateau_width300_slope11'
 MIGR_LIST = ['diffusion', 'gaussian']
 LABELS = ['h277 analog', 'Gaussian migration']
 
