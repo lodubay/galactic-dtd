@@ -16,19 +16,15 @@ DELAY = 0.04 # minimum Ia delay time in Gyr
 def main():
     fig, ax= setup_axes()
     times = [t*0.001 for t in range(40, 13200)]
-    # distributions = [styles.prompt, styles.plaw, styles.plateau, 
-    #                  styles.exp, styles.triple]
-    distributions = [styles.plaw, styles.plateau, styles.exp]
+    distributions = [styles.prompt, styles.plaw, styles.plateau, 
+                      styles.exp, styles.triple]
     for dtd in distributions:
         func = dtd['func']
         ax.plot(times, [func(t) / func(1) for t in times], 
                 label=dtd['label'], c=dtd['color'], ls=dtd['line'], lw=1)
-    # ax.set_ylim((3e-3, 3e2))
-    ax.set_ylim((0.01, 100))
-    # ax.set_ylim((1e-12, 3e-8))
+    ax.set_ylim((3e-3, 3e2))
     ax.legend(frameon=False, loc='upper right', fontsize=8, handlelength=1.25)
-    # fig.savefig(paths.figures / 'delay_time_distributions.pdf')
-    fig.savefig(paths.figures / 'delay_time_distributions_alt.png')
+    fig.savefig(paths.figures / 'delay_time_distributions.pdf')
     plt.close()
 
 
