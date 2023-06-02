@@ -135,13 +135,14 @@ class gaussian_migration:
             self.dR = dR
             # Randomly draw final midplane distance and write to file
             if self.write:
-                # list of midplane distances 
-                zlist = [i * 0.01 for i in range(-500, 501)]
                 # vertical scale height based on age and Rfinal
                 hz = self.scale_height(age, Rfinal)
-                # draw from sech-squared distribution
-                finalz = random.choices(zlist, k=1, 
-                    cum_weights=self.sech_squared_cdf(zlist, hz))
+                # draw from sech^2 distribution
+                while True: # ensure 0 < rng < 1
+                    rng = random.random()
+                    if rng > 0. and rng < 1.:
+                        break
+                finalz = self.inverse_sec2_cdf(rng, hz)
                 analog_id = -1
                 self._file.write("%d\t%.2f\t%d\t%.2f\n" % (zone, tform,
                     analog_id, finalz))
@@ -249,7 +250,7 @@ class gaussian_migration:
         # return 0.18 * (age ** 0.63) * (Rform / 8) ** 1.15
         
     @staticmethod
-    def sech_squared_cdf(x, scale):
+    def sech_squared_cdf(z, scale):
         r"""
         The cumulative distribution function (CDF) of the hyperbolic sec-square
         probability distribution function (PDF), which determines the density
@@ -274,5 +275,34 @@ class gaussian_migration:
         float
             The value of the CDF at the given x.
         """
-        return 1 / (1 + m.exp(-x / scale))
+        return 1 / (1 + m.exp(-z / scale))
+    
+    @staticmethod
+    def inverse_sech2_cdf(cdf, scale):
+        r"""
+        The inverse of the sech$^2$ CDF.
+        
+        For some scaling $h_z$, the $z$ corresponding to the given value of
+        the CDF is
+        
+        $$ z = -h_z \ln\Big(\frac{1}{\rm{CDF}} - 1\Big) $$
+        
+        Parameters
+        ----------
+        cdf : float
+            The value of the CDF. Must be within the exclusive interval (0, 1).
+        scale : float
+            Width of the sech$^2$ distribution. Must be positive.
+        
+        Returns
+        -------
+        float
+            The value of $z$ corresponding to the CDF value, in the same units
+            as ``scale''.
+        """
+        if cdf <= 0. or cdf >= 1.:
+            raise ValueError("The value of the CDF must be between 0 and 1.")
+        if scale <= 0.:
+            raise ValueError("The scale height must be positive.")
+        return -scale * m.log(1/cdf - 1)
         

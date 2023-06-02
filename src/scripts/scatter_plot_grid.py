@@ -48,8 +48,13 @@ def plot_vice_sample(ax, stars, xcol, ycol, zcol='galr_origin',
         sample = sample_dataframe(stars, nsamples, weights=sample_weights)
     else:
         sample = stars.copy()
+    # If zcol is not a valid column, don't color-code points
+    if zcol in sample.columns:
+        colors = sample[zcol]
+    else:
+        colors = None
     # Scatter plot of stellar particles
-    ax.scatter(sample[xcol], sample[ycol], c=sample[zcol], s=markersize,
+    ax.scatter(sample[xcol], sample[ycol], c=colors, s=markersize,
                cmap=cmap, norm=norm, rasterized=True, edgecolor='none')
 
 

@@ -58,7 +58,8 @@ def plot_ofe_feh_stars(stars, cmap):
                                               ZONE_WIDTH)
             # weight random sample by particle mass
             sample_weights = subset['mass'] / subset['mass'].sum()
-            sample = sample_dataframe(subset, 10000, weights=sample_weights)
+            sample = sample_dataframe(subset, min(10000, subset.shape[0]), 
+                                      weights=sample_weights)
             # Scatter plot of random sample of stellar particles
             ax.scatter(sample['[fe/h]'], sample['[o/fe]'], s=0.1,
                        c=sample['zone_origin'] * ZONE_WIDTH, cmap=cmap,

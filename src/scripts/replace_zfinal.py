@@ -12,6 +12,7 @@ import random
 from tqdm import tqdm
 import vice
 from _globals import ZONE_WIDTH
+import math as m
 
 def main():
     p = paths.data / 'migration' / 'gaussian'
@@ -27,8 +28,8 @@ def main():
         samples = []
         for i in tqdm(range(stars.shape[0])):
             hz = sech_scale(stars['age'].iloc[i], stars['galr_final'].iloc[i])
-            s = random.choices(zfinal_arr, cum_weights=sech_cdf(zfinal_arr, hz), k=1)
-            samples.append(s)
+            z = inv_sech_cdf(random.random(), hz)
+            samples.append(z)
         analogdata['zfinal'] = np.array(samples)
         
         analogdata.to_csv(filepath, sep='\t')
@@ -42,6 +43,9 @@ def sech_dist(z, scale):
 
 def sech_cdf(z, scale):
     return 1 / (1 + np.exp(-z / scale))
+
+def inv_sech_cdf(cdf, scale):
+    return -scale * m.log(1/cdf - 1)
 
 def multioutput_to_pandas(output_name, data_dir=paths.data/'migration', 
                           verbose=False, zone_width=ZONE_WIDTH):
