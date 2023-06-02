@@ -37,13 +37,6 @@ for m, row in enumerate(axs):
         if m == 0:
             ax.set_title(r'$%d\leq R_{\rm{form}} < %d$ kpc' % rform_lim)
         for j, color in enumerate(colors):
-            # old, large Rform distributions are very spikey
-            if m == 0 and i >= 1 and j >= 5:
-                continue
-            elif m == 0 and i >= 2 and j >= 4:
-                continue
-            elif m == 0 and i >= 3 and j >= 3:
-                continue
             age_lim = tuple(age_bins[j:j+2])
             # bin h277 data by formation radius and age
             subset = stars[(stars['galr_origin'] >= rform_lim[0]) &
@@ -51,7 +44,8 @@ for m, row in enumerate(axs):
                            (stars['age']         >= age_lim[0]) &
                            (stars['age']         <  age_lim[1])]
             # limit to bins with a meaningful number of stars
-            if subset.shape[0] > 100:
+            no_dups = subset.drop_duplicates('zfinal')
+            if no_dups.shape[0] > 250:
                 hist, _ = np.histogram(subset['zfinal'], zfinal_bins, 
                                        density=True)
                 # apply boxcar smoothing with a width of 0.1 kpc
@@ -62,7 +56,7 @@ for m, row in enumerate(axs):
 
 axs[0,0].xaxis.set_major_locator(MultipleLocator(0.5))
 axs[0,0].xaxis.set_minor_locator(MultipleLocator(0.1))
-axs[0,0].set_xlim((-2, 2))
+axs[0,0].set_xlim((-2.1, 2.1))
 axs[0,0].set_ylim((0, 4.0))
 for ax in axs[-1]:
     # ax.set_xlabel(r'$\Delta R_{\rm{gal}}$ [kpc]')
