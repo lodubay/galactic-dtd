@@ -230,9 +230,9 @@ class gaussian_migration:
         r"""
         The scale height $h_z$ as a function of age and final radius:
         
-        $$ h_z = (0.25\,\rm{kpc}) 
-        \exp\Big(\frac{(\tau-5\,\rm{Gyr})}{7.0\,\rm{Gyr}}\Big) 
-        \exp\Big(\frac{(R_{\rm{final}}-8\,\rm{kpc})}{6.0\,\rm{kpc}}\Big) $$
+        $$ h_z = (0.25\,{\rm kpc}) 
+        \exp\Big(\frac{\tau-5\,{\rm Gyr}}{7.0\,{\rm Gyr}}\Big) 
+        \exp\Big(\frac{R_{\rm final}-8\,{\rm kpc}}{6.0\,{\rm kpc}}\Big) $$
         
         Parameters
         ----------
