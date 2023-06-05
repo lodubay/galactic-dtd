@@ -9,7 +9,8 @@ from matplotlib.ticker import MultipleLocator
 from matplotlib.cm import ScalarMappable
 from distribution_functions import setup_axes, plot_distributions
 from feh_distribution import vice_mdf, apogee_mdf
-from utils import import_apogee, multioutput_to_pandas, discrete_colormap
+from utils import multioutput_to_pandas, discrete_colormap
+from apogee_tools import import_apogee
 from _globals import GALR_BINS
 import paths
 

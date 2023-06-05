@@ -10,7 +10,8 @@ from matplotlib.colors import Normalize, LogNorm
 from ofe_feh_vice import GALR_BINS, ABSZ_BINS, FEH_LIM, OFE_LIM
 from ofe_feh_vice import setup_axes, setup_colorbar
 import paths
-from utils import import_apogee, apogee_region, scatter_hist, kde2D
+from apogee_tools import import_apogee, apogee_region
+from utils import scatter_hist, kde2D
 
 global NBINS
 NBINS = 50

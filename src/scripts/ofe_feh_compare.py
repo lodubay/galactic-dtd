@@ -12,7 +12,7 @@ from utils import multioutput_to_pandas
 from ofe_feh_vice import plot_ofe_feh_stars, plot_post_process_track, \
     plot_post_process_tracks, setup_axes
 from ofe_feh_apogee import plot_contours_grid
-from utils import import_apogee
+from apogee_tools import import_apogee
 import paths
 
 def main(output_name, migration_dir='../data/migration',

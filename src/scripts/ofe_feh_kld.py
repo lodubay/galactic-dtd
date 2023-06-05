@@ -8,8 +8,8 @@ import math as m
 import pandas as pd
 import matplotlib.pyplot as plt
 from utils import kl_div_2D, filter_multioutput_stars, \
-    apogee_region, multioutput_to_pandas, import_apogee, sample_dataframe, \
-    model_uncertainties
+    multioutput_to_pandas, sample_dataframe, model_uncertainty
+from apogee_tools import import_apogee, apogee_region
 from ofe_feh_vice import setup_axes, FEH_LIM, OFE_LIM
 from _globals import GALR_BINS, ABSZ_BINS, ZONE_WIDTH
 import paths
@@ -68,7 +68,15 @@ def kld_regions(output_name, apogee_data, galr_bins=GALR_BINS[:-1],
         in each region
     """
     vice_stars = multioutput_to_pandas(output_name, verbose=verbose)
-    vice_stars = model_uncertainties(vice_stars.copy())
+    if verbose:
+        print('Modeling uncertainties...')
+    # [Fe/H] uncertainty 
+    feh_err = apogee_data['FE_H_ERR'].median()
+    vice_stars['[fe/h]'] = model_uncertainty(vice_stars['[fe/h]'], feh_err)
+    # [O/Fe] uncertainty 
+    ofe_err = apogee_data['O_FE_ERR'].median()
+    vice_stars['[o/fe]'] = model_uncertainty(vice_stars['[o/fe]'], ofe_err)
+    
     # Initialize figure
     fig, axs = setup_axes(len(absz_bins)-1, len(galr_bins)-1)
     

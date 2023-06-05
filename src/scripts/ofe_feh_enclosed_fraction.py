@@ -9,8 +9,8 @@ An alternative score weights each region by the APOGEE sample size.
 import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
-from utils import import_apogee, multioutput_to_pandas, \
-    filter_multioutput_stars, apogee_region
+from utils import multioutput_to_pandas, filter_multioutput_stars
+from apogee_tools import import_apogee, apogee_region
 from _globals import GALR_BINS, ABSZ_BINS, ZONE_WIDTH
 from ofe_feh_vice import setup_axes, FEH_LIM, OFE_LIM
 from ofe_feh_apogee import gen_kde

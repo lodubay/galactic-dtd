@@ -10,8 +10,8 @@ pd.options.mode.chained_assignment = None # default='warn'
 import matplotlib.pyplot as plt
 import vice
 import paths
-from utils import multioutput_to_pandas, filter_multioutput_stars, \
-    import_apogee, apogee_region, box_smooth
+from utils import multioutput_to_pandas, filter_multioutput_stars, box_smooth
+from apogee_tools import import_apogee, apogee_region
 from distribution_functions import setup_axes, plot_distributions
 
 MIGRATION = 'diffusion'

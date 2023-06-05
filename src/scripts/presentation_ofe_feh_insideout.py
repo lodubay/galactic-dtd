@@ -9,8 +9,8 @@ import matplotlib.pyplot as plt
 from matplotlib.ticker import MultipleLocator
 from matplotlib.colors import Normalize
 from matplotlib.cm import ScalarMappable
-from utils import import_apogee, multioutput_to_pandas, \
-    filter_multioutput_stars, sample_dataframe
+from utils import multioutput_to_pandas, filter_multioutput_stars, sample_dataframe
+from apogee_tools import import_apogee
 from ofe_feh_apogee import plot_contours
 import paths
 from _globals import ZONE_WIDTH

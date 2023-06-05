@@ -8,8 +8,8 @@ import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
 import paths
-from utils import multioutput_to_pandas, filter_multioutput_stars, \
-    import_apogee, apogee_region
+from utils import multioutput_to_pandas, filter_multioutput_stars
+from apogee_tools import import_apogee, apogee_region
 from distribution_functions import setup_axes, plot_distributions
 from feh_distribution import vice_mdf, apogee_mdf
 

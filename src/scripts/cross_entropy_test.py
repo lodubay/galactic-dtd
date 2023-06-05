@@ -7,8 +7,8 @@ import math as m
 import pandas as pd
 import matplotlib.pyplot as plt
 from scipy.stats import entropy
-from utils import cross_entropy, kde2D, \
-    apogee_region, import_apogee, sample_dataframe
+from utils import cross_entropy, kde2D, sample_dataframe
+from apogee_tools import import_apogee, apogee_region
 from ofe_feh_vice import setup_axes, FEH_LIM, OFE_LIM
 from _globals import GALR_BINS, ABSZ_BINS, ZONE_WIDTH
 import paths

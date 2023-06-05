@@ -6,7 +6,8 @@ RMS median-difference scores.
 from tqdm import tqdm
 import pandas as pd
 from age_ofe import plot_age_ofe
-from utils import import_apogee, multioutput_to_pandas
+from apogee_tools import import_apogee
+from utils import multioutput_to_pandas
 import paths
 
 MIGR_LIST = ['diffusion', 'gaussian']

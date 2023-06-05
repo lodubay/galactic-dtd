@@ -10,8 +10,8 @@ import matplotlib.pyplot as plt
 from matplotlib.ticker import MultipleLocator, FormatStrFormatter
 from matplotlib.colors import Normalize
 from matplotlib.cm import ScalarMappable
-from utils import import_apogee, apogee_region, multioutput_to_pandas, \
-    filter_multioutput_stars
+from utils import multioutput_to_pandas, filter_multioutput_stars
+from apogee_tools import import_apogee, apogee_region
 from scatter_plot_grid import setup_colorbar, plot_vice_sample
 from age_ofe import plot_vice_medians, plot_astroNN_medians
 import paths

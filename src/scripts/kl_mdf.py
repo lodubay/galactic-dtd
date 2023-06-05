@@ -7,8 +7,8 @@ import numpy as np
 import matplotlib.pyplot as plt
 import pandas as pd
 from feh_distribution import apogee_mdf, vice_mdf
-from utils import kl_divergence, import_apogee, multioutput_to_pandas, \
-    apogee_region, axes_grid, get_bin_centers
+from utils import kl_divergence, multioutput_to_pandas, axes_grid, get_bin_centers
+from apogee_tools import import_apogee, apogee_region
 from _globals import GALR_BINS, ABSZ_BINS
 import paths
 

@@ -2,8 +2,9 @@
 Compare plots of [O/Fe] vs age in a single Galactic region for various DTDs.
 """
 
-from utils import import_apogee, apogee_region, multioutput_to_pandas, \
+from utils import multioutput_to_pandas, \
     filter_multioutput_stars, model_uncertainty
+from apogee_tools import import_apogee, apogee_region
 import matplotlib.pyplot as plt
 from matplotlib.ticker import MultipleLocator, FormatStrFormatter
 from age_ofe import plot_vice_medians, plot_astroNN_medians

@@ -7,7 +7,8 @@ import argparse
 import matplotlib.pyplot as plt
 from distribution_functions import setup_axes, plot_distributions
 from ofe_distribution import vice_mdf, apogee_mdf
-from utils import import_apogee, multioutput_to_pandas
+from utils import multioutput_to_pandas
+from apogee_tools import import_apogee
 import paths
 
 # Custom presentation plot settings

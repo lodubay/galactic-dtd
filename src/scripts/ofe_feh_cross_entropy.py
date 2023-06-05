@@ -10,7 +10,8 @@ import matplotlib.pyplot as plt
 from scipy.stats import entropy
 from ofe_feh_apogee import gen_kde as apogee_kde
 from utils import cross_entropy, kde2D, filter_multioutput_stars, \
-    apogee_region, multioutput_to_pandas, import_apogee, sample_dataframe
+    multioutput_to_pandas, sample_dataframe
+from apogee_tools import import_apogee, apogee_region
 from ofe_feh_vice import setup_axes, FEH_LIM, OFE_LIM
 from _globals import GALR_BINS, ABSZ_BINS, ZONE_WIDTH
 import paths

@@ -10,7 +10,7 @@ from matplotlib.colors import Normalize
 from matplotlib.cm import ScalarMappable
 import vice
 from utils import multioutput_to_pandas, filter_multioutput_stars, \
-    sample_dataframe, model_uncertainties
+    sample_dataframe
 from _globals import GALR_BINS, ABSZ_BINS, ZONE_WIDTH
 import paths
 

@@ -14,8 +14,9 @@ from matplotlib.ticker import MultipleLocator, FormatStrFormatter
 import vice
 from scatter_plot_grid import setup_axes, setup_colorbar, plot_vice_sample
 from utils import multioutput_to_pandas, filter_multioutput_stars, \
-    weighted_quantile, import_apogee, apogee_region, \
+    weighted_quantile, \
     group_by_bins, model_uncertainty, feuillet2019_data
+from apogee_tools import import_apogee, apogee_region
 from _globals import GALR_BINS, ABSZ_BINS, ZONE_WIDTH
 import paths
 
