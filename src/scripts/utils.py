@@ -18,7 +18,7 @@ import paths
 from _globals import ZONE_WIDTH
 
 # =============================================================================
-# MAKING THE APOGEE DR17 SAMPLE
+# DATA IMPORT
 # =============================================================================        
 
 def feuillet2019_data(filename):
@@ -118,52 +118,6 @@ def quad_add(arr1, arr2):
     Add two input arrays in quadrature.
     """
     return np.sqrt(arr1**2 + arr2**2)
-    
-
-def galactic_to_galactocentric(l, b, distance):
-    r"""
-    Use astropy's SkyCoord to convert Galactic (l, b, distance) coordinates
-    to galactocentric (r, phi, z) coordinates.
-
-    Parameters
-    ----------
-    l : array-like
-        Galactic longitude in degrees
-    b : array-like
-        Galactic latitude in degrees
-    distance : array-like
-        Distance (from Sun) in kpc
-
-    Returns
-    -------
-    galr : numpy array
-        Galactocentric radius in kpc
-    galphi : numpy array
-        Galactocentric phi-coordinates in degrees
-    galz : numpy arraay
-        Galactocentric z-height in kpc
-    """
-    import astropy.units as u
-    from astropy.coordinates import SkyCoord, Galactic, Galactocentric
-    l = np.array(l)
-    b = np.array(b)
-    d = np.array(distance)
-    if l.shape == b.shape == d.shape:
-        if not isinstance(l, u.quantity.Quantity):
-            l *= u.deg
-        if not isinstance(b, u.quantity.Quantity):
-            b *= u.deg
-        if not isinstance(d, u.quantity.Quantity):
-            d *= u.kpc
-        galactic = SkyCoord(l=l, b=b, distance=d, frame=Galactic())
-        galactocentric = galactic.transform_to(frame=Galactocentric())
-        galactocentric.representation_type = 'cylindrical'
-        galr = galactocentric.rho.to(u.kpc).value
-        galphi = galactocentric.phi.to(u.deg).value
-        galz = galactocentric.z.to(u.kpc).value
-        return galr, galphi, galz
-    else:
-        raise ValueError('Arrays must be of same length.')
 
 
 def weighted_quantile(df, val, weight, quantile=0.5):
@@ -429,8 +383,7 @@ def multioutput_to_pandas(output_name, data_dir=paths.data/'migration',
 
 
 def filter_multioutput_stars(stars, galr_lim=(0, 20), absz_lim=(0, 5),
-                             zone_width=ZONE_WIDTH, min_mass=1.0, 
-                             zone_origin=False):
+                             min_mass=1.0, origin=False):
     """
     Slice DataFrame of stars within a given Galactic region of radius and
     z-height.
@@ -438,17 +391,17 @@ def filter_multioutput_stars(stars, galr_lim=(0, 20), absz_lim=(0, 5),
     Parameters
     ----------
     stars : pandas DataFrame
-        Output from stars_dataframe()
+        VICE multizone star data.
     galr_lim : tuple
-        Minimum and maximum Galactic radius in kpc
+        Minimum and maximum Galactic radius in kpc. The default is (0, 20).
     absz_lim : tuple
-        Minimum and maximum of the absolute value of z-height in kpc
-    zone_width : float
-        Width of each simulation zone in kpc
+        Minimum and maximum of the absolute value of z-height in kpc. The
+        default is (0, 5).
     min_mass : float, optional
-        Minimum mass of stellar particle
-    zone_origin : bool, optional
-        If True, filter by star's original zone instead of final zone
+        Minimum mass of stellar particle. The default is 1.
+    origin : bool, optional
+        If True, filter by star's original zone instead of final zone. The
+        default is False.
 
     Returns
     -------
@@ -457,12 +410,13 @@ def filter_multioutput_stars(stars, galr_lim=(0, 20), absz_lim=(0, 5),
     """
     galr_min, galr_max = galr_lim
     absz_min, absz_max = absz_lim
-    # Convert Galactic radius in kpc to zone #
-    zone_min = galr_min / zone_width
-    zone_max = galr_max / zone_width
+    if origin:
+        galr_col = 'galr_origin'
+    else:
+        galr_col = 'galr_final'
     # Select subset
-    subset = stars[(stars['zone_final'] >= zone_min) &
-                   (stars['zone_final'] < zone_max) &
+    subset = stars[(stars[galr_col] >= galr_min) &
+                   (stars[galr_col] < galr_max) &
                    (stars['zfinal'].abs() >= absz_min) &
                    (stars['zfinal'].abs() < absz_max) &
                    (stars['mass'] >= min_mass)]

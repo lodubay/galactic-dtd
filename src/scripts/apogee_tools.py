@@ -8,7 +8,14 @@ from pathlib import Path
 import numpy as np
 import pandas as pd
 import paths
-from utils import galactic_to_galactocentric, fits_to_pandas
+from utils import fits_to_pandas
+
+# List of columns to include in the final sample
+SAMPLE_COLS = ['APOGEE_ID', 'RA', 'DEC', 'GALR', 'GALPHI', 'GALZ', 'SNREV',
+               'TEFF', 'TEFF_ERR', 'LOGG', 'LOGG_ERR', 'FE_H', 'FE_H_ERR',
+               'O_FE', 'O_FE_ERR', 'ASTRONN_AGE', 'ASTRONN_AGE_ERR', 
+               'LATENT_AGE', 'LATENT_AGE_ERR', 'LOG_LATENT_AGE', 
+               'LOG_LATENT_AGE_ERR']
 
 def main():
     import_apogee(overwrite=True, verbose=True)
@@ -112,9 +119,15 @@ def gen_apogee_sample(parent_dir=paths.data/'APOGEE', verbose=False):
     full_catalog = join_latent_ages(full_catalog, leung23_catalog)
     if verbose: print('Implementing quality cuts...')
     sample = apogee_quality_cuts(full_catalog)
-    sample = apogee_galactocentric_coords(sample)
-    sample = drop_apogee_columns(sample)
-    return sample
+    # Calculate galactocentric coordinates based on galactic l, b and Gaia dist
+    galr, galphi, galz = galactic_to_galactocentric(
+        sample['GLON'], sample['GLAT'], sample['GAIAEDR3_R_MED_PHOTOGEO']/1000
+    )
+    sample['GALR'] = galr # kpc
+    sample['GALPHI'] = galphi # deg
+    sample['GALZ'] = galz # kpc
+    # Drop unneeded columns
+    return sample[SAMPLE_COLS].copy()
 
 
 def join_astroNN_ages(apogee_df, astroNN_df):
@@ -191,46 +204,52 @@ def apogee_quality_cuts(df):
     df.replace(99.999, np.nan, inplace=True)
     df.reset_index(inplace=True, drop=True)
     return df
-
-
-def apogee_galactocentric_coords(df):
-    """
-    Add columns to the APOGEE dataset with galactocentric coordinates
     
+
+def galactic_to_galactocentric(l, b, distance):
+    r"""
+    Use astropy's SkyCoord to convert Galactic (l, b, distance) coordinates
+    to galactocentric (r, phi, z) coordinates.
+
     Parameters
     ----------
-    df : pandas.DataFrame
-        APOGEE dataset containing galactic longitude, latitutde, and Gaia
-        photogeometric distances
-    
+    l : array-like
+        Galactic longitude in degrees
+    b : array-like
+        Galactic latitude in degrees
+    distance : array-like
+        Distance (from Sun) in kpc
+
     Returns
     -------
-    df : pandas.DataFrame
-        Same as input with three new columns:
-          - 'GALR': galactocentric radius in kpc
-          - 'GALPHI': galactocentric azimuth in degrees
-          - 'GALZ': height above the Galactic midplane in kpc
+    galr : numpy array
+        Galactocentric radius in kpc
+    galphi : numpy array
+        Galactocentric phi-coordinates in degrees
+    galz : numpy arraay
+        Galactocentric z-height in kpc
     """
-    # Calculate galactocentric coordinates based on galactic l, b and Gaia dist
-    galr, galphi, galz = galactic_to_galactocentric(
-        df['GLON'], df['GLAT'], df['GAIAEDR3_R_MED_PHOTOGEO']/1000
-    )
-    df['GALR'] = galr # kpc
-    df['GALPHI'] = galphi # deg
-    df['GALZ'] = galz # kpc
-    return df
-
-
-def drop_apogee_columns(df):
-    """
-    Drop unneeded columns from the APOGEE dataset
-    """
-    cols = ['APOGEE_ID', 'RA', 'DEC', 'GALR', 'GALPHI', 'GALZ', 'SNREV',
-            'TEFF', 'TEFF_ERR', 'LOGG', 'LOGG_ERR', 'FE_H', 'FE_H_ERR',
-            'O_FE', 'O_FE_ERR', 'ASTRONN_AGE', 'ASTRONN_AGE_ERR', 
-            'LATENT_AGE', 'LATENT_AGE_ERR', 'LOG_LATENT_AGE', 
-            'LOG_LATENT_AGE_ERR']
-    return df[cols].copy()
+    import astropy.units as u
+    from astropy.coordinates import SkyCoord, Galactic, Galactocentric
+    l = np.array(l)
+    b = np.array(b)
+    d = np.array(distance)
+    if l.shape == b.shape == d.shape:
+        if not isinstance(l, u.quantity.Quantity):
+            l *= u.deg
+        if not isinstance(b, u.quantity.Quantity):
+            b *= u.deg
+        if not isinstance(d, u.quantity.Quantity):
+            d *= u.kpc
+        galactic = SkyCoord(l=l, b=b, distance=d, frame=Galactic())
+        galactocentric = galactic.transform_to(frame=Galactocentric())
+        galactocentric.representation_type = 'cylindrical'
+        galr = galactocentric.rho.to(u.kpc).value
+        galphi = galactocentric.phi.to(u.deg).value
+        galz = galactocentric.z.to(u.kpc).value
+        return galr, galphi, galz
+    else:
+        raise ValueError('Arrays must be of same length.')
 
 
 if __name__ == '__main__':
