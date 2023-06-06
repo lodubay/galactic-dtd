@@ -367,8 +367,7 @@ def multioutput_to_pandas(output_name, data_dir=paths.data/'migration',
     full_path = Path(data_dir) / output_name
     if verbose: 
         print('Importing VICE multizone data from %s.vice' % full_path)
-    output = vice.output(str(full_path))
-    stars = pd.DataFrame(dict(output.stars))
+    stars = pd.DataFrame(vice.stars(str(full_path)).todict())
     analogdata = pd.read_csv('%s.vice/analogdata.out' % full_path, sep='\t')
     # Limit analogdata to same max time as stars data
     tmax = max(output.stars['formation_time'])
