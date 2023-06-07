@@ -100,10 +100,11 @@ class gaussian_migration:
     Inherits file read/write functionality from ``diskmigration``.
     """
     def __init__(self, radbins, zone_width=ZONE_WIDTH, end_time=END_TIME,
-                 filename="stars.out"):
+                 filename="stars.out", absz_max=3.):
         self.radial_bins = radbins
         self.zone_width = zone_width
         self.end_time = end_time
+        self.absz_max = absz_max
         # super().__init__(radbins, mode=None, filename=filename, **kwargs)
         if isinstance(filename, str):
             self._file = open(filename, 'w')
@@ -138,10 +139,9 @@ class gaussian_migration:
                 # vertical scale height based on age and Rfinal
                 hz = self.scale_height(age, Rfinal)
                 # draw from sech^2 distribution
-                while True: # ensure 0 < rng < 1
-                    rng = random.random()
-                    if rng > 0. and rng < 1.:
-                        break
+                rng_max = self.sech2_cdf(self.absz_max, hz)
+                rng_min = self.sech2_cdf(-self.absz_max, hz)
+                rng = random.uniform(rng_min, rng_max)
                 finalz = self.inverse_sec2_cdf(rng, hz)
                 analog_id = -1
                 self._file.write("%d\t%.2f\t%d\t%.2f\n" % (zone, tform,
@@ -250,7 +250,7 @@ class gaussian_migration:
         # return 0.18 * (age ** 0.63) * (Rform / 8) ** 1.15
         
     @staticmethod
-    def sech_squared_cdf(z, scale):
+    def sech2_cdf(z, scale):
         r"""
         The cumulative distribution function (CDF) of the hyperbolic sec-square
         probability distribution function (PDF), which determines the density
