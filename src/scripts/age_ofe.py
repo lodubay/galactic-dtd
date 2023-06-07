@@ -16,6 +16,7 @@ from scatter_plot_grid import setup_axes, setup_colorbar, plot_vice_sample
 from utils import multioutput_to_pandas, filter_multioutput_stars, \
     weighted_quantile, \
     group_by_bins, model_uncertainty, feuillet2019_data
+from multizone_stars import MultizoneStars
 from apogee_tools import import_apogee, apogee_region
 from _globals import GALR_BINS, ABSZ_BINS, ZONE_WIDTH
 import paths
@@ -32,11 +33,13 @@ AGE_LABELS = {'F19': 'Feuillet et al. (2019)',
               'M19': 'Mackereth et al. (2019)',
               'L23': 'Leung et al. (2023)'}
 
-def main(evolution, RIa, migration='diffusion', data_dir='../data/migration',
+def main(evolution, RIa, migration='diffusion', data_dir=paths.data/'migration',
          ages='L23', verbose=False, **kwargs):
     # Import VICE multi-zone output data
     output_name = '/'.join([migration, evolution, RIa])
-    vice_stars = multioutput_to_pandas(output_name, data_dir, verbose=verbose)
+    # vice_stars = multioutput_to_pandas(output_name, data_dir, verbose=verbose)
+    vice_stars = MultizoneStars.from_output(output_name, data_dir=data_dir, 
+                                            verbose=verbose)
     # Import APOGEE and astroNN data
     apogee_data = import_apogee(verbose=verbose)
     # Main plot function
@@ -54,7 +57,7 @@ def plot_age_ofe(vice_stars, apogee_data, fname='age_ofe.png', ages='L23',
     
     Parameters
     ----------
-    vice_stars : pandas.DataFrame
+    vice_stars : MultizoneStars
     apogee_data : pandas.DataFrame
     fname : str, optional
         File name (excluding parent directory) of plot output. The default is
@@ -87,24 +90,7 @@ def plot_age_ofe(vice_stars, apogee_data, fname='age_ofe.png', ages='L23',
         raise ValueError('Parameter "ages" must be in %s.' % AGE_SOURCES)
     # Model uncertainties
     if uncertainties:
-        if verbose:
-            print('Modeling uncertainties...')
-        # [O/Fe] uncertainty 
-        ofe_err = apogee_data['O_FE_ERR'].median()
-        vice_stars['[o/fe]'] = model_uncertainty(vice_stars['[o/fe]'], ofe_err)
-        # age uncertainty
-        if ages == 'F19':
-            age_err = 0.15 # Feuillet et al. (2016), ApJ, 817, 40
-            age_err_method = 'logarithmic'
-        elif ages == 'M19':
-            age_err = (apogee_data['ASTRONN_AGE_ERR'] / 
-                       apogee_data['ASTRONN_AGE']).median()
-            age_err_method = 'fractional'
-        else: # L23
-            age_err = apogee_data['LOG_LATENT_AGE_ERR'].median()
-            age_err_method = 'logarithmic'
-        vice_stars['age'] = model_uncertainty(vice_stars['age'], age_err,
-                                              how=age_err_method)
+        vice_stars.model_uncertainty(apogee_data, age_source=ages, inplace=True)
     # Age data source
     if ages == 'L23':
         age_col = 'LATENT_AGE'
@@ -147,10 +133,9 @@ def plot_age_ofe(vice_stars, apogee_data, fname='age_ofe.png', ages='L23',
             if verbose:
                 print('\tRGal=%s kpc, |z|=%s kpc' \
                       % (str(galr_lim), str(absz_lim)))
-            vice_subset = filter_multioutput_stars(vice_stars, galr_lim, 
-                                                   absz_lim, ZONE_WIDTH)
-            plot_vice_sample(ax, vice_subset, 'age', '[o/fe]', 
-                              cmap=cmap, norm=cbar.norm)
+            vice_subset = vice_stars.region(galr_lim, absz_lim)
+            plot_vice_sample(ax, vice_subset.stars, 'age', '[o/fe]', 
+                             cmap=cmap, norm=cbar.norm)
             # Plot Feuillet+ 2019 ages
             if ages == 'F19':
                 plot_feuillet2019(ax, galr_lim, absz_lim)
@@ -158,11 +143,11 @@ def plot_age_ofe(vice_stars, apogee_data, fname='age_ofe.png', ages='L23',
                 apogee_subset = apogee_region(apogee_data, galr_lim, absz_lim)
                 plot_astroNN_medians(ax, apogee_subset, 
                                      age_col=age_col, label=AGE_LABELS[ages])
-            plot_vice_medians(ax, vice_subset, label='VICE')
+            plot_vice_medians(ax, vice_subset.stars, label='VICE')
             # Score how well the distributions align based on the RMS of the
             # difference in medians in each [O/Fe] bin
             if score and (ages in ('M19', 'L23')):
-                d_rms = rms_median_diff(vice_subset, apogee_subset, 
+                d_rms = rms_median_diff(vice_subset.stars, apogee_subset, 
                                         age_col=age_col)
                 ax.text(0.07, 0.67, r'$\Delta_{\rm{RMS}}=%.02f$' % d_rms, 
                         transform=ax.transAxes)
@@ -274,6 +259,7 @@ def plot_vice_medians(ax, stars, ofe_lim=OFE_LIM, ofe_bin_width=OFE_BIN_WIDTH,
     markersize : float, optional
         The marker size. The default is 2.
     """
+    stars = stars.dropna(how='any')
     # Lambda functions for weighted quantiles
     wm = lambda x: weighted_quantile(x, 'age', 'mass', quantile=0.5)
     wl = lambda x: weighted_quantile(x, 'age', 'mass', quantile=0.16)
@@ -295,9 +281,10 @@ def plot_vice_medians(ax, stars, ofe_lim=OFE_LIM, ofe_bin_width=OFE_BIN_WIDTH,
                 color='k', linestyle='none', capsize=1, elinewidth=0.5,
                 capthick=0.5, marker=marker, markersize=markersize, label=label
     )
-    # Plot bins with little stellar mass with smaller markers
+    # Plot bins with little (but non-zero) stellar mass with smaller markers
     if plot_low_mass_bins:
-        low_mass_bins = mtot[mtot < low_mass_cutoff * mtot.sum()].index
+        low_mass_bins = mtot[(mtot > 0) & 
+                             (mtot < low_mass_cutoff * mtot.sum())].index
         ax.errorbar(age_median[low_mass_bins], low_mass_bins, 
                     xerr=(age_median[low_mass_bins] - age_lower[low_mass_bins], 
                           age_upper[low_mass_bins] - age_median[low_mass_bins]),
@@ -363,9 +350,10 @@ def plot_astroNN_medians(ax, data, ofe_lim=OFE_LIM, ofe_bin_width=OFE_BIN_WIDTH,
                 color='r', linestyle='none', capsize=1, elinewidth=0.5,
                 capthick=0.5, marker=marker, markersize=markersize, label=label,
     )
-    # Plot bins with few stars with a different, smaller marker
+    # Plot bins with few (but non-zero) stars with a different, smaller marker
     if plot_low_count_bins:
-        low_count_bins = counts[counts < low_count_cutoff * counts.sum()].index
+        low_count_bins = counts[(counts > 0) & 
+                                (counts < low_count_cutoff * counts.sum())].index
         ax.errorbar(age_median[low_count_bins], low_count_bins, 
                     xerr=(age_median[low_count_bins] - age_lower[low_count_bins], 
                           age_upper[low_count_bins] - age_median[low_count_bins]),

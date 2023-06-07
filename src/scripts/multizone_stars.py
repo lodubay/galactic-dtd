@@ -26,6 +26,8 @@ def main():
     print(mzs('age'))
     noisy = mzs.model_uncertainty()
     print(noisy('age'))
+    mzs.model_uncertainty(inplace=True)
+    print(mzs('age'))
 
 
 class MultizoneStars:
@@ -172,7 +174,7 @@ class MultizoneStars:
                             (self.stars['zfinal'].abs() >= absz_min) &
                             (self.stars['zfinal'].abs() <  absz_max) &
                             (self.stars['mass']         >= min_mass)]
-        subset.reset_index(inplace=True)
+        subset.reset_index(inplace=True, drop=True)
         if inplace:
             self.stars = subset
         else:
