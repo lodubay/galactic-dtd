@@ -370,7 +370,7 @@ def multioutput_to_pandas(output_name, data_dir=paths.data/'migration',
     stars = pd.DataFrame(vice.stars(str(full_path)).todict())
     analogdata = pd.read_csv('%s.vice/analogdata.out' % full_path, sep='\t')
     # Limit analogdata to same max time as stars data
-    tmax = max(output.stars['formation_time'])
+    tmax = max(stars['formation_time'])
     analogdata = analogdata[analogdata['time_origin'] <= tmax]
     # Combine relevant data
     stars[['analog_id', 'zfinal']] = analogdata[['analog_id', 'zfinal']]
