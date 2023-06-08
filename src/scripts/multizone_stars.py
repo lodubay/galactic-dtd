@@ -1,5 +1,6 @@
 """
-File description
+This file contains the MultizoneStars class and related functions, which handle
+star particle data from VICE multizone simulation outputs.
 """
 
 import math as m
@@ -38,6 +39,26 @@ class MultizoneStars:
     ----
     In all but rare circumstances, new instances should be generated using
     the MultizoneStars.from_output() class method.
+    
+    Parameters
+    ----------
+    stars : pandas.DataFrame
+        Full star particle data including abundance ratios and z-heights.
+    name : str, optional
+        Name of VICE multizone output. The default is ''.
+    fullpath : str or pathlib.Path, optional
+        Full path to VICE multizone output, including parent directory and
+        '.vice' extension. The default is ''.
+    zone_width : float, optional
+        Width of simulation zones in kpc. The default is 0.1.
+    galr_lim : tuple, optional
+        Lower and upper bounds on galactocentric radius in kpc. The default
+        is None, which calculates these bounds automatically.
+    absz_lim : tuple, optional
+        Similar to galr_lim but for absolute z-height. The default is None.
+    noisy : bool, optional
+        If True, indicates output has been convolved with observational
+        uncertainty. The default is False.
     """
     def __init__(self, stars, name='', fullpath='', zone_width=ZONE_WIDTH,
                  galr_lim=None, absz_lim=None, noisy=False):
