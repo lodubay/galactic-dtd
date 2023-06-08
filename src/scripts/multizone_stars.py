@@ -11,24 +11,15 @@ import pandas as pd
 import vice
 import paths
 from _globals import ZONE_WIDTH
+from utils import sample_dataframe, box_smooth
 
 SOLAR_Z_TOTAL = 0.014
 
 def main():
     # test
-    output_name = 'gaussian/conroy22_JW20yields/exponential_timescale15'
+    output_name = 'diffusion/insideout/powerlaw_slope11'
     mzs = MultizoneStars.from_output(output_name)
-    print(mzs.galr_lim)
-    print(mzs.absz_lim)
-    region = mzs.region((7, 9), (0, 0.5))
-    print(region)
-    print(region.galr_lim)
-    print(region.absz_lim)
-    print(mzs('age'))
-    noisy = mzs.model_uncertainty()
-    print(noisy('age'))
-    mzs.model_uncertainty(inplace=True)
-    print(mzs('age'))
+    print(mzs.mdf('[fe/h]', bins=19, range=(-1.1, 0.8)))
 
 
 class MultizoneStars:
@@ -268,6 +259,73 @@ class MultizoneStars:
                                   galr_lim=self.galr_lim, 
                                   absz_lim=self.absz_lim, 
                                   noisy=True)
+        
+    def sample(self, N):
+        """
+        Randomly sample N rows from the full DataFrame, weighted by mass.
+        
+        Parameters
+        ----------
+        N : int
+            Number of samples to draw without replacement.
+        
+        Returns
+        -------
+        pandas.DataFrame
+            N samples of full DataFrame.
+        """
+        sample_weights = self.stars['mass'] / self.stars['mass'].sum()
+        sample = sample_dataframe(self.stars.copy(), N, weights=sample_weights)
+        return sample
+    
+    def mdf(self, col, bins=100, range=None, smoothing=0.):
+        """
+        Generate a metallicity distribution function (MDF) for the given 
+        abundance.
+
+        Parameters
+        ----------
+        col : str
+            Column for which to generate a distribution function.
+        bins : int or sequence of scalars, optional
+            If an int, defines the number of equal-width bins in the given
+            range. If a sequence, defines the array of bin edges including
+            the right-most edge. The default is 100.
+        range : tuple, optional
+            Range in the given column to bin. The default is None, which 
+            corresponds to the entire range of data. If bins is provided as
+            a sequence, range is ignored.
+        smoothing : float, optional
+            Width of boxcar smoothing to apply to MDF. If 0, no smoothing will
+            be applied. The default is 0.
+            
+        Returns
+        -------
+        mdf : 1-D array
+            Metallicity distribution function.
+        bin_edges : 1-D array
+            Bin edges of the MDF (length(mdf) + 1).
+        """
+        mdf, bin_edges = np.histogram(self(col), bins=bins, range=range, 
+                                      weights=self('mstar'), density=True)
+        if smoothing > 0:
+            mdf = box_smooth(mdf, bin_edges, smoothing)
+        return mdf, bin_edges
+        # if isinstance(bins, int):
+        #     if not range:
+        #         range = (self(col).min(), self(col).max())
+        #     bin_edges = np.linspace(range[0], range[1], bins+1, endpoint=True)
+        # elif isinstance(bins, (np.ndarray, Sequence)):
+        #     bin_edges = np.array(bins)
+        # else:
+        #     raise TypeError('Parameter ``bins`` must be an int, ' + \
+        #                     'arrary-like, or sequence. Got:', type(bins))
+        # # Sum remaining stellar mass binned by metallicity
+        # mdf = self.stars.groupby([pd.cut(self(col), bin_edges)])['mstar'].sum()
+        # # Normalize
+        # bin_widths = bin_edges[1:] - bin_edges[:-1]
+        # mdf *= 1 / (mdf * bin_widths).sum()
+        # return mdf, bin_edges
     
     @staticmethod
     def import_tracers(fullpath, zone_width=ZONE_WIDTH, 
@@ -308,6 +366,9 @@ class MultizoneStars:
                                      / (vice.solar_z['fe'] + vice.solar_z['o'])
         stars['[m/h]'] = np.log10(stars['z'] / solar_z_total)
         stars['age'] = stars['formation_time'].max() - stars['formation_time']
+        # Calculate remaining stellar mass for each particle
+        stars['mstar'] = stars['mass'] * (
+            1 - stars['age'].apply(vice.cumulative_return_fraction))
         return stars
     
     def __str__(self):
