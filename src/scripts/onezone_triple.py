@@ -33,7 +33,7 @@ STANDARD_PARAMS = dict(
 )
 
 def main(overwrite=False):
-    output_dir = paths.data / 'onezone' / 'dtd'
+    output_dir = paths.data / 'onezone' / 'triple'
     if not output_dir.exists():
         output_dir.mkdir(parents=True)
 
@@ -42,10 +42,10 @@ def main(overwrite=False):
     simtime = np.arange(0, END_TIME + DT, DT)
 
     distributions = [dtds.powerlaw(slope=-1.1, tmin=DELAY),
-                     dtds.exponential(timescale=3, tmin=DELAY),
+                     dtds.plateau(width=0.5, tmin=0.5, slope=-1),
                      dtds.triple(tmin=DELAY)]
     labels = [r'Power-law ($\alpha=-1.1$)',
-              r'Exponential ($\tau=3$ Gyr)',
+              r'Plateau ($W=0.5$ Gyr, $t_D=0.5$ Gyr)',
               r'Triple-system evolution',]
     colors = [paultol.vibrant.colors[i] for i in [4, 1, 5]]
     line_styles = ['--', ':', '-']
