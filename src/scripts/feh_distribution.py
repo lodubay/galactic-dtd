@@ -124,15 +124,19 @@ def plot_single_comparison(output, output_dir=paths.data/'migration',
     plot_distributions(apogee_mdf, apogee_data, 'FE_H', axs[:,1], 
                        label='APOGEE DR17', cmap_name=cmap_name)
     
+    axs[0,0].set_ylim((0, None))
+    
     # Automatically generate plot filename if none is provided
     if fname == '':
-        fname = '%s_%s.png' % tuple(output.split('/')[1:])
+        fname = 'feh_df/%s.png' % output
+    fullpath = paths.debug / fname
+    if not fullpath.parents[0].exists():
+        fullpath.parents[0].mkdir(parents=True)
             
-    axs[0,0].set_ylim((0, None))
-    plt.savefig(paths.figures / 'mdf_feh' / fname, dpi=300)
+    plt.savefig(fullpath, dpi=300)
     plt.close()
     if verbose:
-        print('Done! Plot is located at src/tex/figures/mdf_feh/%s' % fname)
+        print('Done! Plot is located at src/debug/%s' % fname)
         
 
 def vice_mdf(stars, col='[fe/h]', galr_lim=(0, 20), absz_lim=(0, 2), 
@@ -207,7 +211,7 @@ def gen_mdf(stars, col='[fe/h]', range=None, bin_width=0.05):
     return mdf, bins
 
 
-def apogee_mdf(data, col='FE_H', galr_lim=(0, 20), absz_lim=(0, 2), 
+def apogee_mdf(data, col='FE_H', galr_lim=(0, 20), absz_lim=(0, 3), 
                xlim=FEH_LIM, bin_width=BIN_WIDTH, smooth_width=SMOOTH_WIDTH,
                smoothing=True):
     """
@@ -239,7 +243,7 @@ def apogee_mdf(data, col='FE_H', galr_lim=(0, 20), absz_lim=(0, 2),
     mdf : numpy.ndarray
         Boxcar-smoothed MDF.
     bin_edges : numpy.ndarray
-        [Fe/H] bins including left and right edges, of length len(dndt)+1.
+        [Fe/H] bins including left and right edges, of length len(mdf)+1.
     """
     subset = apogee_region(data, galr_lim, absz_lim)
     bin_edges = np.arange(xlim[0], xlim[1] + bin_width, bin_width)

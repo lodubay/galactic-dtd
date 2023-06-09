@@ -19,6 +19,8 @@ def main():
     # test
     output_name = 'diffusion/insideout/powerlaw_slope11'
     mzs = MultizoneStars.from_output(output_name)
+    mzs.model_uncertainty(age_source='L23')
+    mzs.model_uncertainty(age_source='M19')
     print(mzs.mdf('[fe/h]', bins=19, range=(-1.1, 0.8)))
 
 
@@ -311,21 +313,6 @@ class MultizoneStars:
         if smoothing > 0:
             mdf = box_smooth(mdf, bin_edges, smoothing)
         return mdf, bin_edges
-        # if isinstance(bins, int):
-        #     if not range:
-        #         range = (self(col).min(), self(col).max())
-        #     bin_edges = np.linspace(range[0], range[1], bins+1, endpoint=True)
-        # elif isinstance(bins, (np.ndarray, Sequence)):
-        #     bin_edges = np.array(bins)
-        # else:
-        #     raise TypeError('Parameter ``bins`` must be an int, ' + \
-        #                     'arrary-like, or sequence. Got:', type(bins))
-        # # Sum remaining stellar mass binned by metallicity
-        # mdf = self.stars.groupby([pd.cut(self(col), bin_edges)])['mstar'].sum()
-        # # Normalize
-        # bin_widths = bin_edges[1:] - bin_edges[:-1]
-        # mdf *= 1 / (mdf * bin_widths).sum()
-        # return mdf, bin_edges
     
     @staticmethod
     def import_tracers(fullpath, zone_width=ZONE_WIDTH, 
