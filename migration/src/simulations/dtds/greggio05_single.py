@@ -80,7 +80,10 @@ class greggio05_single:
         """
         secondary_mass = mlr_wrapper(time, which='age', model=self.mlr)
         f_m2 = self.secondary_mass_distribution(secondary_mass)
-        return self.norm * f_m2 * time ** self.m2_slope
+        if time > 0 and f_m2 > 0:
+            return self.norm * f_m2 * time ** self.m2_slope
+        else:
+            return 0
     
     @property
     def name(self):

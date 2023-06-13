@@ -124,7 +124,7 @@ class greggio05_double:
         if progress:
             print('Computing Greggio 2005 DD %s DTD...' % self.scheme.upper())
         self.times = np.logspace(np.log10(self.t_min),
-                                 np.log10(min((END_TIME, self.t_max))),
+                                 np.log10(min((END_TIME+self.dt, self.t_max))),
                                  num=nsamples, endpoint=True)
         self.dtd = np.zeros(self.times.shape)
         if progress:
@@ -161,13 +161,13 @@ class greggio05_double:
             If the time passed as a parameter is not a float.
         """
         if isinstance(time, Number):
-            if time >= 0:
+            if time >= 0.:
                 if time < self.t_min:
-                    return 0
+                    return 0.
                 elif time <= END_TIME:
                     return np.interp(time, self.times, self.dtd)
                 else:
-                    return np.nan
+                    return 0.
             else:
                 raise ValueError('Time must be positive.')
         else:
