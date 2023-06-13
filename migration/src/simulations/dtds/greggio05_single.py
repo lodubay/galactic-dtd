@@ -31,7 +31,7 @@ class greggio05_single:
     normalize(self, tmin=0.04, tmax=END_TIME, dt=1e-3)
         Normalize the DTD to unity
     """
-    def __init__(self, m2_slope=-1.44, q_slope=1, efficiency=1.,
+    def __init__(self, m2_slope=-1.44, q_slope=1, efficiency=1., m1_max=8.,
                  mlr='larson1974', imf='kroupa', **kwargs):
         """
         Parameters
@@ -45,6 +45,8 @@ class greggio05_single:
         efficiency : float, optional
             Mass-transfer efficiency represented by epsilon in Equation 17.
             The default is 1.
+        m1_max : float, optional
+            Maximum mass of the primary in solar masses. The default is 8.
         mlr : str, optional
             Which mass-lifetime relation to use. The default is 'larson1974'
         imf : str, optional
@@ -56,13 +58,9 @@ class greggio05_single:
         self.m2_slope = m2_slope
         self.q_slope = q_slope
         self.efficiency = efficiency
+        self.m1_max = m1_max
         self.mlr = mlr
         self.imf = imf
-        # We are only concerned with the slope of the IMF above 2 Msun, as it
-        # affects the distribution of primary masses. Therefore, a single
-        # power law slope will suffice.
-        self.imf_slope = {'salpeter': -2.35,
-                          'kroupa': -2.3}[self.imf]
         self.norm = 1
         self.norm = self.normalize(**kwargs)
 
@@ -142,6 +140,22 @@ class greggio05_single:
                             % type(value))
 
     @property
+    def m1_max(self):
+        """
+        Type: float
+            The maximum mass of the primary in solar masses.
+        """
+        return self._m1_max
+
+    @m1_max.setter
+    def m1_max(self, value):
+        if isinstance(value, Number):
+            self._m1_max = value
+        else:
+            raise TypeError('Parameter "m1_max" must be numeric. Got: %s' \
+                            % type(value))
+
+    @property
     def mlr(self):
         r"""
         Type: str
@@ -215,8 +229,11 @@ class greggio05_single:
         float
             The relative frequency of the given secondary mass
         """
-        # Use the same variable names as Greggio (2005)
-        alpha = -self.imf_slope
+        # We are only concerned with the slope of the IMF above 2 Msun, as it
+        # affects the distribution of primary masses. Therefore, a single
+        # power law slope will suffice.
+        alpha = {'salpeter': 2.35,
+                 'kroupa': 2.3}[self.imf]
         gamma = self.q_slope
         # Lower limit of integration over primary mass
         m_wd_min = minimum_wd_mass(m2, efficiency=self.efficiency)
