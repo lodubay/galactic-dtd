@@ -11,13 +11,6 @@ from ..._globals import END_TIME
 from .utils import mlr_wrapper, minimum_wd_mass
 from .greggio05_single import greggio05_single
 
-# The minimum nuclear lifetime of the secondary in Gyr (8 solar masses)
-T_NUC_MIN = 0.04
-# The maximum nuclear lifetime of the secondary in Gyr (2 solar masses)
-T_NUC_MAX = 1.
-# The minimum gravitational inspiral delay in Gyr
-T_GRAV_MIN = 1e-3
-
 class greggio05_double:
     """
     An numerical implementation of the double-degenerate DTD from Greggio 2005
@@ -61,8 +54,8 @@ class greggio05_double:
     """
 
     def __init__(self, scheme='wide', beta_sep=0., beta_grav=-0.75, efficiency=1.,
-                 dt=1e-3, nsamples=100, mlr='larson1974', progress=True,
-                 **kwargs):
+                 t_nuc_min=0.04, t_nuc_max=1., t_grav_min=1e-3, dt=1e-3, 
+                 nsamples=100, mlr='larson1974', progress=True, **kwargs):
         """
         Parameters
         ----------
@@ -81,6 +74,15 @@ class greggio05_double:
         efficiency : float, optional
             The mass-transfer efficiency represented by epsilon in Equation 17.
             The default is 1.
+        t_nuc_min : float, optional
+            The minimum nuclear lifetime of the secondary in Gyr. The default
+            is 0.04, corresponding to the lifetime of an 8 solar mass star.
+        t_nuc_max : float, optional
+            The maximum nuclear lifetime of the secondary in Gyr. The default
+            is 1, corresponding to the lifetime of a 2 solar mass star.
+        t_grav_min : float, optional
+            The minimum gravitational inspiral delay in Gyr. The default is
+            1e-3.
         dt : float, optional
             Integration timestep in Gyr. The default is 1e-3.
         nsamples : int, optional
@@ -102,14 +104,17 @@ class greggio05_double:
         else:
             self.beta = beta_grav
         self.efficiency = efficiency
+        self.t_nuc_min = t_nuc_min
+        self.t_nuc_max = t_nuc_max
+        self.t_grav_min = t_grav_min
         self.dt = dt
         self.mlr = mlr
         
         self._name = 'greggio05_double_%s' % self.scheme
 
         # Total minimum and maximum delay times
-        self.t_min = T_NUC_MIN + T_GRAV_MIN
-        self.t_max = T_NUC_MAX + self.maximum_gravitational_delay(T_NUC_MAX)
+        self.t_min = self.t_nuc_min + self.t_grav_min
+        self.t_max = self.t_nuc_max + self.maximum_gravitational_delay(self.t_nuc_max)
 
         self.single_degenerate_distribution = greggio05_single(
             efficiency=self.efficiency, mlr=self.mlr, **kwargs
@@ -307,10 +312,10 @@ class greggio05_double:
             return 0
         else:
             if self.scheme == 'wide':
-                t_int_min = T_NUC_MIN
+                t_int_min = self.t_nuc_min
             else:
                 t_int_min = self.asymptotic_nuclear_lifetime(time)
-            t_int_max = min((T_NUC_MAX, time))
+            t_int_max = min((self.t_nuc_max, time))
             integration_time = np.arange(t_int_min,
                                          t_int_max + self.dt,
                                          self.dt)
@@ -343,19 +348,19 @@ class greggio05_double:
             Frequency of merger events
         """
         if self.scheme == 'wide':
-            if t_nuc <= time - T_GRAV_MIN:
+            if t_nuc <= time - self.t_grav_min:
                 m2 = mlr_wrapper(t_nuc, which='age', model=self.mlr)
                 fW12 = self.mass_dependence(m2, case=case)
                 return fW12 * (time - t_nuc) ** (-0.75 + 0.25 * self.beta)
             else:
                 return 0
         else:
-            if t_nuc <= time - T_GRAV_MIN:
+            if t_nuc <= time - self.t_grav_min:
                 t_grav_max = self.maximum_gravitational_delay(t_nuc)
                 t_diff = time - t_nuc
                 return t_diff ** self.beta / (
                     t_grav_max ** (1 + self.beta) - \
-                        T_GRAV_MIN ** (1 + self.beta))
+                        self.t_grav_min ** (1 + self.beta))
             else:
                 return 0
 
@@ -405,12 +410,12 @@ class greggio05_double:
         float
             The lower limit of integration in Gyr
         """
-        if time < T_NUC_MIN + \
-            self.maximum_gravitational_delay(T_NUC_MIN):
-            return T_NUC_MIN
+        if time < self.t_nuc_min + \
+            self.maximum_gravitational_delay(self.t_nuc_min):
+            return self.t_nuc_min
         else:
             # Solution to the equation t - t_nuc = t_(gw,x)(t_nuc)
-            t_nuc_arr = np.arange(T_NUC_MIN, T_NUC_MAX, self.dt)
+            t_nuc_arr = np.arange(self.t_nuc_min, self.t_nuc_max, self.dt)
             lhs = time - t_nuc_arr
             rhs = np.array([self.maximum_gravitational_delay(t_nuc) \
                             for t_nuc in t_nuc_arr])
