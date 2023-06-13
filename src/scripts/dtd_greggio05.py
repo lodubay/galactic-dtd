@@ -30,18 +30,18 @@ def main(dt=DT, nsamples=NSAMPLES, verbose=True):
             'offset': 3,
         }
         dd_wide = {
-            # 'func': dtds.greggio05_double('wide', dt=dt, nsamples=nsamples,
-            #                               progress=verbose),
-            'func': dtds.greggio05_approximate.from_defaults('wide'),
+            'func': dtds.greggio05_double('wide', dt=dt, nsamples=nsamples,
+                                          progress=verbose),
+            # 'func': dtds.greggio05_approximate.from_defaults('wide'),
             'label': 'Double Degenerate (WIDE)',
             'color': paultol.muted.colors[1],
             'line': '-',
             'offset': 0.5,
         }
         dd_close = {
-            # 'func': dtds.greggio05_double('close', dt=dt, nsamples=nsamples,
-            #                               progress=verbose),
-            'func': dtds.greggio05_approximate.from_defaults('close'),
+            'func': dtds.greggio05_double('close', dt=dt, nsamples=nsamples,
+                                          progress=verbose),
+            # 'func': dtds.greggio05_approximate.from_defaults('close'),
             'label': 'Double Degenerate (CLOSE)',
             'color': paultol.muted.colors[3],
             'line': '-',

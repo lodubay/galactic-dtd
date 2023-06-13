@@ -4,14 +4,12 @@ degenerate Type Ia DTD from Greggio 2005.
 """
 
 from numbers import Number
-import numpy as np
-import vice
 from ..._globals import END_TIME
 from .utils import mlr_wrapper, minimum_wd_mass
 
 class greggio05_single:
     """
-    An implementation of the analytic single-degenerate DTD from Greggio 2005.
+    An implementation of the analytic single-degenerate DTD from Greggio (2005).
 
     Attributes
     ----------
@@ -42,7 +40,7 @@ class greggio05_single:
             Slope of the power-law derivative of secondary mass. The default is
             -1.44
         q_slope : float, optional
-            The power-law slope of the mass ratio distribution q = m2/m1.
+            The power-law slope (gamma) of the mass ratio distribution q = m2/m1.
             The default is 1.
         efficiency : float, optional
             Mass-transfer efficiency represented by epsilon in Equation 17.
@@ -60,6 +58,11 @@ class greggio05_single:
         self.efficiency = efficiency
         self.mlr = mlr
         self.imf = imf
+        # We are only concerned with the slope of the IMF above 2 Msun, as it
+        # affects the distribution of primary masses. Therefore, a single
+        # power law slope will suffice.
+        self.imf_slope = {'salpeter': -2.35,
+                          'kroupa': -2.3}[self.imf]
         self.norm = 1
         self.norm = self.normalize(**kwargs)
 
@@ -212,20 +215,17 @@ class greggio05_single:
         float
             The relative frequency of the given secondary mass
         """
+        # Use the same variable names as Greggio (2005)
+        alpha = -self.imf_slope
+        gamma = self.q_slope
         # Lower limit of integration over primary mass
         m_wd_min = minimum_wd_mass(m2, efficiency=self.efficiency)
         m1_min = max((m2, 2, 2 + 10 * (m_wd_min - 0.6)))
-        primary_masses = np.arange(m1_min, m1_max + dm, dm)
-        imf_func = {
-            'kroupa': vice.imf.kroupa,
-            'salpeter': vice.imf.salpeter
-        }[self.imf]
-        integral = np.sum([m2 ** self.q_slope * m1 ** (-(self.q_slope + 1)) * \
-                           imf_func(m1) * dm \
-                           for m1 in primary_masses])
-        return integral
+        # Integrate over all possible primaries, from m1_min to m1_max
+        return m2 ** -alpha * ((m2 / m1_min) ** (alpha + gamma) - 
+                               (m2 / m1_max) ** (alpha + gamma))
 
-    def normalize(self, tmin=0.04, tmax=END_TIME, dt=0.01):
+    def normalize(self, tmin=0.04, tmax=END_TIME, dt=0.001):
         """
         Normalize the area under the DTD to 1.
 
@@ -243,6 +243,9 @@ class greggio05_single:
         float
             Normalization factor in Msun^-1 yr^-1
         """
-        tarr = np.arange(tmin, tmax+dt, dt)
-        integral = np.sum([self.__call__(t) * dt * 1e9 for t in tarr])
+        # Generate list of times
+        mult = 1 / dt
+        tlist = [t * dt for t in range(int(tmin*mult), int((tmax+dt)*mult))]
+        # Integrate over the DTD
+        integral = sum([self.__call__(t) * dt * 1e9 for t in tlist])
         return 1 / integral
