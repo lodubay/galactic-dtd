@@ -207,7 +207,7 @@ class greggio05_single:
             raise TypeError('Parameter "imf" must be a string. Got: %s' \
                             % type(value))
 
-    def secondary_mass_distribution(self, m2, m1_max=8., dm=0.01):
+    def secondary_mass_distribution(self, m2, dm=0.01):
         """
         The distribution function of secondary masses in SD systems.
 
@@ -219,8 +219,6 @@ class greggio05_single:
         ----------
         m2 : float
             Mass of the secondary in solar masses
-        m1_max : float
-            Maximum primary mass in solar masses. The default is 8.
         dm : float
             Mass integration step in solar masses. The default is 0.01
 
@@ -240,7 +238,7 @@ class greggio05_single:
         m1_min = max((m2, 2, 2 + 10 * (m_wd_min - 0.6)))
         # Integrate over all possible primaries, from m1_min to m1_max
         return m2 ** -alpha * ((m2 / m1_min) ** (alpha + gamma) - 
-                               (m2 / m1_max) ** (alpha + gamma))
+                               (m2 / self.m1_max) ** (alpha + gamma))
 
     def normalize(self, tmin=0.04, tmax=END_TIME, dt=0.001):
         """
