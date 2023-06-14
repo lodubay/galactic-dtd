@@ -1,5 +1,5 @@
 % Define document class
-\documentclass[twocolumn]{aastex631}
+\documentclass[twocolumn,linenumbers,twocolappendix]{aastex631}
 
 \usepackage{showyourwork}
 \usepackage{amsmath}
@@ -27,7 +27,7 @@
 \author[0000-0003-3781-0747]{Liam O. Dubay}
 \author[0000-0001-7258-1834]{Jennifer A. Johnson}
 \author[0000-0002-6534-8783]{James W. Johnson}
-% \author[0000-0001-7775-7261]{David H. Weinberg}
+\author[0000-0001-7775-7261]{David H. Weinberg}
 
 % Abstract with filler text
 \begin{abstract}
@@ -90,7 +90,7 @@ Another commonly assumed functional form is an exponential. \citet{Schonrich2009
 \begin{figure}
     \centering
     \includegraphics{figures/dtd_greggio05.pdf}
-    \caption{Analytical DTDs from \citet[][solid curves]{Greggio2005-AnalyticalRates} and close approximation simple functions (dashed curves).}
+    \caption{Analytical DTDs from \citet[][solid curves]{Greggio2005-AnalyticalRates} and close approximation simple functions (dashed curves). Some functions are presented with a constant multiplicative factor for visual clarity.}
     \label{fig:dtd-greggio05}
     \script{dtd_greggio05.py}
 \end{figure}
@@ -101,16 +101,119 @@ We explore four different classes of DTD: a power-law, a broken power-law with a
 
 The power-law DTD is motivated by studies of the cosmic Ia rate \citep{Maoz2017-CosmicDTD,Wiseman2021-DESRates}, and we explore slopes of $\alpha=-1.1$ and $\alpha=-1.4$ which correspond to the field galaxy and galaxy cluster DTDs of \citet{Maoz2017-CosmicDTD}, respectively. We explore the broken power-law with plateau widths of 300 Myr and 1 Gyr \textemdash the first as a proxy for both 
 
+\begin{enumerate}
+    \item A simple power law with slope $\alpha$:
+    \begin{equation}
+        R(t) = A_\alpha (t/1\,\rm{Gyr})^\alpha
+        \label{eq:powerlaw-dtd}
+    \end{equation}
+    where $A_\alpha = (\alpha+1)(t_{\rm max}^{\alpha+1} - t_{\rm min}^{\alpha+1})^{-1}$ is the normalization coefficient.
+    We investigate the cases $\alpha=-1.1$ and $\alpha=-1.4$, following the field galaxy and galaxy cluster DTDs of \citet{Maoz2017-CosmicDTD}, respectively.
+    
+    \item A ``plateau'' model consisting of a flat slope of width $W$ followed by a power law decline with normalization $B_W$:
+    \begin{equation}
+        R(t) = 
+        \begin{cases}
+            B_W, & t < W \\
+            B_W (t/W)^\alpha, & t \ge W
+        \end{cases}
+        \label{eq:plateau-dtd}
+    \end{equation}
+    where $B_W=[(W-t_{\rm min}) + \frac{t_{\rm max}^{\alpha+1} - W^{\alpha+1}}{(\alpha+1)W^\alpha}]^{-1}$ is the normalization coefficient.
+    We investigate the cases $W=0.3$ Gyr and $W=1$ Gyr, taking $\alpha=-1.1$ for all plateau models. Figure \ref{fig:dtd-greggio05} illustrates the similarity between these models and two different treatments of the analytical double-degenerate DTD from \citet{Greggio2005-AnalyticalRates}.
+
+    \item An exponentially declining DTD with timescale $\tau$ and normalization $C_\tau$:
+    \begin{equation}
+        R(t) = 1/\tau \exp(-t/\tau)
+        \label{eq:exponential-dtd}
+    \end{equation}
+    We investigate the case where $\tau=1.5$ Gyr, which has been used in previous studies \citep[e.g.,][]{Schonrich2009-RadialMixing,Weinberg2017-ChemicalEquilibrium} and is similar to the analytical single-degenerate DTD from \citet{Greggio2005-AnalyticalRates}. We also investigate a longer timescale of $\tau=3$ Gyr.
+
+    \item A DTD in which 50\% of SNe Ia belong to a ``prompt'' Gaussian component at small $t$ and the other 50\% form an exponential tail at large $t$, normalized by $D_{t_p,\sigma,\tau}$:
+    \begin{equation}
+        R(t) = D_{t_p,\sigma,\tau} \Big[\exp\Big(-\frac{(t-t_p)^2}{2\sigma^2}\Big) + \exp(-t/\tau)\Big]
+        \label{eq:prompt-dtd}
+    \end{equation}
+    Following the two-population model from \citet{Mannucci2006-TwoPopulations}, we take $t_p=50$ Myr, $\sigma=15$ Myr, and $\tau=3$ Gyr, which results in roughly 50\% of SNe Ia exploding within $t<100$ Myr.
+
+    \item A DTD based on simulations of triple-system evolution by \citet{Rajamuthukumar2022-TripleEvolution}. We approximate their DTD as a special case of the plateau model (Equation \ref{eq:plateau-dtd}) where the initial rate is quite low until an instantaneous rise to the plateau value at time $t_{\rm rise}$:
+    \begin{equation}
+        R(t) = 
+        \begin{cases}
+            \epsilon B_W, & t < t_{\rm rise} \\
+            B_W, & t_{\rm rise} \leq t < W \\
+            B_W (t / W) ^ \alpha, & t \geq W
+        \end{cases}
+        \label{eq:triple-dtd}
+    \end{equation}
+    We take $t_{\rm rise}=0.5$ Gyr, $W=0.5$ Gyr, $\alpha=-1.1$, and $\epsilon=0.05$ so the initial rate is 5\% of the peak rate.
+\end{enumerate}
+
 \subsection{APOGEE Data}
 \label{sec:apogee-data}
 
-\subsubsection{Accuracy of astroNN}
-\label{sec:astronn-quality}
+We use APOGEE DR17 \citep{Abdurro'uf2022-SDSSIV-DR17}. Our selection criteria are presented in Table \ref{tab:sample-selection}, producing a final sample of 192,926 stars.
 
-For $19784$ stars, or $\sim3.5\%$ of the sample, the astroNN [Fe/H] abundance estimate is $\gtrsim0.5$ dex lower than the value provided by ASPCAP. The vast majority of these stars are on the lower-main sequence according to \textit{Gaia} photometry, so we exclude stars with $\log(g) > 4$ in ASPCAP. In addition, 197 or $\sim3\%$ of stars with APOKASC-2 asteroseismic ages are reported to be $>5$ Gyr younger by astroNN. The APOKASC-2 age is unphysically high for many of these stars, often exceeding 15 Gyr. We identify prior mass loss as the cause of this discrepancy, so the astroNN ages are likely closer to the truth.
+\begin{deluxetable*}{lll}
+    \tablecaption{Sample Selection\label{tab:sample-selection}}
+    \tablehead{
+        \colhead{Parameter} & \colhead{Range} & \colhead{Notes}
+    }
+    \startdata
+        $\log g$            & $1.0 < \log g < 3.8$          & Select giants only \\
+        $T_{\rm eff}$       & $3500 < T_{\rm eff} < 5500$ K & Reliable temperature range \\
+        $S/N$               & $S/N > 80$                    & Required for accurate stellar parameters \\
+        ASPCAPFLAG Bits     & $\notin$ 23                   & Remove stars flagged as bad \\
+        EXTRATARG Bits      & $\notin$ 0, 1, 2, 3, or 4     & Select main red star sample only \\
+    \enddata
+\end{deluxetable*}
+
+\subsubsection{Stellar Ages}
+\label{sec:stellar-ages}
+
+191,179 stars in our sample have astroNN ages and 71,684 have ages from \citet{Leung2023-Ages}.
+
+% For $19784$ stars, or $\sim3.5\%$ of the sample, the astroNN [Fe/H] abundance estimate is $\gtrsim0.5$ dex lower than the value provided by ASPCAP. The vast majority of these stars are on the lower-main sequence according to \textit{Gaia} photometry, so we exclude stars with $\log(g) > 4$ in ASPCAP. In addition, 197 or $\sim3\%$ of stars with APOKASC-2 asteroseismic ages are reported to be $>5$ Gyr younger by astroNN. The APOKASC-2 age is unphysically high for many of these stars, often exceeding 15 Gyr. We identify prior mass loss as the cause of this discrepancy, so the astroNN ages are likely closer to the truth.
 
 \subsection{Chemical Evolution Models}
 \label{sec:vice-models}
+
+\subsubsection{Stellar Migration}
+\label{sec:migration}
+
+\citet{Johnson2021-Migration}
+
+We fit a Gaussian to the distribution of $\Delta R = R_{\rm final} - R_{\rm initial}$ from the \texttt{h277} output in bins of $R_{\rm initial}$ and age. Each Gaussian is centered at 0 and we find that the scale $\sigma_{\Delta R}$ is best described by the function
+
+\begin{equation}
+    \sigma_{\Delta R} = 1.35\,{\rm kpc}(R_{\rm form}/8\,{\rm kpc})^{0.61} (\tau/1\,{\rm Gyr})^{0.33}
+    \label{eq:radial-migration}
+\end{equation}
+
+\noindent where $\tau$ is the age of the star particle. 
+
+We fit a sech$^2$ function \citep{Spitzer1942} to the distribution of midplane distances $z_{\rm final}$. Vertical migration away from the midplane does not affect the chemical evolution simulation, but we do use $z_{\rm final}$ in our analysis. The probability density function (PDF) of $z_{\rm final}$ given some scale height $h_z$ is
+
+\begin{equation}
+    {\rm PDF}(z_{\rm final}) = \frac{1}{4 h_z} {\rm sech}^2\Big(\frac{z_{\rm final}}{2 h_z}\Big)
+    \label{eq:sech-pdf}
+\end{equation}
+
+\noindent and the corresponding cumulative distribution function (CDF) is
+
+\begin{equation}
+    {\rm CDF}(z_{\rm final}) = \frac{1}{1 + \exp(-z_{\rm final} / h_z)}.
+    \label{eq:sech-cdf}
+\end{equation}
+
+\noindent We fit the above function to the distributions of $z_{\rm final}$ in h277 in varying bins of $\tau$ and $R_{\rm final}$ and found that $h_z$ is best described by the function
+
+\begin{equation}
+    h_z = (0.25\,{\rm kpc}) 
+    \exp\Big(\frac{\tau-5\,{\rm Gyr}}{7.0\,{\rm Gyr}}\Big)
+    \exp\Big(\frac{R_{\rm final}-8\,{\rm kpc}}{6.0\,{\rm kpc}}\Big)
+    \label{eq:scale-height}
+\end{equation}
 
 \section{Results from Single-Zone Models}
 \label{sec:onezone-results}
@@ -150,6 +253,8 @@ Figure \ref{fig:onezone-dtd-delay} shows that the minimum SN Ia delay time has a
     \label{fig:onezone-dtd-delay}
     \script{onezone_dtd_delay.py}
 \end{figure}
+
+A 150 Myr minimum delay time is incompatible with the prompt DTD model, which has $\sim 50$ of SNe Ia explode in the first 100 Myr.
 
 \subsection{The Star Formation History}
 
@@ -222,6 +327,33 @@ A multi-zone with the \citet{Greggio2005-AnalyticalRates} SD DTD produced nearly
 \section{Results from Multi-Zone Models}
 \label{sec:multizone-results}
 
+\begin{deluxetable}{lll}
+    \tablecaption{Median Parameter Uncertainties\label{tab:uncertainties}}
+    \tablehead{
+        \colhead{Parameter} & \colhead{Median Uncertainty} & \colhead{Source}
+    }
+    \startdata
+        [Fe/H] & $9.2\times10^{-3}$ & APOGEE \\
+        $\rm [O/Fe]$ & $1.8\times10^{-2}$ & APOGEE \\
+        log(Age/Gyr) & $0.12$ & \citet{Leung2023-Ages}
+        % Age/Gyr & 29\% & astroNN
+    \enddata
+\end{deluxetable}
+
+\subsection{Comparison to APOGEE MDFs}
+
+To quantify the similarity between the MDFs generated by VICE and the observed APOGEE MDF, we compute the Kullback-Leibler (KL) divergence \citep{KullbackLeibler1951}, defined as
+
+\begin{equation}
+\label{eq:kl-divergence}
+D_{\rm{KL}}(P \parallel Q) = \int_{-\infty}^{\infty} p(x) \log\Big(\frac{p(x)}{q(x)}\Big) dx
+\end{equation}
+
+\noindent for distributions $P$ and $Q$ with probability density functions $p(x)$ and $q(x)$. In this case, $P$ is the APOGEE MDF, $Q$ is the model MDF, and $x$ is [Fe/H]. For each model SFH and DTD, we compute $D_{\rm{KL}}$ in 18 different galactocentric zones defined by radial bins $3-5$ kpc, $5-7$ kpc, $7-9$ kpc, $9-11$ kpc, $11-13$ kpc, and $13-15$ kpc and absolute $z$-height bins $0-0.5$ kpc, $0.5-1$ kpc, and $1-2$ kpc. The KL divergence for the entire model is taken to be the average of $D_{\rm{KL}}$ for each zone, weighted by the number of APOGEE stars in each zone.
+
+\subsection{Comparison to APOGEE ODFs}
+
+
 \section{Discussion}
 \label{sec:discussion}
 
@@ -264,7 +396,7 @@ Plateau                 & Inside-out    & \meh  & \meh  & \yes  & \meh    \\
                         & Two-infall    & \meh  & \meh  & \meh  & \meh    \\
 \hline
 Prompt                  & Inside-out    & \meh  & \no   & \no   & \no     \\
-($t_{50}=0.1$ Gyr)      & Late burst    & \meh  & \no   & \no   & \no     \\
+($t_{\rm max}=0.05$ Gyr)& Late burst    & \meh  & \no   & \no   & \no     \\
                         & Early burst   & \no   & \yes  & \no   & \yes    \\
                         & Two-infall    & \yes  & \no   & \no   & \no     \\
 \hline
@@ -277,6 +409,66 @@ Triple system           & Inside-out    & \yes  & \meh  & \meh  & \yes    \\
 
 \section{Conclusions}
 \label{sec:conclusions}
+
+Blah
+
+\begin{acknowledgments}
+Funding for the Sloan Digital Sky 
+Survey IV has been provided by the 
+Alfred P. Sloan Foundation, the U.S. 
+Department of Energy Office of 
+Science, and the Participating 
+Institutions. 
+
+SDSS-IV acknowledges support and 
+resources from the Center for High 
+Performance Computing  at the 
+University of Utah. The SDSS 
+website is www.sdss4.org.
+
+SDSS-IV is managed by the 
+Astrophysical Research Consortium 
+for the Participating Institutions 
+of the SDSS Collaboration including 
+the Brazilian Participation Group, 
+the Carnegie Institution for Science, 
+Carnegie Mellon University, Center for 
+Astrophysics | Harvard \& 
+Smithsonian, the Chilean Participation 
+Group, the French Participation Group, 
+Instituto de Astrof\'isica de 
+Canarias, The Johns Hopkins 
+University, Kavli Institute for the 
+Physics and Mathematics of the 
+Universe (IPMU) / University of 
+Tokyo, the Korean Participation Group, 
+Lawrence Berkeley National Laboratory, 
+Leibniz Institut f\"ur Astrophysik 
+Potsdam (AIP),  Max-Planck-Institut 
+f\"ur Astronomie (MPIA Heidelberg), 
+Max-Planck-Institut f\"ur 
+Astrophysik (MPA Garching), 
+Max-Planck-Institut f\"ur 
+Extraterrestrische Physik (MPE), 
+National Astronomical Observatories of 
+China, New Mexico State University, 
+New York University, University of 
+Notre Dame, Observat\'ario 
+Nacional / MCTI, The Ohio State 
+University, Pennsylvania State 
+University, Shanghai 
+Astronomical Observatory, United 
+Kingdom Participation Group, 
+Universidad Nacional Aut\'onoma 
+de M\'exico, University of Arizona, 
+University of Colorado Boulder, 
+University of Oxford, University of 
+Portsmouth, University of Utah, 
+University of Virginia, University 
+of Washington, University of 
+Wisconsin, Vanderbilt University, 
+and Yale University.
+\end{acknowledgments}
 
 \appendix
 
