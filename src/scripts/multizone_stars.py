@@ -280,6 +280,46 @@ class MultizoneStars:
         sample = sample_dataframe(self.stars.copy(), N, weights=sample_weights)
         return sample
     
+    def scatter_plot(self, ax, xcol, ycol, color=None, cmap=None, norm=None, 
+                     sampled=True, nsamples=10000, markersize=0.1, **kwargs):
+        """
+        Create a scatter plot of the given columns.
+        
+        parameters
+        ----------
+        ax : matplotlib.axes.Axes
+            Axes object to draw the scatter plot.
+        xcol : str
+            Name of column to plot on the x-axis.
+        ycol : str
+            Name of column to plot on the y-axis.
+        color : str, optional
+            Scatter plot color. If a column name, will color-code points based
+            on the given colormap and normalization. The default is None.
+        cmap : matplotlib colormap, optional
+        norm : matplotlib normalization, optional
+        sampled : bool, optional
+            If True, randomly sample nsamples rows from the full DataFrame.
+            The default is True.
+        nsamples : int, optional
+            Number of randomly sampled points to plot if sampled == True. The 
+            default is 10000.
+        markersize : float, optional
+            Scatter plot marker size. The default is 0.5.
+        kwargs passed to Axes.scatter()
+        """
+        if sampled:
+            stars = self.sample(nsamples)
+        else:
+            stars = self.stars
+        # If zcol is not a valid column, don't color-code points
+        if color in stars.columns:
+            color = stars[color]
+        # Scatter plot of stellar particles
+        ax.scatter(stars[xcol], stars[ycol], c=color, s=markersize,
+                   cmap=cmap, norm=norm, rasterized=True, edgecolor='none',
+                   **kwargs)
+    
     def mdf(self, col, bins=100, range=None, smoothing=0.):
         """
         Generate a metallicity distribution function (MDF) for the given 

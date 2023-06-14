@@ -228,6 +228,8 @@ def sample_dataframe(df, n, weights=None, reset=True):
         Re-indexed DataFrame of n sampled rows
     """
     if isinstance(df, pd.DataFrame):
+        # Number of samples can't exceed length of DataFrame
+        n = min(n, df.shape[0])
         # Initialize default numpy random number generator
         rng = default_rng()
         # Randomly sample without replacement
