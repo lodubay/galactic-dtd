@@ -27,3 +27,5 @@ axes.labelpad: 2.0
 axes.linewidth: 0.5
 # Saving figures
 savefig.pad_inches: 0.0
+# Lines
+lines.linewidth: 1
