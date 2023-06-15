@@ -89,7 +89,7 @@ class diskmodel(vice.milkyway):
         else:
             Nstars = 2 * int(MAX_SF_RADIUS / zone_width * END_TIME / self.dt *
                 self.n_stars)
-        analogdata_filename = "%s.vice/analogdata.out"
+        analogdata_filename = "%s_analogdata.out" % name
         if migration_mode == "gaussian":
             self.migration.stars = gaussian_migration(self.annuli, 
                     zone_width = zone_width, filename = analogdata_filename)

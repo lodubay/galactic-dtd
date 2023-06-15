@@ -99,7 +99,7 @@ class MultizoneStars:
         stars = cls.import_tracers(fullpath, zone_width=zone_width)
         # stars = pd.DataFrame(vice.stars(str(self.fullpath)).todict())
         # Import star particle analogue (z-height) data
-        analogdata = pd.read_csv(fullpath / 'analogdata.out',
+        analogdata = pd.read_csv(str(fullpath).replace('.vice', '_analogdata.out'),
                                  comment='#', sep='\t',
                                  names=['zone_origin', 'time_origin', 
                                         'analog_id', 'zfinal']
