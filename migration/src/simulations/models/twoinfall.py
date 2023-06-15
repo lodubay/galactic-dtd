@@ -10,24 +10,25 @@ from .gradient import gradient
 import math as m
 # import os
 
-FIRST_TIMESCALE = 1. # Gyr
-SECOND_TIMESCALE = 4. # Gyr
+FIRST_TIMESCALE = 0.5 # Gyr
+SECOND_TIMESCALE = 7. # Gyr
 SECOND_ONSET = 4. # Gyr
 
-THIN_DISK_SCALE_RADIUS = 2.5 # kpc
+THIN_DISK_SCALE_RADIUS = 3.5 # kpc
 THICK_DISK_SCALE_RADIUS = 2.0 # kpc
-THICK_TO_THIN_RATIO = 1. # at r = 0
+THIN_TO_THICK_RATIO = 2.2 # at R = 8 kpc
 
 class twoinfall(double_exponential):
 
     def __init__(self, radius, dt = 0.01, dr = 0.1):
-        super().__init__(onset=SECOND_ONSET, ratio=1) # dummy ratio value
+        super().__init__() # dummy initial parameters
+        self.onset = SECOND_ONSET
         # Calculate the amplitude ratio of infalls
-        thin_to_thick = (1 / THICK_TO_THIN_RATIO) * m.exp(radius * (
+        thin_to_thick = THIN_TO_THICK_RATIO * m.exp((radius - 8) * (
             1 / THICK_DISK_SCALE_RADIUS - 1 / THIN_DISK_SCALE_RADIUS))
         timescale_ratio = FIRST_TIMESCALE / SECOND_TIMESCALE
         timescale_ratio *= (1 - m.exp(-END_TIME / FIRST_TIMESCALE))
-        timescale_ratio /= (1 - m.exp(-(END_TIME - SECOND_ONSET) / SECOND_TIMESCALE))
+        timescale_ratio /= (1 - m.exp(-(END_TIME - self.onset) / SECOND_TIMESCALE))
         self.first.timescale = FIRST_TIMESCALE
         self.second.timescale = SECOND_TIMESCALE
         self.ratio = thin_to_thick * timescale_ratio
