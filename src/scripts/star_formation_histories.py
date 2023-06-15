@@ -9,28 +9,34 @@ import matplotlib.pyplot as plt
 from matplotlib.ticker import MultipleLocator
 import vice
 import paths
-from utils import get_color_list
-from _globals import END_TIME, ZONE_WIDTH, TWO_COLUMN_WIDTH
+from utils import get_color_list, get_bin_centers
+from _globals import END_TIME, ZONE_WIDTH, TWO_COLUMN_WIDTH, GALR_BINS
 from colormaps import paultol
 plt.rcParams['axes.prop_cycle'] = plt.cycler('color', paultol.vibrant.colors)
 
 MIGRATION = 'post-process'
 EVOLUTION_LIST = ['insideout', 'lateburst', 'conroy22_JW20yields', 'twoinfall']
 DTD = 'powerlaw_slope11'
-GALR_LIST = [3, 5, 7, 9, 11, 13, 15]
 CMAP_NAME = 'plasma_r'
 
 def main():
     fig, axs = setup_axes()
     # Get color list
     cmap = plt.get_cmap(CMAP_NAME)
-    colors = get_color_list(cmap, GALR_LIST)
+    colors = get_color_list(cmap, GALR_BINS)
+    galr_centers = get_bin_centers(GALR_BINS)
+    zones = [int(galr / ZONE_WIDTH) for galr in galr_centers]
     for i, evolution in enumerate(EVOLUTION_LIST):
         output = paths.data / 'migration' / MIGRATION / evolution / DTD
-        zones = [int(galr / ZONE_WIDTH) for galr in GALR_LIST]
         for zone, color in zip(zones, colors):
             plot_history(axs[:,i], output, zone, color=color, 
-                         label='%.1f kpc' % (zone * ZONE_WIDTH))
+                         label='%d kpc' % (zone * ZONE_WIDTH))
+    leg = axs[0,0].legend(loc='upper center', frameon=False, ncols=3, 
+                          handlelength=1, columnspacing=1, handletextpad=0.5)
+    # Set legend text colors
+    # for i in range(len(zones)):
+    #     leg.get_texts()[i].set_color(colors[i])
+    #     leg.legend_handles[i].set_visible(False)
     plt.savefig(paths.figures / 'star_formation_histories.pdf', dpi=300)
     plt.close()
 
@@ -91,11 +97,12 @@ def setup_axes(tmax=END_TIME, width=TWO_COLUMN_WIDTH):
     axs[0,0].xaxis.set_minor_locator(MultipleLocator(1))
     # y-axis log scale
     axs[0,0].set_yscale('log')
-    axs[0,0].set_ylim((1e-4, 0.3))
+    # axs[0,0].set_ylim((5e-5, 0.2))
+    axs[0,0].set_ylim((5e-5, 0.5))
     axs[1,0].set_yscale('log')
-    axs[1,0].set_ylim((1e-3, 0.5))
+    axs[1,0].set_ylim((1e-3, 0.3))
     axs[2,0].set_yscale('log')
-    axs[2,0].set_ylim((4e6, 4e8))
+    axs[2,0].set_ylim((3e6, 3e8))
     axs[3,0].set_yscale('log')
     axs[3,0].set_ylim((0.5, 3e2))
 
