@@ -3,46 +3,40 @@ This script plots various quantities relating to star formation history as a
 function of time for multiple VICE simulation outputs.
 """
 
-import sys
 from pathlib import Path
 import numpy as np
 import matplotlib.pyplot as plt
+from matplotlib.ticker import MultipleLocator
 import vice
 import paths
-from utils import discrete_colormap, get_color_list, setup_discrete_colorbar, \
-    get_bin_centers
-from _globals import END_TIME, GALR_BINS, ZONE_WIDTH
+from utils import get_color_list
+from _globals import END_TIME, ZONE_WIDTH, TWO_COLUMN_WIDTH
+from colormaps import paultol
+plt.rcParams['axes.prop_cycle'] = plt.cycler('color', paultol.vibrant.colors)
 
-def main(evolution, RIa='powerlaw_slope11', cmap_name='plasma_r'):
-    output = paths.data / 'migration' / 'post-process' / evolution / RIa
-    fname = 'sfh_%s.png' % evolution
-    plot_by_zone(output, fname=fname, zone_width=ZONE_WIDTH, cmap_name=cmap_name)
-    # fig, axs = setup_axes()
-    # plot_history(axs, paths.data / 'migration/diffusion/twoinfall/powerlaw_slope11_delay040', 80, color='b')
-    # plot_history(axs, paths.data / 'migration/diffusion/insideout_conroy22/powerlaw_slope11_delay040', 80, color='orange')
-    # plt.savefig(paths.figures / 'star_formation_histories.png', dpi=300)
-    
+MIGRATION = 'post-process'
+EVOLUTION_LIST = ['insideout', 'lateburst', 'conroy22_JW20yields', 'twoinfall']
+DTD = 'powerlaw_slope11'
+GALR_LIST = [3, 5, 7, 9, 11, 13, 15]
+CMAP_NAME = 'plasma_r'
 
-def plot_by_zone(output, galr_bins=GALR_BINS, zone_width=ZONE_WIDTH, 
-                 cmap_name='plasma_r', fname='star_formation_histories.png'):
-    # Determine zones to plot
-    galr_centers = get_bin_centers(galr_bins)
-    zones = [int(galr / zone_width) for galr in galr_centers]
-    # Set up plot
+def main():
     fig, axs = setup_axes()
-    cmap, norm = discrete_colormap(cmap_name, galr_bins)
-    colors = get_color_list(cmap, galr_bins)
-    # Plot SFHs for each zone
-    for zone, color in zip(zones, colors):
-        plot_history(axs, output, zone, color=color, 
-                     label='%s kpc' % int(zone * zone_width))
-    axs[0,0].legend(frameon=False, fontsize=8, title='Galactic radius', 
-                    title_fontsize=8)
-    plt.savefig(paths.figures / fname, dpi=300)
+    # Get color list
+    cmap = plt.get_cmap(CMAP_NAME)
+    colors = get_color_list(cmap, GALR_LIST)
+    for i, evolution in enumerate(EVOLUTION_LIST):
+        output = paths.data / 'migration' / MIGRATION / evolution / DTD
+        zones = [int(galr / ZONE_WIDTH) for galr in GALR_LIST]
+        for zone, color in zip(zones, colors):
+            plot_history(axs[:,i], output, zone, color=color, 
+                         label='%.1f kpc' % (zone * ZONE_WIDTH))
+    plt.savefig(paths.figures / 'star_formation_histories.pdf', dpi=300)
     plt.close()
 
 
-def plot_history(axs, output, zone, color=None, label=None, zone_width=ZONE_WIDTH):
+def plot_history(axs, output, zone, color=None, label=None, linestyle='-',
+                 zone_width=ZONE_WIDTH):
     r"""
     Plot IFR, SFR, Mgas, and SFE timescale for the given VICE multioutput and
     zone.
@@ -57,35 +51,55 @@ def plot_history(axs, output, zone, color=None, label=None, zone_width=ZONE_WIDT
     color : str or None, optional
         Plot color. The default is None.
     """
-    radius = zone * zone_width
+    radius = (zone + 0.5) * zone_width
     area = np.pi * ((radius + zone_width)**2 - radius**2)
     history = vice.history(str(Path('%s.vice' % output) / ('zone%i' % zone)))
     time = np.array(history['time'])
-    infall_surface = np.array(history['ifr']) / area
-    axs[0,0].plot(time, infall_surface, color=color, label=label)
     sf_surface = np.array(history['sfr']) / area
-    axs[0,1].plot(time, sf_surface, color=color)
+    axs[0].plot(time, sf_surface, color=color, ls=linestyle, label=label)
+    infall_surface = np.array(history['ifr']) / area
+    axs[1].plot(time, infall_surface, color=color, label=label, ls=linestyle)
     gas_surface = np.array(history['mgas']) / area
-    axs[1,0].plot(time, gas_surface, color=color)
+    axs[2].plot(time, gas_surface, color=color, ls=linestyle, label=label)
     tau_star = [history['mgas'][i+1] / history['sfr'][i+1] * 1e-9 for i in range(
                 len(history['time']) - 1)]
-    axs[1,1].plot(history['time'][1:], tau_star, color=color)
+    axs[3].plot(history['time'][1:], tau_star, color=color, ls=linestyle,
+                label=label)
 
 
-def setup_axes(tmax=END_TIME):
-    fig, axs = plt.subplots(2, 2, sharex=True, figsize=(7, 7))
-
-    axs[0,0].set_title(r'Infall Surface Density [$M_{\odot}\,\rm{yr}^{-1}\,\rm{kpc}^{-2}$]')
+def setup_axes(tmax=END_TIME, width=TWO_COLUMN_WIDTH):
+    fig, axs = plt.subplots(4, 4, sharex=True, sharey='row', figsize=(width, width))
+    fig.subplots_adjust(hspace=0., wspace=0., left=0.08, right=0.98, 
+                        bottom=0.05, top=0.96)
+    # Axis titles are model names
+    axs[0,0].set_title('Inside-Out')
+    axs[0,1].set_title('Late-Burst')
+    axs[0,2].set_title('Early-Burst')
+    axs[0,3].set_title('Two-Infall')
+    # y-axis labels are diagnostics
+    axs[0,0].set_ylabel(r'$\dot \Sigma_*$ [$M_{\odot}\,\rm{yr}^{-1}\,\rm{kpc}^{-2}$]')
+    axs[1,0].set_ylabel(r'$\dot \Sigma_{\rm in}$ [$M_{\odot}\,\rm{yr}^{-1}\,\rm{kpc}^{-2}$]')
+    axs[2,0].set_ylabel(r'$\Sigma_{\rm gas}$ [$M_{\odot}\,\rm{kpc}^{-2}$]')
+    axs[3,0].set_ylabel(r'$\tau_*$ [Gyr]')
+    # One x-axis label for all panels
+    bigax = fig.add_subplot(111, frameon=False)
+    bigax.tick_params(labelcolor='none', which='both', top=False, bottom=False, 
+                      left=False, right=False)
+    bigax.set_xlabel('Time [Gyr]')
     axs[0,0].set_xlim((-1, tmax+1))
-    axs[0,1].set_title(r'Star Formation Surface Density [$M_{\odot}\,\rm{yr}^{-1}\,\rm{kpc}^{-2}$]')
-    axs[1,0].set_title(r'Gas Surface Density [$M_{\odot}\,\rm{kpc}^{-2}$]')
-    axs[1,0].set_xlabel('Time [Gyr]')
-    axs[1,1].set_title(r'Star Formation Efficiency Timescale [Gyr]')
-    axs[1,1].set_yscale('log')
-    axs[1,1].set_xlabel('Time [Gyr]')
+    axs[0,0].xaxis.set_major_locator(MultipleLocator(5))
+    axs[0,0].xaxis.set_minor_locator(MultipleLocator(1))
+    # y-axis log scale
+    axs[0,0].set_yscale('log')
+    axs[0,0].set_ylim((1e-4, 0.3))
+    axs[1,0].set_yscale('log')
+    axs[1,0].set_ylim((1e-3, 0.5))
+    axs[2,0].set_yscale('log')
+    axs[2,0].set_ylim((4e6, 4e8))
+    axs[3,0].set_yscale('log')
+    axs[3,0].set_ylim((0.5, 3e2))
 
     return fig, axs
 
 if __name__ == '__main__':
-    evolution = sys.argv[1]
-    main(evolution)
+    main()
