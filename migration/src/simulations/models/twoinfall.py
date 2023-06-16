@@ -22,7 +22,7 @@ class twoinfall(double_exponential):
 
     def __init__(self, radius, dt = 0.01, dr = 0.1):
         super().__init__() # dummy initial parameters
-        self.onset = SECOND_ONSET + (radius - 8)/4
+        self.onset = SECOND_ONSET #+ (radius - 8)/4
         # self.onset = SECOND_ONSET
         # Calculate the amplitude ratio of infalls
         # thin_to_thick = THIN_TO_THICK_RATIO * m.exp((radius - 8) * (
