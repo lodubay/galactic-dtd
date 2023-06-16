@@ -20,17 +20,18 @@ class spitoni21_tau_star(J21_sf_law):
     replaces it with the model by Conroy et al. (2021), also introducing a
     radial dependence.
     """
-    def __init__(self, area, mode = "ifr", onset=4, **kwargs):
+    def __init__(self, area, radius, mode = "ifr", onset=4, **kwargs):
         # spitoni_params = np.genfromtxt('%s/spitoni_twoinfall.dat' % (
         #     os.path.abspath(os.path.dirname(__file__))))
-        # self.radius = radius
+        self.radius = radius
         # self.onset = polyfit(radius, spitoni_params, 9)
-        self.onset = onset
+        self.onset = 4 + (radius - 8)/4
         super().__init__(area, mode = mode, **kwargs)
         
     def __call__(self, time, mgas):
         mgas_dependence = super().__call__(time, mgas) / self.molecular(time)
         return mgas_dependence * self.time_dependence(time)
+        # return self.time_dependence(time) * super().__call__(time, mgas)
 
     def time_dependence(self, time):
         r"""
@@ -49,8 +50,10 @@ class spitoni21_tau_star(J21_sf_law):
 
         """
         if time < self.onset:
+            # return 0.5
             return 1 / self.sfe1
         else:
+            # return 1.
             return 1 / self.sfe2
       
     @property
@@ -59,8 +62,8 @@ class spitoni21_tau_star(J21_sf_law):
         float
             The SFE of the first (high-alpha) infall in Gyr^-1.
         """
-        # return max(4. - (self.radius / 4), 2.)
-        return 2.
+        return max(2. - (self.radius - 8) / 4, 2.)
+        # return 2.
         
     @property
     def sfe2(self):
@@ -68,5 +71,5 @@ class spitoni21_tau_star(J21_sf_law):
         float
             The SFE of the second (low-alpha) infall in Gyr^-1.
         """
-        # return max(2. - (self.radius / 8), 0.5)
-        return 1.
+        return max(1. - (self.radius - 8) / 8, 0.5)
+        # return 1.

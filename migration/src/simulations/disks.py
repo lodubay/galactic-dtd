@@ -132,7 +132,7 @@ class diskmodel(vice.milkyway):
                 #     self.zones[i].tau_star = models.twoinfall_tau_star(area, 
                 #         mean_radius)
                 elif spec.lower() == "spitoni21":
-                    self.zones[i].tau_star = models.spitoni21_tau_star(area)
+                    self.zones[i].tau_star = models.spitoni21_tau_star(area, mean_radius)
                 else:
                     self.zones[i].tau_star = J21_sf_law(area, mode = self.mode)
 

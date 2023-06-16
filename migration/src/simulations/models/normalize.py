@@ -83,7 +83,7 @@ def normalize_ifrmode(time_dependence, radial_gradient, radius, dt = 0.01,
     elif which_tau_star.lower() == 'johnson21':
         tau_star = J21_sf_law(area, mode = 'ifr')
     else:
-        raise TypeError('Unrecognized prescription for tau_star!')
+        raise ValueError('Unrecognized prescription for tau_star!')
     # tau_star = {
     #     'johnson21': J21_sf_law,
     #     'conroy22': conroy22_tau_star,
@@ -105,18 +105,16 @@ def normalize_ifrmode(time_dependence, radial_gradient, radius, dt = 0.01,
         times.append(time)
         time += dt
     sfh = vice.toolkit.interpolation.interp_scheme_1d(times, sfh)
-    # if radius >= 8. and radius < 8.1:
-    #     np.savetxt('/mnt/c/Users/dubay.11/Repos/galactic-dtd/sfh_prenorm.txt',
-    #                np.array([times, [sfh(t) for t in times]]))
     return normalize(sfh, radial_gradient, radius, dt = dt, dr = dr,
         recycling = recycling)
 
 
 def twoinfall_ampratio(time_dependence, radial_gradient, radius, onset = 4,
-                       dt = 0.01, dr = 0.1, recycling = 0.4, thin_scale = 2.0, 
-                       thick_scale = 2.5):
+                       dt = 0.01, dr = 0.1, recycling = 0.4, thin_scale = 3.5, 
+                       thick_scale = 2.0, local_thick_to_thin_ratio = 0.05):
     area = m.pi * ((radius + dr)**2 - radius**2)
     tau_star = J21_sf_law(area)
+    # tau_star = spitoni21_tau_star(area, radius)
     eta = vice.milkyway.default_mass_loading(radius)
     mgas = 0
     time = 0
@@ -129,5 +127,6 @@ def twoinfall_ampratio(time_dependence, radial_gradient, radius, onset = 4,
         mstar += sfr * dt * (1 - recycling)
         if mstar_at_onset is None and time >= onset: mstar_at_onset = mstar
         time += dt
-    thick_to_thin = 0.27 * m.exp(radius * (1 / thin_scale - 1 / thick_scale))
+    thick_to_thin = local_thick_to_thin_ratio * m.exp(
+        (radius - 8) * (1 / thin_scale - 1 / thick_scale))
     return mstar / (mstar - mstar_at_onset) * (1 + thick_to_thin)**-1
