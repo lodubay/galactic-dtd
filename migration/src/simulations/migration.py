@@ -97,7 +97,43 @@ class diskmigration(hydrodisk.hydrodiskstars):
 
 class gaussian_migration:
     r"""
-    Inherits file read/write functionality from ``diskmigration``.
+    A class which controls the Gaussian stellar migration scheme.
+    
+    The total migration distance $\Delta R$ is drawn from a Gaussian whose 
+    width is determined by the star's age and birth radius. The final z-height 
+    is drawn from a sech^2 distribution and written to an external file.
+    
+    Parameters
+    ----------
+    radbins : array-like
+        The bins in galactocentric radius in kpc corresponding to each annulus.
+    zone_width : float [default : 0.1]
+        Width of each radial zone in kpc.
+    end_time : float [default : 13.2]
+        The final simulation timestep in Gyr.
+    filename : ``str`` [default : "stars.out"]
+        The name of the file to write the extra star particle data to.
+    absz_max : float [default : 3]
+        Maximum |z|-height above the midplane in kpc. The default corresponds
+        to the maximum value in the h277 sample.
+    
+    Attributes
+    ----------
+    write : ``bool`` [default : False]     
+        A boolean describing whether or not to write to an output file when
+        the object is called. The ``multizone`` object, and by extension the
+        ``milkyway`` object, automatically switch this attribute to True at the
+        correct time to record extra data.
+        
+    Calling
+    -------
+    Returns the star's current zone at the given time.
+    zone : int
+        Birth zone of the star.
+    tform : float
+        Formation time of the star in Gyr.
+    time : float
+        Current simulation time in Gyr.
     """
     def __init__(self, radbins, zone_width=ZONE_WIDTH, end_time=END_TIME,
                  filename="stars.out", absz_max=3.):
