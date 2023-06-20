@@ -29,7 +29,7 @@ DTD_NAMES=(
 	"prompt_peak050_stdev015_timescale30"
     "triple_delay040"
 )
-MIGR_LIST=("diffusion" "post-process" "gaussian")
+MIGR_LIST=("gaussian" "post-process" "diffusion")
 EVOL="twoinfall"
 
 for i in ${!DTD_LIST[@]}; do
