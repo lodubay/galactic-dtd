@@ -150,7 +150,7 @@ We take $t_{\rm rise}=0.5$ Gyr, $W=0.5$ Gyr, $\alpha=-1.1$, and $\epsilon=0.05$ 
 \begin{figure*}
     \centering
     \includegraphics{figures/star_formation_histories.pdf}
-    \caption{Caption}
+    \caption{The surface densities of star formation $\dot \Sigma_*$ (first row), gas infall $\dot \Sigma_{\rm in}$ (second row), and gas mass $\Sigma_{\rm gas}$ (third row), and the star formation efficiency timescale $\tau_*$ (fourth row) as functions of simulation time for our four model SFHs: inside-out (first column; see Equation \ref{eq:insideout-sfh}), late-burst (second column; see Equation \ref{eq:lateburst-sfh}), early-burst (third column; see Equations \ref{eq:earlyburst-ifr} and \ref{eq:earlyburst-taustar}), and two-infall (fourth column; see Equations \ref{eq:twoinfall-ifr} and \ref{eq:twoinfall-taustar}). In each panel, we plot curves for the zones which have inner radii of 4 kpc (yellow), 6 kpc (orange), 8 kpc (red), 10 kpc (violet), 12 kpc (indigo), and 14 kpc (blue).}
     \label{fig:sfhs}
     \script{star_formation_histories.py}
 \end{figure*}
@@ -164,6 +164,7 @@ We take $t_{\rm rise}=0.5$ Gyr, $W=0.5$ Gyr, $\alpha=-1.1$, and $\epsilon=0.05$ 
 \paragraph{Late-burst}
 \begin{equation}
     f_{\rm LB}(t|R_{\rm gal}) = f_{\rm IO}(t|R_{\rm gal}) \Big(1 + A_b e^{-(t-t_b)^2/2\sigma_b^2} \Big)
+    \label{eq:lateburst-sfh}
 \end{equation}
 
 \paragraph{Early-burst} The infall rate at a given radius declines exponentially with time:
@@ -174,16 +175,44 @@ We take $t_{\rm rise}=0.5$ Gyr, $W=0.5$ Gyr, $\alpha=-1.1$, and $\epsilon=0.05$ 
 We take $\tau_{\rm IFR} = \tau_{\rm SFH}$ at all radii.
 The time-dependence of the SFE timescale $\tau_*$ comes from \citet{Conroy2022-ThickDisk}:
 \begin{equation}
-    \frac{\tau_*}{1\,\rm{Gyr}} =
+    \frac{\tau_*(t|\Sigma_g)}{1\,\rm{Gyr}} =
     \begin{cases}
-        50 & t < 2.5\,\rm{Gyr} \\
-        50/[1+3(t-2.5)]^2 & 2.5\leq t \leq 3.7\,\rm{Gyr} \\
-        2.36 & t > 3.7\,\rm{Gyr}
+        50, & t < 2.5\,\rm{Gyr} \\
+        \frac{50}{[1+3(t-2.5)]^2}, & 2.5\leq t \leq 3.7\,\rm{Gyr} \\
+        2.36, & t > 3.7\,\rm{Gyr}
     \end{cases}
+    \label{eq:earlyburst-conroy22}
+\end{equation}
+We combine this with the Kennicutt-Schmidt relation used by \citet{Johnson2021-Migration}, minus the dependence on the molecular timescale $\tau_{\rm mol}$:
+\begin{equation}
+    \dot \Sigma_* = 
+    \begin{cases}
+        \Sigma_g, & \Sigma_g \geq \Sigma_{g,2} \\
+        \Sigma_g \Big(\frac{\Sigma_g}{\Sigma_{g,2}}\Big)^{2.6}, & \Sigma_{g,1} \leq \Sigma_g \leq \Sigma_{g,2} \\
+        \Sigma_g \Big(\frac{\Sigma_{g,1}}{\Sigma_{g,2}}\Big)^{2.6} \Big(\frac{\Sigma_g}{\Sigma_{g,1}}\Big)^{0.7}, & \Sigma_g \leq \Sigma_{g,1}
+    \end{cases}
+    \label{eq:kennicutt-schmidt}
+\end{equation}
+Which leads to an overall SFE timescale of
+\begin{equation}
+    \tau_*(t,\Sigma_g) = \tau_*(t|\Sigma_g) \frac{\Sigma_g}{\dot \Sigma_*}
     \label{eq:earlyburst-taustar}
 \end{equation}
 
-\paragraph{Two-infall}
+\paragraph{Two-infall} 
+We parameterize the infall rate as two successive, exponentially declining bursts as in \citet{Chiappini2001-AbundanceGradients}:
+\begin{equation}
+    f_{\rm TI}(t|R_{\rm gal}) = N_1(R_{\rm gal}) e^{-t/\tau_1} + N_2(R_{\rm gal}) e^{-(t-t_{\rm on})/\tau_2}
+\end{equation}
+with normalization coefficients
+\begin{equation}
+    N_1(R_{\rm gal}) = \frac{\Sigma_{1,\odot} e^{-(R_{\rm gal}-8\,\rm{kpc})/R_1}}{\tau_1 (1-e^{-t_{\rm max}/\tau_1})}
+\end{equation}
+and
+\begin{equation}
+    N_2(R_{\rm gal}) = \frac{\Sigma_{2,\odot} e^{-(R_{\rm gal}-8\,\rm{kpc})/R_2}}{\tau_2 (1-e^{-(t_{\rm max}-t_{\rm on})/\tau_2})}
+\end{equation}
+Second infall onset time $t_{\rm on}=4$ Gyr, infall timescales $\tau_1=1$ Gyr and $\tau_2=4$ Gyr. We take the surface mass density ratio of the thin disk to the thick disk at the Sun to be $(\frac{\Sigma_2}{\Sigma_1})_\odot=5.6$ \citep{Spitoni2021-TwoInfall}.
 
 \subsection{Stellar Migration}
 \label{sec:migration}
