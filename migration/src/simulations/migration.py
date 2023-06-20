@@ -178,7 +178,7 @@ class gaussian_migration:
                 rng_max = self.sech2_cdf(self.absz_max, hz)
                 rng_min = self.sech2_cdf(-self.absz_max, hz)
                 rng = random.uniform(rng_min, rng_max)
-                finalz = self.inverse_sec2_cdf(rng, hz)
+                finalz = self.inverse_sech2_cdf(rng, hz)
                 analog_id = -1
                 self._file.write("%d\t%.2f\t%d\t%.2f\n" % (zone, tform,
                     analog_id, finalz))
