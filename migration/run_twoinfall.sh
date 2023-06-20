@@ -1,7 +1,7 @@
 #!/bin/bash
 DTD_LIST=(
-	"powerlaw" 
-	"powerlaw" 
+	# "powerlaw" 
+	# "powerlaw" 
 	"plateau" 
 	"plateau" 
 	"exponential" 
@@ -10,8 +10,8 @@ DTD_LIST=(
     "triple"
 )
 DTD_PARAMS=(
-	"slope=-1.1" 
-	"slope=-1.4" 
+	# "slope=-1.1" 
+	# "slope=-1.4" 
 	"width=0.3_slope=-1.1" 
 	"width=1_slope=-1.1" 
 	"timescale=1.5" 
@@ -20,8 +20,8 @@ DTD_PARAMS=(
     ""
 )
 DTD_NAMES=(
-	"powerlaw_slope11" 
-	"powerlaw_slope14" 
+	# "powerlaw_slope11" 
+	# "powerlaw_slope14" 
 	"plateau_width300_slope11" 
 	"plateau_width1000_slope11" 
 	"exponential_timescale15" 
@@ -29,7 +29,7 @@ DTD_NAMES=(
 	"prompt_peak050_stdev015_timescale30"
     "triple_delay040"
 )
-MIGR_LIST=("gaussian" "post-process" "diffusion")
+MIGR_LIST=("gaussian") # "post-process" "diffusion")
 EVOL="twoinfall"
 
 for i in ${!DTD_LIST[@]}; do
