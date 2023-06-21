@@ -145,10 +145,11 @@ def plot_single_comparison(output, output_dir=paths.data/'migration',
             
     for ax in axs[:,0]:
         ax.set_ylim((0, None))
-    plt.savefig(paths.figures / 'mdf_ofe' / fname, dpi=300)
+    figpath = paths.debug / 'ofe_df' / output.split('/')[0] / fname
+    plt.savefig(figpath, dpi=300)
     plt.close()
     if verbose:
-        print('Done! Plot is located at src/tex/figures/mdf_ofe/%s' % fname)
+        print('Done! Plot is located at ', str(figpath))
 
 
 if __name__ == '__main__':

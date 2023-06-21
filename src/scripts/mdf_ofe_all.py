@@ -5,11 +5,10 @@ Plot MDFs from all multizone runs
 from ofe_distribution import main
 
 SFH_LIST = [
-    'insideout', 
+    # 'insideout', 
     'lateburst', 
-    'conroy22', 
+    'earlyburst', 
     'twoinfall',
-    'conroy22_JW20yields'
 ]
 DTD_LIST = [
     'powerlaw_slope11', 
@@ -18,9 +17,10 @@ DTD_LIST = [
     'exponential_timescale30', 
     'plateau_width300_slope11', 
     'plateau_width1000_slope11', 
-    'prompt_peak050_stdev015_timescale30'
+    'prompt_peak050_stdev015_timescale30',
+    # 'triple_delay040'
 ]
 
 for evolution in SFH_LIST:
     for RIa in DTD_LIST:
-        main(evolution, RIa)
+        main(evolution, RIa, migration='gaussian')
