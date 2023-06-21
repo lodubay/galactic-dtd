@@ -109,7 +109,7 @@ def normalize_ifrmode(time_dependence, radial_gradient, radius, dt = 0.01,
         recycling = recycling)
 
 
-def twoinfall_ampratio(time_dependence, radial_gradient, radius, onset = 4,
+def twoinfall_ampratio(time_dependence, radius, onset = 4,
                        dt = 0.01, dr = 0.1, recycling = 0.4, thin_scale = 3.5, 
                        thick_scale = 2.0, local_thick_to_thin_ratio = 0.05):
     area = m.pi * ((radius + dr)**2 - radius**2)

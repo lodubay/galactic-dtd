@@ -35,7 +35,7 @@ class twoinfall(double_exponential):
         self.second.timescale = SECOND_TIMESCALE 
         # self.second.timescale = max(4, 4 + (radius - 8) * 1.5)
         # self.ratio = thin_to_thick * timescale_ratio
-        self.ratio = twoinfall_ampratio(self, gradient, radius, onset=self.onset, 
+        self.ratio = twoinfall_ampratio(self, radius, onset=self.onset, 
                                         dr = dr, dt = dt)
         # self.ratio = 1 / 3.5
         prefactor = normalize_ifrmode(self, gradient, radius, dt = dt,
