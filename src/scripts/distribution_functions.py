@@ -3,57 +3,37 @@ This file contains generic functions for plotting distributions of data
 binned by galactic radius and z-height.
 """
 
-import inspect
 import matplotlib.pyplot as plt
 from matplotlib.ticker import MultipleLocator
 from matplotlib.cm import ScalarMappable
-from utils import get_bin_centers, discrete_colormap, get_color_list
+from utils import get_bin_centers, discrete_colormap
+from apogee_tools import apogee_region, apogee_mdf
 from _globals import ABSZ_BINS, GALR_BINS
 
 # Ratio between major and minor tick spacing in data units
 MAJOR_MINOR_RATIO = 5.
 
-    
-def plot_distributions(func, data, col, axs, label='', cmap_name='plasma_r',
-                       galr_bins=GALR_BINS, absz_bins=ABSZ_BINS, linewidth=1,
-                       func_kwargs={}):
+
+def plot_multizone_mdfs(mzs, axs, col='[fe/h]', colors=[], label='VICE', 
+                        galr_bins=GALR_BINS, absz_bins=ABSZ_BINS, **kwargs):
     """
-    Plot distributions of data binned by galactic radius and z-height.
+    Plot [Fe/H] MDFs from a VICE multizone run.
     
     Parameters
     ----------
-    func : <function>
-        The function which computes the distribution in the given bin of
-        galactic coordinates. Must take data as an argument and bounds on
-        galr and absz as keyword arguments, and must return the values of the
-        distribution and its bin edges (similar to the output of 
-        numpy.histogram).
-    data : pandas.DataFrame
-        Data (e.g. from VICE or APOGEE) from which to generate the 
-        distributions.
-    col : str
-        Column name of abundance data to plot.
+    mzs : MultizoneStars object
+        VICE multizone stars.
     axs : list of matplotlib.axes.Axes
-        Axes on which to plot the age distributions, the length of which must
-        correspond to len(absz_bins)-1 (3 by default); usually a single
-        column from a larger array of axes.
+        Column of axes to plot MDFs. Must have len(axs) == len(absz_bins) - 1.
+    colors : list of strings or matplotlib colors, optional
+        List of colors to code by Rgal bins. If len(colors) != len(galr_bins)-1,
+        colors will be chosen automatically. The default is [].
     label : str, optional
-        Axis column label. The default is 'VICE'.
-    cmap_name : str, optional
-        The name of the colormap to code by galactic radius. The default is
-        'plasma_r'.
-    absz_bins : list, optional
-        Bin edges of galactic z-height in kpc. The default is [0, 0.5, 1, 2].
-    galr_bins : list, optional
-        Bin edges of galactic radius in kpc. The default is 
-        [3, 5, 7, 9, 11, 13, 15].
-    linewidth : float, optional
-        The plot line width. The default is 1.
-    func_kwargs : dict
-        Keyword arguments passed to func()
+        Title for this column of axes. The default is 'VICE'.
+    galr_bins: list of floats, optional
+    absz_bins: list of floats, optional
+    **kwargs passed to MultizoneStars.mdf()
     """
-    cmap = plt.get_cmap(cmap_name)
-    colors = get_color_list(cmap, galr_bins)
     if len(colors) != len(galr_bins) - 1:
         colors = [None for galr in galr_bins[:-1]]
     if len(axs) == len(absz_bins) - 1:
@@ -61,13 +41,49 @@ def plot_distributions(func, data, col, axs, label='', cmap_name='plasma_r',
             absz_lim = absz_bins[-(i+2):len(absz_bins)-i]
             for j in range(len(galr_bins)-1):
                 galr_lim = galr_bins[j:j+2]
-                dist, bin_edges = func(data, col=col, galr_lim=galr_lim, 
-                                       absz_lim=absz_lim, **func_kwargs)
-                ax.plot(get_bin_centers(bin_edges), dist, 
-                        color=colors[j], linewidth=linewidth)
+                subset = mzs.region(galr_lim, absz_lim)
+                mdf, bin_edges = subset.mdf(col, **kwargs)
+                ax.plot(get_bin_centers(bin_edges), mdf, 
+                        color=colors[j], linewidth=1)
         axs[0].set_title(label, va='top', pad=18)
     else:
-        raise ValueError('Mismatch between axes and z-height bins.')
+        raise ValueError('Mismatch between number of axes and |z|-height bins.')
+
+
+def plot_apogee_mdfs(data, axs, col='FE_H', colors=[], label='APOGEE', 
+                     galr_bins=GALR_BINS, absz_bins=ABSZ_BINS, **kwargs):
+    """
+    Plot [Fe/H] MDFs from the APOGEE sample.
+    
+    Parameters
+    ----------
+    output_name : str
+        Name of multizone output.
+    axs : list of matplotlib.axes.Axes
+        Column of axes to plot MDFs. Must have len(axs) == len(absz_bins) - 1.
+    colors : list of strings or matplotlib colors, optional
+        List of colors to code by Rgal bins. If len(colors) != len(galr_bins)-1,
+        colors will be chosen automatically. The default is [].
+    label : str, optional
+        Title for this column of axes. The default is 'APOGEE'.
+    galr_bins: list of floats, optional
+    absz_bins: list of floats, optional
+    **kwargs passed to apogee_mdf()
+    """
+    if len(colors) != len(galr_bins) - 1:
+        colors = [None for galr in galr_bins[:-1]]
+    if len(axs) == len(absz_bins) - 1:
+        for i, ax in enumerate(axs.flatten()):
+            absz_lim = absz_bins[-(i+2):len(absz_bins)-i]
+            for j in range(len(galr_bins)-1):
+                galr_lim = galr_bins[j:j+2]
+                subset = apogee_region(data, galr_lim, absz_lim)
+                mdf, bin_edges = apogee_mdf(subset, col=col, **kwargs)
+                ax.plot(get_bin_centers(bin_edges), mdf, 
+                        color=colors[j], linewidth=1)
+        axs[0].set_title(label, va='top', pad=18)
+    else:
+        raise ValueError('Mismatch between number of axes and |z|-height bins.')
     
 
 def setup_axes(ncols=2, figure_width=3.25, xlabel='', xlim=None, 

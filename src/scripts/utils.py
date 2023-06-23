@@ -958,3 +958,41 @@ def box_smooth(hist, bins, width):
     box = np.ones(box_width) / box_width
     hist_smooth = np.convolve(hist, box, mode='same')
     return hist_smooth
+
+# =============================================================================
+# SCIENCE FUNCTIONS
+# =============================================================================
+
+def mean_stellar_mass(age, imf=vice.imf.kroupa, mlr=vice.mlr.larson1974,
+                      m_lower=0.08, m_upper=100, dm=0.01):
+    """
+    Calculate the mean mass of a stellar population of a given age.
+
+    Parameters
+    ----------
+    age : float
+        Stellar age in Gyr
+    imf : <function>, optional
+        Initial mass function which takes mass in solar masses as an argument.
+        The default is vice.imf.kroupa
+    mlr : <function>, optional
+        Mass-lifetime relation which takes age in Gyr as an argument. The
+        default is vice.mlr.larson1974
+    m_lower : float, optional
+        Lower mass limit on IMF in solar masses. The default is 0.08
+    m_upper : float, optional
+        Upper mass limit on IMF in solar masses. The default is 100
+    dm : float, optional
+        IMF integration step in solar masses. The default is 0.01
+
+    Returns
+    -------
+    float
+        Mean mass of stars with lifetime greater than or equal to the given age
+        weighted by the IMF
+    """
+    m_max = min((mlr(age, which='age'), m_upper))
+    masses = np.arange(m_lower, m_max + dm, dm)
+    dndm = np.array([imf(m) for m in masses])
+    weighted_mean = np.average(masses, weights=dndm)
+    return weighted_mean

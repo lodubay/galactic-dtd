@@ -1,27 +1,36 @@
 """
-This script plots the distribution of stellar ages as predicted by VICE.
+This script plots the age distributions of different multizone SFHs in 
+comparison to age data for APOGEE stars.
 """
-import sys
 from pathlib import Path
 import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
 import vice
 import paths
-from utils import multioutput_to_pandas, filter_multioutput_stars
+from multizone_stars import MultizoneStars
 from apogee_tools import import_apogee, apogee_region
 from distribution_functions import setup_axes, plot_distributions
-from _globals import DT, END_TIME
+from _globals import DT, END_TIME, TWO_COLUMN_WIDTH
 
-MAX_AGE = 14
-BIN_WIDTH = 1
+SFH_LIST = ['insideout', 'lateburst', 'earlyburst', 'twoinfall']
+AGE_SOURCE = 'L23'
+MIGRATION = 'gaussian'
+DTD = 'powerlaw_slope11'
 
-def main(evolution, RIa):
-    output = 'diffusion/%s/%s' % (evolution, RIa)
-    plot_single_comparison(output, verbose=True)
+def main():
+    # Set up plot
+    fig, axs = setup_axes(ncols=len(outputs)+1, figure_width=TWO_COLUMN_WIDTH, 
+                          xlabel='Age [Gyr]', xlim=(0, END_TIME), 
+                          major_tick_spacing=5, cmap_name='plasma_r')
+    apogee_data = import_apogee()
+    for sfh in SFH_LIST:
+        output_name = '%s/%s/%s' % (MIGRATION, sfh, DTD)
+        mzs = MultizoneStars.from_output(output_name)
+        
     
     
-def plot_multiple_comparison(outputs, labels, output_dir=paths.data/'migration',
+def plot_multiple_comparison(outputs, labels, output_dir=paths.simulation_outputs,
                              cmap_name='plasma_r', verbose=False, 
                              fname='adf_multiple_comparison.png',
                              double_line_titles=False):
@@ -50,10 +59,6 @@ def plot_multiple_comparison(outputs, labels, output_dir=paths.data/'migration',
         False.
     """
         
-    # Set up plot
-    fig, axs = setup_axes(ncols=len(outputs)+1, figure_width=7., 
-                          xlabel='Age [Gyr]', xlim=(0, MAX_AGE), 
-                          major_tick_spacing=5, cmap_name=cmap_name)
     fig.subplots_adjust(left=0.1)
     if double_line_titles:
         # Allow room for two-line axis titles
@@ -80,7 +85,7 @@ def plot_multiple_comparison(outputs, labels, output_dir=paths.data/'migration',
         print('Done!')
     
     
-def plot_single_comparison(output, output_dir=paths.data/'migration',
+def plot_single_comparison(output, output_dir=paths.simulation_outputs,
                            label='VICE', cmap_name='plasma_r', verbose=False,
                            fname=''):
     """
@@ -274,6 +279,4 @@ def mean_stellar_mass(age, imf=vice.imf.kroupa, mlr=vice.mlr.larson1974,
 
 
 if __name__ == '__main__':
-    evolution = sys.argv[1]
-    RIa = sys.argv[2]
-    main(evolution, RIa)
+    main()

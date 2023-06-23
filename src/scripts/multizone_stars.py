@@ -11,7 +11,7 @@ import pandas as pd
 import vice
 import paths
 from _globals import ZONE_WIDTH
-from utils import sample_dataframe, box_smooth
+from utils import sample_dataframe, box_smooth, mean_stellar_mass
 
 SOLAR_Z_TOTAL = 0.014
 
@@ -71,8 +71,7 @@ class MultizoneStars:
         self.noisy = noisy
         
     @classmethod
-    def from_output(cls, name, data_dir=paths.data/'migration', 
-                    zone_width=ZONE_WIDTH, verbose=False):
+    def from_output(cls, name, zone_width=ZONE_WIDTH, verbose=False):
         """
         Generate an instance of MultizoneStars from a VICE multizone output.
         
@@ -80,9 +79,6 @@ class MultizoneStars:
         ----------
         name : str
             Name of VICE output, excluding ``.vice`` extension.
-        data_dir : str or pathlib.Path, optional
-            Parent directory of VICE output. The default is 
-            ``../data/migration``.
         zone_width : float, optional
             Width of simulation zones in kpc. The default is 0.1.
         verbose : bool, optional
@@ -92,7 +88,7 @@ class MultizoneStars:
         -------
         MultizoneStars instance
         """
-        fullpath = Path(data_dir) / (name + '.vice')
+        fullpath = paths.simulation_outputs / (name + '.vice')
         # Import star tracer data
         if verbose: 
             print('Importing VICE multizone data from', str(fullpath))
@@ -354,6 +350,52 @@ class MultizoneStars:
             mdf = box_smooth(mdf, bin_edges, smoothing)
         return mdf, bin_edges
     
+    def adf(self, bins=20, **kwargs):
+        """
+        Generate an age distribution function (ADF).
+        
+        Parameters
+        ----------
+        bins : int or sequence of scalars, optional
+            If an int, defines the number of equal-width bins in the given
+            range. If a sequence, defines the array of bin edges including
+            the right-most edge. The default is 100.
+        kwargs : dict, optional
+            Keyword arguments passed to mean_stellar_mass
+        
+        Returns
+        -------
+        adf : 1-D array
+            Age distribution function.
+        bin_edges : 1-D array
+            Bin edges of the ADF (length(adf) + 1).
+        """
+        bin_edges = np.linspace(0, self.end_time, bins)
+        bin_centers = 0.5 * (bins[:-1] + bins[1:])
+        bin_width = bin_edges[1] - bin_edges[0]
+        # Create dummy entries to count at least 0 mass at every age
+        temp_df = pd.DataFrame({
+            'age': bin_centers, 
+            'mass': np.zeros(bin_centers.shape)
+        })
+        stars = pd.concat([self.stars, temp_df])
+        # stars['age'] = np.round(stars['age'], decimals=2)
+        # Sum stellar mass in each bin
+        mass_total, _ = np.histogram(stars['age'], bins=bin_edges, 
+                                     weights=stars['mass'])
+        # Calculate remaining stellar mass today
+        mass_remaining = mass_total * (1 - np.array(
+            [vice.cumulative_return_fraction(age) for age in bin_centers]))
+        # Average mass of a star of that particular age
+        mass_average = np.array(
+            [mean_stellar_mass(age, **kwargs) for age in bin_centers]
+        )
+        # Number of stars in each age bin
+        nstars = np.around(mass_remaining / mass_average)
+        # Fraction of stars in each age bin
+        adf = nstars / (bin_width * nstars.sum())
+        return adf, bin_edges        
+    
     @staticmethod
     def import_tracers(fullpath, zone_width=ZONE_WIDTH, 
                        solar_z_total=SOLAR_Z_TOTAL):
@@ -478,16 +520,16 @@ class MultizoneStars:
     
     @galr_lim.setter
     def galr_lim(self, value):
-        if isinstance(value, tuple):
+        if isinstance(value, (tuple, list)):
             if len(value) == 2:
                 if all([isinstance(x, Number) for x in value]):
-                    self._galr_lim = value
+                    self._galr_lim = tuple(value)
                 else:
                     raise TypeError('Each item in "galr_lim" must be a number.')
             else:
                 raise ValueError('Attribute "galr_lim" must have length 2.')
         else:
-            raise TypeError('Attribute "galr_lim" must be a tuple. Got:',
+            raise TypeError('Attribute "galr_lim" must be a tuple or list. Got:',
                             type(value))
             
     @property
@@ -500,10 +542,10 @@ class MultizoneStars:
     
     @absz_lim.setter
     def absz_lim(self, value):
-        if isinstance(value, tuple):
+        if isinstance(value, (tuple, list)):
             if len(value) == 2:
                 if all([isinstance(x, Number) for x in value]):
-                    self._absz_lim = value
+                    self._absz_lim = tuple(value)
                 else:
                     raise TypeError('Each item in "absz_lim" must be a number.')
             else:
@@ -528,6 +570,14 @@ class MultizoneStars:
         else:
             raise TypeError('Attribute "noisy" must be a Boolean. Got:',
                             type(value))
+            
+    @property
+    def end_time(self):
+        """
+        float
+            Simulation end time in Gyr.
+        """
+        return self.stars['formation_time']
         
 
 if __name__ == '__main__':

@@ -8,7 +8,7 @@ from pathlib import Path
 import numpy as np
 import pandas as pd
 import paths
-from utils import fits_to_pandas
+from utils import fits_to_pandas, box_smooth
 
 # List of columns to include in the final sample
 SAMPLE_COLS = ['APOGEE_ID', 'RA', 'DEC', 'GALR', 'GALPHI', 'GALZ', 'SNREV',
@@ -19,6 +19,42 @@ SAMPLE_COLS = ['APOGEE_ID', 'RA', 'DEC', 'GALR', 'GALPHI', 'GALZ', 'SNREV',
 
 def main():
     import_apogee(overwrite=True, verbose=True)
+    
+
+def apogee_mdf(data, col='FE_H', bins=100, range=None, smoothing=0.):
+    """
+    Calculate the MDF in [Fe/H] of a region of APOGEE data.
+    
+    Parameters
+    ----------
+    data : pandas.DataFrame
+        Data from APOGEE DR17.
+    col : str, optional
+        Column name of desired abundance data. The default is 'FE_H'.
+    bins : int or sequence of scalars, optional
+        If an int, defines the number of equal-width bins in the given
+        range. If a sequence, defines the array of bin edges including
+        the right-most edge. The default is 100.
+    range : tuple, optional
+        Range in the given column to bin. The default is None, which 
+        corresponds to the entire range of data. If bins is provided as
+        a sequence, range is ignored.
+    smoothing : float, optional
+        Width of boxcar smoothing in x-axis units. If 0, the distribution will
+        not be smoothed. The default is 0.
+    
+    Returns
+    -------
+    mdf : numpy.ndarray
+        Boxcar-smoothed MDF.
+    bin_edges : numpy.ndarray
+        [Fe/H] bins including left and right edges, of length len(mdf)+1.
+    """
+    mdf, bin_edges = np.histogram(data[col], bins=bins, range=range, 
+                                  density=True)
+    if smoothing > 0.:
+        mdf = box_smooth(mdf, bin_edges, smoothing)
+    return mdf, bin_edges
 
 
 def apogee_region(data, galr_lim=(0, 20), absz_lim=(0, 5)):
