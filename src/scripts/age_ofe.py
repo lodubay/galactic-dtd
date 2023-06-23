@@ -59,7 +59,8 @@ def plot_age_ofe(output_name, apogee_data, fname='age_ofe.png', ages='L23',
     
     Parameters
     ----------
-    vice_stars : MultizoneStars
+    output_name : str
+        Name of multizone output within the data_dir directory.
     apogee_data : pandas.DataFrame
     fname : str, optional
         File name (excluding parent directory) of plot output. The default is
@@ -85,7 +86,9 @@ def plot_age_ofe(output_name, apogee_data, fname='age_ofe.png', ages='L23',
     Returns
     -------
     float
-        If scores==True, the weighted average score across all regions.
+        If scores==True, the weighted average score across all regions. The
+        score represents the difference between the median ages from VICE
+        and APOGEE. A lower score represents a better fit.
     """
     # Error handling
     if ages not in AGE_SOURCES:

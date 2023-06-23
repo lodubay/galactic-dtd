@@ -7,7 +7,6 @@ from tqdm import tqdm
 import pandas as pd
 from age_ofe import plot_age_ofe
 from apogee_tools import import_apogee
-from utils import multioutput_to_pandas
 import paths
 
 MIGR_LIST = ['diffusion', 'gaussian']
@@ -28,25 +27,23 @@ DTD_LIST = [
     'prompt_peak050_stdev015_timescale30',
     'triple_delay040'
 ]
-MIGRATION = 'diffusion'
 DATA_DIR = '../data/migration'
 
 def main():
     # Import APOGEE and astroNN data
     apogee_data = import_apogee(verbose=True)
     
-    summary_table = pd.DataFrame([], 
-        index=pd.MultiIndex.from_product([DTD_LIST, SFH_LIST], 
-                                         names=['DTD', 'SFH']),
-        columns=AGE_SOURCES,
-    )
-    
     with tqdm(total=len(MIGR_LIST) * len(SFH_LIST) * len(DTD_LIST) * len(AGE_SOURCES)) as t:
         for migration in MIGR_LIST:
+            summary_table = pd.DataFrame([], 
+                index=pd.MultiIndex.from_product([DTD_LIST, SFH_LIST], 
+                                                 names=['DTD', 'SFH']),
+                columns=AGE_SOURCES,
+            )
             for evolution in SFH_LIST:
                 for RIa in DTD_LIST:
                     # Import VICE multi-zone output data
-                    output_name = '/'.join([MIGRATION, evolution, RIa])
+                    output_name = '/'.join([migration, evolution, RIa])
                     scores = []
                     for age_source in AGE_SOURCES:
                         print(migration, evolution, RIa, age_source)
@@ -60,9 +57,9 @@ def main():
                         t.update()
                     summary_table.loc[RIa, evolution] = scores
     
-    print('\n-----------------------------------\n')
-    print(summary_table)
-    summary_table.to_csv(paths.debug / 'age_ofe/scores.csv')
+            print('\n-----------------------------------\n')
+            print(summary_table)
+            summary_table.to_csv(paths.debug / 'age_ofe' / migration / 'scores.csv')
 
 
 if __name__ == '__main__':
