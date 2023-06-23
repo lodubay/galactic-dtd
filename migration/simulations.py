@@ -12,10 +12,10 @@ import src
 _MIGRATION_MODELS_ = ["diffusion", "linear", "post-process", "sudden", 
                       "gaussian"]
 _EVOLUTION_MODELS_ = ["static", "insideout", "lateburst", "outerburst",
-                      "twoinfall", "conroy22", "expifr"]
+                      "twoinfall", "earlyburst"]
 _DELAY_MODELS_ = ["powerlaw", "plateau", "prompt",
                   "exponential", "greggio05_single", "triple"]
-_YIELD_SETS_ = ["JW20", "S21", "C22"]
+_YIELD_SETS_ = ["JW20", "C22"]
 
 def parse():
     r"""

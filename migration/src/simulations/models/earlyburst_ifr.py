@@ -1,6 +1,6 @@
 r"""
-This file declares the time-dependence of the star formation history at a
-given radius in the fiducial inside-out model from Johnson et al. (2021).
+This file declares the time-dependence of the infall rate at a
+given radius in the early-burst model.
 """
 
 from .utils import exponential, get_bin_number, interpolate
@@ -8,9 +8,9 @@ from .normalize import normalize_ifrmode
 from .gradient import gradient
 from .insideout import _read_sanchez_data
 
-class exponential_ifrmode(exponential):
+class earlyburst_ifr(exponential):
     r"""
-    The inside-out SFH model from Johnson et al. (2021).
+    The early-burst IFR model.
 
     Parameters
     ----------
@@ -31,7 +31,7 @@ class exponential_ifrmode(exponential):
     def __init__(self, radius, dt = 0.01, dr = 0.1):
         super().__init__(timescale = self.timescale(radius))
         self.norm *= normalize_ifrmode(self, gradient, radius, dt = dt, dr = dr,
-                                 which_tau_star = "conroy22")
+                                       which_tau_star = "earlyburst")
 
     @staticmethod
     def timescale(radius, Re = 5):

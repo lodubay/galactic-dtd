@@ -20,7 +20,6 @@ gaussian : object
 
 import math as m
 import numbers
-from numpy.polynomial.polynomial import Polynomial
 
 
 def get_bin_number(bins, value):
@@ -531,14 +530,3 @@ class normal_distribution(gaussian):
     def __init__(self, mean = 0, std = 1):
         amplitude = 1 / (std * m.sqrt(2 * m.pi))
         super().__init__(mean = mean, amplitude = amplitude, std = std)
-    
-
-def polyfit(radius, params, col):
-    fit = Polynomial.fit(params[:,0], params[:,col], deg=2, 
-                         w=1/params[:,col+1], domain=[])
-    return fit(radius)
-
-def expfit(radius, params, col):
-    logy = [m.log(y) for y in params[:,col]]
-    fit = Polynomial.fit(params[:,0], logy, deg=1, w=1/params[:,col+1], domain=[])
-    return m.exp(fit.coef[0]) * m.exp(fit.coef[1] * radius)

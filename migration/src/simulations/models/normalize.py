@@ -3,8 +3,7 @@ This file implements the normalization calculation in Appendix A of
 Johnson et al. (2021).
 """
 
-from .conroy22_tau_star import conroy22_tau_star
-from .spitoni21_tau_star import spitoni21_tau_star
+from .earlyburst_tau_star import earlyburst_tau_star
 from ..._globals import MAX_SF_RADIUS, END_TIME, M_STAR_MW
 import vice
 from vice.toolkit import J21_sf_law
@@ -69,26 +68,17 @@ def normalize(time_dependence, radial_gradient, radius, dt = 0.01, dr = 0.1,
 
 
 def normalize_ifrmode(time_dependence, radial_gradient, radius, dt = 0.01,
-                      dr = 0.1, recycling = 0.4, which_tau_star='johnson21',
+                      dr = 0.1, recycling = 0.4, which_tau_star='default',
                       outflows = True):
     r"""
     Performs essentially the same thing as ``normalize`` but for models ran in
     infall mode.
     """
     area = m.pi * ((radius + dr)**2 - radius**2)
-    if which_tau_star.lower() == 'spitoni21':
-        tau_star = spitoni21_tau_star(area, radius)
-    elif which_tau_star.lower() == 'conroy22':
-        tau_star = conroy22_tau_star(area)
-    elif which_tau_star.lower() == 'johnson21':
-        tau_star = J21_sf_law(area, mode = 'ifr')
-    else:
-        raise ValueError('Unrecognized prescription for tau_star!')
-    # tau_star = {
-    #     'johnson21': J21_sf_law,
-    #     'conroy22': conroy22_tau_star,
-    #     'spitoni21': spitoni21_tau_star,
-    # }[which_tau_star](area)
+    tau_star = {
+        'default': J21_sf_law,
+        'earlyburst': earlyburst_tau_star,
+    }[which_tau_star.lower()](area, mode = 'ifr')
     if outflows:
         eta = vice.milkyway.default_mass_loading(radius)
     else:
@@ -114,7 +104,6 @@ def twoinfall_ampratio(time_dependence, radius, onset = 4,
                        thick_scale = 2.0, local_thick_to_thin_ratio = 0.05):
     area = m.pi * ((radius + dr)**2 - radius**2)
     tau_star = J21_sf_law(area)
-    # tau_star = spitoni21_tau_star(area, radius)
     eta = vice.milkyway.default_mass_loading(radius)
     mgas = 0
     time = 0

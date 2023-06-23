@@ -46,7 +46,7 @@ class diskmodel(vice.milkyway):
         - "lateburst"
         - "outerburst"
         - "twoinfall"
-        - "conroy22"
+        - "earlyburst"
     
     verbose : ``bool`` [default : True]
         Whether or not the run the models with verbose output.
@@ -70,6 +70,7 @@ class diskmodel(vice.milkyway):
         - "plateau"
         - "exponential"
         - "prompt"
+        - "triple"
 
     RIa_kwargs : ``dict`` [default: {}]
         Keyword arguments to pass to the delay-time distribution initialization
@@ -102,20 +103,15 @@ class diskmodel(vice.milkyway):
         # Set the yields
         if yields == "C22":
             from .yields import conroy22
-        elif yields == "S21":
-            from .yields import twoinfall
         else:
             from vice.yields.presets import JW20
             vice.yields.sneia.settings['fe'] *= 10**0.1
         # Set the SF mode - infall vs star formation rate
-        if spec.lower() in ["twoinfall", "conroy22", "expifr", "staticifr", "spitoni21"]:
+        if spec.lower() in ["twoinfall", "earlyburst"]:
             self.mode = "ifr"
             for zone in self.zones: zone.Mg0 = 0
         else:
             self.mode = "sfr"
-        # Remove outflows in the two-infall case (per Spitoni et al. 2021)
-        if spec.lower() == "spitoni21" or spec.lower() == "expifr" or spec.lower() == "staticifr":
-            self.mass_loading = self.no_outflow_mass_loading
         # Set the Type Ia delay time distribution
         dtd = delay_time_distribution(dist = RIa, tmin = delay, **RIa_kwargs)
         for i in range(self.n_zones):
@@ -126,13 +122,11 @@ class diskmodel(vice.milkyway):
             mean_radius = (self.annuli[i] + self.annuli[i + 1]) / 2
             if mean_radius <= MAX_SF_RADIUS:
                 area = m.pi * (self.annuli[i + 1]**2 - self.annuli[i]**2)
-                if spec.lower() == "conroy22":
-                    self.zones[i].tau_star = models.conroy22_tau_star(area)
+                if spec.lower() == "earlyburst":
+                    self.zones[i].tau_star = models.earlyburst_tau_star(area)
                 # elif spec.lower() == "twoinfall":
                 #     self.zones[i].tau_star = models.twoinfall_tau_star(area, 
                 #         mean_radius)
-                elif spec.lower() == "spitoni21":
-                    self.zones[i].tau_star = models.spitoni21_tau_star(area, mean_radius)
                 else:
                     self.zones[i].tau_star = J21_sf_law(area, mode = self.mode)
 
@@ -210,10 +204,7 @@ class star_formation_history:
                 "lateburst":          models.lateburst,
                 "outerburst":         models.outerburst,
                 "twoinfall":          models.twoinfall,
-                "spitoni21":          models.spitoni21,
-                "conroy22":           models.exponential_ifrmode,
-                "expifr":             models.exponential_ifrmode,
-                "staticifr":          models.static_ifrmode,
+                "earlyburst":         models.earlyburst_ifr,
             }[spec.lower()]((i + 0.5) * zone_width, dr = zone_width, dt = dt))
             i += 1
 

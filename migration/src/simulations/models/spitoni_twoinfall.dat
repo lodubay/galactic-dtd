@@ -1,4 +1,0 @@
-#R		sfe1	sfe2	timescale1	timescale1_err	timescale2	timescale2_err	sigma_ratio	sigma_ratio_err	tmax	tmax_err
-4.0		3.0		1.5		0.115		0.005			3.756		0.112			3.805		0.0955			4.647	0.046
-8.0		2.0		1.0		0.103		0.007			4.110		0.136			5.635		0.188			4.085	0.027
-12.0	2.0		0.5		0.449		0.034			10.986		0.436			10.348		0.180			3.059	0.043					
