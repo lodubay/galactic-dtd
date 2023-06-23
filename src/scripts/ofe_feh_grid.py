@@ -23,9 +23,9 @@ OFE_LIM = (-0.15, 0.55)
 GALR_BINS = [3, 5, 7, 9, 11, 13]
 
 def main(output_name, cmap='winter', uncertainties=True, tracks=True, 
-         contours=True, data_dir=paths.data/'migration'):
+         contours=True):
     # Import multioutput stars data
-    mzs = MultizoneStars.from_output(output_name, data_dir=data_dir)
+    mzs = MultizoneStars.from_output(output_name)
     # Import APOGEE data
     if contours:
         apogee_data = import_apogee()
@@ -77,35 +77,6 @@ def main(output_name, cmap='winter', uncertainties=True, tracks=True,
     fname += '.png'
     plt.savefig(paths.debug / 'ofe_feh_grid' / fname, dpi=300)
     plt.close()
-    
-
-def plot_contours(ax, data, bandwidth=0.02, absz_lim=(0, 5), galr_lim=(0, 20),
-                  overwrite=False, **kwargs):
-    """
-    Plot APOGEE density contours in the specified region.
-    
-    Parameters
-    ----------
-    ax : matplotlib.axes.Axes
-        Axis object on which to draw contours.
-    data : pandas.DataFrame
-        APOGEE data containing columns 'FE_H' and 'O_FE'.
-    bandwidth : float
-        Kernel density estimate bandwidth. A larger number will produce
-        smoother contour lines. The default is 0.02.
-    absz_lim : tuple
-        Limits on absolute Galactic z-height in kpc. The default is (0, 5).
-    galr_lim : tuple
-        Limits on Galactocentric radius in kpc. The default is (0, 20).
-    overwrite : bool
-        If True, force re-generate the 2D KDE and save the output.
-    **kwargs passed to matplotlib.axes.Axes.contour().
-    
-    Returns
-    -------
-    contours: matplotlib.contour.QuadContourSet
-    """
-    return contours
 
 
 def gen_kde(data, bandwidth=0.02, absz_lim=(0, 5), galr_lim=(0, 20), 
@@ -180,7 +151,7 @@ def kde_path(galr_lim, absz_lim, savedir=paths.data/'APOGEE/kde'):
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(
-        prog='ofe_feh.py',
+        prog='ofe_feh_grid.py',
         description='Generate a grid of [O/Fe] vs [Fe/H] scatterplots ' + \
             'from a VICE multizone run.'
     )

@@ -20,10 +20,9 @@ OFE_LIM = (-0.15, 0.55)
 GALR_LIM = (7, 9)
 ABSZ_LIM = (0, 2)
 
-def main(output_name, cmap='winter', uncertainties=True, tracks=True,
-         data_dir=paths.data/'migration'):
+def main(output_name, cmap='winter', uncertainties=True, tracks=True):
     # Import multioutput stars data
-    mzs = MultizoneStars.from_output(output_name, data_dir=data_dir)
+    mzs = MultizoneStars.from_output(output_name)
     # Model observational uncertainties
     if uncertainties:
         mzs.model_uncertainty(inplace=True)

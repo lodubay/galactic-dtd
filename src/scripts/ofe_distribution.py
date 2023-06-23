@@ -24,7 +24,7 @@ def main(evolution, RIa, migration=MIGRATION):
     plot_single_comparison(output, verbose=True)
 
 
-def plot_multiple_comparison(outputs, labels, output_dir=paths.data/'migration',
+def plot_multiple_comparison(outputs, labels, output_dir=paths.simulation_outputs,
                              cmap_name='plasma_r', verbose=False, 
                              fname='mdf_ofe_multiple.png',
                              double_line_titles=False, figure_width=7.,
@@ -93,7 +93,7 @@ def plot_multiple_comparison(outputs, labels, output_dir=paths.data/'migration',
         print('Done!')
     
     
-def plot_single_comparison(output, output_dir=paths.data/'migration',
+def plot_single_comparison(output, output_dir=paths.simulation_outputs,
                            label='VICE', cmap_name='plasma_r', verbose=False,
                            fname=''):
     """

@@ -27,7 +27,6 @@ DTD_LIST = [
     'prompt_peak050_stdev015_timescale30',
     'triple_delay040'
 ]
-DATA_DIR = '../data/migration'
 
 def main():
     # Import APOGEE and astroNN data

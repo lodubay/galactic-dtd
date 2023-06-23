@@ -346,7 +346,7 @@ def model_uncertainty(x, err, how='linear'):
 # VICE MULTIZONE INPUT AND UTILITY FUNCTIONS
 # =============================================================================
 
-def multioutput_to_pandas(output_name, data_dir=paths.data/'migration', 
+def multioutput_to_pandas(output_name, data_dir=paths.simulation_outputs, 
                           verbose=False, zone_width=ZONE_WIDTH):
     """
     Convert VICE multizone stars output to pandas DataFrame (slow).
@@ -442,7 +442,7 @@ _RIA_SETTING_DEFAULTS = {
 def multizone_output_path(migration='diffusion', evolution='insideout',
                           efficiency='johnson21', RIa='powerlaw',
                           RIa_setting=None, minimum_delay=0.04,
-                          parent=paths.data/'migration'):
+                          parent=paths.simulation_outputs):
     r"""
     Generate the name of a VICE multizone output based on its simulation
     parameters.

@@ -33,8 +33,8 @@ AGE_LABELS = {'F19': 'Feuillet et al. (2019)',
               'M19': 'Mackereth et al. (2019)',
               'L23': 'Leung et al. (2023)'}
 
-def main(evolution, RIa, migration='diffusion', data_dir=paths.data/'migration',
-         ages='L23', verbose=False, uncertainties=False, **kwargs):
+def main(evolution, RIa, migration='diffusion', ages='L23', verbose=False, 
+         uncertainties=False, **kwargs):
     # Import VICE multi-zone output data
     output_name = '/'.join([migration, evolution, RIa])
     # Import APOGEE and astroNN data
@@ -46,14 +46,13 @@ def main(evolution, RIa, migration='diffusion', data_dir=paths.data/'migration',
         fname = '%s_%s.png' % (RIa, ages)
     save_dir = paths.debug / 'age_ofe' / migration / evolution
     plot_age_ofe(output_name, apogee_data, fname=fname, ages=ages, 
-                 verbose=verbose, data_dir=data_dir, save_dir=save_dir, 
+                 verbose=verbose, save_dir=save_dir, 
                  uncertainties=uncertainties, **kwargs)
 
 
 def plot_age_ofe(output_name, apogee_data, fname='age_ofe.png', ages='L23', 
                  cmap='winter', log=False, score=False, uncertainties=False, 
-                 verbose=False, data_dir=paths.data/'migration', 
-                 save_dir=paths.debug/'age_ofe'):
+                 verbose=False, save_dir=paths.debug/'age_ofe'):
     """
     Plot a grid of [O/Fe] vs age across multiple Galactic regions.
     
@@ -94,8 +93,7 @@ def plot_age_ofe(output_name, apogee_data, fname='age_ofe.png', ages='L23',
     if ages not in AGE_SOURCES:
         raise ValueError('Parameter "ages" must be in %s.' % AGE_SOURCES)
     # Import VICE multizone outputs
-    vice_stars = MultizoneStars.from_output(output_name, data_dir=data_dir, 
-                                            verbose=verbose)
+    vice_stars = MultizoneStars.from_output(output_name, verbose=verbose)
     # Model uncertainties
     if uncertainties:
         vice_stars.model_uncertainty(apogee_data, age_source=ages, inplace=True)
