@@ -15,7 +15,7 @@ AGE_SOURCES = ['M19', 'L23']
 SFH_LIST = [
     'insideout', 
     'lateburst', 
-    'conroy22_JW20yields', 
+    'earlyburst', 
     'twoinfall'
 ]
 DTD_LIST = [
@@ -47,14 +47,12 @@ def main():
                 for RIa in DTD_LIST:
                     # Import VICE multi-zone output data
                     output_name = '/'.join([MIGRATION, evolution, RIa])
-                    vice_stars = multioutput_to_pandas(output_name, DATA_DIR, 
-                                                       verbose=True)
                     scores = []
                     for age_source in AGE_SOURCES:
                         print(migration, evolution, RIa, age_source)
-                        fname = '%s_%s.png' % (RIa, age_source)
+                        fname = '%s_%s_errors.png' % (RIa, age_source)
                         save_dir = paths.debug / 'age_ofe' / migration / evolution
-                        score = plot_age_ofe(vice_stars, apogee_data, fname=fname, 
+                        score = plot_age_ofe(output_name, apogee_data, fname=fname, 
                                              ages=age_source, log=True, score=True,
                                              uncertainties=True, verbose=True,
                                              save_dir=save_dir)

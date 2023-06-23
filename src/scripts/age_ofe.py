@@ -34,24 +34,26 @@ AGE_LABELS = {'F19': 'Feuillet et al. (2019)',
               'L23': 'Leung et al. (2023)'}
 
 def main(evolution, RIa, migration='diffusion', data_dir=paths.data/'migration',
-         ages='L23', verbose=False, **kwargs):
+         ages='L23', verbose=False, uncertainties=False, **kwargs):
     # Import VICE multi-zone output data
     output_name = '/'.join([migration, evolution, RIa])
-    # vice_stars = multioutput_to_pandas(output_name, data_dir, verbose=verbose)
-    vice_stars = MultizoneStars.from_output(output_name, data_dir=data_dir, 
-                                            verbose=verbose)
     # Import APOGEE and astroNN data
     apogee_data = import_apogee(verbose=verbose)
     # Main plot function
-    fname = '%s_%s.png' % (RIa, ages)
+    if uncertainties:
+        fname = '%s_%s_errors.png' % (RIa, ages)
+    else:
+        fname = '%s_%s.png' % (RIa, ages)
     save_dir = paths.debug / 'age_ofe' / migration / evolution
-    plot_age_ofe(vice_stars, apogee_data, fname=fname, ages=ages, 
-                 verbose=verbose, save_dir=save_dir, **kwargs)
+    plot_age_ofe(output_name, apogee_data, fname=fname, ages=ages, 
+                 verbose=verbose, data_dir=data_dir, save_dir=save_dir, 
+                 uncertainties=uncertainties, **kwargs)
 
 
-def plot_age_ofe(vice_stars, apogee_data, fname='age_ofe.png', ages='L23', 
+def plot_age_ofe(output_name, apogee_data, fname='age_ofe.png', ages='L23', 
                  cmap='winter', log=False, score=False, uncertainties=False, 
-                 verbose=False, save_dir=paths.debug/'age_ofe'):
+                 verbose=False, data_dir=paths.data/'migration', 
+                 save_dir=paths.debug/'age_ofe'):
     """
     Plot a grid of [O/Fe] vs age across multiple Galactic regions.
     
@@ -88,6 +90,9 @@ def plot_age_ofe(vice_stars, apogee_data, fname='age_ofe.png', ages='L23',
     # Error handling
     if ages not in AGE_SOURCES:
         raise ValueError('Parameter "ages" must be in %s.' % AGE_SOURCES)
+    # Import VICE multizone outputs
+    vice_stars = MultizoneStars.from_output(output_name, data_dir=data_dir, 
+                                            verbose=verbose)
     # Model uncertainties
     if uncertainties:
         vice_stars.model_uncertainty(apogee_data, age_source=ages, inplace=True)
