@@ -1,15 +1,15 @@
 """
-Plot metallicity distribution functions (MDFs) of [Fe/H] binned by radius.
+Plot metallicity distribution functions (MDFs) of [O/Fe] binned by radius.
 """
 
 import argparse
 from pathlib import Path
 import matplotlib.pyplot as plt
-import paths
+import distribution_functions as dfs
 from multizone_stars import MultizoneStars
 from apogee_tools import import_apogee
 from utils import get_color_list
-import distribution_functions as dfs
+import paths
 from _globals import ONE_COLUMN_WIDTH, GALR_BINS, ABSZ_BINS
 
 NBINS = 100
