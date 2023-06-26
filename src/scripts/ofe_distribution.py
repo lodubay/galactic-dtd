@@ -13,7 +13,7 @@ import paths
 from _globals import ONE_COLUMN_WIDTH, GALR_BINS, ABSZ_BINS
 
 NBINS = 100
-OFE_LIM = (-0.1, 0.5)
+OFE_LIM = (-0.15, 0.55)
 SMOOTH_WIDTH = 0.05
 
 def main(output_name, uncertainties=False, nbins=NBINS, xlim=OFE_LIM, 
@@ -25,7 +25,7 @@ def main(output_name, uncertainties=False, nbins=NBINS, xlim=OFE_LIM,
     # Set up plot
     fig, axs = dfs.setup_axes(ncols=2, figure_width=ONE_COLUMN_WIDTH, 
                               cmap_name=cmap, xlabel='[O/Fe]', xlim=OFE_LIM, 
-                              major_tick_spacing=0.5)
+                              major_tick_spacing=0.2, major_minor_tick_ratio=4.)
     colors = get_color_list(plt.get_cmap(cmap), GALR_BINS)
     # plot
     mdf_kwargs = {'bins': nbins, 'range': xlim, 'smoothing': smoothing}
@@ -58,7 +58,7 @@ if __name__ == '__main__':
     parser.add_argument('--xlim', metavar='XLIM', nargs=2, type=list, 
                         default=OFE_LIM,
                         help='Lower and upper bounds of the MDF ' + \
-                             '(default: [-0.1, 0.5])')
+                             '(default: [-0.15, 0.55])')
     parser.add_argument('--smoothing', metavar='WIDTH', type=float,
                         default=SMOOTH_WIDTH,
                         help='Width of boxcar smoothing (default: 0.0.05)')

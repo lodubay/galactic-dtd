@@ -88,7 +88,8 @@ def plot_apogee_mdfs(data, axs, col='FE_H', colors=[], label='APOGEE',
 
 def setup_axes(ncols=2, figure_width=3.25, xlabel='', xlim=None, 
                major_tick_spacing=1, galr_bins=GALR_BINS, absz_bins=ABSZ_BINS, 
-               cbar_width=0.6, cmap_name='plasma_r', panel_aspect_ratio=1.5):
+               cbar_width=0.6, cmap_name='plasma_r', panel_aspect_ratio=1.5,
+               major_minor_tick_ratio=MAJOR_MINOR_RATIO):
     """
     Set up matplotlib figure and axes for the distribution plot.
     
@@ -136,7 +137,7 @@ def setup_axes(ncols=2, figure_width=3.25, xlabel='', xlim=None,
     # Format x-axis
     axs[0,0].set_xlim(xlim)
     axs[0,0].xaxis.set_major_locator(MultipleLocator(major_tick_spacing))
-    minor_tick_spacing = major_tick_spacing / MAJOR_MINOR_RATIO
+    minor_tick_spacing = major_tick_spacing / major_minor_tick_ratio
     axs[0,0].xaxis.set_minor_locator(MultipleLocator(minor_tick_spacing))
     for ax in axs[-1]:
         ax.set_xlabel(xlabel)
