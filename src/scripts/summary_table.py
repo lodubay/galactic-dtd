@@ -24,7 +24,17 @@ DTD_LIST = ['powerlaw_slope11',
             'triple_delay040']
 AGE_SOURCE = 'L23' # Use Leung et al (2023) "latent-space" ages
 
-def main():
+def main(overwrite=False):
+    csv_file = paths.output / 'summary_table.csv'
+    if csv_file.exists() and not overwrite:
+        summary_table = pd.read_csv(csv_file, index_col=[0, 1])
+    else:
+        summary_table = gen_summary_table()
+        summary_table.to_csv(csv_file)
+    print(summary_table)
+
+
+def gen_summary_table():
     apogee_data = import_apogee()
     
     summary_table = pd.DataFrame([], 
@@ -71,9 +81,7 @@ def main():
                 summary_table.loc[dtd, sfh] = weighted_sums
                 t.update()
     
-    summary_table.to_csv(paths.output / 'summary_table.csv')
-    # summary_table = summary_table.round(3)
-    # print(summary_table)
+    return summary_table
     
 
 def score_feh_df(mzs, apogee_data, data_range=(-3., 1.), bin_width=0.01):
