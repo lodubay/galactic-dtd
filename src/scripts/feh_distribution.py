@@ -13,7 +13,7 @@ import distribution_functions as dfs
 from _globals import ONE_COLUMN_WIDTH, GALR_BINS, ABSZ_BINS
 
 NBINS = 100
-FEH_LIM = (-1.1, 0.6)
+FEH_LIM = (-1.6, 0.6)
 SMOOTH_WIDTH = 0.2
 
 def main(output_name, uncertainties=False, nbins=100, xlim=(-1.1, 0.6), 

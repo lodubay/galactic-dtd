@@ -10,9 +10,6 @@ from utils import get_bin_centers, discrete_colormap
 from apogee_tools import apogee_region, apogee_mdf
 from _globals import ABSZ_BINS, GALR_BINS
 
-# Ratio between major and minor tick spacing in data units
-MAJOR_MINOR_RATIO = 5.
-
 
 def plot_multizone_mdfs(mzs, axs, col='[fe/h]', colors=[], label='VICE', 
                         galr_bins=GALR_BINS, absz_bins=ABSZ_BINS, **kwargs):
@@ -89,7 +86,7 @@ def plot_apogee_mdfs(data, axs, col='FE_H', colors=[], label='APOGEE',
 def setup_axes(ncols=2, figure_width=3.25, xlabel='', xlim=None, 
                major_tick_spacing=1, galr_bins=GALR_BINS, absz_bins=ABSZ_BINS, 
                cbar_width=0.6, cmap_name='plasma_r', panel_aspect_ratio=1.5,
-               major_minor_tick_ratio=MAJOR_MINOR_RATIO):
+               major_minor_tick_ratio=5.):
     """
     Set up matplotlib figure and axes for the distribution plot.
     
@@ -119,6 +116,9 @@ def setup_axes(ncols=2, figure_width=3.25, xlabel='', xlim=None,
     panel_aspect_ratio : float, optional
         The aspect ratio of the panels, equal to the panel width divided by
         the panel height. The default is 1.5.
+    major_minor_tick_ratio : float, optional
+        Ratio between major and minor tick spacing in data units. The default
+        is 5.
         
     Returns
     -------

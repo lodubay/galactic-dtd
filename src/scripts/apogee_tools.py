@@ -238,6 +238,8 @@ def apogee_quality_cuts(df):
             (df['TEFF'] > 3500) & (df['TEFF'] < 5500)]
     # Replace NaN stand-in values with NaN
     df.replace(99.999, np.nan, inplace=True)
+    # Limit to stars with measurements of both [Fe/H] and [O/Fe]
+    df.dropna(subset=['FE_H', 'O_FE'], inplace=True)
     df.reset_index(inplace=True, drop=True)
     return df
     
