@@ -18,10 +18,11 @@ SOLAR_Z_TOTAL = 0.014
 def main():
     # test
     output_name = 'diffusion/insideout/powerlaw_slope11'
-    mzs = MultizoneStars.from_output(output_name)
-    mzs.model_uncertainty(age_source='L23')
-    mzs.model_uncertainty(age_source='M19')
-    print(mzs.mdf('[fe/h]', bins=19, range=(-1.1, 0.8)))
+    mzs1 = MultizoneStars.from_output(output_name)
+    mzs2 = mzs1.copy()
+    mzs1.filter({'[fe/h]': (-0.4, -0.2)}, inplace=True)
+    print(mzs1.stars.shape)
+    print(mzs2.stars.shape)
 
 
 class MultizoneStars:
@@ -144,7 +145,75 @@ class MultizoneStars:
                                 'of strings.')
             return self.stars[cols]
         
-    def region(self, galr_lim=(0, 20), absz_lim=(0, 5), min_mass=1.0, 
+    def copy(self):
+        """
+        Create a copy of the current instance.
+        
+        Returns
+        -------
+        MultizoneStars instance
+        """
+        return MultizoneStars(self.stars.copy(), name=self.name, 
+                              fullpath=self.fullpath, 
+                              zone_width=self.zone_width,
+                              galr_lim=self.galr_lim, absz_lim=self.absz_lim, 
+                              noisy=self.noisy)
+        
+    def filter(self, filterdict, inplace=False):
+        """
+        Filter stars by the given parameter bounds.
+        
+        Parameters
+        ----------
+        filterdict : dict
+            Dictionary containing the parameters and bounds with which to
+            filter the data. Each key must be a column in the data and
+            each value must be a tuple of lower and upper bounds. If either
+            element in the tuple is None, the corresponding limit will not be
+            applied.
+        inplace : bool, optional
+            If True, modifies the data of the current instance. If False,
+            returns a new instance with the filtered data. The default is
+            False.
+        """
+        stars_copy = self.stars.copy()
+        if isinstance(filterdict, dict):
+            for key in filterdict.keys():
+                # Error handling
+                if key not in self.stars.columns:
+                    raise ValueError('Keys in "filterdict" must be data',
+                                     'column names.')
+                elif not isinstance(filterdict[key], tuple):
+                    raise TypeError('Each value in "filterdict" must be a',
+                                    'tuple of length 2.')
+                elif len(filterdict[key]) != 2:
+                    raise ValueError('Each value in "filterdict" must be a',
+                                     'tuple of length 2.')
+                elif not all([isinstance(val, Number) or val is None \
+                              for val in filterdict[key]]):
+                    raise TypeError('Each element of the tuple must be numeric',
+                                    'or NoneType.')
+                else:
+                    colmin, colmax = filterdict[key]
+                    if colmin is not None:
+                        stars_copy = stars_copy[stars_copy[key] >= colmin]
+                    if colmax is not None:
+                        stars_copy = stars_copy[stars_copy[key] < colmax]
+            if inplace:
+                self.stars = stars_copy
+            else:
+                return MultizoneStars(stars_copy, name=self.name, 
+                                      fullpath=self.fullpath, 
+                                      zone_width=self.zone_width, 
+                                      galr_lim=self.galr_lim, 
+                                      absz_lim=self.absz_lim, 
+                                      noisy=self.noisy)
+        else:
+            raise TypeError('Parameter "filterdict" must be a dict. Got:',
+                            type(filterdict))
+            
+        
+    def region(self, galr_lim=(0, 20), absz_lim=(0, 3), min_mass=1.0, 
                origin=False, inplace=False):
         """
         Slice DataFrame of stars within a given Galactic region of radius and
