@@ -42,8 +42,8 @@ class triple(plateau):
         self.norm = 1
         # Normalize over full time range
         self.norm *= 1e-9 * self.normalize(tmin, tmax)
-        self._name = 'triple_rise{:03d}_slope{:02d}'.format(
-            int(rise_time * 1000), int(abs(slope) * 10))
+        self._name = 'triple_rise{:03d}_width{:03d}_slope{:02d}'.format(
+            int(rise_time * 1000), int(width * 1000), int(abs(slope) * 10))
     
     def __call__(self, time):
         if time < self.rise_time:

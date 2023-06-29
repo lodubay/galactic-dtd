@@ -1,11 +1,13 @@
 r"""
-This script runs the models in Johnson et al. (2021).
+This script runs a multi-zone model with the parameters specified by command-
+line arguments.
 
-Run ``python simulations.py --help`` for more info.
+Run ``python -m multizone.py --help`` for more info.
 """
 
 import argparse
-import src
+from . import _globals
+from . import src
 # from vice import milkyway
 # import sys
 
@@ -13,8 +15,8 @@ _MIGRATION_MODELS_ = ["diffusion", "linear", "post-process", "sudden",
                       "gaussian"]
 _EVOLUTION_MODELS_ = ["static", "insideout", "lateburst", "outerburst",
                       "twoinfall", "earlyburst"]
-_DELAY_MODELS_ = ["powerlaw", "plateau", "prompt",
-                  "exponential", "greggio05_single", "triple"]
+_DELAY_MODELS_ = ["powerlaw", "plateau", "prompt", "exponential", "triple",
+                  "greggio05_single", "greggio05_double"]
 _YIELD_SETS_ = ["JW20", "C22"]
 
 def parse():
@@ -108,7 +110,7 @@ def model(args):
         for p in args.RIa_params.split('_'):
             key, value = p.split('=')
             RIa_kwargs[key] = float(value)
-    config = src.simulations.config(
+    config = src.config(
         timestep_size = args.dt,
         star_particle_density = args.nstars,
         zone_width = args.zonewidth,
@@ -126,7 +128,7 @@ def model(args):
         kwargs["simple"] = True
     else:
         kwargs["migration_mode"] = args.migration
-    return src.simulations.diskmodel.from_config(config, **kwargs)
+    return src.diskmodel.from_config(config, **kwargs)
 
 
 def main():
@@ -137,7 +139,7 @@ def main():
     args = parser.parse_args()
     model_ = model(args)
     model_.run([_ * model_.dt for _ in range(round(
-        src._globals.END_TIME / model_.dt) + 1)],
+        _globals.END_TIME / model_.dt) + 1)],
         overwrite = args.force, pickle = False)
 
 
