@@ -6,6 +6,7 @@ multizone simulations across multiple parameter spaces.
 from tqdm import tqdm
 import numpy as np
 import pandas as pd
+from scipy.signal import find_peaks
 from apogee_tools import import_apogee, apogee_region, apogee_mdf
 from multizone_stars import MultizoneStars
 from utils import kl_divergence, kl_div_2D, group_by_bins, weighted_quantile
@@ -31,7 +32,10 @@ def main(overwrite=False):
     else:
         summary_table = gen_summary_table()
         summary_table.to_csv(csv_file)
-    print(summary_table)
+    # Convert to LaTeX format and write to output file
+    latex_table = to_latex(summary_table)
+    with open(paths.output / 'summary_table.tex', 'w') as f:
+        f.write(latex_table)
 
 
 def gen_summary_table():
@@ -53,7 +57,7 @@ def gen_summary_table():
                 mzs = MultizoneStars.from_output(output_name)
                 mzs.model_uncertainty(apogee_data, inplace=True)
                 # Set up lists to track scores by region
-                scores = {col: [] for col in summary_table.columns}
+                scores = {col: [] for col in summary_table.columns[:-1]}
                 weights = []
                 for i in range(len(ABSZ_BINS) - 1):
                     absz_lim = (ABSZ_BINS[-(i+2)], ABSZ_BINS[-(i+1)])
@@ -73,11 +77,12 @@ def gen_summary_table():
                         scores['age_ofe'].append(
                             score_age_ofe(vice_subset, apogee_subset, 
                                           age_col=age_col))
-                        scores['bimodality'].append(0)
                         weights.append(apogee_subset.shape[0])
                 # Append weighted mean scores
                 weighted_sums = {col: np.average(scores[col], weights=weights) 
-                                 for col in summary_table.columns}
+                                 for col in summary_table.columns[:-1]}
+                # Separate bimodality test (binary output)
+                weighted_sums['bimodality'] = test_bimodality(mzs)
                 summary_table.loc[dtd, sfh] = weighted_sums
                 t.update()
     
@@ -203,6 +208,88 @@ def score_age_ofe(mzs, apogee_data, age_col='LATENT_AGE',
     notna = (pd.notna(apogee_medians) & pd.notna(vice_medians))
     median_diffs = vice_medians[notna] - apogee_medians[notna]
     return np.sqrt(np.average(median_diffs**2, weights=apogee_counts[notna]))
+
+
+def test_bimodality(mzs, prominence=0.1, feh_bins=[(-0.6, -0.4), (-0.4, -0.2)],
+                    galr_lim=(7, 9), absz_lim=(0, 2), smoothing=0.05):
+    """
+    Determine whether the distribution of stars in [O/Fe] is bimodal.
+    
+    Parameters
+    ----------
+    mzs : MultizoneStars object
+        Star particle output from a VICE multizone run.
+    prominence : float, optional
+        Prominence threshold for peak-finding algorithm. The default is 0.1.
+    feh_bins : list of tuples, optional
+        Limits on [Fe/H] to slice the output. Bimodality will be checked for
+        stars within each slice, and if either slice is bimodal, the function
+        will return True. The default is [(-0.6, -0.4), (-0.4, -0.2)].
+    galr_lim : tuple, optional
+        Limits on galactic radius in kpc. The default is (7, 9).
+    absz_lim : tuple, optional
+        Limits on absolute galactic z-height in kpc. The default is (0, 2).
+    smoothing : float, optional
+        Boxcar smoothing width for the [O/Fe] distribution. The default is 0.05.
+    
+    Returns
+    -------
+    bool
+        Whether or not the distribution of stars in [O/Fe] is bimodal.
+    """
+    subset = mzs.region(galr_lim=galr_lim, absz_lim=absz_lim)
+    for feh_bin in feh_bins:
+        subset_slice = subset.filter({'[fe/h]': feh_bin})
+        mdf, bin_edges = subset_slice.mdf('[o/fe]', smoothing=smoothing,
+                                          bins=np.arange(-0.5, 0.56, 0.01))
+        peaks, _ = find_peaks(mdf/mdf.max(), prominence=0.1)
+        is_bimodal = (len(peaks) > 1)
+        if is_bimodal:
+            break
+    return is_bimodal
+    
+
+def to_latex(df):
+    # Mask numerical scores with no / meh / yes marks
+    for col in df.columns[:-1]:
+        df[col] = df[col].mask(df[col] < df[col].quantile(0.33), 
+                           other='\yes').mask(
+                               (df[col] >= df[col].quantile(0.33)) & 
+                               (df[col] < df[col].quantile(0.67)), 
+                           other='\meh').mask(
+                               df[col] >= df[col].quantile(0.67),
+                           other='\\no')
+    # Mask bimodality booleans with no / yes marks
+    df['bimodality'] = df['bimodality'].mask(df['bimodality'], 
+                                         other='\yes').mask(
+                                             ~df['bimodality'],
+                                         other='\\no')
+    # Fancy row labels
+    dtd_labels = ['Power law', '($\\alpha=-1.1$)', '', '',
+                  'Power law', '($\\alpha=-1.4$)', '', '',
+                  'Exponential', '($\\tau=1.5$ Gyr)', '', '',
+                  'Exponential', '($\\tau=3.0$ Gyr)', '', '',
+                  'Plateau', '($W=0.3$ Gyr)', '', '',
+                  'Plateau', '($W=1.0$ Gyr)', '', '',
+                  'Prompt', '($t_{\\rm max}=0.05$ Gyr)', '', '',
+                  'Triple system', '($t_{\\rm max}=1.0$ Gyr)', '', '']
+    sfh_labels = ['Inside-out', 'Late-burst', 'Early-burst', 'Two-infall']
+    df.reset_index(drop=False, inplace=True)
+    df['DTD'] = dtd_labels
+    df['SFH'] = sfh_labels * len(DTD_LIST)
+    latex_table = df.style.hide(axis=0).to_latex()
+    # Remove tabular environment & add horizontal lines
+    rows = latex_table.split('\n')[2:-2]
+    for i in range(3, len(rows)-4, 4):
+        rows[i] = rows[i].replace('\\\\', '\\\\ \n\\hline')
+    latex_table = '\n'.join(rows)
+    # Import table header and footer
+    with open('summary_table_header.txt', 'r') as f:
+        header_footer = f.read()
+        header, footer = header_footer.split('===')
+    # Replace tabular environment with deluxetable
+    latex_table = header + latex_table + footer
+    return latex_table
 
 
 if __name__ == '__main__':

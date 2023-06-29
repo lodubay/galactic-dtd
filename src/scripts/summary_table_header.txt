@@ -1,0 +1,10 @@
+\begin{deluxetable*}{ll|ccccc}
+\label{tab:results}
+\tablehead{
+    \colhead{DTD} & \colhead{SFH} & \colhead{[Fe/H] DF} & \colhead{[O/Fe] DF} & 
+    \colhead{[Fe/H]--[O/Fe]} & \colhead{Age--[O/Fe]} & \colhead{Bimodality}
+}
+\startdata
+===
+\enddata
+\end{deluxetable*}
