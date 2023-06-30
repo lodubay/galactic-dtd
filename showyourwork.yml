@@ -9,3 +9,7 @@ overleaf:
     pull:
         - src/tex/ms.tex
         - src/tex/bib.bib
+
+dependencies:
+    src/scripts/star_formation_histories.py:
+        - src/data/multizone/

@@ -15,7 +15,8 @@ from colormaps import paultol
 plt.rcParams['axes.prop_cycle'] = plt.cycler('color', paultol.vibrant.colors)
 
 MIGRATION = 'gaussian'
-EVOLUTION_LIST = ['insideout', 'lateburst', 'earlyburst', 'twoinfall']
+# EVOLUTION_LIST = ['insideout', 'lateburst', 'earlyburst', 'twoinfall']
+EVOLUTION_LIST = ['insideout', 'insideout', 'insideout', 'insideout']
 DTD = 'powerlaw_slope11'
 CMAP_NAME = 'plasma_r'
 
