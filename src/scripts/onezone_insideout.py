@@ -8,7 +8,7 @@ import matplotlib.pyplot as plt
 import vice
 import paths
 from track_and_mdf import setup_axes, plot_vice_onezone
-from multizone.src.simulations import models, dtds
+from multizone.src import models, dtds
 from _globals import END_TIME
 from vice.yields.presets import JW20
 vice.yields.sneia.settings['fe'] *= 10**0.1

@@ -3,8 +3,8 @@ import numpy as np
 import matplotlib.pyplot as plt
 import vice
 import paths
-from multizone.src.simulations import models
-from multizone.src.simulations.yields import C22
+from multizone.src import models
+from multizone.src.yields import C22
 from track_and_mdf import plot_vice_onezone
 
 area = m.pi * (9**2 - 7**2)

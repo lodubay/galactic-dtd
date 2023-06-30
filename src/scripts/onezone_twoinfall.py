@@ -9,10 +9,10 @@ import matplotlib.pyplot as plt
 import vice
 import paths
 from track_and_mdf import setup_axes, plot_vice_onezone
-from multizone.src.simulations import models, dtds
+from multizone.src import models, dtds
 from _globals import END_TIME
-from multizone.src.simulations.yields import twoinfall
-from multizone.src.simulations.models.gradient import gradient
+from multizone.src.yields import twoinfall
+from multizone.src.models.gradient import gradient
 
 ZONE_WIDTH = 0.1
 DT = 0.01

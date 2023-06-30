@@ -5,7 +5,7 @@ Plot the Type Ia supernova delay time distributions (DTDs) as a function of time
 import matplotlib.pyplot as plt
 from matplotlib.ticker import FuncFormatter
 import paths
-from multizone.src.simulations import dtds
+from multizone.src import dtds
 from colormaps import paultol
 plt.rcParams['axes.prop_cycle'] = plt.cycler('color', paultol.bright.colors)
 

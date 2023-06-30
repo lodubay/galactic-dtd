@@ -6,7 +6,7 @@ import argparse
 import numpy as np
 import matplotlib.pyplot as plt
 import paths
-from multizone.src.simulations import dtds
+from multizone.src import dtds
 from _globals import END_TIME
 from delay_time_distributions import setup_axes
 from colormaps import paultol
