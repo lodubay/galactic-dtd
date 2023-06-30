@@ -26,7 +26,7 @@
 \author[0000-0003-3781-0747]{Liam O. Dubay}
 \author[0000-0001-7258-1834]{Jennifer A. Johnson}
 \author[0000-0002-6534-8783]{James W. Johnson}
-\author[0000-0001-7775-7261]{David H. Weinberg}
+% \author[0000-0001-7775-7261]{David H. Weinberg}
 
 % Abstract from AAS 241
 \begin{abstract}
@@ -202,17 +202,23 @@ Which leads to an overall SFE timescale of
 \paragraph{Two-infall} 
 We parameterize the infall rate as two successive, exponentially declining bursts as in \citet{Chiappini2001-AbundanceGradients}:
 \begin{equation}
+    \label{eq:twoinfall-ifr}
     f_{\rm TI}(t|R_{\rm gal}) = N_1(R_{\rm gal}) e^{-t/\tau_1} + N_2(R_{\rm gal}) e^{-(t-t_{\rm on})/\tau_2}
 \end{equation}
-with normalization coefficients
+% with normalization coefficients
+% \begin{equation}
+%     N_1(R_{\rm gal}) = \frac{\Sigma_{1,\odot} e^{-(R_{\rm gal}-8\,\rm{kpc})/R_1}}{\tau_1 (1-e^{-t_{\rm max}/\tau_1})}
+% \end{equation}
+% and
+% \begin{equation}
+%     N_2(R_{\rm gal}) = \frac{\Sigma_{2,\odot} e^{-(R_{\rm gal}-8\,\rm{kpc})/R_2}}{\tau_2 (1-e^{-(t_{\rm max}-t_{\rm on})/\tau_2})}
+% \end{equation}
+% Second infall onset time $t_{\rm on}=4$ Gyr, infall timescales $\tau_1=1$ Gyr and $\tau_2=4$ Gyr. We take the surface mass density ratio of the thin disk to the thick disk at the Sun to be $(\frac{\Sigma_2}{\Sigma_1})_\odot=5.6$ \citep{Spitoni2021-TwoInfall}.
+The normalization ratio $N_2/N_1$ is calculated so that the ratio of stellar surface mass density produced by the second infall relative to the first follows
 \begin{equation}
-    N_1(R_{\rm gal}) = \frac{\Sigma_{1,\odot} e^{-(R_{\rm gal}-8\,\rm{kpc})/R_1}}{\tau_1 (1-e^{-t_{\rm max}/\tau_1})}
+    \frac{\Sigma_2}{\Sigma_1} = \Big(\frac{\Sigma_2}{\Sigma_1}\Big)_{R_0} e^{(R-R_0)(1/h{R,2} - 1/h_{R,1})}
 \end{equation}
-and
-\begin{equation}
-    N_2(R_{\rm gal}) = \frac{\Sigma_{2,\odot} e^{-(R_{\rm gal}-8\,\rm{kpc})/R_2}}{\tau_2 (1-e^{-(t_{\rm max}-t_{\rm on})/\tau_2})}
-\end{equation}
-Second infall onset time $t_{\rm on}=4$ Gyr, infall timescales $\tau_1=1$ Gyr and $\tau_2=4$ Gyr. We take the surface mass density ratio of the thin disk to the thick disk at the Sun to be $(\frac{\Sigma_2}{\Sigma_1})_\odot=5.6$ \citep{Spitoni2021-TwoInfall}.
+where $h_{R,1}=2.0$ kpc and $h_{R,2}=3.5$ kpc are the thick- and thin-disk scale radii, respectively, found by \citet{Bovy2012-SubPopulationStructure}. We take the local thick- to thin-disk surface density ratio $(\Sigma_1/\Sigma_2)_{R_0}=0.05$ for [reasons].
 
 \subsection{Stellar Migration}
 \label{sec:migration}
