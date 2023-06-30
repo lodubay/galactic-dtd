@@ -2,8 +2,9 @@
 This script runs all necessary multi-zone simulations for the paper.
 """
 
-import simulations
+import multizone
 import paths
+import _globals
 
 # SN Ia delay time distribution models
 DTD_LIST = [
@@ -32,10 +33,17 @@ DTD_LIST = [
      'model': 'triple',
      'params': {'rise_time': 0.5, 'width': 0.5, 'slope': -1.1}},
 ]
+# Star formation history models
+SFH_LIST = ['insideout', 'lateburst', 'earlyburst', 'twoinfall']
 
 def main():
-    dtd = DTD_LIST[0]
-    model('insideout', dtd['model'], dtd_kwargs=dtd['params'], dtd_name=dtd['name'])
+    for sfh in SFH_LIST:
+        for dtd in DTD_LIST:
+            model_ = model('insideout', dtd['model'], dtd_kwargs=dtd['params'], 
+                           dtd_name=dtd['name'])
+            model_.run([_ * model_.dt for _ in range(round(
+                _globals.END_TIME / model_.dt) + 1)],
+                overwrite = False, pickle = False)
 
 
 def model(sfh, dtd, dtd_kwargs={}, dtd_name='', migration='gaussian'):
@@ -47,11 +55,11 @@ def model(sfh, dtd, dtd_kwargs={}, dtd_name='', migration='gaussian'):
     args : argparse.Namespace
         The command line arguments parsed via argparse.
     """
-    config = simulations.config(
-        timestep_size = simulations._globals.DT,
-        star_particle_density = simulations._globals.NSTARS,
-        zone_width = simulations._globals.ZONE_WIDTH,
-        elements = simulations._globals.ELEMENTS
+    config = multizone.src.config(
+        timestep_size = _globals.DT,
+        star_particle_density = _globals.NSTARS,
+        zone_width = _globals.ZONE_WIDTH,
+        elements = _globals.ELEMENTS
     )
     # Path to output directory
     if dtd_name == '':
@@ -64,14 +72,14 @@ def model(sfh, dtd, dtd_kwargs={}, dtd_name='', migration='gaussian'):
         spec = sfh,
         RIa = dtd,
         RIa_kwargs = dtd_kwargs,
-        delay = simulations._globals.MIN_RIA_DELAY,
+        delay = _globals.MIN_RIA_DELAY,
         yields = 'JW20'
     )
     if migration == "post-process":
         kwargs["simple"] = True
     else:
         kwargs["migration_mode"] = migration
-    return simulations.diskmodel.from_config(config, **kwargs)
+    return multizone.src.diskmodel.from_config(config, **kwargs)
 
 
 if __name__ == '__main__':

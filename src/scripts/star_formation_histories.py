@@ -14,8 +14,8 @@ from _globals import END_TIME, ZONE_WIDTH, TWO_COLUMN_WIDTH, GALR_BINS
 from colormaps import paultol
 plt.rcParams['axes.prop_cycle'] = plt.cycler('color', paultol.vibrant.colors)
 
-MIGRATION = 'post-process'
-EVOLUTION_LIST = ['insideout', 'lateburst', 'conroy22_JW20yields', 'twoinfall']
+MIGRATION = 'gaussian'
+EVOLUTION_LIST = ['insideout', 'lateburst', 'earlyburst', 'twoinfall']
 DTD = 'powerlaw_slope11'
 CMAP_NAME = 'plasma_r'
 

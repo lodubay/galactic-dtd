@@ -3,7 +3,7 @@ Global variables for the multizone simulations and plotting scripts.
 """
 
 # Simulation globals are located at src/scripts/simulations/_globals.py
-from simulations._globals import END_TIME, ZONE_WIDTH, DT
+from multizone._globals import *
 
 # Plot bins in galactocentric radius and absolute z-height in kpc
 GALR_BINS = [3, 5, 7, 9, 11, 13, 15]

@@ -8,8 +8,6 @@ Run ``python -m multizone.py --help`` for more info.
 import argparse
 from . import _globals
 from . import src
-# from vice import milkyway
-# import sys
 
 _MIGRATION_MODELS_ = ["diffusion", "linear", "post-process", "sudden", 
                       "gaussian"]
