@@ -3,15 +3,13 @@ This script plots a comparison between one-zone two-infall models with and
 without outflows.
 """
 
-import sys
 import numpy as np
 import matplotlib.pyplot as plt
 import vice
 import paths
-sys.path.append(str(paths.root))
-from migration.src.simulations import models, dtds
-from migration.src._globals import END_TIME
-from migration.src.simulations.yields import twoinfall
+from multizone.src.simulations import models, dtds
+from _globals import END_TIME
+from multizone.src.simulations.yields import twoinfall
 
 DT = 0.01
 RADII = [4, 6, 8, 10, 12, 14] # kpc

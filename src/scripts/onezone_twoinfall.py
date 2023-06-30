@@ -4,17 +4,15 @@ without outflows.
 """
 
 import math as m
-import sys
 import numpy as np
 import matplotlib.pyplot as plt
 import vice
 import paths
 from track_and_mdf import setup_axes, plot_vice_onezone
-sys.path.append(str(paths.root))
-from migration.src.simulations import models, dtds
-from migration.src._globals import END_TIME
-from migration.src.simulations.yields import twoinfall
-from migration.src.simulations.models.gradient import gradient
+from multizone.src.simulations import models, dtds
+from _globals import END_TIME
+from multizone.src.simulations.yields import twoinfall
+from multizone.src.simulations.models.gradient import gradient
 
 ZONE_WIDTH = 0.1
 DT = 0.01
