@@ -254,7 +254,7 @@ We fit a sech$^2$ function \citep{Spitzer1942} to the distribution of midplane d
 \subsection{APOGEE Data}
 \label{sec:apogee-data}
 
-We use APOGEE DR17 \citep{Abdurro'uf2022-SDSSIV-DR17}. Our selection criteria are presented in Table \ref{tab:sample-selection}, producing a final sample of 192,926 stars.
+We use APOGEE DR17 \citep{Abdurro'uf2022-SDSSIV-DR17}. Our selection criteria are presented in Table \ref{tab:sample-selection}, producing a final sample of \variable{output/sample_size.txt} stars. We limit to stars with a reported measurement of both [Fe/H] and [O/Fe]. APOGEE survey \citep{Majewski2017-APOGEE}, spectrographs \citep{Wilson2019-APOGEE-Spectrographs}, ASPCAP \citep{Holtzmann2015-ASPCAP,GarciaPerez2016-ASPCAP}, 2.5-meter Sloan Foundation Telescope \citep{Gunn2006-SloanTelescope} at Apache Point Observatory, New Mexico. Ir{\'e}n{\'e}e DuPont Telescope \citep{BowenVaughan1973-DuPontTelescope} at Las Campanas Observatory, Chile for Southern Hemisphere observations. Data reduction pipeline \citep{Nidever2015-APOGEE-DataReduction}, model grids and interpolation method \citep{Jonsson2020-APOGEE-DR16}.
 
 \begin{deluxetable*}{lll}
     \tablecaption{Sample Selection\label{tab:sample-selection}}
@@ -334,7 +334,7 @@ The minimum delay and SFE timescale have similar effects on the abundance tracks
 
 \subsection{Analytical Formulations}
 
-\citet{Greggio2005-AnalyticalRates} derives analytical DTDs for SD and DD progenitor systems from assumptions about binary stellar evolution and outcomes of mass exchange. They find that the parameters which have a large effect on the shape of the DTD are the distribution and range of stellar masses in progenitor systems; the efficiency of accretion in the SD scenario; and the distribution of separations at birth in the DD scenario. Figure \ref{fig:greggio05-dtd} shows the analytical DTDs for SD progenitors and two different prescriptions for DD progenitors (``WIDE'' and ``CLOSE''). In the ``WIDE'' scheme, it is assumed that there is a wide distribution of ratios $A/A_0$ of the separation of the DD system to the initial separation of the binary, and that the distributions of $A$ and total mass of the system $m_{\rm{DD}}$ are independent, so one cannot necessarily predict the total merge time of a system based on its initial parameters. In the ``CLOSE'' scheme, there is assumed to be a narrow distribution of $A/A_0$ and a correlation between $A$ and $m_{\rm{DD}}$, so the most massive binaries tend to merge quickly and the least massive merge last.
+\citet{Greggio2005-AnalyticalRates} derives analytical DTDs for SD and DD progenitor systems from assumptions about binary stellar evolution and outcomes of mass exchange. They find that the parameters which have a large effect on the shape of the DTD are the distribution and range of stellar masses in progenitor systems; the efficiency of accretion in the SD scenario; and the distribution of separations at birth in the DD scenario. Figure \ref{fig:dtd-greggio05} shows the analytical DTDs for SD progenitors and two different prescriptions for DD progenitors (``WIDE'' and ``CLOSE''). In the ``WIDE'' scheme, it is assumed that there is a wide distribution of ratios $A/A_0$ of the separation of the DD system to the initial separation of the binary, and that the distributions of $A$ and total mass of the system $m_{\rm{DD}}$ are independent, so one cannot necessarily predict the total merge time of a system based on its initial parameters. In the ``CLOSE'' scheme, there is assumed to be a narrow distribution of $A/A_0$ and a correlation between $A$ and $m_{\rm{DD}}$, so the most massive binaries tend to merge quickly and the least massive merge last.
 
 An implementation of these DTDs in a chemical evolution model requires numerical integration (see their Equations 14, 33, and 34, respectively, for the exact functional forms), so to save on computation time we approximate the DTD for the DD prescriptions as a broken power-law with an exponential rise and tail:
 
@@ -354,8 +354,8 @@ An implementation of these DTDs in a chemical evolution model requires numerical
 \end{equation}
 
 \noindent We use a non-linear least squares method to fit Equation \ref{eq:greggio05-approx} to the analytical DTDs for DD progenitors. We obtain best-fit parameters $\alpha_1=-0.19$, $A_{\rm{rise}}=1.7$, $\tau_{\rm{rise}}=0.084$ Gyr, $\alpha_2=-0.91$, $A_{\rm{tail}}=0.85$, and $\tau_{\rm{tail}}=0.088$ Gyr for the ``WIDE'' scheme, and $\alpha_1=-0.53$, $A_{\rm{rise}}=3.0$, $\tau_{\rm{rise}}=0.042$ Gyr, $\alpha_2=-1.1$, $A_{\rm{tail}}=0.62$, and $\tau_{\rm{tail}}=0.11$ Gyr for the ``CLOSE'' scheme.\footnote{
-Our implementation of these best-fit approximations, as well as the original SD and DD formulations, is available in the GitHub repository for this paper.
-} These best-fit approximations are represented by the dashed curves in Figure \ref{fig:greggio05-dtd} \citep[see also Figure 8 in][]{Greggio2005-AnalyticalRates}. The difference between the true analytical DTDs and our best-fit approximations is small enough as to be irrelevant for our purposes, so for the rest of this section we rely on the best-fit approximations for faster simulations.
+Our implementation of these best-fit approximations, as well as the original SD and DD formulations, is available in the GitHub repository for this paper: \GitHubURL
+} These best-fit approximations are represented by the dashed curves in Figure \ref{fig:dtd-greggio05} \citep[see also Figure 8 in][]{Greggio2005-AnalyticalRates}. The difference between the true analytical DTDs and our best-fit approximations is small enough as to be irrelevant for our purposes, so for the rest of this section we rely on the best-fit approximations for faster simulations.
 
 % \begin{figure}
 %     \centering
@@ -421,60 +421,78 @@ D_{\rm{KL}}(P \parallel Q) = \int_{-\infty}^{\infty} p(x) \log\Big(\frac{p(x)}{q
 
 Picking the team.
 
-\begin{deluxetable*}{ll|cccc}
+\begin{deluxetable*}{ll|ccccc}
 \label{tab:results}
 \tablehead{
-\colhead{DTD} & \colhead{SFH} & \colhead{MDF} & \colhead{ODF} & \colhead{[Fe/H]--[O/Fe]} & \colhead{Age--[O/Fe]}
+    \colhead{DTD} & \colhead{SFH} & \colhead{[Fe/H] DF} & \colhead{[O/Fe] DF} & 
+    \colhead{[Fe/H]--[O/Fe]} & \colhead{Age--[O/Fe]} & \colhead{Bimodality}
 }
 \startdata
-Power law               & Inside-out    & \meh  & \no   & \meh  & \no     \\
-($\alpha=-1.1$)         & Late burst    & \meh  & \no   & \meh  & \no     \\
-                        & Early burst   & \no   & \yes  & \meh  & \meh    \\
-                        & Two-infall    & \no   & \no   & \meh  & \no     \\
+Power law & Inside-out & \no & \meh & \meh & \no & \no \\
+($\alpha=-1.1$) & Late-burst & \no & \no & \meh & \no & \no \\
+ & Early-burst & \yes & \no & \no & \meh & \yes \\
+ & Two-infall & \yes & \meh & \meh & \no & \no \\ 
 \hline
-Power law               & Inside-out    & \meh  & \no   & \no   & \no     \\
-($\alpha=-1.4$)         & Late burst    & \meh  & \no   & \no   & \no     \\
-                        & Early burst   & \no   & \yes  & \no   & \meh    \\
-                        & Two-infall    & \no   & \no   & \no   & \no     \\
+Power law & Inside-out & \no & \no & \no & \no & \no \\
+($\alpha=-1.4$) & Late-burst & \no & \no & \no & \no & \no \\
+ & Early-burst & \meh & \no & \no & \no & \yes \\
+ & Two-infall & \no & \no & \no & \no & \no \\ 
 \hline
-Exponential             & Inside-out    & \yes  & \no   & \yes  & \no     \\
-($\tau=1.5$ Gyr)        & Late burst    & \yes  & \no   & \yes  & \no     \\
-                        & Early burst   & \no   & \yes  & \meh  & \yes    \\
-                        & Two-infall    & \yes  & \meh  & \meh  & \meh    \\
+Exponential & Inside-out & \meh & \meh & \meh & \no & \no \\
+($\tau=1.5$ Gyr) & Late-burst & \meh & \yes & \meh & \meh & \yes \\
+ & Early-burst & \no & \no & \no & \meh & \yes \\
+ & Two-infall & \yes & \meh & \meh & \meh & \yes \\ 
 \hline
-Exponential             & Inside-out    & \yes  & \meh  & \yes  & \meh    \\
-($\tau=3$ Gyr)          & Late burst    & \yes  & \meh  & \yes  & \meh    \\
-                        & Early burst   & \no   & \yes  & \no   & \yes    \\
-                        & Two-infall    & \meh  & \meh  & \meh  & \meh    \\
+Exponential & Inside-out & \yes & \yes & \yes & \meh & \no \\
+($\tau=3.0$ Gyr) & Late-burst & \meh & \yes & \yes & \yes & \yes \\
+ & Early-burst & \meh & \no & \meh & \yes & \yes \\
+ & Two-infall & \yes & \meh & \meh & \yes & \yes \\ 
 \hline
-Plateau                 & Inside-out    & \yes  & \meh  & \yes  & \no     \\
-($W=0.3$ Gyr)           & Late burst    & \yes  & \no   & \yes  & \no     \\
-                        & Early burst   & \no   & \yes  & \meh  & \yes    \\
-                        & Two-infall    & \yes  & \meh  & \yes  & \meh    \\
+Plateau & Inside-out & \meh & \yes & \yes & \meh & \no \\
+($W=0.3$ Gyr) & Late-burst & \no & \yes & \yes & \meh & \yes \\
+ & Early-burst & \meh & \meh & \no & \yes & \yes \\
+ & Two-infall & \yes & \yes & \yes & \meh & \yes \\ 
 \hline
-Plateau                 & Inside-out    & \meh  & \meh  & \yes  & \meh    \\
-($W=1.0$ Gyr)           & Late burst    & \meh  & \meh  & \yes  & \meh    \\
-                        & Early burst   & \no   & \yes  & \no   & \yes    \\
-                        & Two-infall    & \meh  & \meh  & \meh  & \meh    \\
+Plateau & Inside-out & \yes & \yes & \yes & \meh & \no \\
+($W=1.0$ Gyr) & Late-burst & \no & \yes & \yes & \yes & \yes \\
+ & Early-burst & \meh & \meh & \meh & \yes & \yes \\
+ & Two-infall & \yes & \yes & \yes & \yes & \yes \\ 
 \hline
-Prompt                  & Inside-out    & \meh  & \no   & \no   & \no     \\
-($t_{\rm max}=0.05$ Gyr)& Late burst    & \meh  & \no   & \no   & \no     \\
-                        & Early burst   & \no   & \yes  & \no   & \yes    \\
-                        & Two-infall    & \yes  & \no   & \no   & \no     \\
+Prompt & Inside-out & \no & \no & \no & \no & \no \\
+($t_{\rm max}=0.05$ Gyr) & Late-burst & \no & \no & \no & \no & \yes \\
+ & Early-burst & \yes & \no & \no & \meh & \yes \\
+ & Two-infall & \meh & \meh & \no & \no & \no \\ 
 \hline
-Triple system           & Inside-out    & \yes  & \meh  & \meh  & \yes    \\
-($t_{\rm{max}}=1$ Gyr)  & Late burst    & \yes  & \yes  & \meh  & \meh    \\
-                        & Early burst   & \no   & \meh  & \no   & \yes    \\
-                        & Two-infall    & \meh  & \meh  & \meh  & \meh    \\
+Triple system & Inside-out & \yes & \yes & \yes & \yes & \no \\
+($t_{\rm max}=1.0$ Gyr) & Late-burst & \no & \yes & \yes & \yes & \yes \\
+ & Early-burst & \meh & \meh & \meh & \yes & \yes \\
+ & Two-infall & \yes & \meh & \yes & \yes & \yes \\
 \enddata
 \end{deluxetable*}
+
+\subsection{Radial Migration \& Bimodality}
+
+Something about \citet{Johnson2021-Migration} and \citet{Schonrich2009-RadialMixing}.
 
 \section{Conclusions}
 \label{sec:conclusions}
 
-Blah
+\begin{itemize}
+
+    \item Our diagnostics consistently favor a DTD with a large fraction of delayed SNe Ia, such as the 3 Gyr exponential, 1 Gyr plateau, or triple system evolution models, over a DTD with a high number of prompt SNe Ia, such as the $t^{-1.4}$ power law or prompt models. [Discuss the disconnect and/or complement with \citet{Maoz2017-CosmicDTD}, etc.; something about different timescales probed by volumetric surveys vs. us]
+    
+    \item While the choice of DTD cannot produce a bimodal distribution of [O/Fe], it can affect the shape of the distribution, the ratio of high-$\alpha$ to low-$\alpha$ stars, and the location of the high-$\alpha$ sequence if it exists. The SFH is the critical determining factor in bimodality.
+
+    \item The distribution of [Fe/H] depends strongly on the chosen SFH, but there is only a weak effect from the DTD.
+
+    \item The early-burst SFH model is the only one which produced a bimodal distribution of [O/Fe] across the disk resembling APOGEE, from the models we investigate. [Add: summary of why everything else fails.]
+
+    \item [Something about how radial migration can't produce bimodality on its own]
+    
+\end{itemize}
 
 \begin{acknowledgments}
+
 Funding for the Sloan Digital Sky 
 Survey IV has been provided by the 
 Alfred P. Sloan Foundation, the U.S. 
@@ -530,9 +548,26 @@ University of Virginia, University
 of Washington, University of 
 Wisconsin, Vanderbilt University, 
 and Yale University.
+
 \end{acknowledgments}
 
 \appendix
+
+\section{Reproducibility}
+\label{app:reproducibility}
+
+This study was carried out using the reproducibility software
+\href{https://github.com/showyourwork/showyourwork}{\showyourwork}
+\citep{Luger2021-showyourwork}, which leverages continuous integration to
+programmatically download the data from
+\href{https://zenodo.org/}{zenodo.org}, create the figures, and
+compile the manuscript. Each figure caption contains two links: one
+to the dataset stored on zenodo used in the corresponding figure,
+and the other to the script used to make the figure (at the commit
+corresponding to the current build of the manuscript). The git
+repository associated to this study is publicly available at
+\GitHubURL, and the release v.X.X allows anyone to re-build the entire 
+manuscript. The datasets are stored at [URL].
 
 \bibliography{bib}
 
