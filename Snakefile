@@ -1,3 +1,20 @@
+rule simulation_IOplaw1:
+    output:
+        directory("src/data/multizone/gaussian/insideout/powerlaw_slope11")
+    cache:
+        True
+    conda:
+        "environment.yml"
+    params:
+        migration="gaussian",
+        evolution="insideout",
+        RIa="powerlaw",
+        RIa_params={slope=-1.1},
+        minimum_delay=0.04,
+        yields="JW20"
+    script:
+        "src/scripts/snakesim.py"
+        
 rule simulations:
     output:
         directory("src/data/multizone")
