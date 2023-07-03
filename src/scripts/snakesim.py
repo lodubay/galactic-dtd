@@ -6,6 +6,15 @@ import multizone
 import paths
 import _globals
 
+_DEFAULT_PARAMS_ = {
+    'migration': 'gaussian',
+    'evolution': 'insideout',
+    'RIa': 'powerlaw',
+    'RIa_params': {'slope': -1.1},
+    'minimum_delay': _globals.MIN_RIA_DELAY,
+    'yields': 'JW20'
+}
+
 def main():
     r"""
     Runs the script.
@@ -23,8 +32,24 @@ def model(name, params):
 
     Parameters
     ----------
-    args : argparse.Namespace
-        The command line arguments parsed via argparse.
+    name : str
+        Path to the simulation output directory, excluding the .vice extension.
+    params : dict
+        Simulation parameters from Snakemake. The keyword options are:
+            
+            - 'migration': str, the stellar migration model
+            - 'evolution': str, the star formation history model
+            - 'RIa': str, the SN Ia delay time distribution model
+            - 'RIa_params': dict, kwargs passed to the DTD model
+            - 'minimum_delay': float, the minimum SN Ia delay time in Gyr
+            - 'yields': str, the nucleosynthetic yield set
+        
+        Any of these parameters left unspecified will be filled by the defaults
+        from above.
+        
+    Returns
+    -------
+    multizone.src.diskmodel instance
     """
     config = multizone.src.config(
         timestep_size = _globals.DT,
@@ -32,6 +57,10 @@ def model(name, params):
         zone_width = _globals.ZONE_WIDTH,
         elements = _globals.ELEMENTS
     )
+    # Fill in missing params with defaults
+    for key, value in _DEFAULT_PARAMS_.items():
+        if key not in params.keys():
+            params[key] = value
     kwargs = dict(
         name = name,
         spec = params.evolution,

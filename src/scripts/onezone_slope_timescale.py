@@ -37,7 +37,7 @@ LINE_STYLE = ['-', '--', ':']
 COLOR = ['k', 'k', 'k']
 LOG_MDF = False
 
-def main(overwrite=False):
+def main(overwrite=True):
     output_dir = paths.data / 'onezone' / 'slope_timescale'
     if not output_dir.exists():
         output_dir.mkdir(parents=True)
