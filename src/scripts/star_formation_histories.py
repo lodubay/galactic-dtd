@@ -28,7 +28,7 @@ def main():
     galr_centers = get_bin_centers(GALR_BINS)
     zones = [int(galr / ZONE_WIDTH) for galr in galr_centers]
     for i, evolution in enumerate(EVOLUTION_LIST):
-        output = paths.simulation_outputs / MIGRATION / evolution / DTD
+        output = paths.simulation_outputs / MIGRATION / evolution / DTD / 'diskmodel'
         for zone, color in zip(zones, colors):
             plot_history(axs[:,i], output, zone, color=color, 
                          label='%d kpc' % (zone * ZONE_WIDTH))
