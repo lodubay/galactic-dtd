@@ -12,4 +12,4 @@ overleaf:
 
 dependencies:
     src/scripts/star_formation_histories.py:
-        - src/data/multizone/
+        - src/data/multizone/gaussian/insideout/powerlaw_slope11/
