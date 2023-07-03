@@ -20,6 +20,8 @@ def main():
     Runs the script.
     """
     fullpath = paths.root / snakemake.output[0] / 'diskmodel'
+    if not fullpath.parents[0].exists():
+        fullpath.parents[0].mkdir(parents=True)
     model_ = model(str(fullpath), snakemake.params)
     model_.run([_ * model_.dt for _ in range(round(
         _globals.END_TIME / model_.dt) + 1)],
