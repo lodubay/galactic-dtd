@@ -6,12 +6,12 @@ rule simulation_IO_plaw1:
     conda:
         "environment.yml"
     params:
-        migration="gaussian",
-        evolution="insideout",
-        RIa="powerlaw",
-        RIa_params={slope=-1.1},
-        minimum_delay=0.04,
-        yields="JW20"
+        "migration": "gaussian",
+        "evolution": "insideout",
+        "RIa": "powerlaw",
+        "RIa_params": {"slope": -1.1},
+        "minimum_delay": 0.04,
+        "yields": "JW20"
     script:
         "src/scripts/snakesim.py"
 
@@ -23,12 +23,12 @@ rule simulation_LB_plaw1:
     conda:
         "environment.yml"
     params:
-        migration="gaussian",
-        evolution="lateburst",
-        RIa="powerlaw",
-        RIa_params={slope=-1.1},
-        minimum_delay=0.04,
-        yields="JW20"
+        "migration": "gaussian",
+        "evolution": "lateburst",
+        "RIa": "powerlaw",
+        "RIa_params": {"slope": -1.1},
+        "minimum_delay": 0.04,
+        "yields": "JW20"
     script:
         "src/scripts/snakesim.py"
 
@@ -40,12 +40,12 @@ rule simulation_EB_plaw1:
     conda:
         "environment.yml"
     params:
-        migration="gaussian",
-        evolution="earlyburst",
-        RIa="powerlaw",
-        RIa_params={slope=-1.1},
-        minimum_delay=0.04,
-        yields="JW20"
+        "migration": "gaussian",
+        "evolution": "earlyburst",
+        "RIa": "powerlaw",
+        "RIa_params": {"slope": -1.1},
+        "minimum_delay": 0.04,
+        "yields": "JW20"
     script:
         "src/scripts/snakesim.py"
 
@@ -57,12 +57,12 @@ rule simulation_TI_plaw1:
     conda:
         "environment.yml"
     params:
-        migration="gaussian",
-        evolution="twoinfall",
-        RIa="powerlaw",
-        RIa_params={slope=-1.1},
-        minimum_delay=0.04,
-        yields="JW20"
+        "migration": "gaussian",
+        "evolution": "twoinfall",
+        "RIa": "powerlaw",
+        "RIa_params": {"slope": -1.1},
+        "minimum_delay": 0.04,
+        "yields": "JW20"
     script:
         "src/scripts/snakesim.py"
 
