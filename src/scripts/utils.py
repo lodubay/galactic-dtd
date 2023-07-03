@@ -597,13 +597,13 @@ def run_singlezone(name, simtime, overwrite=False, **kwargs):
     """
     if overwrite:
         sz = vice.singlezone(name=name, **kwargs)
-        sz.run(simtime, overwrite=overwrite)
+        sz.run(simtime, overwrite=True)
     else:
         try:
             sz = vice.singlezone.from_output(name)
         except OSError:
             sz = vice.singlezone(name=name, **kwargs)
-            sz.run(simtime, overwrite=overwrite)
+            sz.run(simtime, overwrite=True)
     return sz
 
     
