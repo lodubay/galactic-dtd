@@ -142,9 +142,18 @@ rule star_formation_histories:
                evolution=["insideout", "lateburst", "earlyburst", "twoinfall"]
         )
     output:
-        "src/figures/star_formation_histories.pdf"
+        "src/tex/figures/star_formation_histories.pdf"
     script:
         "src/scripts/star_formation_histories.py"
+
+rule radial_migration:
+    input:
+        "src/data/multizone/diffusion/insideout/powerlaw_slope11",
+        "src/data/multizone/gaussian/insideout/powerlaw_slope11"
+    output:
+        "src/tex/figures/radial_migration.pdf"
+    script:
+        "src/scripts/radial_migration.py"
 
 # Tables
 rule summary_table:
