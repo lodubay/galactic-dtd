@@ -1,5 +1,5 @@
 # Simulations
-rule simulation_powerlaw_11:
+rule simulation_powerlaw_slope11:
     output:
         directory("src/data/multizone/{migration}/{evolution}/powerlaw_slope11")
     cache:
@@ -7,6 +7,8 @@ rule simulation_powerlaw_11:
     conda:
         "environment.yml"
     params:
+        migration={migration},
+        evolution={evolution},
         RIa="powerlaw",
         RIa_params={"slope": -1.1},
         minimum_delay=0.04,
