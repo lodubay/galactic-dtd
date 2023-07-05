@@ -7,11 +7,13 @@ import math as m
 import numpy as np
 import matplotlib.pyplot as plt
 import vice
+from vice.yields.presets import JW20
+vice.yields.sneia.settings['fe'] *= 10**0.1
 import paths
 from multizone.src import models, dtds
 # from multizone.src.yields import C22
 from track_and_mdf import setup_axes, plot_vice_onezone
-from _globals import END_TIME, DT
+from _globals import END_TIME, DT, MIN_RIA_DELAY
 
 def main():
     
@@ -24,13 +26,12 @@ def main():
     area = m.pi * ((rgal + dr)**2 - rgal**2)
     
     kwargs = dict(
-        mode='sfr',
         elements=('fe', 'o'),
         Mg0=0,
         dt=DT,
         recycling='continuous',
         RIa=dtds.powerlaw(slope=-1.1),
-        delay=0.04,
+        delay=MIN_RIA_DELAY,
         schmidt=False,
         eta=vice.milkyway.default_mass_loading(rgal)
     )
@@ -56,7 +57,8 @@ def main():
     sz = vice.singlezone(name=str(output_dir / 'earlyburst'),
                          func=models.earlyburst_ifr(rgal, dr=dr), 
                          mode='ifr',
-                         tau_star=models.earlyburst_tau_star(area))
+                         tau_star=models.earlyburst_tau_star(area),
+                         **kwargs)
     sz.run(simtime, overwrite=True)
     
     # Two-infall SFH
@@ -68,11 +70,14 @@ def main():
     sz.run(simtime, overwrite=True)
     
     # Plot
-    fig, axs = setup_axes()  
-    plot_vice_onezone('../data/onezone/conroy22/conroy22')
-    axs[0].set_xlim((-3, 0.5))
-    axs[0].set_ylim((-0.1, 0.65))
-    plt.savefig(paths.figures / 'onezone_conroy22.png', dpi=300)
+    fig, axs = setup_axes()
+    plot_vice_onezone(str(output_dir / 'insideout'), fig=fig, axs=axs, label='Inside-out')
+    plot_vice_onezone(str(output_dir / 'lateburst'), fig=fig, axs=axs, label='Late-burst')
+    plot_vice_onezone(str(output_dir / 'earlyburst'), fig=fig, axs=axs, label='Early-burst')
+    plot_vice_onezone(str(output_dir / 'twoinfall'), fig=fig, axs=axs, label='Two-infall', marker_labels=True)
+    axs[0].set_xlim((-1.6, 0.6))
+    axs[0].set_ylim((-0.2, 0.52))
+    plt.savefig(paths.figures / 'onezone_sfh.png', dpi=300)
     plt.close()
 
 if __name__ == '__main__':
