@@ -67,7 +67,7 @@ rule simulation_exponential_timescale30:
     script:
         "src/scripts/snakesim.py"
 
-rule simulation_plateau_width300:
+rule simulation_plateau_width03:
     output:
         directory("src/data/multizone/{migration}/{evolution}/plateau_width03")
     cache:
@@ -84,7 +84,7 @@ rule simulation_plateau_width300:
     script:
         "src/scripts/snakesim.py"
 
-rule simulation_plateau_width300:
+rule simulation_plateau_width10:
     output:
         directory("src/data/multizone/{migration}/{evolution}/plateau_width10")
     cache:
