@@ -55,18 +55,18 @@ underscores. (Default: '')",
     parser.add_argument("--minimum-delay",
          help = "The minimum SN Ia delay time in Gyr (Default: 0.04)",
          type = float,
-         default = 0.04)
+         default = _globals.MIN_RIA_DELAY)
 
     parser.add_argument("--dt",
         help = "Timestep size in Gyr. (Default: 0.01)",
         type = float,
-        default = 0.01)
+        default = _globals.DT)
 
     parser.add_argument("--nstars",
         help = """Number of stellar populations per zone per timestep. \
 (Default: 2)""",
         type = int,
-        default = 2)
+        default = _globals.NSTARS)
 
     parser.add_argument("--name",
         help = "The name of the output simulations (Default: 'milkway')",
@@ -77,12 +77,12 @@ underscores. (Default: '')",
         help = """Elements to simulation the enrichment for separated by \
 underscores. (Default: \"fe_o\")""",
         type = str,
-        default = "fe_o")
+        default = "_".join(_globals.ELEMENTS))
 
     parser.add_argument("--zonewidth",
         help = "The width of each annulus in kpc. (Default: 0.1)",
         type = float,
-        default = 0.1)
+        default = _globals.ZONE_WIDTH)
     
     parser.add_argument("--yields",
         help = "The nucleosynthetic yield set to use. (Default: 'JW20')",
