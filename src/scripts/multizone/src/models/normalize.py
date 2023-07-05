@@ -8,7 +8,7 @@ from ..._globals import MAX_SF_RADIUS, END_TIME, M_STAR_MW
 import vice
 from vice.toolkit import J21_sf_law
 import math as m
-from gradient import THIN_DISK_SCALE_RADIUS, THICK_DISK_SCALE_RADIUS, \
+from .gradient import THIN_DISK_SCALE_RADIUS, THICK_DISK_SCALE_RADIUS, \
     THICK_TO_THIN_RATIO
 
 
