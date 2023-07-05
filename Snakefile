@@ -138,14 +138,28 @@ rule simulation_triple:
 # Figures
 rule star_formation_histories:
     input:
-        "src/data/multizone/gaussian/insideout/powerlaw_slope11",
-        "src/data/multizone/gaussian/lateburst/powerlaw_slope11",
-        "src/data/multizone/gaussian/earlyburst/powerlaw_slope11",
-        "src/data/multizone/gaussian/twoinfall/powerlaw_slope11"
+        expand("src/data/multizone/gaussian/{evolution}/powerlaw_slope11",
+               evolution=["insideout", "lateburst", "earlyburst", "twoinfall"]
+        )
     output:
         "src/figures/star_formation_histories.pdf"
     script:
         "src/scripts/star_formation_histories.py"
+
+# Tables
+rule summary_table:
+    input:
+        expand("src/data/multizone/gaussian/{evolution}/{dtd}",
+               evolution=["insideout", "lateburst", "earlyburst", "twoinfall"],
+               dtd=["powerlaw_slope11", "powerlaw_slope14", 
+                    "exponential_timescale15", "exponential_timescale30", 
+                    "plateau_width03", "plateau_width10", "prompt", "triple"
+               ]
+        )
+    output:
+        multiext("src/tex/output/summary_table", ".csv", ".tex")
+    script:
+        "src/scripts/summary_table.py"
 
 # Variables
 rule sample_size:
