@@ -494,6 +494,7 @@ class MultizoneStars:
         # Convert radial zone indices to Galactic radii in kpc
         stars['galr_origin'] = zone_width * stars['zone_origin']
         stars['galr_final'] = zone_width * stars['zone_final']
+        stars['dr'] = stars['galr_final'] - stars['galr_origin']
         # Convert Z to bracket notation
         np.seterr(divide='ignore')
         stars['[fe/h]'] = np.log10(stars['z(fe)'] / vice.solar_z['fe'])
