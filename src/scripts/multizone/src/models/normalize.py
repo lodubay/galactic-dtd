@@ -8,7 +8,8 @@ from ..._globals import MAX_SF_RADIUS, END_TIME, M_STAR_MW
 import vice
 from vice.toolkit import J21_sf_law
 import math as m
-import numpy as np
+from gradient import THIN_DISK_SCALE_RADIUS, THICK_DISK_SCALE_RADIUS, \
+    THICK_TO_THIN_RATIO
 
 
 def normalize(time_dependence, radial_gradient, radius, dt = 0.01, dr = 0.1,
@@ -100,8 +101,7 @@ def normalize_ifrmode(time_dependence, radial_gradient, radius, dt = 0.01,
 
 
 def twoinfall_ampratio(time_dependence, radius, onset = 4,
-                       dt = 0.01, dr = 0.1, recycling = 0.4, thin_scale = 3.5, 
-                       thick_scale = 2.0, local_thick_to_thin_ratio = 0.05):
+                       dt = 0.01, dr = 0.1, recycling = 0.4):
     area = m.pi * ((radius + dr)**2 - radius**2)
     tau_star = J21_sf_law(area)
     eta = vice.milkyway.default_mass_loading(radius)
@@ -116,6 +116,6 @@ def twoinfall_ampratio(time_dependence, radius, onset = 4,
         mstar += sfr * dt * (1 - recycling)
         if mstar_at_onset is None and time >= onset: mstar_at_onset = mstar
         time += dt
-    thick_to_thin = local_thick_to_thin_ratio * m.exp(
-        (radius - 8) * (1 / thin_scale - 1 / thick_scale))
+    thick_to_thin = THICK_TO_THIN_RATIO * m.exp(
+        radius * (1 / THIN_DISK_SCALE_RADIUS - 1 / THICK_DISK_SCALE_RADIUS))
     return mstar / (mstar - mstar_at_onset) * (1 + thick_to_thin)**-1

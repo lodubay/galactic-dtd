@@ -61,7 +61,6 @@ def model(name, params):
     )
     # Fill in missing params with defaults
     for key, value in _DEFAULT_PARAMS_.items():
-        print(key, value)
         if key not in params.keys():
             params[key] = value
     kwargs = dict(

@@ -11,7 +11,7 @@ import math as m
 
 FIRST_TIMESCALE = 1. # Gyr
 SECOND_TIMESCALE = 4. # Gyr
-SECOND_ONSET = 4. # Gyr, at R = 8 kpc
+SECOND_ONSET = 4. # Gyr
 
 class twoinfall(double_exponential):
 

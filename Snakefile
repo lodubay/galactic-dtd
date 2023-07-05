@@ -7,8 +7,8 @@ rule simulation_powerlaw_slope11:
     conda:
         "environment.yml"
     params:
-        migration={migration},
-        evolution={evolution},
+        migration="{migration}",
+        evolution="{evolution}",
         RIa="powerlaw",
         RIa_params={"slope": -1.1},
         minimum_delay=0.04,
