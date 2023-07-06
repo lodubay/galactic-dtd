@@ -182,7 +182,8 @@ rule summary_table:
                     "exponential_timescale15", "exponential_timescale30", 
                     "plateau_width03", "plateau_width10", "prompt", "triple"
                ]
-        )
+        ),
+        "src/data/APOGEE/sample.csv"
     output:
         multiext("src/tex/output/summary_table", ".csv", ".tex")
     script:
