@@ -216,14 +216,22 @@ where we take the thick disk scale radius $R_1=2.0$ kpc, thin disk scale radius 
 \subsection{Stellar Migration}
 \label{sec:migration}
 
-For each star particle in VICE, \citet{Johnson2021-Migration} randomly assign an analogue star particle from \texttt{h277} and adopt its radial migration distance $\Delta R$ and final midplane distance $z$. This allows VICE to adopt a realistic pattern of radial migration without needing to implement its own hydrodynamical simulation. However, in regions where the number of h277 star particles is relatively low, such as at large $R_{\rm gal}$ and small $t$, a single h277 star particle can be assigned as an analogue to multiple VICE stellar populations. These populations will have similar formation and migration histories and consequently similar abundances, which produces unphysical ``clumps'' of stars in the abundance distributions at high  latitudes and large radii. 
+For each star particle in VICE, \citet{Johnson2021-Migration} randomly assign an analogue star particle from \texttt{h277} and adopt its radial migration distance $\Delta R$ and final midplane distance $z$. This allows VICE to adopt a realistic pattern of radial migration without needing to implement its own hydrodynamical simulation. However, in regions where the number of h277 star particles is relatively low, such as at large $R_{\rm gal}$ and small $t$, a single h277 star particle can be assigned as an analogue to multiple VICE stellar populations. These populations will have similar formation and migration histories and consequently similar abundances, which produces unphysical ``clumps'' of stars in the abundance distributions at high latitudes and large radii. 
 
 \begin{figure*}
     \centering
     \includegraphics{figures/radial_migration.pdf}
-    \caption{Caption.}
+    \caption{The distribution of final radius as a function of formation radius and age for the h277 analogue (top row) and Gaussian sampling scheme (bottom row). From left to right, star particles are binned by formation annulus, from the inner disk (far left column) to the Solar annulus (center column) to the outer disk (far right column). Within each panel, colored curves represent the different age bins, ranging from the youngest stars (dark blue) to the oldest (dark red). The vertical dotted black lines indicate the bounds of each bin in formation radius; stars within that region of the distribution have not migrated outside their birth annulus over their lifetime.}
     \label{fig:radial-migration}
     \script{radial_migration.py}
+\end{figure*}
+
+\begin{figure*}
+    \centering
+    \includegraphics{figures/midplane_distance.pdf}
+    \caption{Similar to Figure \ref{fig:radial-migration} but for the distribution of final midplane distance $z_{\rm final}$ as a function of final radius and age. From left to right, star particles are binned by \textit{final} annulus.}
+    \label{fig:midplane-distance}
+    \script{midplane_distance.py}
 \end{figure*}
 
 We fit a Gaussian to the distribution of $\Delta R = R_{\rm final} - R_{\rm initial}$ from the \texttt{h277} output in bins of $R_{\rm initial}$ and age. Each Gaussian is centered at 0 and we find that the scale $\sigma_{\Delta R}$ is best described by the function
@@ -380,7 +388,7 @@ A multi-zone with the \citet{Greggio2005-AnalyticalRates} SD DTD produced nearly
     \centering
     \includegraphics{figures/onezone_greggio05_single.pdf}
     \includegraphics{figures/onezone_greggio05_double.pdf}
-    \caption{Abundance tracks and distributions from one-zone models with the analytical DTDs from \citet{Greggio2005-AnalyticalRates}. \textit{Left:} a comparison between the analytical SD DTD (solid curve), an exponential DTD with a 1.5 Gyr timescale (dashed curve), and a power-law DTD with a slope of -1.1 (dotted curve). \textit{Right:} a comparison between two different prescriptions for an analytical DD DTD (solid curves), power-law DTDs with an initial plateau of 1 Gyr and 350 Myr (dashed curves), and a power-law DTD with no plateau and a slope of -1.1 (dotted curve).}
+    \caption{Abundance tracks and distributions from one-zone models with the analytical DTDs from \citet{Greggio2005-AnalyticalRates}. \textit{Left:} a comparison between the analytical SD DTD (solid magenta curve), an exponential DTD with a 1.5 Gyr timescale (dashed pink curve), and a power-law DTD with a slope of -1.1 (dotted black curve). \textit{Right:} a comparison between WIDE and CLOSE prescriptions for an analytical DD DTD (solid blue and green curves, respectively), power-law DTDs with an initial plateau of 1 Gyr and 300 Myr (dashed cyan and yellow curves, respectively), and a power-law DTD with no plateau and a slope of -1.1 (dotted black curve).}
     \label{fig:onezone-greggio05}
     \script{onezone_greggio05.py}
 \end{figure*}
