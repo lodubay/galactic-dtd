@@ -155,6 +155,15 @@ rule radial_migration:
     script:
         "src/scripts/radial_migration.py"
 
+rule midplane_distance:
+    input:
+        "src/data/multizone/diffusion/insideout/powerlaw_slope11",
+        "src/data/multizone/gaussian/insideout/powerlaw_slope11"
+    output:
+        "src/tex/figures/midplane_distance.pdf"
+    script:
+        "src/scripts/midplane_distance.py"
+
 # Tables
 rule summary_table:
     input:

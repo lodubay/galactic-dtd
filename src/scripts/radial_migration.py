@@ -60,20 +60,20 @@ def main():
                 hist_smooth = box_smooth(hist, rfinal_bins, 0.5)
                 bin_centers = (rfinal_bins[:-1] + rfinal_bins[1:]) / 2
                 ax.plot(bin_centers, hist_smooth, c=color, ls='-', 
-                        label=r'$%d - %d$ Gyr' % age_lim)
+                        label=r'$%d - %d$ Gyr' % age_lim, zorder=10-j)
     
     axs[0,0].xaxis.set_major_locator(MultipleLocator(5))
     axs[0,0].xaxis.set_minor_locator(MultipleLocator(1))
     axs[0,0].yaxis.set_major_locator(MultipleLocator(0.1))
     axs[0,0].yaxis.set_minor_locator(MultipleLocator(0.02))
     axs[0,0].set_xlim((-2, 22))
-    axs[0,0].set_ylim((0, 0.45))
+    axs[0,0].set_ylim((0, 0.46))
     for ax in axs[-1]:
         ax.set_xlabel(r'$R_{\rm{final}}$ [kpc]')
     for ax in axs[:,0]:
         ax.set_ylabel('PDF')
-    axs[0,0].legend(loc='upper right', frameon=False, handlelength=1, 
-                    handletextpad=0.5)
+    axs[0,0].legend(loc='upper right', frameon=False, 
+                    handlelength=1, handletextpad=0.5)
     plt.savefig(paths.figures / 'radial_migration.pdf', dpi=300)
 
 if __name__ == '__main__':

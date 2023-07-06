@@ -14,6 +14,9 @@ dependencies:
     src/scripts/radial_migration.py:
         - src/data/multizone/diffusion/insideout/powerlaw_slope11/
         - src/data/multizone/gaussian/insideout/powerlaw_slope11/
+    src/scripts/midplane_distance.py:
+        - src/data/multizone/diffusion/insideout/powerlaw_slope11/
+        - src/data/multizone/gaussian/insideout/powerlaw_slope11/
     src/scripts/star_formation_histories.py:
         - src/data/multizone/gaussian/insideout/powerlaw_slope11/
         - src/data/multizone/gaussian/lateburst/powerlaw_slope11/
