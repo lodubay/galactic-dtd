@@ -135,6 +135,15 @@ rule simulation_triple:
     script:
         "src/scripts/snakesim.py"
 
+# Data
+rule apogee_sample:
+    output:
+        "src/data/APOGEE/sample.csv"
+    cache:
+        True
+    script:
+        "src/scripts/apogee_tools.py"
+
 # Figures
 rule star_formation_histories:
     input:

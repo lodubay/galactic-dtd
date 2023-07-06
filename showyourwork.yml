@@ -55,3 +55,4 @@ dependencies:
         - src/data/multizone/gaussian/twoinfall/plateau_width10/
         - src/data/multizone/gaussian/twoinfall/prompt/
         - src/data/multizone/gaussian/twoinfall/triple/
+        - src/data/APOGEE/sample.csv

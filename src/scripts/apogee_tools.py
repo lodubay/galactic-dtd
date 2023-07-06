@@ -4,12 +4,17 @@ datasets. If run as a script, it will re-generate the main sample file
 (src/data/APOGEE/sample.csv).
 """
 
+import urllib.request
 from pathlib import Path
 import numpy as np
 import pandas as pd
 import paths
 from utils import fits_to_pandas, box_smooth
 
+# Data file names
+ALLSTAR_FNAME = 'allStarLite-dr17-synspec_rev1.fits'
+ASTRONN_FNAME = 'apogee_astroNN-DR17.fits'
+LEUNG23_FNAME = 'nn_latent_age_dr17.csv'
 # List of columns to include in the final sample
 SAMPLE_COLS = ['APOGEE_ID', 'RA', 'DEC', 'GALR', 'GALPHI', 'GALZ', 'SNREV',
                'TEFF', 'TEFF_ERR', 'LOGG', 'LOGG_ERR', 'FE_H', 'FE_H_ERR',
@@ -141,17 +146,37 @@ def gen_apogee_sample(parent_dir=paths.data/'APOGEE', verbose=False):
     -------
     sample : pandas.DataFrame
     """
+    # Make parent dir if needed
+    if not Path(parent_dir).is_dir():
+        parent_dir.mkdir(parents=True)
+    apogee_catalog_path = parent_dir / ALLSTAR_FNAME
+    if not apogee_catalog_path.is_file():
+        # Download DR17 allStar file from SDSS server
+        if verbose: 
+            print('Downloading allStar file (this will take a few minutes)...')
+        get_allStar_dr17()
     if verbose: print('Importing allStar file...')
-    apogee_catalog = fits_to_pandas(parent_dir / 
-                                    'allStarLite-dr17-synspec.fits', hdu=1)
+    apogee_catalog = fits_to_pandas(apogee_catalog_path, hdu=1)
     # Add ages from row-matched datasets BEFORE any cuts
     # Add ages from astroNN (Leung & Bovy 2019)
+    astroNN_catalog_path = parent_dir / ASTRONN_FNAME
+    if not astroNN_catalog_path.is_file():
+        # Download astroNN DR17 from SDSSserver
+        if verbose:
+            print('Downloading astroNN age data (this will take a minute)...')
+        get_astroNN_ages()
     if verbose: print('Joining with astroNN age catalog...')
-    astroNN_catalog = fits_to_pandas(parent_dir / 'apogee_astroNN-DR17.fits')
+    astroNN_catalog = fits_to_pandas(astroNN_catalog_path)
     full_catalog = join_astroNN_ages(apogee_catalog, astroNN_catalog)
     # Add ages from Leung et al. (2023)
+    leung23_catalog_path = parent_dir / LEUNG23_FNAME
+    if not leung23_catalog_path.is_file():
+        # Download Leung+ 2023 data from GitHub
+        if verbose:
+            print('Downloading Leung et al. (2023) age data...')
+        get_Leung2023_ages()
     if verbose: print('Joining with latent age catalog...')
-    leung23_catalog = pd.read_csv(parent_dir / 'nn_latent_age_dr17.csv')
+    leung23_catalog = pd.read_csv(leung23_catalog_path)
     full_catalog = join_latent_ages(full_catalog, leung23_catalog)
     if verbose: print('Implementing quality cuts...')
     sample = apogee_quality_cuts(full_catalog)
@@ -288,6 +313,43 @@ def galactic_to_galactocentric(l, b, distance):
         return galr, galphi, galz
     else:
         raise ValueError('Arrays must be of same length.')
+
+
+def get_allStar_dr17():
+    """
+    Retrieve the DR17 ASPCAP allStarLite file from the SDSS data server.
+    """
+    url = 'https://data.sdss.org/sas/dr17/apogee/spectro/aspcap/dr17/synspec_rev1/%s' \
+        % ALLSTAR_FNAME
+    with urllib.request.urlopen(url) as response:
+        fits = response.read()
+    with open(paths.data / 'APOGEE' / ALLSTAR_FNAME, 'wb') as f:
+        f.write(fits)
+
+
+def get_astroNN_ages():
+    """
+    Retrieve the value-added catalog of astroNN ages from 
+    Mackereth et al. (2019)
+    """
+    url = 'https://data.sdss.org/sas/dr17/env/APOGEE_ASTRO_NN/%s' % ASTRONN_FNAME
+    with urllib.request.urlopen(url) as response:
+        fits = response.read()
+    with open(paths.data / 'APOGEE' / ASTRONN_FNAME, 'wb') as f:
+        f.write(fits)
+        
+
+def get_Leung2023_ages():
+    """
+    Retrieve the database of latent ages from Leung et al. (2023).
+    """
+    import gzip
+    url = 'https://raw.githubusercontent.com/henrysky/astroNN_ages/main/%s.gz' % LEUNG23_FNAME
+    with urllib.request.urlopen(url) as response:
+        zipped = response.read()
+    csv = gzip.decompress(zipped)
+    with open(paths.data / 'APOGEE' / LEUNG23_FNAME, 'wb') as f:
+        f.write(csv)
 
 
 if __name__ == '__main__':
