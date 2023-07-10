@@ -53,7 +53,7 @@ def gen_summary_table():
     with tqdm(total=len(SFH_LIST) * len(DTD_LIST)) as t:
         for dtd in DTD_LIST:
             for sfh in SFH_LIST:
-                output_name = '/'.join([MIGRATION, sfh, dtd])
+                output_name = '/'.join([MIGRATION, sfh, dtd, 'diskmodel'])
                 mzs = MultizoneStars.from_output(output_name)
                 mzs.model_uncertainty(apogee_data, inplace=True)
                 # Set up lists to track scores by region
