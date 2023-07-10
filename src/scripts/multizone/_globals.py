@@ -18,13 +18,11 @@ M_STAR_MW = 5.17e10
 DT = 0.01
 
 # List of elements to simulate
-ELEMENTS = ['o', 'fe']
+# Order is important! "Reference elements" (e.g., Fe) should come first
+ELEMENTS = ['fe', 'o']
 
 # Number of stellar populations per zone per timestep
 NSTARS = 8
-
-# Whether to force overwrite existing VICE outputs of the same name
-OVERWRITE = True
 
 # The minimum SN Ia delay time in Gyr
 MIN_RIA_DELAY = 0.04

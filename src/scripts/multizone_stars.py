@@ -93,8 +93,14 @@ class MultizoneStars:
         # Import star tracer data
         if verbose: 
             print('Importing VICE multizone data from', str(fullpath))
-        stars = cls.import_tracers(fullpath, zone_width=zone_width)
-        # stars = pd.DataFrame(vice.stars(str(self.fullpath)).todict())
+        stars = pd.DataFrame(vice.stars(str(fullpath)).todict())
+        # Convert radial zone indices to Galactic radii in kpc
+        stars['galr_origin'] = zone_width * stars['zone_origin']
+        stars['galr_final'] = zone_width * stars['zone_final']
+        stars['dr'] = stars['galr_final'] - stars['galr_origin']
+        # Calculate remaining stellar mass for each particle
+        stars['mstar'] = stars['mass'] * (
+            1 - stars['age'].apply(vice.cumulative_return_fraction))
         # Import star particle analogue (z-height) data
         analogdata = pd.read_csv(str(fullpath).replace('.vice', '_analogdata.out'),
                                  comment='#', sep='\t',
@@ -463,52 +469,8 @@ class MultizoneStars:
         nstars = np.around(mass_remaining / mass_average)
         # Fraction of stars in each age bin
         adf = nstars / (bin_width * nstars.sum())
-        return adf, bin_edges        
-    
-    @staticmethod
-    def import_tracers(fullpath, zone_width=ZONE_WIDTH, 
-                       solar_z_total=SOLAR_Z_TOTAL):
-        """
-        Import star particle data from ``tracers.out``.
-        
-        Parameters
-        ----------
-        fullpath : str or pathlib.Path
-            Full path to VICE output directory.
-        zone_width : float, optional
-            Width of simulation zones in kpc. The default is 0.1.
-        solar_z_total : float, optional
-            Solar metallicity. The default is 0.014.
-        
-        Returns
-        -------
-        pandas.DataFrame
-            Star particle tracer data.
-        """        
-        stars = pd.read_csv(Path(fullpath) / 'tracers.out', 
-                            comment='#', sep='\t', 
-                            names=['formation_time', 'zone_origin', 
-                                   'zone_final', 'mass', 'z(fe)', 'z(o)'],
-                            index_col=False
-        )
-        # Convert radial zone indices to Galactic radii in kpc
-        stars['galr_origin'] = zone_width * stars['zone_origin']
-        stars['galr_final'] = zone_width * stars['zone_final']
-        stars['dr'] = stars['galr_final'] - stars['galr_origin']
-        # Convert Z to bracket notation
-        np.seterr(divide='ignore')
-        stars['[fe/h]'] = np.log10(stars['z(fe)'] / vice.solar_z['fe'])
-        stars['[o/h]'] = np.log10(stars['z(o)'] / vice.solar_z['o'])
-        stars['[o/fe]'] = stars['[o/h]'] - stars['[fe/h]']
-        # Calculate total Z and [M/H]
-        stars['z'] = solar_z_total * (stars['z(fe)'] + stars['z(o)']) \
-                                     / (vice.solar_z['fe'] + vice.solar_z['o'])
-        stars['[m/h]'] = np.log10(stars['z'] / solar_z_total)
-        stars['age'] = stars['formation_time'].max() - stars['formation_time']
-        # Calculate remaining stellar mass for each particle
-        stars['mstar'] = stars['mass'] * (
-            1 - stars['age'].apply(vice.cumulative_return_fraction))
-        return stars
+        return adf, bin_edges
+
     
     def __str__(self):
         return self.stars.__str__()
