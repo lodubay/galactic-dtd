@@ -42,6 +42,8 @@
 \subsection{DTD Models}
 \label{sec:dtd-models}
 
+We explore five different functional forms for the SN Ia DTD: a power-law, a broken power-law with an initial flat plateau, an exponential, an exponential with a prompt Gaussian component, with one or two different parameterizations for each. Figure \ref{fig:dtds} presents these DTDs as a function of time since star formation.
+
 \begin{figure}
     \centering
     \includegraphics{figures/delay_time_distributions.pdf}
@@ -50,53 +52,28 @@
     \script{delay_time_distributions.py}
 \end{figure}
 
-\subsubsection{From Observations}
+% \citet{Stolger2020-ExponentialDTD} perform maximum likelihood estimations based on the cosmic star formation history and the star formation histories of individual galaxies. In both cases their best fit functions were approximately exponential, though they started with a skew-normal function so could not have ended up with a power law even if they wanted to. They don't actually report the timescale of this exponential, but based on the plots I'd say it's about 1.5 - 2 (1.7?) Gyr. Their best fit parameters make no sense to me as they don't report their units.
 
-\citet{Maoz2014-Review}
-
-A typical form for the DTD is a power-law $t^\alpha$ where $\alpha\sim-1$. \citet{Maoz2017-CosmicDTD} compare volumetric SN Ia rates to the cosmic star formation history. They get a power law with a slope of $-1.13\pm 0.06$ for field galaxies, and a slope of $-1.39^{+0.32}_{-0.05}$ for galaxy clusters.
-
-\citet{Heringer2019-FieldGalaxyDTD} study the distribution of SNe Ia in field galaxies and get a power-law index of $-1.34^{+0.19}_{-0.17}$ which is closer to Maoz's cluster DTD.
-
-\citet{Wiseman2021-DESRates} measure the SN Ia rate in the redshift range $0.2 < z < 0.6$ and get a similar power law to \citet{Maoz2017-CosmicDTD} with a slope of $-1.13 \pm 0.05$. They also find that slower-declining SNe have a steeper DTD slope.
-
-Another commonly assumed functional form is an exponential. \citet{Schonrich2009-RadialMixing} take their DTD to be an exponential with a 1.5 Gyr timescale, though this isn't strictly observationally motivated.
-
-\citet{Stolger2020-ExponentialDTD} perform maximum likelihood estimations based on the cosmic star formation history and the star formation histories of individual galaxies. In both cases their best fit functions were approximately exponential, though they started with a skew-normal function so could not have ended up with a power law even if they wanted to. They don't actually report the timescale of this exponential, but based on the plots I'd say it's about 1.5 - 2 (1.7?) Gyr. Their best fit parameters make no sense to me as they don't report their units.
-
-% \begin{deluxetable}{lCl}
-% \tablecaption{Sources of the various forms of delay time distribution.}
-% \tablehead{
-% \colhead{Name} & \colhead{Form} & \colhead{Source}
-% }
-% \startdata
-% Field Galaxy Power-Law      & t^{-1.1}              & \citet{Maoz2017-CosmicDTD} \\   
-% Galaxy Cluster Power-Law    & t^{-1.4}              & \citet{Maoz2017-CosmicDTD} \\
-% Short Exponential           & e^{-t/1.5~\rm{Gyr}}  & \citet{Schonrich2009-RadialMixing} \\
-% \enddata
-% \end{deluxetable}
-
-\subsubsection{Theoretical Models}
-
-\citet{Matteucci1986-SupernovaEnrichment}
-
-\citet{Greggio2005-AnalyticalRates}
-
-\citet{Rajamuthukumar2022-TripleEvolution}
-
-\citet{Schonrich2009-RadialMixing,Weinberg2017-ChemicalEquilibrium} assume an exponential with $\tau=1.5$ Gyr
-
-\begin{figure}
-    \centering
-    \includegraphics{figures/dtd_greggio05.pdf}
-    \caption{Analytical DTDs from \citet[][solid curves]{Greggio2005-AnalyticalRates} and close approximation simple functions (dashed curves). Some functions are presented with a constant multiplicative factor for visual clarity.}
-    \label{fig:dtd-greggio05}
-    \script{dtd_greggio05.py}
-\end{figure}
-
-\subsubsection{Our Models}
-
-We explore five different classes of DTD: a power-law, a broken power-law with an initial flat plateau, an exponential, an exponential with a prompt Gaussian component, with one or two different parameterizations for each. Figure \ref{fig:dtds} presents these DTDs as a function of time since star formation.
+\begin{deluxetable*}{lll}
+\tablecaption{Summary of SN Ia DTD models explored in this paper.}
+\tablehead{
+\colhead{Model} & \colhead{Parameters} & \colhead{Similar to}
+}
+\startdata
+Power-law   & $\alpha=-1.1$     & \citet[][field]{Maoz2017-CosmicDTD}; 
+                                  \citet{Wiseman2021-DESRates}              \\
+            & $\alpha=-1.4$     & \citet[][cluster]{Maoz2017-CosmicDTD}; 
+                                  \citet{Heringer2019-FieldGalaxyDTD}       \\
+Exponential & $\tau=1.5$ Gyr    & \citet[][SD]{Greggio2005-AnalyticalRates};
+                                  \citet{Schonrich2009-RadialMixing,
+                                         Weinberg2017-ChemicalEquilibrium}  \\
+            & $\tau=3.0$ Gyr    & \\
+Plateau     & $W=0.3$ Gyr, $\alpha=-1.1$    & \citet[][CLOSE DD]{Greggio2005-AnalyticalRates} \\
+            & $W=1.0$ Gyr, $\alpha=-1.1$    & \citet[][WIDE DD]{Greggio2005-AnalyticalRates} \\
+Prompt      & $t_{\rm max}=0.05$ Gyr, $\sigma=0.015$ Gyr, $\tau=3.0$ Gyr & \citet{Mannucci2006-TwoPopulations} \\
+Triple      & & \citet{Rajamuthukumar2022-TripleEvolution}
+\enddata
+\end{deluxetable*}
 
 \paragraph{Power-law} A simple power law with slope $\alpha$:
 \begin{equation}
@@ -105,6 +82,12 @@ We explore five different classes of DTD: a power-law, a broken power-law with a
 \end{equation}
 where $A_\alpha = (\alpha+1)(t_{\rm max}^{\alpha+1} - t_{\rm min}^{\alpha+1})^{-1}$ is the normalization coefficient.
 We investigate the cases $\alpha=-1.1$ and $\alpha=-1.4$, which correspond to the field galaxy and galaxy cluster DTDs of \citet{Maoz2017-CosmicDTD}, respectively.
+
+A typical form for the DTD is a power-law $t^\alpha$ where $\alpha\sim-1$. \citet{Maoz2017-CosmicDTD} compare volumetric SN Ia rates to the cosmic star formation history. They get a power law with a slope of $-1.13\pm 0.06$ for field galaxies, and a slope of $-1.39^{+0.32}_{-0.05}$ for galaxy clusters.
+
+\citet{Heringer2019-FieldGalaxyDTD} study the distribution of SNe Ia in field galaxies and get a power-law index of $-1.34^{+0.19}_{-0.17}$ which is closer to Maoz's cluster DTD.
+
+\citet{Wiseman2021-DESRates} measure the SN Ia rate in the redshift range $0.2 < z < 0.6$ and get a similar power law to \citet{Maoz2017-CosmicDTD} with a slope of $-1.13 \pm 0.05$. They also find that slower-declining SNe have a steeper DTD slope.
 
 \paragraph{Plateau} A ``plateau'' model consisting of a flat slope of width $W$ followed by a power law decline with normalization $B_W$:
 \begin{equation}
@@ -118,12 +101,20 @@ We investigate the cases $\alpha=-1.1$ and $\alpha=-1.4$, which correspond to th
 where $B_W=[(W-t_{\rm min}) + \frac{t_{\rm max}^{\alpha+1} - W^{\alpha+1}}{(\alpha+1)W^\alpha}]^{-1}$ is the normalization coefficient.
 We investigate the cases $W=0.3$ Gyr and $W=1$ Gyr, taking $\alpha=-1.1$ for all plateau models. Figure \ref{fig:dtd-greggio05} illustrates the similarity between these models and two different treatments of the analytical double-degenerate DTD from \citet{Greggio2005-AnalyticalRates}.
 
+\begin{figure}
+    \centering
+    \includegraphics{figures/dtd_greggio05.pdf}
+    \caption{Analytical DTDs from \citet[][solid curves]{Greggio2005-AnalyticalRates} and close approximation simple functions (dashed curves). Some functions are presented with a constant multiplicative factor for visual clarity.}
+    \label{fig:dtd-greggio05}
+    \script{dtd_greggio05.py}
+\end{figure}
+
 \paragraph{Exponential} An exponentially declining DTD with timescale $\tau$ and normalization $C_\tau$:
 \begin{equation}
     R(t) = \frac{1}{\tau} e^{-t/\tau}
     \label{eq:exponential-dtd}
 \end{equation}
-We investigate the case where $\tau=1.5$ Gyr, which has been used in previous studies \citep[e.g.,][]{Schonrich2009-RadialMixing,Weinberg2017-ChemicalEquilibrium} and is similar to the analytical single-degenerate DTD from \citet{Greggio2005-AnalyticalRates}. We also investigate a longer timescale of $\tau=3$ Gyr.
+We investigate the case where $\tau=1.5$ Gyr, which has been used in previous studies \citep[e.g.,][]{Schonrich2009-RadialMixing,Weinberg2017-ChemicalEquilibrium} and is similar to the analytical single-degenerate DTD from \citet{Greggio2005-AnalyticalRates}. We also investigate a longer timescale of $\tau=3$ Gyr. \citet{Matteucci1986-SupernovaEnrichment}, \citet{Stolger2020-ExponentialDTD}
 
 \paragraph{Prompt} A DTD in which 50\% of SNe Ia belong to a ``prompt'' Gaussian component at small $t$ and the other 50\% form an exponential tail at large $t$, normalized by $D_{t_p,\sigma,\tau}$:
 \begin{equation}
@@ -350,27 +341,6 @@ The minimum delay and SFE timescale have similar effects on the abundance tracks
 \subsection{Analytical Formulations}
 
 \citet{Greggio2005-AnalyticalRates} derives analytical DTDs for SD and DD progenitor systems from assumptions about binary stellar evolution and outcomes of mass exchange. They find that the parameters which have a large effect on the shape of the DTD are the distribution and range of stellar masses in progenitor systems; the efficiency of accretion in the SD scenario; and the distribution of separations at birth in the DD scenario. Figure \ref{fig:dtd-greggio05} shows the analytical DTDs for SD progenitors and two different prescriptions for DD progenitors (``WIDE'' and ``CLOSE''). In the ``WIDE'' scheme, it is assumed that there is a wide distribution of ratios $A/A_0$ of the separation of the DD system to the initial separation of the binary, and that the distributions of $A$ and total mass of the system $m_{\rm DD}$ are independent, so one cannot necessarily predict the total merge time of a system based on its initial parameters. In the ``CLOSE'' scheme, there is assumed to be a narrow distribution of $A/A_0$ and a correlation between $A$ and $m_{\rm DD}$, so the most massive binaries tend to merge quickly and the least massive merge last.
-
-An implementation of these DTDs in a chemical evolution model requires numerical integration (see their Equations 14, 33, and 34, respectively, for the exact functional forms), so to save on computation time we approximate the DTD for the DD prescriptions as a broken power-law with an exponential rise and tail:
-
-\begin{equation}
-    f_{\rm{Ia}}^{\rm{DD}}(t) \propto
-    \begin{cases}
-        t^{\alpha_1} (1 - A_{\rm{rise}} e^{-t/\tau_{\rm{rise}}}) & t \le 1~\rm{Gyr} \\
-        B t^{\alpha_2} (1 + A_{\rm{tail}} e^{-(t - 1~\rm{Gyr})/\tau_{\rm{tail}}}) & t > 1~\rm{Gyr}
-    \end{cases}
-    \label{eq:greggio05-approx}
-\end{equation}
-
-\noindent with the normalization $B$ of the second part set such that
-
-\begin{equation}
-    B = \frac{1}{1 + A_{\rm{tail}}} t^{(\alpha_1-\alpha_2)} (1 - A_{\rm{rise}} e^{-(1~\rm{Gyr})/\tau_{\rm{rise}}}).
-\end{equation}
-
-\noindent We use a non-linear least squares method to fit Equation \ref{eq:greggio05-approx} to the analytical DTDs for DD progenitors. We obtain best-fit parameters $\alpha_1=-0.19$, $A_{\rm{rise}}=1.7$, $\tau_{\rm{rise}}=0.084$ Gyr, $\alpha_2=-0.91$, $A_{\rm{tail}}=0.85$, and $\tau_{\rm{tail}}=0.088$ Gyr for the ``WIDE'' scheme, and $\alpha_1=-0.53$, $A_{\rm{rise}}=3.0$, $\tau_{\rm{rise}}=0.042$ Gyr, $\alpha_2=-1.1$, $A_{\rm{tail}}=0.62$, and $\tau_{\rm{tail}}=0.11$ Gyr for the ``CLOSE'' scheme.\footnote{
-Our implementation of these best-fit approximations, as well as the original SD and DD formulations, is available in the GitHub repository for this paper: \GitHubURL
-} These best-fit approximations are represented by the dashed curves in Figure \ref{fig:dtd-greggio05} \citep[see also Figure 8 in][]{Greggio2005-AnalyticalRates}. The difference between the true analytical DTDs and our best-fit approximations is small enough as to be irrelevant for our purposes, so for the rest of this section we rely on the best-fit approximations for faster simulations.
 
 % \begin{figure}
 %     \centering
