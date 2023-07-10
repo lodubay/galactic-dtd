@@ -1,14 +1,14 @@
 # Simulations
-rule simulation_powerlaw_slope11:
+rule simulation_insideout_powerlaw_slope11:
     output:
-        directory("src/data/multizone/{migration}/{evolution}/powerlaw_slope11")
+        directory("src/data/multizone/gaussian/insideout/powerlaw_slope11")
     cache:
         True
     conda:
         "environment.yml"
     params:
-        migration="{migration}",
-        evolution="{evolution}",
+        migration="gaussian",
+        evolution="insideout",
         RIa="powerlaw",
         RIa_params={"slope": -1.1},
         minimum_delay=0.04,
@@ -16,16 +16,67 @@ rule simulation_powerlaw_slope11:
     script:
         "src/scripts/snakesim.py"
 
-rule simulation_powerlaw_slope14:
+rule simulation_lateburst_powerlaw_slope11:
     output:
-        directory("src/data/multizone/{migration}/{evolution}/powerlaw_slope14")
+        directory("src/data/multizone/gaussian/lateburst/powerlaw_slope11")
     cache:
         True
     conda:
         "environment.yml"
     params:
-        migration="{migration}",
-        evolution="{evolution}",
+        migration="gaussian",
+        evolution="lateburst",
+        RIa="powerlaw",
+        RIa_params={"slope": -1.1},
+        minimum_delay=0.04,
+        yields="JW20"
+    script:
+        "src/scripts/snakesim.py"
+
+rule simulation_earlyburst_powerlaw_slope11:
+    output:
+        directory("src/data/multizone/gaussian/earlyburst/powerlaw_slope11")
+    cache:
+        True
+    conda:
+        "environment.yml"
+    params:
+        migration="gaussian",
+        evolution="earlyburst",
+        RIa="powerlaw",
+        RIa_params={"slope": -1.1},
+        minimum_delay=0.04,
+        yields="JW20"
+    script:
+        "src/scripts/snakesim.py"
+
+rule simulation_twoinfall_powerlaw_slope11:
+    output:
+        directory("src/data/multizone/gaussian/twoinfall/powerlaw_slope11")
+    cache:
+        True
+    conda:
+        "environment.yml"
+    params:
+        migration="gaussian",
+        evolution="twoinfall",
+        RIa="powerlaw",
+        RIa_params={"slope": -1.1},
+        minimum_delay=0.04,
+        yields="JW20"
+    script:
+        "src/scripts/snakesim.py"
+
+rule simulation_insideout_powerlaw_slope14:
+    output:
+        directory("src/data/multizone/gaussian/insideout/powerlaw_slope14")
+    cache:
+        True
+    conda:
+        "environment.yml"
+    params:
+        migration="gaussian",
+        evolution="insideout",
         RIa="powerlaw",
         RIa_params={"slope": -1.4},
         minimum_delay=0.04,
@@ -33,16 +84,67 @@ rule simulation_powerlaw_slope14:
     script:
         "src/scripts/snakesim.py"
 
-rule simulation_exponential_timescale15:
+rule simulation_lateburst_powerlaw_slope14:
     output:
-        directory("src/data/multizone/{migration}/{evolution}/exponential_timescale15")
+        directory("src/data/multizone/gaussian/lateburst/powerlaw_slope14")
     cache:
         True
     conda:
         "environment.yml"
     params:
-        migration="{migration}",
-        evolution="{evolution}",
+        migration="gaussian",
+        evolution="lateburst",
+        RIa="powerlaw",
+        RIa_params={"slope": -1.4},
+        minimum_delay=0.04,
+        yields="JW20"
+    script:
+        "src/scripts/snakesim.py"
+
+rule simulation_earlyburst_powerlaw_slope14:
+    output:
+        directory("src/data/multizone/gaussian/earlyburst/powerlaw_slope14")
+    cache:
+        True
+    conda:
+        "environment.yml"
+    params:
+        migration="gaussian",
+        evolution="earlyburst",
+        RIa="powerlaw",
+        RIa_params={"slope": -1.4},
+        minimum_delay=0.04,
+        yields="JW20"
+    script:
+        "src/scripts/snakesim.py"
+
+rule simulation_twoinfall_powerlaw_slope14:
+    output:
+        directory("src/data/multizone/gaussian/twoinfall/powerlaw_slope14")
+    cache:
+        True
+    conda:
+        "environment.yml"
+    params:
+        migration="gaussian",
+        evolution="twoinfall",
+        RIa="powerlaw",
+        RIa_params={"slope": -1.4},
+        minimum_delay=0.04,
+        yields="JW20"
+    script:
+        "src/scripts/snakesim.py"
+
+rule simulation_insideout_exponential_timescale15:
+    output:
+        directory("src/data/multizone/gaussian/insideout/exponential_timescale15")
+    cache:
+        True
+    conda:
+        "environment.yml"
+    params:
+        migration="gaussian",
+        evolution="insideout",
         RIa="exponential",
         RIa_params={"timescale": 1.5},
         minimum_delay=0.04,
@@ -50,16 +152,67 @@ rule simulation_exponential_timescale15:
     script:
         "src/scripts/snakesim.py"
 
-rule simulation_exponential_timescale30:
+rule simulation_lateburst_exponential_timescale15:
     output:
-        directory("src/data/multizone/{migration}/{evolution}/exponential_timescale30")
+        directory("src/data/multizone/gaussian/lateburst/exponential_timescale15")
     cache:
         True
     conda:
         "environment.yml"
     params:
-        migration="{migration}",
-        evolution="{evolution}",
+        migration="gaussian",
+        evolution="lateburst",
+        RIa="exponential",
+        RIa_params={"timescale": 1.5},
+        minimum_delay=0.04,
+        yields="JW20"
+    script:
+        "src/scripts/snakesim.py"
+
+rule simulation_earlyburst_exponential_timescale15:
+    output:
+        directory("src/data/multizone/gaussian/earlyburst/exponential_timescale15")
+    cache:
+        True
+    conda:
+        "environment.yml"
+    params:
+        migration="gaussian",
+        evolution="earlyburst",
+        RIa="exponential",
+        RIa_params={"timescale": 1.5},
+        minimum_delay=0.04,
+        yields="JW20"
+    script:
+        "src/scripts/snakesim.py"
+
+rule simulation_twoinfall_exponential_timescale15:
+    output:
+        directory("src/data/multizone/gaussian/twoinfall/exponential_timescale15")
+    cache:
+        True
+    conda:
+        "environment.yml"
+    params:
+        migration="gaussian",
+        evolution="twoinfall",
+        RIa="exponential",
+        RIa_params={"timescale": 1.5},
+        minimum_delay=0.04,
+        yields="JW20"
+    script:
+        "src/scripts/snakesim.py"
+
+rule simulation_insideout_exponential_timescale30:
+    output:
+        directory("src/data/multizone/gaussian/insideout/exponential_timescale30")
+    cache:
+        True
+    conda:
+        "environment.yml"
+    params:
+        migration="gaussian",
+        evolution="insideout",
         RIa="exponential",
         RIa_params={"timescale": 3.0},
         minimum_delay=0.04,
@@ -67,16 +220,67 @@ rule simulation_exponential_timescale30:
     script:
         "src/scripts/snakesim.py"
 
-rule simulation_plateau_width03:
+rule simulation_lateburst_exponential_timescale30:
     output:
-        directory("src/data/multizone/{migration}/{evolution}/plateau_width03")
+        directory("src/data/multizone/gaussian/lateburst/exponential_timescale30")
     cache:
         True
     conda:
         "environment.yml"
     params:
-        migration="{migration}",
-        evolution="{evolution}",
+        migration="gaussian",
+        evolution="lateburst",
+        RIa="exponential",
+        RIa_params={"timescale": 3.0},
+        minimum_delay=0.04,
+        yields="JW20"
+    script:
+        "src/scripts/snakesim.py"
+
+rule simulation_earlyburst_exponential_timescale30:
+    output:
+        directory("src/data/multizone/gaussian/earlyburst/exponential_timescale30")
+    cache:
+        True
+    conda:
+        "environment.yml"
+    params:
+        migration="gaussian",
+        evolution="earlyburst",
+        RIa="exponential",
+        RIa_params={"timescale": 3.0},
+        minimum_delay=0.04,
+        yields="JW20"
+    script:
+        "src/scripts/snakesim.py"
+
+rule simulation_twoinfall_exponential_timescale30:
+    output:
+        directory("src/data/multizone/gaussian/twoinfall/exponential_timescale30")
+    cache:
+        True
+    conda:
+        "environment.yml"
+    params:
+        migration="gaussian",
+        evolution="twoinfall",
+        RIa="exponential",
+        RIa_params={"timescale": 3.0},
+        minimum_delay=0.04,
+        yields="JW20"
+    script:
+        "src/scripts/snakesim.py"
+
+rule simulation_insideout_plateau_width03:
+    output:
+        directory("src/data/multizone/gaussian/insideout/plateau_width03")
+    cache:
+        True
+    conda:
+        "environment.yml"
+    params:
+        migration="gaussian",
+        evolution="insideout",
         RIa="plateau",
         RIa_params={"width": 0.3, "slope": -1.1},
         minimum_delay=0.04,
@@ -84,16 +288,67 @@ rule simulation_plateau_width03:
     script:
         "src/scripts/snakesim.py"
 
-rule simulation_plateau_width10:
+rule simulation_lateburst_plateau_width03:
     output:
-        directory("src/data/multizone/{migration}/{evolution}/plateau_width10")
+        directory("src/data/multizone/gaussian/lateburst/plateau_width03")
     cache:
         True
     conda:
         "environment.yml"
     params:
-        migration="{migration}",
-        evolution="{evolution}",
+        migration="gaussian",
+        evolution="lateburst",
+        RIa="plateau",
+        RIa_params={"width": 0.3, "slope": -1.1},
+        minimum_delay=0.04,
+        yields="JW20"
+    script:
+        "src/scripts/snakesim.py"
+
+rule simulation_earlyburst_plateau_width03:
+    output:
+        directory("src/data/multizone/gaussian/earlyburst/plateau_width03")
+    cache:
+        True
+    conda:
+        "environment.yml"
+    params:
+        migration="gaussian",
+        evolution="earlyburst",
+        RIa="plateau",
+        RIa_params={"width": 0.3, "slope": -1.1},
+        minimum_delay=0.04,
+        yields="JW20"
+    script:
+        "src/scripts/snakesim.py"
+
+rule simulation_twoinfall_plateau_width03:
+    output:
+        directory("src/data/multizone/gaussian/twoinfall/plateau_width03")
+    cache:
+        True
+    conda:
+        "environment.yml"
+    params:
+        migration="gaussian",
+        evolution="twoinfall",
+        RIa="plateau",
+        RIa_params={"width": 0.3, "slope": -1.1},
+        minimum_delay=0.04,
+        yields="JW20"
+    script:
+        "src/scripts/snakesim.py"
+
+rule simulation_insideout_plateau_width10:
+    output:
+        directory("src/data/multizone/gaussian/insideout/plateau_width10")
+    cache:
+        True
+    conda:
+        "environment.yml"
+    params:
+        migration="gaussian",
+        evolution="insideout",
         RIa="plateau",
         RIa_params={"width": 1.0, "slope": -1.1},
         minimum_delay=0.04,
@@ -101,16 +356,67 @@ rule simulation_plateau_width10:
     script:
         "src/scripts/snakesim.py"
 
-rule simulation_prompt:
+rule simulation_lateburst_plateau_width10:
     output:
-        directory("src/data/multizone/{migration}/{evolution}/prompt")
+        directory("src/data/multizone/gaussian/lateburst/plateau_width10")
     cache:
         True
     conda:
         "environment.yml"
     params:
-        migration="{migration}",
-        evolution="{evolution}",
+        migration="gaussian",
+        evolution="lateburst",
+        RIa="plateau",
+        RIa_params={"width": 1.0, "slope": -1.1},
+        minimum_delay=0.04,
+        yields="JW20"
+    script:
+        "src/scripts/snakesim.py"
+
+rule simulation_earlyburst_plateau_width10:
+    output:
+        directory("src/data/multizone/gaussian/earlyburst/plateau_width10")
+    cache:
+        True
+    conda:
+        "environment.yml"
+    params:
+        migration="gaussian",
+        evolution="earlyburst",
+        RIa="plateau",
+        RIa_params={"width": 1.0, "slope": -1.1},
+        minimum_delay=0.04,
+        yields="JW20"
+    script:
+        "src/scripts/snakesim.py"
+
+rule simulation_twoinfall_plateau_width10:
+    output:
+        directory("src/data/multizone/gaussian/twoinfall/plateau_width10")
+    cache:
+        True
+    conda:
+        "environment.yml"
+    params:
+        migration="gaussian",
+        evolution="twoinfall",
+        RIa="plateau",
+        RIa_params={"width": 1.0, "slope": -1.1},
+        minimum_delay=0.04,
+        yields="JW20"
+    script:
+        "src/scripts/snakesim.py"
+
+rule simulation_insideout_prompt:
+    output:
+        directory("src/data/multizone/gaussian/insideout/prompt")
+    cache:
+        True
+    conda:
+        "environment.yml"
+    params:
+        migration="gaussian",
+        evolution="insideout",
         RIa="prompt",
         RIa_params={"peak": 0.05, "stdev": 0.015, "timescale": 3.0},
         minimum_delay=0.04,
@@ -118,20 +424,190 @@ rule simulation_prompt:
     script:
         "src/scripts/snakesim.py"
 
-rule simulation_triple:
+rule simulation_lateburst_prompt:
     output:
-        directory("src/data/multizone/{migration}/{evolution}/triple")
+        directory("src/data/multizone/gaussian/lateburst/prompt")
     cache:
         True
     conda:
         "environment.yml"
     params:
-        migration="{migration}",
-        evolution="{evolution}",
+        migration="gaussian",
+        evolution="lateburst",
+        RIa="prompt",
+        RIa_params={"peak": 0.05, "stdev": 0.015, "timescale": 3.0},
+        minimum_delay=0.04,
+        yields="JW20"
+    script:
+        "src/scripts/snakesim.py"
+
+rule simulation_earlyburst_prompt:
+    output:
+        directory("src/data/multizone/gaussian/earlyburst/prompt")
+    cache:
+        True
+    conda:
+        "environment.yml"
+    params:
+        migration="gaussian",
+        evolution="earlyburst",
+        RIa="prompt",
+        RIa_params={"peak": 0.05, "stdev": 0.015, "timescale": 3.0},
+        minimum_delay=0.04,
+        yields="JW20"
+    script:
+        "src/scripts/snakesim.py"
+
+rule simulation_twoinfall_prompt:
+    output:
+        directory("src/data/multizone/gaussian/twoinfall/prompt")
+    cache:
+        True
+    conda:
+        "environment.yml"
+    params:
+        migration="gaussian",
+        evolution="twoinfall",
+        RIa="prompt",
+        RIa_params={"peak": 0.05, "stdev": 0.015, "timescale": 3.0},
+        minimum_delay=0.04,
+        yields="JW20"
+    script:
+        "src/scripts/snakesim.py"
+
+rule simulation_insideout_triple:
+    output:
+        directory("src/data/multizone/gaussian/insideout/triple")
+    cache:
+        True
+    conda:
+        "environment.yml"
+    params:
+        migration="gaussian",
+        evolution="insideout",
         RIa="triple",
         RIa_params={"early_rate": 0.05, "rise_time": 0.5, "width": 0.5, "slope": -1.1},
         minimum_delay=0.04,
         yields="JW20"
+    script:
+        "src/scripts/snakesim.py"
+
+rule simulation_lateburst_triple:
+    output:
+        directory("src/data/multizone/gaussian/lateburst/triple")
+    cache:
+        True
+    conda:
+        "environment.yml"
+    params:
+        migration="gaussian",
+        evolution="lateburst",
+        RIa="triple",
+        RIa_params={"early_rate": 0.05, "rise_time": 0.5, "width": 0.5, "slope": -1.1},
+        minimum_delay=0.04,
+        yields="JW20"
+    script:
+        "src/scripts/snakesim.py"
+
+rule simulation_earlyburst_triple:
+    output:
+        directory("src/data/multizone/gaussian/earlyburst/triple")
+    cache:
+        True
+    conda:
+        "environment.yml"
+    params:
+        migration="gaussian",
+        evolution="earlyburst",
+        RIa="triple",
+        RIa_params={"early_rate": 0.05, "rise_time": 0.5, "width": 0.5, "slope": -1.1},
+        minimum_delay=0.04,
+        yields="JW20"
+    script:
+        "src/scripts/snakesim.py"
+
+rule simulation_twoinfall_triple:
+    output:
+        directory("src/data/multizone/gaussian/twoinfall/triple")
+    cache:
+        True
+    conda:
+        "environment.yml"
+    params:
+        migration="gaussian",
+        evolution="twoinfall",
+        RIa="triple",
+        RIa_params={"early_rate": 0.05, "rise_time": 0.5, "width": 0.5, "slope": -1.1},
+        minimum_delay=0.04,
+        yields="JW20"
+    script:
+        "src/scripts/snakesim.py"
+
+rule simulation_insideout_greggio05_single:
+    output:
+        directory("src/data/multizone/gaussian/insideout/greggio05_single")
+    cache:
+        True
+    conda:
+        "environment.yml"
+    params:
+        migration="gaussian",
+        evolution="insideout",
+        RIa="greggio05_single",
+        RIa_params={},
+        minimum_delay=0.04,
+        yields="JW20"
+    script:
+        "src/scripts/snakesim.py"
+
+rule simulation_fiducial_diffusion:
+    output:
+        directory("src/data/multizone/diffusion/insideout/powerlaw_slope11")
+    cache:
+        True
+    conda:
+        "environment.yml"
+    params:
+        migration="diffusion",
+        evolution="insideout",
+        RIa="powerlaw",
+        RIa_params={"slope": -1.1},
+        minimum_delay=0.04,
+        yields="JW20"
+    script:
+        "src/scripts/snakesim.py"
+
+rule simulation_fiducial_delay150:
+    output:
+        directory("src/data/multizone/gaussian/insideout/powerlaw_slope11")
+    cache:
+        True
+    conda:
+        "environment.yml"
+    params:
+        migration="gaussian",
+        evolution="insideout",
+        RIa="powerlaw",
+        RIa_params={"slope": -1.1},
+        minimum_delay=0.15,
+        yields="JW20"
+    script:
+        "src/scripts/snakesim.py"
+
+rule simulation_earlyburst_C22yields:
+    output:
+        directory("src/data/multizone/gaussian/earlyburst/powerlaw_slope11")
+    cache:
+        True
+    conda:
+        "environment.yml"
+    params:
+        migration="gaussian",
+        evolution="earlyburst",
+        RIa="powerlaw",
+        RIa_params={"slope": -1.1},
+        minimum_delay=0.04,
+        yields="C22"
     script:
         "src/scripts/snakesim.py"
 
