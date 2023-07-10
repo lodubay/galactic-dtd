@@ -19,10 +19,10 @@ DTD_LIST = ['powerlaw_slope11',
             'powerlaw_slope14', 
             'exponential_timescale15',
             'exponential_timescale30',
-            'plateau_width300_slope11',
-            'plateau_width1000_slope11',
-            'prompt_peak050_stdev015_timescale30',
-            'triple_delay040']
+            'plateau_width03',
+            'plateau_width10',
+            'prompt',
+            'triple']
 AGE_SOURCE = 'L23' # Use Leung et al (2023) "latent-space" ages
 
 def main(overwrite=False):
