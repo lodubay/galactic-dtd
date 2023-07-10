@@ -579,7 +579,7 @@ rule simulation_fiducial_diffusion:
 
 rule simulation_fiducial_delay150:
     output:
-        directory("src/data/multizone/gaussian/insideout/powerlaw_slope11")
+        directory("src/data/multizone/gaussian/insideout/powerlaw_slope11_delay150")
     cache:
         True
     conda:
@@ -596,7 +596,7 @@ rule simulation_fiducial_delay150:
 
 rule simulation_earlyburst_C22yields:
     output:
-        directory("src/data/multizone/gaussian/earlyburst/powerlaw_slope11")
+        directory("src/data/multizone/gaussian/earlyburst_C22yields/powerlaw_slope11")
     cache:
         True
     conda:
