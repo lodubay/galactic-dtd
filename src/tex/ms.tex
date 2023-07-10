@@ -4,7 +4,7 @@
 \usepackage{showyourwork}
 \usepackage{amsmath}
 \usepackage{amssymb}
-\usepackage{layouts}
+% \usepackage{layouts}
 \usepackage{xcolor}
 % \usepackage{siunitx}
 
@@ -221,7 +221,7 @@ For each star particle in VICE, \citet{Johnson2021-Migration} randomly assign an
 \begin{figure*}
     \centering
     \includegraphics{figures/radial_migration.pdf}
-    \caption{The distribution of final radius as a function of formation radius and age for the h277 analogue (top row) and Gaussian sampling scheme (bottom row). From left to right, star particles are binned by formation annulus, from the inner disk (far left column) to the Solar annulus (center column) to the outer disk (far right column). Within each panel, colored curves represent the different age bins, ranging from the youngest stars (dark blue) to the oldest (dark red). The vertical dotted black lines indicate the bounds of each bin in formation radius; stars within that region of the distribution have not migrated outside their birth annulus over their lifetime.}
+    \caption{The distribution of final radius $R_{\rm final}$ as a function of formation radius and age for the h277 analogue (top row) and Gaussian sampling scheme (bottom row). From left to right, star particles are binned by formation annulus, from the inner disk (far left column) to the Solar annulus (center column) to the outer disk (far right column). Within each panel, colored curves represent the different age bins, ranging from the youngest stars (dark blue) to the oldest (dark red). The vertical dotted black lines indicate the bounds of each bin in formation radius; stars within that region of the distribution have not migrated outside their birth annulus over their lifetime.}
     \label{fig:radial-migration}
     \script{radial_migration.py}
 \end{figure*}
@@ -349,7 +349,7 @@ The minimum delay and SFE timescale have similar effects on the abundance tracks
 
 \subsection{Analytical Formulations}
 
-\citet{Greggio2005-AnalyticalRates} derives analytical DTDs for SD and DD progenitor systems from assumptions about binary stellar evolution and outcomes of mass exchange. They find that the parameters which have a large effect on the shape of the DTD are the distribution and range of stellar masses in progenitor systems; the efficiency of accretion in the SD scenario; and the distribution of separations at birth in the DD scenario. Figure \ref{fig:dtd-greggio05} shows the analytical DTDs for SD progenitors and two different prescriptions for DD progenitors (``WIDE'' and ``CLOSE''). In the ``WIDE'' scheme, it is assumed that there is a wide distribution of ratios $A/A_0$ of the separation of the DD system to the initial separation of the binary, and that the distributions of $A$ and total mass of the system $m_{\rm{DD}}$ are independent, so one cannot necessarily predict the total merge time of a system based on its initial parameters. In the ``CLOSE'' scheme, there is assumed to be a narrow distribution of $A/A_0$ and a correlation between $A$ and $m_{\rm{DD}}$, so the most massive binaries tend to merge quickly and the least massive merge last.
+\citet{Greggio2005-AnalyticalRates} derives analytical DTDs for SD and DD progenitor systems from assumptions about binary stellar evolution and outcomes of mass exchange. They find that the parameters which have a large effect on the shape of the DTD are the distribution and range of stellar masses in progenitor systems; the efficiency of accretion in the SD scenario; and the distribution of separations at birth in the DD scenario. Figure \ref{fig:dtd-greggio05} shows the analytical DTDs for SD progenitors and two different prescriptions for DD progenitors (``WIDE'' and ``CLOSE''). In the ``WIDE'' scheme, it is assumed that there is a wide distribution of ratios $A/A_0$ of the separation of the DD system to the initial separation of the binary, and that the distributions of $A$ and total mass of the system $m_{\rm DD}$ are independent, so one cannot necessarily predict the total merge time of a system based on its initial parameters. In the ``CLOSE'' scheme, there is assumed to be a narrow distribution of $A/A_0$ and a correlation between $A$ and $m_{\rm DD}$, so the most massive binaries tend to merge quickly and the least massive merge last.
 
 An implementation of these DTDs in a chemical evolution model requires numerical integration (see their Equations 14, 33, and 34, respectively, for the exact functional forms), so to save on computation time we approximate the DTD for the DD prescriptions as a broken power-law with an exponential rise and tail:
 
@@ -458,7 +458,7 @@ Something about \citet{Johnson2021-Migration} and \citet{Schonrich2009-RadialMix
 
     \item The early-burst SFH model is the only one which produced a bimodal distribution of [O/Fe] across the disk resembling APOGEE, from the models we investigate. [Add: summary of why everything else fails.]
 
-    \item [Something about how radial migration can't produce bimodality on its own]
+    \item Something about how radial migration can't produce bimodality on its own.
     
 \end{itemize}
 
@@ -537,7 +537,7 @@ to the dataset stored on zenodo used in the corresponding figure,
 and the other to the script used to make the figure (at the commit
 corresponding to the current build of the manuscript). The git
 repository associated to this study is publicly available at
-\GitHubURL, and the release v.X.X allows anyone to re-build the entire 
+\url{\GitHubURL}, and the release v.X.X allows anyone to re-build the entire 
 manuscript. The datasets are stored at [URL].
 
 \bibliography{bib}
