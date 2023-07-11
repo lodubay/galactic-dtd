@@ -12,6 +12,7 @@ plt.rcParams['axes.prop_cycle'] = plt.cycler('color', paultol.bright.colors)
 DELAY = 0.04 # minimum Ia delay time in Gyr
 
 def main():
+    plt.style.use(paths.styles / 'paper.mplstyle')
     fig, ax= setup_axes()
     times = [t*0.001 for t in range(40, 13200)]
     distributions = [styles.prompt, styles.plaw, styles.plateau, 
