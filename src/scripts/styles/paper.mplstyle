@@ -1,5 +1,3 @@
-# Enforce a non-interactive backend
-backend: agg
 # Default figure size and resolution
 figure.figsize: 4, 4
 figure.dpi: 300
