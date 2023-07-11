@@ -260,10 +260,10 @@ def to_latex(df):
                                df[col] >= df[col].quantile(0.67),
                            other='\\no')
     # Mask bimodality booleans with no / yes marks
-    df['bimodality'] = df['bimodality'].mask(df['bimodality'], 
-                                         other='\yes').mask(
-                                             ~df['bimodality'],
-                                         other='\\no')
+    df['bimodality'] = df['bimodality'].mask(df['bimodality'].astype('bool'), 
+                                        other='\yes').mask(
+                                             ~df['bimodality'].astype('bool'),
+                                        other='\\no')
     # Fancy row labels
     dtd_labels = ['Power law', '($\\alpha=-1.1$)', '', '',
                   'Power law', '($\\alpha=-1.4$)', '', '',
