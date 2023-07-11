@@ -29,6 +29,10 @@ static = src / "static"
 # Absolute path to the `src/scripts` folder (contains figure/pipeline scripts)
 scripts = src / "scripts"
 
+# Absolute path to the `src/scripts/styles` folder (contains matplotlib style
+# files)
+styles = scripts / "styles"
+
 # Absolute path to the `src/tex` folder (contains the manuscript)
 tex = src / "tex"
 

@@ -18,6 +18,7 @@ RFORM_BINS = [3, 5, 7, 9, 11, 13]
 AGE_BINS = [0, 2, 4, 6, 8, 10, 12]
 
 def main():
+    plt.style.use(paths.styles / 'paper.mplstyle')
     rfinal_bins = np.arange(0, 20.01, 0.01)
     
     # pick discrete colors

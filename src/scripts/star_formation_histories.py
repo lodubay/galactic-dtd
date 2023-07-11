@@ -20,6 +20,7 @@ DTD = 'powerlaw_slope11'
 CMAP_NAME = 'plasma_r'
 
 def main():
+    plt.style.use(paths.styles / 'paper.mplstyle')
     fig, axs = setup_axes()
     # Get color list
     cmap = plt.get_cmap(CMAP_NAME)

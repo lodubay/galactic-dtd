@@ -20,6 +20,7 @@ ABSZ_MAX = 3.
 DZ = 0.01
 
 def main():
+    plt.style.use(paths.styles / 'paper.mplstyle')
     zfinal_bins = np.arange(-ABSZ_MAX, ABSZ_MAX + DZ, DZ)
     
     # pick discrete colors
