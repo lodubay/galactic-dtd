@@ -13,11 +13,12 @@ jobs:
         uses: actions/checkout@v3
         with:
           fetch-depth: 0
-          run_cache_rules_on_ci: True
-          
+        
       - name: Build the article PDF
         id: build
         uses: showyourwork/showyourwork-action@v1
+        with:
+          run_cache_rules_on_ci: True
         env:
           SANDBOX_TOKEN: ${{ secrets.SANDBOX_TOKEN }}
           OVERLEAF_EMAIL: ${{ secrets.OVERLEAF_EMAIL }}
