@@ -42,7 +42,7 @@
 \subsection{DTD Models}
 \label{sec:dtd-models}
 
-We explore five different functional forms for the SN Ia DTD: a power-law, a broken power-law with an initial flat plateau, an exponential, an exponential with a prompt Gaussian component, with one or two different parameterizations for each. Figure \ref{fig:dtds} presents these DTDs as a function of time since star formation.
+We explore four different functional forms for the SN Ia DTD: a power-law, a broken power-law with an initial flat plateau, an exponential, and an exponential with a prompt Gaussian component, with a few different parameterizations for each. Figure \ref{fig:dtds} presents these DTDs as a function of time since star formation.
 
 \begin{figure}
     \centering
@@ -54,42 +54,14 @@ We explore five different functional forms for the SN Ia DTD: a power-law, a bro
 
 % \citet{Stolger2020-ExponentialDTD} perform maximum likelihood estimations based on the cosmic star formation history and the star formation histories of individual galaxies. In both cases their best fit functions were approximately exponential, though they started with a skew-normal function so could not have ended up with a power law even if they wanted to. They don't actually report the timescale of this exponential, but based on the plots I'd say it's about 1.5 - 2 (1.7?) Gyr. Their best fit parameters make no sense to me as they don't report their units.
 
-\begin{deluxetable*}{lll}
-\tablecaption{Summary of SN Ia DTD models explored in this paper.}
-\tablehead{
-\colhead{Model} & \colhead{Parameters} & \colhead{Similar to}
-}
-\startdata
-Power-law   & $\alpha=-1.1$     & \citet[][field]{Maoz2017-CosmicDTD}; 
-                                  \citet{Wiseman2021-DESRates}              \\
-Power-law   & $\alpha=-1.4$     & \citet[][cluster]{Maoz2017-CosmicDTD}; 
-                                  \citet{Heringer2019-FieldGalaxyDTD}       \\
-Exponential & $\tau=1.5$ Gyr    & \citet[][SD]{Greggio2005-AnalyticalRates};
-                                  \citet{Schonrich2009-RadialMixing};       \\
-            &                   & \citet{Weinberg2017-ChemicalEquilibrium}  \\
-Exponential & $\tau=3.0$ Gyr    & \\
-Plateau     & $W=0.3$ Gyr, $\alpha=-1.1$    & \citet[][CLOSE DD]{Greggio2005-AnalyticalRates} \\
-Plateau     & $W=1.0$ Gyr, $\alpha=-1.1$    & \citet[][WIDE DD]{Greggio2005-AnalyticalRates} \\
-Prompt      & $t_{\rm max}=0.05$ Gyr, $\sigma=0.015$ Gyr, & \citet{Mannucci2006-TwoPopulations} \\
-            & $\tau=3.0$ Gyr & \\
-Triple      & $f_{\rm init}=0.05f_{\rm peak}$, $t_{\rm rise}=0.5$ Gyr, & \citet{Rajamuthukumar2022-TripleEvolution} \\
-            & $W=0.5$ Gyr, $\alpha=-1.1$ & \\
-\enddata
-\end{deluxetable*}
-
 \paragraph{Power-law} A simple power law with slope $\alpha$:
 \begin{equation}
     R(t) = A_\alpha (t/1\,\rm{Gyr})^\alpha
     \label{eq:powerlaw-dtd}
 \end{equation}
 where $A_\alpha = (\alpha+1)(t_{\rm max}^{\alpha+1} - t_{\rm min}^{\alpha+1})^{-1}$ is the normalization coefficient.
-We investigate the cases $\alpha=-1.1$ and $\alpha=-1.4$, which correspond to the field galaxy and galaxy cluster DTDs of \citet{Maoz2017-CosmicDTD}, respectively.
-
-A typical form for the DTD is a power-law $t^\alpha$ where $\alpha\sim-1$. \citet{Maoz2017-CosmicDTD} compare volumetric SN Ia rates to the cosmic star formation history. They get a power law with a slope of $-1.13\pm 0.06$ for field galaxies, and a slope of $-1.39^{+0.32}_{-0.05}$ for galaxy clusters.
-
-\citet{Heringer2019-FieldGalaxyDTD} study the distribution of SNe Ia in field galaxies and get a power-law index of $-1.34^{+0.19}_{-0.17}$ which is closer to Maoz's cluster DTD.
-
-\citet{Wiseman2021-DESRates} measure the SN Ia rate in the redshift range $0.2 < z < 0.6$ and get a similar power law to \citet{Maoz2017-CosmicDTD} with a slope of $-1.13 \pm 0.05$. They also find that slower-declining SNe have a steeper DTD slope.
+A declining power-law with $\alpha\sim-1$ is a standard assumption in many observational studies of the DTD as well as GCE studies. \citet{Maoz2017-CosmicDTD} obtain a DTD with $\alpha=-1.07\pm0.09$ based on volumetric rates and an assumed cosmic SFH for field galaxies in redshift range $0\leq z\leq 2.25$. \citet{Wiseman2021-DESRates} obtain a similar slope of $\alpha=-1.13\pm0.05$ for field galaxies in the redshift range $0.2<z<0.6$. For galaxy clusters, \citet{Maoz2017-CosmicDTD} find a steeper DTD slope of $\alpha=-1.39^{+0.32}_{-0.05}$. \citet{Heringer2019-FieldGalaxyDTD} use a SFH-independent method to constrain the DTD for field galaxies within $0.01<z<0.2$ and find a steeper slope of $\alpha=-1.34^{+0.19}_{-0.17}$.
+In this paper, we investigate the cases $\alpha=-1.1$ and $\alpha=-1.4$.
 
 \paragraph{Plateau} A ``plateau'' model consisting of a flat slope of width $W$ followed by a power law decline with normalization $B_W$:
 \begin{equation}
@@ -136,6 +108,31 @@ Following the two-population model from \citet{Mannucci2006-TwoPopulations}, we 
     \label{eq:triple-dtd}
 \end{equation}
 We take $t_{\rm rise}=0.5$ Gyr, $W=0.5$ Gyr, $\alpha=-1.1$, and $\epsilon=0.05$ so the initial rate is 5\% of the peak rate.
+
+Table \ref{tab:dtds} summarizes the model DTDs we investigate in this paper.
+
+\begin{deluxetable*}{lll}
+\tablecaption{Summary of SN Ia DTD models explored in this paper.\label{tab:dtds}}
+\tablehead{
+\colhead{Model} & \colhead{Parameters} & \colhead{Similar to}
+}
+\startdata
+Power-law   & $\alpha=-1.1$                 & \citet[][field]{Maoz2017-CosmicDTD}; 
+                                              \citet{Wiseman2021-DESRates}              \\
+Power-law   & $\alpha=-1.4$                 & \citet[][cluster]{Maoz2017-CosmicDTD}; 
+                                              \citet{Heringer2019-FieldGalaxyDTD}       \\
+Plateau     & $W=0.3$ Gyr, $\alpha=-1.1$    & \citet[][CLOSE DD]{Greggio2005-AnalyticalRates} \\
+Plateau     & $W=1.0$ Gyr, $\alpha=-1.1$    & \citet[][WIDE DD]{Greggio2005-AnalyticalRates} \\
+Triple-system   & $f_{\rm init}=0.05f_{\rm peak}$, $t_{\rm rise}=0.5$ Gyr, & \citet{Rajamuthukumar2022-TripleEvolution} \\
+            & $W=0.5$ Gyr, $\alpha=-1.1$ & \\
+Exponential & $\tau=1.5$ Gyr    & \citet[][SD]{Greggio2005-AnalyticalRates};
+                                  \citet{Schonrich2009-RadialMixing};       \\
+            &                   & \citet{Weinberg2017-ChemicalEquilibrium}  \\
+Exponential & $\tau=3.0$ Gyr    & \\
+Prompt      & $t_{\rm max}=0.05$ Gyr, $\sigma=0.015$ Gyr, & \citet{Mannucci2006-TwoPopulations} \\
+            & $\tau=3.0$ Gyr & \\
+\enddata
+\end{deluxetable*}
 
 \subsection{Star Formation Histories}
 \label{sec:sfh}
@@ -214,7 +211,7 @@ For each star particle in VICE, \citet{Johnson2021-Migration} randomly assign an
 \begin{figure*}
     \centering
     \includegraphics{figures/radial_migration.pdf}
-    \caption{The distribution of final radius $R_{\rm final}$ as a function of formation radius and age for the h277 analogue (top row) and Gaussian sampling scheme (bottom row). From left to right, star particles are binned by formation annulus, from the inner disk (far left column) to the Solar annulus (center column) to the outer disk (far right column). Within each panel, colored curves represent the different age bins, ranging from the youngest stars (dark blue) to the oldest (dark red). The vertical dotted black lines indicate the bounds of each bin in formation radius; stars within that region of the distribution have not migrated outside their birth annulus over their lifetime.}
+    \caption{The distribution of final radius $R_{\rm final}$ as a function of formation radius and age for the h277 analogue (top row) and Gaussian sampling scheme (bottom row). From left to right, star particles are binned by formation annulus, from the inner disk (far left column) to the Solar annulus (center column) to the outer disk (far right column). Within each panel, colored curves represent the different age bins, ranging from the youngest stars (dark blue) to the oldest (dark red). The vertical dotted black lines indicate the bounds of each bin in formation radius; stars within that region of the distribution have not migrated outside their birth annulus over their lifetime. All distributions are normalized so that the area under the curve is 1.}
     \label{fig:radial-migration}
     \script{radial_migration.py}
 \end{figure*}
@@ -237,32 +234,31 @@ We fit a Gaussian to the distribution of $\Delta R = R_{\rm final} - R_{\rm init
 \noindent where $\tau$ is the age of the star particle. 
 
 We fit a sech$^2$ function \citep{Spitzer1942} to the distribution of midplane distances $z_{\rm final}$. Vertical migration away from the midplane does not affect the chemical evolution simulation, but we do use $z_{\rm final}$ in our analysis. The probability density function (PDF) of $z_{\rm final}$ given some scale height $h_z$ is
-
 \begin{equation}
     {\rm PDF}(z_{\rm final}) = \frac{1}{4 h_z} {\rm sech}^2\Big(\frac{z_{\rm final}}{2 h_z}\Big)
     \label{eq:sech-pdf}
 \end{equation}
-
-\noindent and the corresponding cumulative distribution function (CDF) is
-
+and the corresponding cumulative distribution function (CDF) is
 \begin{equation}
     {\rm CDF}(z_{\rm final}) = \frac{1}{1 + e^{-z_{\rm final} / h_z}}.
     \label{eq:sech-cdf}
 \end{equation}
-
-\noindent We fit the above function to the distributions of $z_{\rm final}$ in h277 in varying bins of $\tau$ and $R_{\rm final}$ and found that $h_z$ is best described by the function
-
+We fit the above function to the distributions of $z_{\rm final}$ in h277 in varying bins of $\tau$ and $R_{\rm final}$ and found that $h_z$ is best described by the function
 \begin{equation}
     h_z = (0.25\,{\rm kpc}) 
     e^{\frac{\tau-5\,{\rm Gyr}}{7.0\,{\rm Gyr}}}
-    e^{\frac{R_{\rm final}-8\,{\rm kpc}}{6.0\,{\rm kpc}}}
+    e^{\frac{R_{\rm final}-8\,{\rm kpc}}{6.0\,{\rm kpc}}}.
     \label{eq:scale-height}
 \end{equation}
 
-\subsection{APOGEE Data}
-\label{sec:apogee-data}
+When a star particle is created by VICE at initial radius $R_{\rm form}$, we sample its total radial migration distance $\Delta R$ from a Gaussian with a width described by Equation \ref{eq:radial-migration}, and we sample its final midplane distance $z_{\rm final}$ from the distribution described by Equation \ref{eq:sech-pdf} with a width given by Equation \ref{eq:scale-height}. The star particle migrates to its final radius $R_{\rm final}$ in a similar manner to the ``diffusion'' case from \citet{Johnson2021-Migration}, but with a time dependence $\propto t^{1/3}$. This produces distributions of $R_{\rm final}$ and $z_{\rm final}$ which are similar to the analogue migration case for all but the oldest stars
 
-We use APOGEE DR17 \citep{Abdurro'uf2022-SDSSIV-DR17}. Our selection criteria are presented in Table \ref{tab:sample-selection}, producing a final sample of \variable{output/sample_size.txt} stars. We limit to stars with a reported measurement of both [Fe/H] and [O/Fe]. APOGEE survey \citep{Majewski2017-APOGEE}, spectrographs \citep{Wilson2019-APOGEE-Spectrographs}, ASPCAP \citep{Holtzmann2015-ASPCAP,GarciaPerez2016-ASPCAP}, 2.5-meter Sloan Foundation Telescope \citep{Gunn2006-SloanTelescope} at Apache Point Observatory, New Mexico. Ir{\'e}n{\'e}e DuPont Telescope \citep{BowenVaughan1973-DuPontTelescope} at Las Campanas Observatory, Chile for Southern Hemisphere observations. Data reduction pipeline \citep{Nidever2015-APOGEE-DataReduction}, model grids and interpolation method \citep{Jonsson2020-APOGEE-DR16}.
+\subsection{Observational Sample}
+\label{sec:observational-sample}
+
+We compare our simulation results to abundance measurements from the 17th data release \citep[DR17;][]{Abdurro'uf2022-SDSSIV-DR17} of the Apache Point Observatory Galactic Evolution Experiment \citep[APOGEE;][]{Majewski2017-APOGEE}. APOGEE uses infrared spectrographs \citep{Wilson2019-APOGEE-Spectrographs} mounted on two telescopes: the 2.5-meter Sloan Foundation Telescope \citep{Gunn2006-SloanTelescope} at Apache Point Observatory, United States in the Northern Hemisphere, and the Ir{\'e}n{\'e}e DuPont Telescope \citep{BowenVaughan1973-DuPontTelescope} at Las Campanas Observatory, Chile in the Southern Hemisphere. After the spectra are passed through the data reduction pipeline \citep{Nidever2015-APOGEE-DataReduction}, the APOGEE Stellar Parameter and Chemical Abundance Pipeline \citep[ASPCAP;][]{Holtzmann2015-ASPCAP,GarciaPerez2016-ASPCAP} extracts chemical abundances using the model grids and interpolation method described by \citet{Jonsson2020-APOGEE-DR16}.
+
+We limit our sample to red giant branch and red clump stars with high-quality spectra; Table \ref{tab:sample-selection} lists our selection criteria, which produce a final sample of \variable{output/sample_size.txt}stars.
 
 \begin{deluxetable*}{lll}
     \tablecaption{Sample Selection\label{tab:sample-selection}}
