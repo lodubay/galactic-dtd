@@ -284,7 +284,7 @@ def to_latex(df):
         rows[i] = rows[i].replace('\\\\', '\\\\ \n\\hline')
     latex_table = '\n'.join(rows)
     # Import table header and footer
-    with open('summary_table_header.txt', 'r') as f:
+    with open(paths.scripts / 'summary_table_header.txt', 'r') as f:
         header_footer = f.read()
         header, footer = header_footer.split('===')
     # Replace tabular environment with deluxetable
