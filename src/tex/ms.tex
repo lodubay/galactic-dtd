@@ -208,22 +208,6 @@ where we take the thick disk scale radius $R_1=2.0$ kpc, thin disk scale radius 
 
 For each star particle in VICE, \citet{Johnson2021-Migration} randomly assign an analogue star particle from \texttt{h277} and adopt its radial migration distance $\Delta R$ and final midplane distance $z$. This allows VICE to adopt a realistic pattern of radial migration without needing to implement its own hydrodynamical simulation. However, in regions where the number of h277 star particles is relatively low, such as at large $R_{\rm gal}$ and small $t$, a single h277 star particle can be assigned as an analogue to multiple VICE stellar populations. These populations will have similar formation and migration histories and consequently similar abundances, which produces unphysical ``clumps'' of stars in the abundance distributions at high latitudes and large radii. 
 
-\begin{figure*}
-    \centering
-    \includegraphics{figures/radial_migration.pdf}
-    \caption{The distribution of final radius $R_{\rm final}$ as a function of formation radius and age for the h277 analogue (top row) and Gaussian sampling scheme (bottom row). From left to right, star particles are binned by formation annulus, from the inner disk (far left column) to the Solar annulus (center column) to the outer disk (far right column). Within each panel, colored curves represent the different age bins, ranging from the youngest stars (dark blue) to the oldest (dark red). The vertical dotted black lines indicate the bounds of each bin in formation radius; stars within that region of the distribution have not migrated outside their birth annulus over their lifetime. All distributions are normalized so that the area under the curve is 1.}
-    \label{fig:radial-migration}
-    \script{radial_migration.py}
-\end{figure*}
-
-\begin{figure*}
-    \centering
-    \includegraphics{figures/midplane_distance.pdf}
-    \caption{Similar to Figure \ref{fig:radial-migration} but for the distribution of final midplane distance $z_{\rm final}$ as a function of final radius and age. From left to right, star particles are binned by \textit{final} annulus.}
-    \label{fig:midplane-distance}
-    \script{midplane_distance.py}
-\end{figure*}
-
 We fit a Gaussian to the distribution of $\Delta R = R_{\rm final} - R_{\rm initial}$ from the \texttt{h277} output in bins of $R_{\rm initial}$ and age. Each Gaussian is centered at 0 and we find that the scale $\sigma_{\Delta R}$ is best described by the function
 
 \begin{equation}
@@ -251,7 +235,25 @@ We fit the above function to the distributions of $z_{\rm final}$ in h277 in var
     \label{eq:scale-height}
 \end{equation}
 
-When a star particle is created by VICE at initial radius $R_{\rm form}$, we sample its total radial migration distance $\Delta R$ from a Gaussian with a width described by Equation \ref{eq:radial-migration}, and we sample its final midplane distance $z_{\rm final}$ from the distribution described by Equation \ref{eq:sech-pdf} with a width given by Equation \ref{eq:scale-height}. The star particle migrates to its final radius $R_{\rm final}$ in a similar manner to the ``diffusion'' case from \citet{Johnson2021-Migration}, but with a time dependence $\propto t^{1/3}$. This produces distributions of $R_{\rm final}$ and $z_{\rm final}$ which are similar to the analogue migration case for all but the oldest stars
+When a star particle is created by VICE at initial radius $R_{\rm form}$, we sample its total radial migration distance $\Delta R$ from a Gaussian with a width described by Equation \ref{eq:radial-migration}, and we sample its final midplane distance $z_{\rm final}$ from the distribution described by Equation \ref{eq:sech-pdf} with a width given by Equation \ref{eq:scale-height}. The star particle migrates to its final radius $R_{\rm final}$ in a similar manner to the ``diffusion'' case from \citet{Johnson2021-Migration}, but with a time dependence $\propto t^{1/3}$. This produces distributions of $R_{\rm final}$ and $z_{\rm final}$ which are similar to the analogue migration case for all but the oldest stars. 
+
+Figure \ref{fig:radial-migration} compares the distributions of $R_{\rm final}$ in bins of $R_{\rm form}$ and age between the analogue and Gaussian migration schema. The 
+
+\begin{figure*}
+    \centering
+    \includegraphics{figures/radial_migration.pdf}
+    \caption{The distribution of final radius $R_{\rm final}$ as a function of formation radius $R_{\rm form}$ and age for the h277 analogue (top row) and Gaussian sampling scheme (bottom row). From left to right, star particles are binned by formation annulus, from the inner disk (far left column) to the Solar annulus (center column) to the outer disk (far right column). Within each panel, colored curves represent the different age bins, ranging from the youngest stars (dark blue) to the oldest (dark red). All distributions are normalized so that the area under the curve is 1, and have been smoothed by a boxcar function of width 0.5 kpc. The vertical dotted black lines indicate the bounds of each bin in $R_{\rm form}$; stars within that region of the distribution have not migrated outside their birth annulus over their lifetime.}
+    \label{fig:radial-migration}
+    \script{radial_migration.py}
+\end{figure*}
+
+\begin{figure*}
+    \centering
+    \includegraphics{figures/midplane_distance.pdf}
+    \caption{Similar to Figure \ref{fig:radial-migration} but for the distribution of final midplane distance $z_{\rm final}$ as a function of final radius and age. From left to right, star particles are binned by \textit{final} annulus. All distributions have been smoothed by a boxcar function of width 0.1 kpc.}
+    \label{fig:midplane-distance}
+    \script{midplane_distance.py}
+\end{figure*}
 
 \subsection{Observational Sample}
 \label{sec:observational-sample}
@@ -388,13 +390,11 @@ A multi-zone with the \citet{Greggio2005-AnalyticalRates} SD DTD produced nearly
 \subsection{Comparison to APOGEE MDFs}
 
 To quantify the similarity between the MDFs generated by VICE and the observed APOGEE MDF, we compute the Kullback-Leibler (KL) divergence \citep{KullbackLeibler1951}, defined as
-
 \begin{equation}
 \label{eq:kl-divergence}
 D_{\rm{KL}}(P \parallel Q) = \int_{-\infty}^{\infty} p(x) \log\Big(\frac{p(x)}{q(x)}\Big) dx
 \end{equation}
-
-\noindent for distributions $P$ and $Q$ with probability density functions $p(x)$ and $q(x)$. In this case, $P$ is the APOGEE MDF, $Q$ is the model MDF, and $x$ is [Fe/H]. For each model SFH and DTD, we compute $D_{\rm{KL}}$ in 18 different galactocentric zones defined by radial bins $3-5$ kpc, $5-7$ kpc, $7-9$ kpc, $9-11$ kpc, $11-13$ kpc, and $13-15$ kpc and absolute $z$-height bins $0-0.5$ kpc, $0.5-1$ kpc, and $1-2$ kpc. The KL divergence for the entire model is taken to be the average of $D_{\rm{KL}}$ for each zone, weighted by the number of APOGEE stars in each zone.
+for distributions $P$ and $Q$ with probability density functions $p(x)$ and $q(x)$. In this case, $P$ is the APOGEE MDF, $Q$ is the model MDF, and $x$ is [Fe/H]. For each model SFH and DTD, we compute $D_{\rm{KL}}$ in 18 different galactocentric zones defined by radial bins $3-5$ kpc, $5-7$ kpc, $7-9$ kpc, $9-11$ kpc, $11-13$ kpc, and $13-15$ kpc and absolute $z$-height bins $0-0.5$ kpc, $0.5-1$ kpc, and $1-2$ kpc. The KL divergence for the entire model is taken to be the average of $D_{\rm{KL}}$ for each zone, weighted by the number of APOGEE stars in each zone.
 
 \subsection{Comparison to APOGEE ODFs}
 
