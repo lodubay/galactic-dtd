@@ -104,51 +104,5 @@ def main(overwrite=False):
     plt.close()
 
 
-# def run(output_dir, i):
-#     """
-#     Set up and run the ith one-zone model.
-#     """
-#     sz = setup_single(output_dir, MODELS[i], DELAYS[i], **STANDARD_PARAMS)
-#     simtime = np.arange(0, END_TIME + DT, DT)
-#     sz.run(simtime, overwrite=True)
-
-
-# def setup_single(output_dir, model, delay, **kwargs):
-#     """
-#     Setup a one-zone model with a given minimum Ia delay time and SFE timescale.
-
-#     Parameters
-#     ----------
-#     output_dir : Path
-#         Parent directory for VICE outputs
-#     delay : float, optional
-#         Minimum Type Ia delay time in Gyr. The default is 0.1 Gyr.
-#     tau_star : float, optional
-#         Star formation efficiency timescale in Gyr. The default is 2 Gyr.
-#     Other keyword arguments are passed to vice.singlezone
-
-#     Returns
-#     -------
-#     sz : vice.singlezone object
-#     """
-#     name = gen_name_from_params(model, delay)
-#     dtd = {
-#         'powerlaw': dtds.powerlaw(slope=-1.1, tmin=delay),
-#         'exponential': dtds.exponential(timescale=1.5, tmin=delay)
-#     }
-#     sz = vice.singlezone(name=str(output_dir / name),
-#                          RIa=dtd[model], delay=delay,
-#                          **kwargs)
-#     return sz
-
-
-def gen_name_from_params(plateau):
-    """
-    Generate singlezone output name from its distinguishing parameters.
-    """
-    name = f'plateau{int(plateau*1000):03d}'
-    return name
-
-
 if __name__ == '__main__':
     main()
