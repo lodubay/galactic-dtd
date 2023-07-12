@@ -7,6 +7,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 from matplotlib.ticker import MultipleLocator
 from utils import get_bin_centers
+from _globals import ONE_COLUMN_WIDTH
 
 
 def plot_vice_onezone(output, fig=None, axs=[], label=None, color=None,
@@ -176,10 +177,10 @@ def plot_track_and_mdf(feh, ofe, dn_dfeh=[], feh_bins=10, dn_dofe=[],
         weights = np.log10(dn_dfeh)
     else:
         weights= dn_dfeh
-    # axs[1].hist(feh_bins[:-1], feh_bins, weights=weights, color=color,
-    #             histtype=histtype, **style_kw)
-    feh_bin_centers = get_bin_centers(feh_bins)
-    axs[1].plot(feh_bin_centers, weights, color=color, **style_kw)
+    axs[1].hist(feh_bins[:-1], feh_bins, weights=weights, color=color,
+                histtype=histtype, **style_kw)
+    # feh_bin_centers = get_bin_centers(feh_bins)
+    # axs[1].plot(feh_bin_centers, weights, color=color, **style_kw)
 
     # Plot distribution of [O/Fe] on right side panel
     if len(dn_dofe) == 0:
@@ -190,15 +191,15 @@ def plot_track_and_mdf(feh, ofe, dn_dfeh=[], feh_bins=10, dn_dofe=[],
         weights = np.log10(dn_dofe)
     else:
         weights = dn_dofe
-    # axs[2].hist(ofe_bins[:-1], ofe_bins, weights=weights, color=color,
-    #             orientation='horizontal', histtype=histtype, **style_kw)
-    ofe_bin_centers = get_bin_centers(ofe_bins)
-    axs[2].plot(weights, ofe_bin_centers, color=color, **style_kw)
+    axs[2].hist(ofe_bins[:-1], ofe_bins, weights=weights, color=color,
+                orientation='horizontal', histtype=histtype, **style_kw)
+    # ofe_bin_centers = get_bin_centers(ofe_bins)
+    # axs[2].plot(weights, ofe_bin_centers, color=color, **style_kw)
 
     return fig, axs
 
 
-def setup_axes(width=3.25, logmdf=False):
+def setup_axes(width=ONE_COLUMN_WIDTH, logmdf=False, title=''):
     """
     Create a figure with three axes: the main abundance track axis plus two
     side panels for [Fe/H] and [O/Fe] distribution functions.
@@ -231,6 +232,9 @@ def setup_axes(width=3.25, logmdf=False):
     ax_main.set_ylabel('[O/Fe]')
     ax_main.set_xlim((-2.5, 0.3))
     ax_main.set_ylim((-0.1, 0.54))
+    # Add plot title
+    ax_main.text(0.95, 0.95, title, 
+                 ha='right', va='top', transform=ax_main.transAxes)
     # Add panel above for MDF in [Fe/H]
     ax_mdf = fig.add_subplot(gs[0,0], sharex=ax_main)
     ax_mdf.tick_params(axis='x', labelcolor='#ffffff00')

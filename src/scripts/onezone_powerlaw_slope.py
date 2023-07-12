@@ -29,7 +29,6 @@ STANDARD_PARAMS = dict(
     eta=2.5,
     tau_star=2.,
     delay=DELAY,
-    bins=np.arange(-3., 1.01, 0.01)
 )
 
 # Plot settings
@@ -40,11 +39,11 @@ LOG_MDF = False
 def main():
     plt.style.use(paths.styles / 'paper.mplstyle')
     
-    output_dir = paths.data / 'onezone' / 'powerlaw'
+    output_dir = paths.data / 'onezone' / 'powerlaw_slope'
     if not output_dir.exists():
         output_dir.mkdir(parents=True)
 
-    fig, axs = setup_axes(logmdf=LOG_MDF)
+    fig, axs = setup_axes(logmdf=LOG_MDF, title='Power-law DTD')
 
     simtime = np.arange(0, END_TIME + DT, DT)
 
@@ -55,7 +54,7 @@ def main():
 
         plot_vice_onezone(str(output_dir / dtd.name), 
                           fig=fig, axs=axs,
-                          label=rf'Power-Law ($\alpha={slope:.1f}$)',
+                          label=rf'$\alpha={slope:.1f}$',
                           color=COLOR,
                           style_kw={
                               'linestyle': LINE_STYLE[i],
@@ -69,7 +68,7 @@ def main():
     axs[0].set_ylim((-0.1, 0.52))
 
     axs[0].legend(frameon=False, loc='lower left', handlelength=1.2, fontsize=7)
-    fig.savefig(paths.figures / 'onezone_powerlaw.pdf', dpi=300)
+    fig.savefig(paths.figures / 'onezone_powerlaw_slope.pdf', dpi=300)
     plt.close()
 
 
