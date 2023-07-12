@@ -6,7 +6,7 @@ alongside their corresponding metallicity distribution functions (MDFs).
 import numpy as np
 import matplotlib.pyplot as plt
 from matplotlib.ticker import MultipleLocator
-# from utils import get_bin_centers
+from utils import get_bin_centers
 
 
 def plot_vice_onezone(output, fig=None, axs=[], label=None, color=None,
@@ -176,10 +176,10 @@ def plot_track_and_mdf(feh, ofe, dn_dfeh=[], feh_bins=10, dn_dofe=[],
         weights = np.log10(dn_dfeh)
     else:
         weights= dn_dfeh
-    axs[1].hist(feh_bins[:-1], feh_bins, weights=weights, color=color,
-                histtype=histtype, **style_kw)
-    # feh_bin_centers = get_bin_centers(feh_bins)
-    # axs[1].plot(feh_bin_centers, weights, color=color, **style_kw)
+    # axs[1].hist(feh_bins[:-1], feh_bins, weights=weights, color=color,
+    #             histtype=histtype, **style_kw)
+    feh_bin_centers = get_bin_centers(feh_bins)
+    axs[1].plot(feh_bin_centers, weights, color=color, **style_kw)
 
     # Plot distribution of [O/Fe] on right side panel
     if len(dn_dofe) == 0:
@@ -190,10 +190,10 @@ def plot_track_and_mdf(feh, ofe, dn_dfeh=[], feh_bins=10, dn_dofe=[],
         weights = np.log10(dn_dofe)
     else:
         weights = dn_dofe
-    axs[2].hist(ofe_bins[:-1], ofe_bins, weights=weights, color=color,
-                orientation='horizontal', histtype=histtype, **style_kw)
-    # ofe_bin_centers = get_bin_centers(ofe_bins)
-    # axs[2].plot(weights, ofe_bin_centers, color=color, **style_kw)
+    # axs[2].hist(ofe_bins[:-1], ofe_bins, weights=weights, color=color,
+    #             orientation='horizontal', histtype=histtype, **style_kw)
+    ofe_bin_centers = get_bin_centers(ofe_bins)
+    axs[2].plot(weights, ofe_bin_centers, color=color, **style_kw)
 
     return fig, axs
 
