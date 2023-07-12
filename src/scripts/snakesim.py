@@ -12,7 +12,7 @@ _DEFAULT_PARAMS_ = {
     'RIa': 'powerlaw',
     'RIa_params': {'slope': -1.1},
     'minimum_delay': _globals.MIN_RIA_DELAY,
-    'yields': 'JW20'
+    'yields': 'J21'
 }
 
 def main():

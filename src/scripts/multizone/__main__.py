@@ -15,7 +15,7 @@ _EVOLUTION_MODELS_ = ["static", "insideout", "lateburst", "outerburst",
                       "twoinfall", "earlyburst"]
 _DELAY_MODELS_ = ["powerlaw", "plateau", "prompt", "exponential", "triple",
                   "greggio05_single", "greggio05_double"]
-_YIELD_SETS_ = ["JW20", "C22"]
+_YIELD_SETS_ = ["JW20", "J21", "C22"]
 
 def parse():
     r"""
@@ -85,10 +85,10 @@ underscores. (Default: \"fe_o\")""",
         default = _globals.ZONE_WIDTH)
     
     parser.add_argument("--yields",
-        help = "The nucleosynthetic yield set to use. (Default: 'JW20')",
+        help = "The nucleosynthetic yield set to use. (Default: 'J21')",
         type = str,
         choices = _YIELD_SETS_,
-        default = "JW20")
+        default = "J21")
 
     return parser
 

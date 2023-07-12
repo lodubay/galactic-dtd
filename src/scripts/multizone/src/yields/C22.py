@@ -1,3 +1,6 @@
+"""
+This file contains the fiducial yields from Conroy et al. (2022).
+"""
 
 import vice
 

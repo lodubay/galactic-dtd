@@ -7,8 +7,7 @@ from pathlib import Path
 import numpy as np
 import matplotlib.pyplot as plt
 import vice
-from vice.yields.presets import JW20
-vice.yields.sneia.settings['fe'] *= 10**0.1
+from multizone.src.yields import J21
 import paths
 from multizone.src import models, dtds
 from _globals import END_TIME
