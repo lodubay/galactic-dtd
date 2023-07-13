@@ -6,13 +6,14 @@ alongside their corresponding metallicity distribution functions (MDFs).
 import numpy as np
 import matplotlib.pyplot as plt
 from matplotlib.ticker import MultipleLocator
+import vice
 from utils import get_bin_centers
 from _globals import ONE_COLUMN_WIDTH
 
 
 def plot_vice_onezone(output, fig=None, axs=[], label=None, color=None,
-                      histtype='step', logmdf=False, marker_labels=False,
-                      style_kw={}):
+                      logmdf=False, marker_labels=False,
+                      mdf_style='hist', style_kw={}):
     """
     Wrapper for plot_track_and_mdf given a VICE onezone output.
 
@@ -30,12 +31,13 @@ def plot_vice_onezone(output, fig=None, axs=[], label=None, color=None,
         Plot label to add to main panel legend
     color : str, optional
         Color of plot and histogram
-    histtype : str, optional
-        Histogram type; options are 'bar', 'barstacked', 'step', 'stepfilled'.
-        The default is 'step'.
     logmdf : bool, optional
         If True, plot the marginal distributions on a log scale. The default
         is False.
+    mdf_style : str, optional
+        If 'hist', plots MDFs as a histogram with the 'histtype' styling. 
+        If 'curve', plots MDFs as lines connected to the center
+        of each bin. The default is 'hist'.
     style_kw : dict, optional
         Dict of style-related keyword arguments to pass to both
         matplotlib.pyplot.plot and matplotlib.pyplot.hist
@@ -45,25 +47,39 @@ def plot_vice_onezone(output, fig=None, axs=[], label=None, color=None,
     fig : matplotlib.figure.Figure
     axs : list of matplotlib.axes.Axes
     """
-    import vice
+    if fig == None or len(axs) != 3:
+        fig, axs = setup_axes(logmdf=logmdf)
     hist = vice.history(output)
     mdf = vice.mdf(output)
     mdf_bins = mdf['bin_edge_left'] + mdf['bin_edge_right'][-1:]
-    fig, axs = plot_track_and_mdf(hist['[fe/h]'], hist['[o/fe]'],
-                                  dn_dfeh=mdf['dn/d[fe/h]'], feh_bins=mdf_bins,
-                                  dn_dofe=mdf['dn/d[o/fe]'], ofe_bins=mdf_bins,
-                                  fig=fig, axs=axs, label=label, color=color,
-                                  histtype=histtype, logmdf=logmdf,
-                                  style_kw=style_kw)
+    # Plot abundance tracks on main panel
+    axs[0].plot(hist['[fe/h]'], hist['[o/fe]'], label=label, color=color, 
+                **style_kw)
     if color == None:
         color = axs[0].lines[-1].get_color()
+    # Plot [Fe/H] DF
+    plot_mdf(axs[1], mdf['dn/d[fe/h]'], mdf_bins, log=logmdf, bin_mult=5,
+             color=color, **style_kw)
+    # Plot [O/Fe DF
+    plot_mdf(axs[2], mdf['dn/d[o/fe]'], mdf_bins, log=logmdf, bin_mult=2,
+             orientation='horizontal', color=color, **style_kw)
+    # fig, axs = plot_track_and_mdf(hist['[fe/h]'], hist['[o/fe]'],
+    #                               dn_dfeh=mdf['dn/d[fe/h]'], feh_bins=mdf_bins,
+    #                               dn_dofe=mdf['dn/d[o/fe]'], ofe_bins=mdf_bins,
+    #                               fig=fig, axs=axs, label=label, color=color,
+    #                               histtype=histtype, logmdf=logmdf,
+    #                               mdf_style=mdf_style, style_kw=style_kw)
+    if 'zorder' in style_kw.keys():
+        zorder = style_kw['zorder']
+    else:
+        zorder = axs[0].lines[-1].get_zorder()
     plot_time_markers(hist['time'], hist['[fe/h]'], hist['[o/fe]'], axs[0],
-                      color=color, show_labels=marker_labels)
+                      color=color, show_labels=marker_labels, zorder=zorder)
     return fig, axs
 
 
 def plot_time_markers(time, feh, ofe, ax, loc=[0.1, 0.3, 1, 3, 10],
-                      color=None, show_labels=False):
+                      color=None, show_labels=False, zorder=10):
     """
     Add temporal markers to the [O/Fe] vs [Fe/H] tracks.
 
@@ -83,13 +99,15 @@ def plot_time_markers(time, feh, ofe, ax, loc=[0.1, 0.3, 1, 3, 10],
         Color of the markers. The default is None.
     show_labels : bool, optional
         Whether to add marker labels. The default is False.
+    zorder : int, optional
+        Z-order of markers.
     """
     markers = ['o', 's', '^', 'd', 'v', 'p', '*', 'X']
     time = np.array(time)
     for i, t in enumerate(loc):
         idx = np.argmin(np.abs(time - t))
         ax.scatter(feh[idx], ofe[idx], s=9, marker=markers[i],
-                   edgecolors=color, facecolors='w', zorder=10)
+                   edgecolors=color, facecolors='w', zorder=zorder)
         if show_labels:
             if t < 1:
                 label = f'{int(t*1000)} Myr'
@@ -113,9 +131,41 @@ def plot_time_markers(time, feh, ofe, ax, loc=[0.1, 0.3, 1, 3, 10],
             )
 
 
+def plot_mdf(ax, mdf, bins, histtype='step', log=False, bin_mult=1, **kwargs):
+    """
+    Plot a histogram of the metallicity distribution function (MDF).
+    
+    Parameters
+    ----------
+    ax : matplotlib.axes.Axes
+    mdf : array-like
+        Values of the MDF.
+    bins : array-like
+        MDF bins. Size should be 1 greater than mdf.
+    histtype : str, optional
+        Histogram style. The default is 'step'.
+    log : bool, optional
+        Whether to plot the histogram on a log scale. The default is False.
+    bin_mult : int, optional
+        If greater than 1, will join that number of adjacent bins together.
+    """
+    # join bins together
+    bins = bins[::bin_mult]
+    mdf = [sum(mdf[i:i+bin_mult]) for i in range(0, len(mdf), bin_mult)]
+    # mask zeros before taking log
+    mdf = np.array(mdf)
+    if log:
+        mdf[mdf == 0] = 1e-10
+        weights = np.log10(mdf)
+    else:
+        weights = mdf
+    ax.hist(bins[:-1], bins, weights=weights, histtype=histtype, **kwargs)
+
+
 def plot_track_and_mdf(feh, ofe, dn_dfeh=[], feh_bins=10, dn_dofe=[],
                        ofe_bins=10, fig=None, axs=[], label=None, color=None,
-                       histtype='step', logmdf=False, style_kw={}):
+                       histtype='step', logmdf=False, mdf_style='hist', 
+                       style_kw={}):
     """
     Simultaneously plot a track in [Fe/H] vs [O/Fe] and the corresponding
     metallicity distribution functions (MDFs).
@@ -152,6 +202,10 @@ def plot_track_and_mdf(feh, ofe, dn_dfeh=[], feh_bins=10, dn_dofe=[],
     logmdf : bool, optional
         If True, plot the marginal distributions on a log scale. The default
         is False.
+    mdf_style : str, optional
+        If 'hist', plots MDFs as a histogram with the 'histtype' styling. 
+        If 'curve', plots MDFs as lines connected to the center
+        of each bin. The default is 'hist'.
     style_kw : dict, optional
         Dict of style-related keyword arguments to pass to both
         matplotlib.pyplot.plot and matplotlib.pyplot.hist
@@ -177,10 +231,12 @@ def plot_track_and_mdf(feh, ofe, dn_dfeh=[], feh_bins=10, dn_dofe=[],
         weights = np.log10(dn_dfeh)
     else:
         weights= dn_dfeh
-    axs[1].hist(feh_bins[:-1], feh_bins, weights=weights, color=color,
-                histtype=histtype, **style_kw)
-    # feh_bin_centers = get_bin_centers(feh_bins)
-    # axs[1].plot(feh_bin_centers, weights, color=color, **style_kw)
+    if mdf_style == 'curve':
+        feh_bin_centers = get_bin_centers(feh_bins)
+        axs[1].plot(feh_bin_centers, weights, color=color, **style_kw)
+    else:
+        axs[1].hist(feh_bins[:-1], feh_bins, weights=weights, color=color,
+                    histtype=histtype, **style_kw)
 
     # Plot distribution of [O/Fe] on right side panel
     if len(dn_dofe) == 0:
@@ -191,10 +247,12 @@ def plot_track_and_mdf(feh, ofe, dn_dfeh=[], feh_bins=10, dn_dofe=[],
         weights = np.log10(dn_dofe)
     else:
         weights = dn_dofe
-    axs[2].hist(ofe_bins[:-1], ofe_bins, weights=weights, color=color,
-                orientation='horizontal', histtype=histtype, **style_kw)
-    # ofe_bin_centers = get_bin_centers(ofe_bins)
-    # axs[2].plot(weights, ofe_bin_centers, color=color, **style_kw)
+    if mdf_style == 'curve':
+        ofe_bin_centers = get_bin_centers(ofe_bins)
+        axs[2].plot(weights, ofe_bin_centers, color=color, **style_kw)
+    else:
+        axs[2].hist(ofe_bins[:-1], ofe_bins, weights=weights, color=color,
+                    orientation='horizontal', histtype=histtype, **style_kw)
 
     return fig, axs
 
@@ -230,8 +288,8 @@ def setup_axes(width=ONE_COLUMN_WIDTH, logmdf=False, title=''):
     ax_main.yaxis.set_minor_locator(MultipleLocator(0.02))
     ax_main.set_xlabel('[Fe/H]')
     ax_main.set_ylabel('[O/Fe]')
-    ax_main.set_xlim((-2.5, 0.3))
-    ax_main.set_ylim((-0.1, 0.54))
+    ax_main.set_xlim((-2.1, 0.4))
+    ax_main.set_ylim((-0.1, 0.52))
     # Add plot title
     ax_main.text(0.95, 0.95, title, 
                  ha='right', va='top', transform=ax_main.transAxes)
@@ -246,8 +304,8 @@ def setup_axes(width=ONE_COLUMN_WIDTH, logmdf=False, title=''):
         ax_mdf.set_ylabel(r'log(d$N$/d[Fe/H])', size=7)
     else:
         ax_mdf.set_ylabel(r'd$N$/d[Fe/H]', size=7)
-        ax_mdf.yaxis.set_major_locator(MultipleLocator(5))
-        ax_mdf.yaxis.set_minor_locator(MultipleLocator(1))
+        ax_mdf.yaxis.set_major_locator(MultipleLocator(20))
+        ax_mdf.yaxis.set_minor_locator(MultipleLocator(5))
     # Add panel to the right for MDF in [O/Fe]
     ax_odf = fig.add_subplot(gs[1,1], sharey=ax_main)
     ax_odf.tick_params(axis='y', labelcolor='#ffffff00')
@@ -259,7 +317,7 @@ def setup_axes(width=ONE_COLUMN_WIDTH, logmdf=False, title=''):
         ax_odf.xaxis.set_minor_locator(MultipleLocator(0.5))
     else:
         ax_odf.set_xlabel(r'd$N$/d[O/Fe]', size=7)
-        ax_odf.xaxis.set_major_locator(MultipleLocator(5))
-        ax_odf.xaxis.set_minor_locator(MultipleLocator(1))
+        ax_odf.xaxis.set_major_locator(MultipleLocator(20))
+        ax_odf.xaxis.set_minor_locator(MultipleLocator(5))
     axs = [ax_main, ax_mdf, ax_odf]
     return fig, axs

@@ -12,3 +12,14 @@ ABSZ_BINS = [0, 0.5, 1, 2]
 # AASTeX plot widths in inches
 ONE_COLUMN_WIDTH = 3.25
 TWO_COLUMN_WIDTH = 7.
+
+# Default parameters for one-zone simulations
+ONEZONE_DEFAULTS = {
+    'elements': ELEMENTS,
+    'eta': 2.15,
+    'recycling': 'continuous',
+    'delay': MIN_RIA_DELAY,
+    'tau_star': 2,
+    'dt': DT,
+    'bins': [i*0.01 - 3 for i in range(401)]
+}
