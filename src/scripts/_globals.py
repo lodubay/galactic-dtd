@@ -21,5 +21,6 @@ ONEZONE_DEFAULTS = {
     'delay': MIN_RIA_DELAY,
     'tau_star': 2,
     'dt': DT,
-    'bins': [i*0.01 - 3 for i in range(401)]
+    'bins': [i*0.01 - 3 for i in range(401)],
+    'Mg0': 0.
 }
