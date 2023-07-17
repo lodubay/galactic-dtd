@@ -327,12 +327,20 @@ Adjusting the parameters of the DTD affects how steeply the abundance track in [
     \script{onezone_exponential_timescale.py}
 \end{figure}
 
+\begin{figure}
+    \centering
+    \includegraphics{figures/onezone_plateau_width.pdf}
+    \caption{Similar to Figure \ref{fig:onezone-powerlaw-slope} but for one-zone models with a plateau DTD. The solid, dashed, and dot-dashed pink curves represent plateau widths $W=1.0$, 0.3, and 0.1 Gyr, respectively. All plateau DTDs assume a power-law slope of $\alpha=-1.1$. For comparison, the blue dotted curve represents an exponential DTD with a timescale $\tau=3$ Gyr, and the black dotted curve represents a power-law DTD with the same slope but no plateau.}
+    \label{fig:onezone-plateau-width}
+    \script{onezone_plateau_width.py}
+\end{figure}
+
 Figure \ref{fig:onezone-dtd} compares the one-zone model outputs from the full range of DTDs we investigate in this paper. In general, the choice of DTD has the greatest effect on the location of the knee in [Fe/H]-[O/Fe] space (center panel) and the high-$\alpha$ end of the distribution of [O/Fe] (right panel). The DTD also has a smaller effect on the MDF in the range $-15.5\lesssim$ [Fe/H] $\lesssim-0.5$ (top panel).
 
 \begin{figure}
     \centering
     \includegraphics{figures/onezone_dtd.pdf}
-    \caption{Similar to Figure \ref{fig:onezone-slope-timescale} but with a different selection of DTDs. In all cases a minimum delay time of 40 Myr is assumed.}
+    \caption{Similar to Figure \ref{fig:onezone-powerlaw-slope} but with a different selection of DTDs. In all cases a minimum delay time of 40 Myr is assumed.}
     \label{fig:onezone-dtd}
     \script{onezone_dtd.py}
 \end{figure}
@@ -360,9 +368,17 @@ The minimum delay and SFE timescale have similar effects on the abundance tracks
 \begin{figure}
     \centering
     \includegraphics{figures/onezone_delay_taustar.pdf}
-    \caption{Similar to Figure \ref{fig:onezone-slope-timescale} but with varying minimum SN Ia delay time ($t_D$) and star formation efficiency timescale ($\tau_*$). Tracks with $\tau_*=2$ Gyr are represented in black, while a track with a shorter $\tau_*=1$ Gyr is shown in red and a track with a longer $\tau_*=4$ Gyr is in yellow. The dotted, solid, and dashed black curves represent a minimum delay time of 40 Myr, 80 Myr, and 160 Myr, respectively. A power-law DTD is assumed in all models.}
+    \caption{Similar to Figure \ref{fig:onezone-powerlaw-slope} but with varying minimum SN Ia delay time ($t_D$) and star formation efficiency timescale ($\tau_*$). Tracks with $\tau_*=2$ Gyr are represented in black, while a track with a shorter $\tau_*=1$ Gyr is shown in red and a track with a longer $\tau_*=4$ Gyr is in yellow. The dotted, solid, and dashed black curves represent a minimum delay time of 40 Myr, 80 Myr, and 160 Myr, respectively. A power-law DTD is assumed in all models.}
     \label{fig:onezone-delay-taustar}
     \script{onezone_delay_taustar.py}
+\end{figure}
+
+\begin{figure}
+    \centering
+    \includegraphics{figures/onezone_sfh.pdf}
+    \caption{Similar to Figure \ref{fig:onezone-powerlaw-slope} but with varying star formation history (SFH). An exponential DTD with $\tau=1.5$ Gyr is assumed in all models.}
+    \label{fig:onezone-sfh}
+    \script{onezone_sfh.py}
 \end{figure}
 
 \subsection{Analytical Formulations}
