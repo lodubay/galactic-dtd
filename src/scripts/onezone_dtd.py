@@ -27,17 +27,17 @@ def main(overwrite=False):
 
     delay = ONEZONE_DEFAULTS['delay']
     distributions = [dtds.triple(tmin=delay),
-                     dtds.exponential(timescale=3, tmin=delay),
-                     dtds.plateau(width=0.3, slope=-1.1, tmin=delay),
+                     dtds.plateau(width=1., slope=-1.1, tmin=delay),
+                     dtds.exponential(timescale=1.5, tmin=delay),
                      dtds.powerlaw(slope=-1.1, tmin=delay),
                      dtds.prompt(peak=0.05, stdev=0.015, timescale=3, tmin=delay),
                      ]
     labels = [r'Triple-system',
-              r'Exponential ($\tau=3$ Gyr)',
-              r'Plateau ($W=0.3$ Gyr)',
+              r'Plateau ($W=1$ Gyr)',
+              r'Exponential ($\tau=1.5$ Gyr)',
               r'Power-law ($\alpha=-1.1$)',
               r'Prompt',]
-    colors = [paultol.vibrant.colors[i] for i in [5, 1, 0, 4, 2]]
+    colors = [paultol.vibrant.colors[i] for i in [5, 0, 1, 4, 2]]
     line_styles = ['-', '-.', '--', ':', ':']
 
     for i, dtd in enumerate(distributions):
