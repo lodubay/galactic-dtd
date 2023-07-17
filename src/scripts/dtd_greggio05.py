@@ -16,6 +16,7 @@ NSAMPLES = 200 # sets the integration precision; higher means longer runtime
 DELAY = 0.04 # minimum SN Ia delay time in Gyr
 
 def main(dt=DT, nsamples=NSAMPLES, verbose=True):
+    plt.style.use(paths.styles / 'paper.mplstyle')
     
     class styles:
         """Plot styling for different DTD models."""
