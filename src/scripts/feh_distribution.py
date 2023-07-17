@@ -13,18 +13,19 @@ import distribution_functions as dfs
 from _globals import ONE_COLUMN_WIDTH, GALR_BINS, ABSZ_BINS
 
 NBINS = 100
-FEH_LIM = (-1.6, 0.6)
+FEH_LIM = (-1.1, 0.6)
 SMOOTH_WIDTH = 0.2
 
-def main(output_name, uncertainties=False, nbins=100, xlim=(-1.1, 0.6), 
-         smoothing=0.2, cmap='plasma_r'):
+def main(output_name, uncertainties=True, nbins=NBINS, xlim=FEH_LIM, 
+         smoothing=SMOOTH_WIDTH, cmap='plasma_r'):
+    plt.style.use(paths.styles / 'paper.mplstyle')
     apogee_data = import_apogee()
     mzs = MultizoneStars.from_output(output_name)
     if uncertainties:
         mzs.model_uncertainty(apogee_data, inplace=True)
     # Set up plot
     fig, axs = dfs.setup_axes(ncols=2, figure_width=ONE_COLUMN_WIDTH, 
-                              cmap_name=cmap, xlabel='[Fe/H]', xlim=FEH_LIM, 
+                              cmap_name=cmap, xlabel='[Fe/H]', xlim=xlim, 
                               major_tick_spacing=0.5)
     colors = get_color_list(plt.get_cmap(cmap), GALR_BINS)
     # plot
@@ -34,10 +35,8 @@ def main(output_name, uncertainties=False, nbins=100, xlim=(-1.1, 0.6),
     for ax in axs[:,0]:
         ax.set_ylim((0, None))
     # Save
-    fname = 'feh_df/%s.png' % output_name
-    if uncertainties:
-        fname = fname.replace('.png', '_errors.png')
-    fullpath = paths.debug / fname
+    fname = output_name.replace('diskmodel', 'feh_df.png')
+    fullpath = paths.figures / 'supplementary' / fname
     if not fullpath.parents[0].exists():
         fullpath.parents[0].mkdir(parents=True)
     plt.savefig(fullpath, dpi=300)

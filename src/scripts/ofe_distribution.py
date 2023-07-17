@@ -16,8 +16,9 @@ NBINS = 100
 OFE_LIM = (-0.15, 0.55)
 SMOOTH_WIDTH = 0.05
 
-def main(output_name, uncertainties=False, nbins=NBINS, xlim=OFE_LIM, 
+def main(output_name, uncertainties=True, nbins=NBINS, xlim=OFE_LIM, 
          smoothing=SMOOTH_WIDTH, cmap='plasma_r'):
+    plt.style.use(paths.styles / 'paper.mplstyle')
     apogee_data = import_apogee()
     mzs = MultizoneStars.from_output(output_name)
     if uncertainties:
@@ -34,10 +35,8 @@ def main(output_name, uncertainties=False, nbins=NBINS, xlim=OFE_LIM,
     for ax in axs[:,0]:
         ax.set_ylim((0, None))
     # Save
-    fname = 'ofe_df/%s.png' % output_name
-    if uncertainties:
-        fname = fname.replace('.png', '_errors.png')
-    fullpath = paths.debug / fname
+    fname = output_name.replace('diskmodel', 'ofe_df.png')
+    fullpath = paths.figures / 'supplementary' / fname
     if not fullpath.parents[0].exists():
         fullpath.parents[0].mkdir(parents=True)
     plt.savefig(fullpath, dpi=300)
