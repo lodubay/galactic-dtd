@@ -13,7 +13,7 @@ from _globals import END_TIME, ONEZONE_DEFAULTS
 from colormaps import paultol
 from track_and_mdf import setup_axes, plot_vice_onezone
 
-def main(overwrite=False):
+def main():
     plt.style.use(paths.styles / 'paper.mplstyle')
     
     output_dir = paths.data / 'onezone' / 'dtd'

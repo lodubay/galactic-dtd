@@ -7,41 +7,32 @@ from pathlib import Path
 import numpy as np
 import matplotlib.pyplot as plt
 import vice
-from vice.yields.presets import JW20
-vice.yields.sneia.settings['fe'] = 0.0021
 import paths
+from multizone.src.yields import J21
 from multizone.src import models, dtds
-from _globals import END_TIME
+from _globals import END_TIME, ONEZONE_DEFAULTS
 from colormaps import paultol
 from track_and_mdf import setup_axes, plot_vice_onezone
 
-# One-zone model settings
-DT = 0.01
-STANDARD_PARAMS = dict(
-    func=models.insideout(8, dt=DT),
-    mode='sfr',
-    elements=('fe', 'o'),
-    dt=DT,
-    recycling='continuous',
-    eta=2.5,
-    delay=0.04,
-    tau_star=2.,
-)
-LOG_MDF = False
-
-def main(overwrite=False):
+def main():
+    plt.style.use(paths.styles / 'paper.mplstyle')
+    
     output_dir = paths.data / 'onezone' / 'greggio05'
     if not output_dir.exists():
         output_dir.mkdir(parents=True)
 
-    fig, axs = setup_axes(logmdf=LOG_MDF)
+    fig, axs = setup_axes(logmdf=False)
 
-    simtime = np.arange(0, END_TIME + DT, DT)
+    dt = ONEZONE_DEFAULTS['dt']
+    simtime = np.arange(0, END_TIME + dt, dt)
 
     # Single-degenerate
     dtd = dtds.greggio05_single()
     sz = vice.singlezone(name=str(output_dir / dtd.name),
-                         RIa=dtd, **STANDARD_PARAMS)
+                         RIa=dtd, 
+                         func=models.insideout(8, dt=dt), 
+                         mode='sfr',
+                         **ONEZONE_DEFAULTS)
     sz.run(simtime, overwrite=True)
     plot_vice_onezone(str(output_dir / dtd.name), fig=fig, axs=axs,
                       label='Single Degenerate',
@@ -50,12 +41,15 @@ def main(overwrite=False):
                           'linestyle': '-',
                           'linewidth': 1.5,
                           'zorder': 1},
-                      logmdf=LOG_MDF
+                      logmdf=False
                       )
 
     dtd = dtds.exponential(timescale=1.5)
     sz = vice.singlezone(name=str(output_dir / dtd.name),
-                         RIa=dtd, **STANDARD_PARAMS)
+                         RIa=dtd, 
+                         func=models.insideout(8, dt=dt), 
+                         mode='sfr',
+                         **ONEZONE_DEFAULTS)
     sz.run(simtime, overwrite=True)
     plot_vice_onezone(str(output_dir / dtd.name), fig=fig, axs=axs,
                       label=r'Exponential ($\tau=1.5$ Gyr)',
@@ -65,13 +59,16 @@ def main(overwrite=False):
                             'linewidth': 1,
                             'zorder': 10,
                       }, 
-                      logmdf=LOG_MDF,
+                      logmdf=False,
                       marker_labels=True
                       )
 
     dtd = dtds.powerlaw(slope=-1.1)
     sz = vice.singlezone(name=str(output_dir / dtd.name),
-                         RIa=dtd, **STANDARD_PARAMS)
+                         RIa=dtd, 
+                         func=models.insideout(8, dt=dt), 
+                         mode='sfr',
+                         **ONEZONE_DEFAULTS)
     sz.run(simtime, overwrite=True)
     plot_vice_onezone(str(output_dir / dtd.name), fig=fig, axs=axs,
                       label=r'Power-Law ($\alpha=-1.1$)',
@@ -81,14 +78,14 @@ def main(overwrite=False):
                            'linewidth': 1,
                            'zorder': 1,
                       }, 
-                      logmdf=LOG_MDF
+                      logmdf=False
                       )
 
     # Adjust axis limits
-    axs[0].set_xlim((-2.5, 0.3))
-    axs[0].set_ylim((-0.1, 0.54))
+    axs[0].set_xlim((-2.1, 0.4))
+    axs[0].set_ylim((-0.1, 0.52))
 
-    axs[0].legend(frameon=False, loc='lower left', handlelength=1.2, fontsize=7)
+    axs[0].legend(frameon=False, loc='lower left', handlelength=1.2)
     fig.savefig(paths.figures / 'onezone_greggio05_single.pdf', dpi=300)
     plt.close()    
 
