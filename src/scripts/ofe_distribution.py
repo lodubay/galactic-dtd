@@ -45,8 +45,8 @@ def main(output_name, uncertainties=True, nbins=NBINS, xlim=OFE_LIM,
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(
-        prog='feh_distribution.py',
-        description='Plot the [Fe/H] MDF from a VICE multizone run.'
+        prog='ofe_distribution.py',
+        description='Plot the [O/Fe] DF from a VICE multizone run.'
     )
     parser.add_argument('output_name', metavar='NAME',
                         help='Name of VICE multizone output')
@@ -56,11 +56,11 @@ if __name__ == '__main__':
                         help='Number of histogram bins (default: 100)')
     parser.add_argument('--xlim', metavar='XLIM', nargs=2, type=list, 
                         default=OFE_LIM,
-                        help='Lower and upper bounds of the MDF ' + \
+                        help='Lower and upper bounds of the [O/Fe] DF ' + \
                              '(default: [-0.15, 0.55])')
     parser.add_argument('--smoothing', metavar='WIDTH', type=float,
                         default=SMOOTH_WIDTH,
-                        help='Width of boxcar smoothing (default: 0.0.05)')
+                        help='Width of boxcar smoothing (default: 0.05)')
     parser.add_argument('--cmap', metavar='COLORMAP', type=str,
                         default='plasma_r',
                         help='Name of colormap for color-coding VICE ' + \
