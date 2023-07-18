@@ -357,7 +357,7 @@ Figure \ref{fig:onezone-dtd-delay} shows that the minimum SN Ia delay time has a
     \script{onezone_dtd_delay.py}
 \end{figure}
 
-A 150 Myr minimum delay time is incompatible with the prompt DTD model, which has $\sim 50$ of SNe Ia explode in the first 100 Myr.
+A 150 Myr minimum delay time is incompatible with the prompt DTD model, which has $\sim 50$\% of SNe Ia explode in the first 100 Myr.
 
 \subsection{The Star Formation History}
 
@@ -439,7 +439,31 @@ D_{\rm{KL}}(P \parallel Q) = \int_{-\infty}^{\infty} p(x) \log\Big(\frac{p(x)}{q
 \end{equation}
 for distributions $P$ and $Q$ with probability density functions $p(x)$ and $q(x)$. In this case, $P$ is the APOGEE MDF, $Q$ is the model MDF, and $x$ is [Fe/H]. For each model SFH and DTD, we compute $D_{\rm{KL}}$ in 18 different galactocentric zones defined by radial bins $3-5$ kpc, $5-7$ kpc, $7-9$ kpc, $9-11$ kpc, $11-13$ kpc, and $13-15$ kpc and absolute $z$-height bins $0-0.5$ kpc, $0.5-1$ kpc, and $1-2$ kpc. The KL divergence for the entire model is taken to be the average of $D_{\rm{KL}}$ for each zone, weighted by the number of APOGEE stars in each zone.
 
+\begin{figure*}
+    \centering
+    \includegraphics{figures/feh_df_sfh.pdf}
+    \caption{Distributions of [Fe/H] for multi-zone simulations with different SFHs. Each row presents distributions of stars within a range of absolute midplane distance: $1\leq|z|<2$ kpc (\textit{top}), $0.5\leq|z|<1$ kpc (\textit{middle}), and $0\leq|z|<0.5$ kpc (\textit{bottom}). Within each panel, curves of different color represent the distributions of stars binned by Galactocentric radius $R_{\rm gal}$, from $3\leq R_{\rm gal}<5$ kpc (yellow) to $13\leq R_{\rm gal}<15$ kpc (blue). }
+    \label{fig:feh-df-sfh}
+    \script{feh_df_sfh.py}
+\end{figure*}
+
 \subsection{Comparison to APOGEE ODFs}
+
+\begin{figure*}
+    \centering
+    \includegraphics{figures/ofe_df_dtd.pdf}
+    \caption{Caption.}
+    \label{fig:ofe-df-dtd}
+    \script{ofe_df_dtd.py}
+\end{figure*}
+
+\begin{figure*}
+    \centering
+    \includegraphics{figures/ofe_df_sfh.pdf}
+    \caption{Caption.}
+    \label{fig:ofe-df-sfh}
+    \script{ofe_df_sfh.py}
+\end{figure*}
 
 
 \section{Discussion}
