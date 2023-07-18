@@ -649,6 +649,40 @@ rule midplane_distance:
     script:
         "src/scripts/midplane_distance.py"
 
+rule feh_df_sfh:
+    input:
+        "src/data/multizone/gaussian/insideout/exponential_timescale15"
+        "src/data/multizone/gaussian/lateburst/exponential_timescale15"
+        "src/data/multizone/gaussian/earlyburst/exponential_timescale15"
+        "src/data/multizone/gaussian/twoinfall/exponential_timescale15"
+    output:
+        "src/tex/figures/feh_df_sfh.pdf"
+    script:
+        "src/scripts/feh_df_sfh.py"
+
+rule ofe_df_sfh:
+    input:
+        "src/data/multizone/gaussian/insideout/exponential_timescale15"
+        "src/data/multizone/gaussian/lateburst/exponential_timescale15"
+        "src/data/multizone/gaussian/earlyburst/exponential_timescale15"
+        "src/data/multizone/gaussian/twoinfall/exponential_timescale15"
+    output:
+        "src/tex/figures/ofe_df_sfh.pdf"
+    script:
+        "src/scripts/ofe_df_sfh.py"
+
+rule ofe_df_dtd:
+    input:
+        "src/data/multizone/gaussian/insideout/prompt"
+        "src/data/multizone/gaussian/insideout/powerlaw_slope11"
+        "src/data/multizone/gaussian/insideout/exponential_timescale15"
+        "src/data/multizone/gaussian/insideout/plateau_width10"
+        "src/data/multizone/gaussian/insideout/triple"
+    output:
+        "src/tex/figures/ofe_df_dtd.pdf"
+    script:
+        "src/scripts/ofe_df_dtd.py"
+
 # Tables
 rule summary_table:
     input:
