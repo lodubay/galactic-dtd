@@ -7,11 +7,10 @@ from pathlib import Path
 import numpy as np
 import matplotlib.pyplot as plt
 import vice
-from vice.yields.presets import JW20
-vice.yields.sneia.settings['fe'] *= 10**0.1
 import paths
+from multizone.src.yields import J21
 from multizone.src import models, dtds
-from _globals import END_TIME
+from _globals import END_TIME, DT, ONEZONE_DEFAULTS
 from colormaps import paultol
 from track_and_mdf import setup_axes, plot_vice_onezone
 
@@ -19,28 +18,22 @@ from track_and_mdf import setup_axes, plot_vice_onezone
 MINIMUM_DELAY = [0.16, 0.08, 0.04, 0.08, 0.08] # Gyr
 TAU_STAR = [2.0, 2.0, 2.0, 1.0, 4.0] # Gyr
 NRUNS = len(MINIMUM_DELAY)
-DT = 0.01
-STANDARD_PARAMS = dict(
-    func=models.insideout(8, dt=DT),
-    mode='sfr',
-    elements=('fe', 'o'),
-    dt=DT,
-    recycling='continuous',
-    eta=2.5,
-)
 
 # Plot settings
 LINE_STYLE = ['--', '-', ':', '-', '-']
 COLOR = ['k', 'k', 'k', paultol.highcontrast.colors[2],
          paultol.highcontrast.colors[1]]
-LOG_MDF = True
 
-def main(overwrite=False):
+def main():
+    plt.style.use(paths.styles / 'paper.mplstyle')
+    
     output_dir = paths.data / 'onezone' / 'delay_taustar'
     if not output_dir.exists():
         output_dir.mkdir(parents=True)
+    
+    simtime = np.arange(0, END_TIME + DT, DT)
 
-    fig, axs = setup_axes(logmdf=LOG_MDF)
+    fig, axs = setup_axes(logmdf=False)
 
     for i in range(NRUNS):
         delay = MINIMUM_DELAY[i]
@@ -48,13 +41,14 @@ def main(overwrite=False):
         name = gen_name_from_params(delay=delay, tau_star=tau_star)
         label = rf'$t_D={int(delay*1000)}$ Myr, $\tau_*={int(tau_star)}$ Gyr'
 
-        if overwrite:
-            run(output_dir, i)
-        else:
-            try:
-                history = vice.history(str(output_dir / name))
-            except IOError:
-                run(output_dir, i)
+        ONEZONE_DEFAULTS['tau_star'] = tau_star
+        ONEZONE_DEFAULTS['delay'] = delay
+        sz = vice.singlezone(name=str(output_dir / name),
+                             RIa=dtds.powerlaw(slope=-1.1, tmin=delay),
+                             func=models.insideout(8, dt=DT), 
+                             mode='sfr',
+                             **ONEZONE_DEFAULTS)
+        sz.run(simtime, overwrite=True)
 
         if tau_star != 2.0:
             line_width = 1.5
@@ -75,53 +69,16 @@ def main(overwrite=False):
                               'linestyle': LINE_STYLE[i],
                               'linewidth': line_width,
                               'zorder': zorder},
-                          logmdf=LOG_MDF
+                          logmdf=False
                           )
 
     # Adjust axis limits
-    axs[0].set_xlim((-2.7, 0.3))
-    axs[0].set_ylim((-0.1, 0.54))
+    # axs[0].set_xlim((-2.7, 0.3))
+    # axs[0].set_ylim((-0.1, 0.54))
 
-    axs[0].legend(frameon=False, loc='lower left', handlelength=1.2, fontsize=7)
+    axs[0].legend(frameon=False, loc='lower left', handlelength=1.2)
     fig.savefig(paths.figures / 'onezone_delay_taustar.pdf', dpi=300)
     plt.close()
-
-
-def run(output_dir, i):
-    """
-    Set up and run the ith one-zone model.
-    """
-    sz = setup_single(output_dir,
-                      delay=MINIMUM_DELAY[i], tau_star=TAU_STAR[i],
-                      **STANDARD_PARAMS)
-    simtime = np.arange(0, END_TIME + DT, DT)
-    sz.run(simtime, overwrite=True)
-
-
-def setup_single(output_dir, delay=0.1, tau_star=2., **kwargs):
-    """
-    Setup a one-zone model with a given minimum Ia delay time and SFE timescale.
-
-    Parameters
-    ----------
-    output_dir : Path
-        Parent directory for VICE outputs
-    delay : float, optional
-        Minimum Type Ia delay time in Gyr. The default is 0.1 Gyr.
-    tau_star : float, optional
-        Star formation efficiency timescale in Gyr. The default is 2 Gyr.
-    Other keyword arguments are passed to vice.singlezone
-
-    Returns
-    -------
-    sz : vice.singlezone object
-    """
-    name = gen_name_from_params(delay=delay, tau_star=tau_star)
-    sz = vice.singlezone(name=str(output_dir / name),
-                         RIa=dtds.powerlaw(tmin=delay),
-                         delay=delay, tau_star=tau_star,
-                         **kwargs)
-    return sz
 
 
 def gen_name_from_params(delay=0.1, tau_star=2.0):

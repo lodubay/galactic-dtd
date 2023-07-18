@@ -317,7 +317,7 @@ def setup_axes(width=ONE_COLUMN_WIDTH, logmdf=False, title=''):
         ax_odf.xaxis.set_minor_locator(MultipleLocator(0.5))
     else:
         ax_odf.set_xlabel(r'd$N$/d[O/Fe]', size=7)
-        ax_odf.xaxis.set_major_locator(MultipleLocator(20))
-        ax_odf.xaxis.set_minor_locator(MultipleLocator(5))
+        ax_odf.xaxis.set_major_locator(MultipleLocator(10))
+        ax_odf.xaxis.set_minor_locator(MultipleLocator(2))
     axs = [ax_main, ax_mdf, ax_odf]
     return fig, axs
