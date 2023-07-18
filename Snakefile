@@ -660,6 +660,15 @@ rule feh_df_sfh:
     script:
         "src/scripts/feh_df_sfh.py"
 
+rule feh_df_dtd:
+    input:
+        "src/data/multizone/gaussian/insideout/powerlaw_slope14"
+        "src/data/multizone/gaussian/insideout/exponential_timescale30"
+    output:
+        "src/tex/figures/feh_df_dtd.pdf"
+    script:
+        "src/scripts/feh_df_dtd.py"
+
 rule ofe_df_sfh:
     input:
         "src/data/multizone/gaussian/insideout/exponential_timescale15"

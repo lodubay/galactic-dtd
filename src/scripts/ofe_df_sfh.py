@@ -30,7 +30,8 @@ def main():
     fig, axs = dfs.setup_axes(ncols=len(SFH_LIST)+1, 
                               figure_width=_globals.TWO_COLUMN_WIDTH, 
                               cmap_name=CMAP, xlabel='[O/Fe]', xlim=OFE_LIM, 
-                              major_tick_spacing=0.2, major_minor_tick_ratio=4.)
+                              major_tick_spacing=0.2, major_minor_tick_ratio=4.,
+                              cbar_width=0.4)
     fig.subplots_adjust(top=0.9, left=0.07, right=0.98)
     colors = get_color_list(plt.get_cmap(CMAP), _globals.GALR_BINS)
     # plot

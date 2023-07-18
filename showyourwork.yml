@@ -27,6 +27,9 @@ dependencies:
         - src/data/multizone/gaussian/lateburst/exponential_timescale15/
         - src/data/multizone/gaussian/earlyburst/exponential_timescale15/
         - src/data/multizone/gaussian/twoinfall/exponential_timescale15/
+    src/scripts/feh_df_dtd.py:
+        - src/data/multizone/gaussian/insideout/powerlaw_slope14/
+        - src/data/multizone/gaussian/insideout/exponential_timescale30/
     src/scripts/ofe_df_sfh.py:
         - src/data/multizone/gaussian/insideout/exponential_timescale15/
         - src/data/multizone/gaussian/lateburst/exponential_timescale15/
