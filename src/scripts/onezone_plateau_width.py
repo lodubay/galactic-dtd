@@ -30,7 +30,7 @@ def main(overwrite=False):
     delay = ONEZONE_DEFAULTS['delay']
     simtime = np.arange(0, END_TIME + dt, dt)
 
-    fig, axs = setup_axes(logmdf=LOG_MDF)
+    fig, axs = setup_axes(logmdf=LOG_MDF, title='Plateau DTD')
 
     # Plot exponentials for reference
     # for tau, ls in zip([1.5, 3], ['--', '-']):
@@ -59,17 +59,17 @@ def main(overwrite=False):
         else:
             label = f'{int(plateau*1000)} Myr plateau'
 
-        plateau = dtds.plateau(width=plateau, slope=SLOPE, tmin=delay)
-        sz = vice.singlezone(name=str(output_dir / plateau.name),
-                             RIa=plateau,
+        dtd = dtds.plateau(width=plateau, slope=SLOPE, tmin=delay)
+        sz = vice.singlezone(name=str(output_dir / dtd.name),
+                             RIa=dtd,
                              func=models.insideout(8, dt=dt), 
                              mode='sfr',
                              **ONEZONE_DEFAULTS)
         sz.run(simtime, overwrite=True)
 
-        plot_vice_onezone(str(output_dir / plateau.name),
+        plot_vice_onezone(str(output_dir / dtd.name),
                           fig=fig, axs=axs,
-                          label=label, 
+                          label=r'$W={:1.1f}$ Gyr'.format(plateau), 
                           color=paultol.bright.colors[1],
                           style_kw={
                               'linestyle': LINE_STYLE[i],
