@@ -15,7 +15,7 @@ import _globals
 
 # Multizone outputs
 SFH_LIST = ['insideout', 'lateburst', 'earlyburst', 'twoinfall']
-SFH_LABELS = ['Inside-Out', 'Late-burst', 'Early-burst', 'Two-infall']
+SFH_LABELS = ['Inside-out', 'Late-burst', 'Early-burst', 'Two-infall']
 DTD = 'exponential_timescale15'
 # Plot settings
 NBINS = 100

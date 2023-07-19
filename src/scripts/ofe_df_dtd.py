@@ -21,7 +21,7 @@ DTD_LIST = ['prompt',
             'plateau_width10', 
             'triple']
 DTD_LABELS = ['Prompt', 
-              'Powerlaw\n($\\alpha=-1.1$)', 
+              'Power-law\n($\\alpha=-1.1$)', 
               'Exponential\n($\\tau=1.5$ Gyr)',
               'Plateau\n($W=1$ Gyr)',
               'Triple-system']
