@@ -30,7 +30,8 @@ def main():
                             figsize=(ONE_COLUMN_WIDTH, 0.9*ONE_COLUMN_WIDTH))
     plt.subplots_adjust(top=0.98, right=0.93, wspace=0., hspace=0.)
     cbar = setup_colorbar(fig, cmap=CMAP_NAME, vmin=0, vmax=15.5, width=0.04,
-                          label=r'Birth $R_{\rm{gal}}$ [kpc]', pad=0.02)
+                          label=r'Birth $R_{\rm{gal}}$ [kpc]', pad=0.02,
+                          labelpad=2)
     cbar.ax.yaxis.set_major_locator(MultipleLocator(2))
     cbar.ax.yaxis.set_minor_locator(MultipleLocator(0.5))
     
@@ -41,7 +42,7 @@ def main():
         output_name = '/'.join(['gaussian', sfh, DTD_MODEL, 'diskmodel'])
         # Import multioutput stars data
         mzs = MultizoneStars.from_output(output_name)
-        mzs.model_uncertainty(inplace=True)
+        mzs.model_uncertainty(apogee_data=apogee_data, inplace=True)
         mzs.region(GALR_LIM, ABSZ_LIM, inplace=True)
         # Plot sample of star particle abundances
         mzs.scatter_plot(ax, '[fe/h]', '[o/fe]', color='galr_origin',
