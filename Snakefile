@@ -651,10 +651,9 @@ rule midplane_distance:
 
 rule feh_df_sfh:
     input:
-        "src/data/multizone/gaussian/insideout/exponential_timescale15"
-        "src/data/multizone/gaussian/lateburst/exponential_timescale15"
-        "src/data/multizone/gaussian/earlyburst/exponential_timescale15"
-        "src/data/multizone/gaussian/twoinfall/exponential_timescale15"
+        expand("src/data/multizone/gaussian/{evolution}/powerlaw_slope11",
+               evolution=["insideout", "lateburst", "earlyburst", "twoinfall"]
+        )
     output:
         "src/tex/figures/feh_df_sfh.pdf"
     script:
@@ -671,10 +670,9 @@ rule feh_df_dtd:
 
 rule ofe_df_sfh:
     input:
-        "src/data/multizone/gaussian/insideout/exponential_timescale15"
-        "src/data/multizone/gaussian/lateburst/exponential_timescale15"
-        "src/data/multizone/gaussian/earlyburst/exponential_timescale15"
-        "src/data/multizone/gaussian/twoinfall/exponential_timescale15"
+        expand("src/data/multizone/gaussian/{evolution}/powerlaw_slope11",
+               evolution=["insideout", "lateburst", "earlyburst", "twoinfall"]
+        )
     output:
         "src/tex/figures/ofe_df_sfh.pdf"
     script:
@@ -682,15 +680,35 @@ rule ofe_df_sfh:
 
 rule ofe_df_dtd:
     input:
-        "src/data/multizone/gaussian/insideout/prompt"
-        "src/data/multizone/gaussian/insideout/powerlaw_slope11"
-        "src/data/multizone/gaussian/insideout/exponential_timescale15"
-        "src/data/multizone/gaussian/insideout/plateau_width10"
-        "src/data/multizone/gaussian/insideout/triple"
+        expand("src/data/multizone/gaussian/insideout/{dtd}",
+               dtd=["prompt", "powerlaw_slope11", "exponential_timescale15",
+                    "plateau_width10", "triple"]
+        )
     output:
         "src/tex/figures/ofe_df_dtd.pdf"
     script:
         "src/scripts/ofe_df_dtd.py"
+
+rule ofe_feh_sfh:
+    input:
+        expand("src/data/multizone/gaussian/{evolution}/powerlaw_slope11",
+               evolution=["insideout", "lateburst", "earlyburst", "twoinfall"]
+        )
+    output:
+        "src/tex/figures/ofe_feh_sfh.pdf"
+    script:
+        "src/scripts/ofe_feh_sfh.py"
+
+rule ofe_feh_dtd:
+    input:
+        expand("src/data/multizone/gaussian/insideout/{dtd}",
+               dtd=["prompt", "powerlaw_slope11", "exponential_timescale15",
+                    "plateau_width10", "triple"]
+        )
+    output:
+        "src/tex/figures/ofe_feh_dtd.pdf"
+    script:
+        "src/scripts/ofe_feh_dtd.py"
 
 # Tables
 rule summary_table:

@@ -103,7 +103,7 @@ def setup_colorbar(fig, cmap=None, vmin=None, vmax=None, label='',
 def setup_axes(galr_bins=GALR_BINS[:-1], absz_bins=ABSZ_BINS,
                width=TWO_COLUMN_WIDTH, xlim=None, ylim=None,
                xlabel='', ylabel='', xlabelpad=0., ylabelpad=0.,
-               row_label_pos=(0.07, 0.88), spacing=0.):
+               row_label_pos=(0.07, 0.88), spacing=0., title=''):
     """
     Set up a blank grid of axes with a default subplot spacing.
 
@@ -143,6 +143,10 @@ def setup_axes(galr_bins=GALR_BINS[:-1], absz_bins=ABSZ_BINS,
                             sharex=True, sharey=True)
     plt.subplots_adjust(right=0.98, left=0.06, bottom=0.07, top=0.95,
                         wspace=spacing, hspace=spacing)
+    # Figure title
+    if len(title) > 0:
+        fig.suptitle(title)
+        plt.subplots_adjust(top=0.9)
     # Axis limits
     axs[0,0].set_xlim(xlim)
     axs[0,0].set_ylim(ylim)

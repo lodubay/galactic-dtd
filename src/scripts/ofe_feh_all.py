@@ -1,14 +1,33 @@
-from ofe_feh_compare import main
+"""
+This script generates [O/Fe]-[Fe/H] grid plots for all VICE multi-zone runs.
+"""
 
-for evolution in ['insideout', 'lateburst', 'conroy22', 'twoinfall', 'conroy22_JW20yields']:
-    for RIa in ['powerlaw_slope11', 
-                'powerlaw_slope14', 
-                'exponential_timescale15',
-                'exponential_timescale30',
-                'plateau_width300_slope11',
-                'plateau_width1000_slope11',
-                'prompt_peak050_stdev015_timescale30',
-                'triple_delay040']:
-        output_name = '/'.join(('diffusion', evolution, RIa))
-        print('Plotting %s' % output_name)
-        main(output_name)
+from ofe_feh_grid import main
+from tqdm import tqdm
+
+SFH_LIST = [
+    'insideout', 
+    'lateburst', 
+    'earlyburst', 
+    'twoinfall'
+]
+DTD_LIST = [
+    'powerlaw_slope11', 
+    'powerlaw_slope14', 
+    'exponential_timescale15',
+    'exponential_timescale30', 
+    'plateau_width03', 
+    'plateau_width10', 
+    'prompt',
+    'triple'
+]
+
+with tqdm(total=len(SFH_LIST) * len(DTD_LIST) + 1) as t:
+    for evolution in SFH_LIST:
+        for RIa in DTD_LIST:
+            output_name = '/'.join(('gaussian', evolution, RIa, 'diskmodel'))
+            main(output_name, uncertainties=True, tracks=True, contours=True)
+            t.update()
+    output_name = 'diffusion/insideout/powerlaw_slope11/diskmodel'
+    main(output_name, uncertainties=True, tracks=True, contours=True)
+    t.update()
