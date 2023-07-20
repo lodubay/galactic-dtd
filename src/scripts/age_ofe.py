@@ -11,14 +11,12 @@ import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
 from matplotlib.ticker import MultipleLocator, FormatStrFormatter
-import vice
-from scatter_plot_grid import setup_axes, setup_colorbar, plot_vice_sample
-from utils import multioutput_to_pandas, filter_multioutput_stars, \
-    weighted_quantile, \
-    group_by_bins, model_uncertainty, feuillet2019_data
+# import vice
+from scatter_plot_grid import setup_axes, setup_colorbar
+from utils import weighted_quantile, group_by_bins, feuillet2019_data
 from multizone_stars import MultizoneStars
 from apogee_tools import import_apogee, apogee_region
-from _globals import GALR_BINS, ABSZ_BINS, ZONE_WIDTH
+from _globals import GALR_BINS, ABSZ_BINS
 import paths
 
 GALR_BINS = GALR_BINS[:-1]
@@ -33,26 +31,18 @@ AGE_LABELS = {'F19': 'Feuillet et al. (2019)',
               'M19': 'Mackereth et al. (2019)',
               'L23': 'Leung et al. (2023)'}
 
-def main(evolution, RIa, migration='diffusion', ages='L23', verbose=False, 
-         uncertainties=False, **kwargs):
+def main(evolution, RIa, migration='gaussian', verbose=False, **kwargs):
     # Import VICE multi-zone output data
-    output_name = '/'.join([migration, evolution, RIa])
+    output_name = '/'.join([migration, evolution, RIa, 'diskmodel'])
     # Import APOGEE and astroNN data
     apogee_data = import_apogee(verbose=verbose)
     # Main plot function
-    if uncertainties:
-        fname = '%s_%s_errors.png' % (RIa, ages)
-    else:
-        fname = '%s_%s.png' % (RIa, ages)
-    save_dir = paths.debug / 'age_ofe' / migration / evolution
-    plot_age_ofe(output_name, apogee_data, fname=fname, ages=ages, 
-                 verbose=verbose, save_dir=save_dir, 
-                 uncertainties=uncertainties, **kwargs)
+    plot_age_ofe(output_name, apogee_data, verbose=verbose, **kwargs)
 
 
 def plot_age_ofe(output_name, apogee_data, fname='age_ofe.png', ages='L23', 
-                 cmap='winter', log=False, score=False, uncertainties=False, 
-                 verbose=False, save_dir=paths.debug/'age_ofe'):
+                 cmap='winter', log=True, score=False, uncertainties=True, 
+                 verbose=False):
     """
     Plot a grid of [O/Fe] vs age across multiple Galactic regions.
     
@@ -118,6 +108,7 @@ def plot_age_ofe(output_name, apogee_data, fname='age_ofe.png', ages='L23',
         age_lim = AGE_LIM_LINEAR
     
     # Set up figure
+    plt.style.use(paths.styles / 'paper.mplstyle')
     fig, axs = setup_axes(xlim=age_lim, ylim=OFE_LIM, 
                           xlabel='Age [Gyr]', ylabel='[O/Fe]',
                           xlabelpad=2, ylabelpad=4,
@@ -140,8 +131,8 @@ def plot_age_ofe(output_name, apogee_data, fname='age_ofe.png', ages='L23',
                 print('\tRGal=%s kpc, |z|=%s kpc' \
                       % (str(galr_lim), str(absz_lim)))
             vice_subset = vice_stars.region(galr_lim, absz_lim)
-            plot_vice_sample(ax, vice_subset.stars, 'age', '[o/fe]', 
-                             cmap=cmap, norm=cbar.norm)
+            vice_subset.scatter_plot(ax, 'age', '[o/fe]', color='galr_origin',
+                                     cmap=cmap, norm=cbar.norm)
             # Plot Feuillet+ 2019 ages
             if ages == 'F19':
                 plot_feuillet2019(ax, galr_lim, absz_lim)
@@ -149,7 +140,7 @@ def plot_age_ofe(output_name, apogee_data, fname='age_ofe.png', ages='L23',
                 apogee_subset = apogee_region(apogee_data, galr_lim, absz_lim)
                 plot_astroNN_medians(ax, apogee_subset, 
                                      age_col=age_col, label=AGE_LABELS[ages])
-            plot_vice_medians(ax, vice_subset.stars, label='VICE')
+            plot_vice_medians(ax, vice_subset.stars, label='Model')
             # Score how well the distributions align based on the RMS of the
             # difference in medians in each [O/Fe] bin
             if score and (ages in ('M19', 'L23')):
@@ -177,6 +168,11 @@ def plot_age_ofe(output_name, apogee_data, fname='age_ofe.png', ages='L23',
     axs[0,0].yaxis.set_minor_locator(MultipleLocator(0.05))
     
     # Output figure
+    if uncertainties:
+        fname = 'age_ofe_%s_errors.png' % ages
+    else:
+        fname = 'age_ofe_%s.png' % ages
+    save_dir = paths.figures / 'supplementary' / output_name.split('/diskmodel')[0]
     if not save_dir.exists():
         save_dir.mkdir(parents=True)
     fig.savefig(save_dir / fname, dpi=300)
@@ -422,7 +418,7 @@ if __name__ == '__main__':
                         help='Name of delay time distribution model')
     parser.add_argument('--migration', '-m', metavar='MIGR', 
                         choices=['diffusion', 'post-process', 'gaussian'], 
-                        default='diffusion',
+                        default='gaussian',
                         help='Name of migration prescription')
     parser.add_argument('-v', '--verbose', action='store_true')
     parser.add_argument('-c', '--cmap', metavar='COLORMAP', type=str,

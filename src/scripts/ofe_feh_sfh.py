@@ -6,8 +6,6 @@ different star formation histories.
 from pathlib import Path
 import matplotlib.pyplot as plt
 from matplotlib.ticker import MultipleLocator
-# from matplotlib.colors import Normalize
-# from matplotlib.cm import ScalarMappable
 import vice
 from multizone_stars import MultizoneStars
 from scatter_plot_grid import setup_colorbar

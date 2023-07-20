@@ -1,5 +1,6 @@
 """
-Compare plots of [O/Fe] vs age in a single Galactic region for various DTDs.
+Compare [O/Fe]-Age plots for the Solar annulus for VICE outputs with
+different star formation histories.
 """
 
 from utils import multioutput_to_pandas, filter_multioutput_stars, model_uncertainty
@@ -8,14 +9,14 @@ import matplotlib.pyplot as plt
 from matplotlib.ticker import MultipleLocator, FormatStrFormatter
 from age_ofe import plot_vice_medians, plot_astroNN_medians
 from scatter_plot_grid import setup_colorbar, plot_vice_sample
-from _globals import ZONE_WIDTH, ONE_COLUMN_WIDTH
+from _globals import ZONE_WIDTH, ONE_COLUMN_WIDTH, MAX_SF_RADIUS
 import paths
 
 SFH_LIST = ['insideout', 'lateburst', 'conroy22_JW20yields', 'twoinfall']
 DTD = 'powerlaw_slope11'
 LABEL_LIST = ['Inside-Out', 'Late-Burst', 'Early-Burst', 'Two-Infall']
 AGE_COL = 'LATENT_AGE'
-AGE_LABEL = 'Leung et al. 2023'
+AGE_LABEL = 'Leung et al. (2023)'
 AGE_LIM = (0.3, 20)
 OFE_LIM = (-0.15, 0.55)
 CMAP = 'winter'
@@ -30,8 +31,9 @@ def main():
                             sharex=True, sharey=True)
     plt.subplots_adjust(right=0.94, left=0.1, bottom=0.1, top=0.98,
                         wspace=0, hspace=0)
-    cbar = setup_colorbar(fig, cmap=CMAP, vmin=0, vmax=15.5, 
+    cbar = setup_colorbar(fig, cmap=CMAP, vmin=0, vmax=MAX_SF_RADIUS, 
                           label=r'Birth $R_{\rm{Gal}}$ [kpc]', pad=0.02, width=0.04)
+    cbar.ax.yaxis.set_major_locator(MultipleLocator(2))
     cbar.ax.yaxis.set_minor_locator(MultipleLocator(0.5))
     
     for ax, sfh, label in zip(axs.flatten(), SFH_LIST, LABEL_LIST):

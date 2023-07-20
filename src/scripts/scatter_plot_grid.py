@@ -141,7 +141,7 @@ def setup_axes(galr_bins=GALR_BINS[:-1], absz_bins=ABSZ_BINS,
     cols = len(galr_bins) - 1
     fig, axs = plt.subplots(rows, cols, figsize=(width, (width/cols)*rows),
                             sharex=True, sharey=True)
-    plt.subplots_adjust(right=0.98, left=0.06, bottom=0.07, top=0.95,
+    plt.subplots_adjust(right=0.98, left=0.06, bottom=0.08, top=0.95,
                         wspace=spacing, hspace=spacing)
     # Figure title
     if len(title) > 0:
