@@ -20,7 +20,7 @@
 
 % Title
 \title{The Galactic Delay-Time Distribution of Type Ia Supernovae:\\
-    A Chemical Evolution Perspective}
+       A Chemical Evolution Perspective}
 
 % Author list
 \author[0000-0003-3781-0747]{Liam O. Dubay}
@@ -33,7 +33,6 @@
     Type Ia supernovae (SNe Ia) produce most of Fe-peak elements in the Universe and therefore are a crucial ingredient in galactic chemical evolution models. SNe Ia do not explode immediately after star formation and the delay-time distribution (DTD) has not been definitively determined by supernova surveys or theoretical models. Because the DTD also affects the relationship among age, [Fe/H], and [$\alpha$/Fe] in chemical evolution models, comparison with observations of stars in the Milky Way is an important consistency check for any proposed DTD. We implement several popular forms of the DTD in combination with multiple star formation histories for the Milky Way in one-zone and multi-zone chemical evolution models using the Versatile Integrator for Chemical Evolution (VICE). VICE includes a prescription for radial stellar migration in multi-zone models. We compare our predicted interstellar medium abundance tracks, stellar abundance distributions, and stellar age distributions to the 17th data release of the Apache Point Observatory Galactic Evolution Experiment (APOGEE). We find that the SN Ia DTD has the largest effect on the [$\alpha$/Fe] distribution: a DTD with more prompt SNe Ia produces a stellar abundance distribution that is skewed toward a lower [$\alpha$/Fe] ratio, whereas a DTD with more delayed SNe Ia produces a distribution that is skewed toward higher [$\alpha$/Fe]. While the DTD alone cannot explain the observed bimodality in the [$\alpha$/Fe] distribution, in combination with an appropriate star formation history it affects the goodness of fit between the simulated and observed high-$\alpha$ sequence.
 \end{abstract}
 
-% Main body with filler text
 \section{Introduction}
 
 \section{Methods}
@@ -128,7 +127,7 @@ Triple-system   & $f_{\rm init}=0.05f_{\rm peak}$, $t_{\rm rise}=0.5$ Gyr, & \ci
 Exponential & $\tau=1.5$ Gyr    & \citet[][SD]{Greggio2005-AnalyticalRates};
                                   \citet{Schonrich2009-RadialMixing};       \\
             &                   & \citet{Weinberg2017-ChemicalEquilibrium}  \\
-Exponential & $\tau=3.0$ Gyr    & \\
+Exponential & $\tau=3.0$ Gyr    & --- \\
 Prompt      & $t_{\rm max}=0.05$ Gyr, $\sigma=0.015$ Gyr, & \citet{Mannucci2006-TwoPopulations} \\
             & $\tau=3.0$ Gyr & \\
 \enddata
@@ -137,34 +136,29 @@ Prompt      & $t_{\rm max}=0.05$ Gyr, $\sigma=0.015$ Gyr, & \citet{Mannucci2006-
 \subsection{Star Formation Histories}
 \label{sec:sfh}
 
-Figure \ref{fig:sfhs} presents an overview of our model star formation histories.
+In this paper, we consider four models for the SFH: inside-out, late-burst, early-burst, and two-infall. The first two models are run in VICE's ``star formation mode,'' where the surface density of star formation rate $\dot\Sigma_*$ is prescribed along with the star formation efficiency timescale $\tau_*$, and the infall rate surface density $\dot\Sigma_{\rm in}$ and gas surface density $\Sigma_{\rm gas}$ are calculated from the specified quantities. The latter two models are run in ``infall mode,'' where we specify $\dot\Sigma_{\rm in}$  and $\tau_*$ and the other two quantities follow. 
 
-\begin{figure*}
-    \centering
-    \includegraphics{figures/star_formation_histories.pdf}
-    \caption{The surface densities of star formation $\dot \Sigma_*$ (first row), gas infall $\dot \Sigma_{\rm in}$ (second row), and gas mass $\Sigma_{\rm gas}$ (third row), and the star formation efficiency timescale $\tau_*$ (fourth row) as functions of simulation time for our four model SFHs: inside-out (first column; see Equation \ref{eq:insideout-sfh}), late-burst (second column; see Equation \ref{eq:lateburst-sfh}), early-burst (third column; see Equations \ref{eq:earlyburst-ifr} and \ref{eq:earlyburst-taustar}), and two-infall (fourth column; see Equation \ref{eq:twoinfall-ifr}). In each panel, we plot curves for the zones which have inner radii of 4 kpc (yellow), 6 kpc (orange), 8 kpc (red), 10 kpc (violet), 12 kpc (indigo), and 14 kpc (blue).}
-    \label{fig:sfhs}
-    \script{star_formation_histories.py}
-\end{figure*}
+The functions presented below are dimensionless. For a detailed look at the normalization of the star formation rate with $R_{\rm gal}$, we refer the reader to Appendix B of \citet{Johnson2021-Migration}.
 
-\paragraph{Inside-out}
+\paragraph{Inside-out} Following \citet{Johnson2021-Migration}, this is our fiducial SFH:
 \begin{equation}
-    f_{\rm IO}(t|R_{\rm gal}) = (1 - e^{-t/\tau_{\rm rise}}) e^{-t/\tau_{\rm SFH}}
+    f_{\rm IO}(t|R_{\rm gal}) = (1 - e^{-t/\tau_{\rm rise}}) e^{-t/\tau_{\rm sfh}}
     \label{eq:insideout-sfh}
 \end{equation}
+where we assume $\tau_{\rm rise}=2$ Gyr for all radii. The SFH timescale $\tau_{\rm sfh}$ varies with $R_{\rm gal}$, with $\tau_{\rm sfh}(R_{\rm gal}=8\,\rm{kpc})\approx15$ Gyr at the Solar annulus and longer timescales in the outer galaxy. The $\tau_{\rm sfh} - R_{\rm gal}$ relation is determined from the data of \citet{Sanchez2020-StarFormationTimescales}; see Section 2.5 of \citet{Johnson2021-Migration} for the details.
 
-\paragraph{Late-burst}
+\paragraph{Late-burst} A variation on the inside-out SFH with a Gaussian burst in the star formation rate:
 \begin{equation}
     f_{\rm LB}(t|R_{\rm gal}) = f_{\rm IO}(t|R_{\rm gal}) \Big(1 + A_b e^{-(t-t_b)^2/2\sigma_b^2} \Big)
     \label{eq:lateburst-sfh}
 \end{equation}
+where $A_b$ is the dimensionless amplitude of the starburst, $t_b$ is the time of the peak of the burst, and $\sigma_b$ is the width of the Gaussian. Following \citet{Johnson2021-Migration}, we adopt $A_b=1.5$, $t_b=11.2$ Gyr, and $\sigma_b=1$ Gyr. The determination of $\tau_{\rm sfh}$ and the normalization of the SFR as a function of $R_{\rm gal}$ are the same as in the inside-out case.
 
 \paragraph{Early-burst} The infall rate at a given radius declines exponentially with time:
 \begin{equation}
-    f_{\rm EB}(t|R_{\rm gal}) = e^{-t/\tau_{\rm IFR}}
+    f_{\rm EB}(t|R_{\rm gal}) = e^{-t/\tau_{\rm sfh}}
     \label{eq:earlyburst-ifr}
 \end{equation}
-We take $\tau_{\rm IFR} = \tau_{\rm SFH}$ at all radii.
 The time-dependence of the SFE timescale $\tau_*$ comes from \citet{Conroy2022-ThickDisk}:
 \begin{equation}
     \frac{\tau_*(t|\Sigma_g)}{1\,\rm{Gyr}} =
@@ -202,6 +196,16 @@ In this model, the first infall produces the thick disk and the second infall pr
     f_\Sigma(R) = f_\Sigma(0) e^{R(1/R_2 - 1/R_1)}
 \end{equation}
 where we take the thick disk scale radius $R_1=2.0$ kpc, thin disk scale radius $R_2=2.5$ kpc, and $f_\Sigma(0)=0.27$ following \citet{BlandHawthornGerhard2016-MilkyWayReview}.
+
+Figure \ref{fig:sfhs} presents an overview of these model star formation histories.
+
+\begin{figure*}
+    \centering
+    \includegraphics{figures/star_formation_histories.pdf}
+    \caption{The surface densities of star formation $\dot \Sigma_*$ (first row), gas infall $\dot \Sigma_{\rm in}$ (second row), and gas mass $\Sigma_{\rm gas}$ (third row), and the star formation efficiency timescale $\tau_*$ (fourth row) as functions of simulation time for our four model SFHs: inside-out (first column; see Equation \ref{eq:insideout-sfh}), late-burst (second column; see Equation \ref{eq:lateburst-sfh}), early-burst (third column; see Equations \ref{eq:earlyburst-ifr} and \ref{eq:earlyburst-taustar}), and two-infall (fourth column; see Equation \ref{eq:twoinfall-ifr}). In each panel, we plot curves for the zones which have inner radii of 4 kpc (yellow), 6 kpc (orange), 8 kpc (red), 10 kpc (violet), 12 kpc (indigo), and 14 kpc (blue).}
+    \label{fig:sfhs}
+    \script{star_formation_histories.py}
+\end{figure*}
 
 \subsection{Stellar Migration}
 \label{sec:migration}
@@ -258,7 +262,7 @@ Figure \ref{fig:radial-migration} compares the distributions of $R_{\rm final}$ 
 \subsection{Nucleosynthetic Yields}
 \label{sec:yields}
 
-We use the same yields as in \citet{Johnson2021-Migration}.
+Table \ref{tab:yields} summarizes the nucleosynthetic yields assumed in this paper, which we adopt from \citet{Johnson2021-Migration}.
 
 \begin{deluxetable}{lll}
     \tablecaption{Nucleosynthetic yields assumed in our simulations.\label{tab:yields}}
@@ -282,7 +286,7 @@ We compare our simulation results to abundance measurements from the 17th data r
 We limit our sample to red giant branch and red clump stars with high-quality spectra; Table \ref{tab:sample-selection} lists our selection criteria, which produce a final sample of \variable{output/sample_size.txt}stars.
 
 \begin{deluxetable*}{lll}
-    \tablecaption{Sample Selection\label{tab:sample-selection}}
+    \tablecaption{Sample selection parameters from APOGEE DR17\label{tab:sample-selection}}
     \tablehead{
         \colhead{Parameter} & \colhead{Range} & \colhead{Notes}
     }
@@ -302,10 +306,29 @@ We limit our sample to red giant branch and red clump stars with high-quality sp
 
 % For $19784$ stars, or $\sim3.5\%$ of the sample, the astroNN [Fe/H] abundance estimate is $\gtrsim0.5$ dex lower than the value provided by ASPCAP. The vast majority of these stars are on the lower-main sequence according to \textit{Gaia} photometry, so we exclude stars with $\log(g) > 4$ in ASPCAP. In addition, 197 or $\sim3\%$ of stars with APOKASC-2 asteroseismic ages are reported to be $>5$ Gyr younger by astroNN. The APOKASC-2 age is unphysically high for many of these stars, often exceeding 15 Gyr. We identify prior mass loss as the cause of this discrepancy, so the astroNN ages are likely closer to the truth.
 
-\section{Results from Single-Zone Models}
+\section{Results from One-Zone Models}
 \label{sec:onezone-results}
 
-All models are run for a duration of 13.2 Gyr with a simulation timestep of 0.01 Gyr.
+All models are run for a duration of $t_{\rm max}=13.2$ Gyr with a time-step of $\Delta t=0.01$ Gyr. We adopt an outflow mass-loading factor $\eta\equiv \dot M_{\rm out}/\dot M_*=2.15$ \citep[see Equation 8 from][]{Johnson2021-Migration} and a star formation efficiency timescale $\tau_*\equiv M_{\rm gas}/\dot M_*=2$ Gyr. We adopt a continuous recycling prescription \citep[see Equation 2 from][]{JohnsonWeinberg2020-Starbursts}. Unless otherwise specified, we adopt the inside-out star formation rate (Equation \ref{eq:insideout-sfh}) evaluated at $R_{\rm gal}=8$ kpc, with timescales $\tau_{\rm rise}=2$ Gyr and $\tau_{\rm sfh}=15.1$ Gyr, and our models have an initial gas mass $M_{\rm gas,0}=0$. Unless otherwise specified, we assume a minimum SN Ia delay time of 40 Myr. A summary of these one-zone fiducial parameters is presented in Table \ref{tab:onezone-parameters}.
+
+\begin{deluxetable}{Ccl}
+    \tablecaption{A summary of parameters and their fiducial values for our one-zone chemical evolution models.\label{tab:onezone-parameters}}
+    \tablehead{
+        \colhead{Parameter} & \colhead{Value} & \colhead{Description}
+    }
+    \startdata
+    \Delta t        & 10 Myr    & Time-step size \\
+    t_{\rm max}     & 13.2 Gyr  & Maximum simulation time \\
+    \eta            & 2.15      & Outflow mass-loading factor \\
+    \tau_*          & 2.0 Gyr   & Star formation efficiency timescale \\
+    \dot M_r        & continuous    & Recycling rate \\
+    t_D             & 40 Myr    & Minimum SN Ia delay time \\
+    M_{\rm gas,0}   & 0         & Initial gas mass \\
+    \dot M_*(t)     & Equation \ref{eq:insideout-sfh}  & Star formation rate \\
+    \tau_{\rm rise} & 2 Gyr     & SFR rise timescale \\
+    \tau_{\rm sfh}  & 15.1 Gyr  & SFR exponential timescale
+    \enddata
+\end{deluxetable}
 
 \subsection{The SN Ia Delay-Time Distribution}
 
@@ -335,7 +358,7 @@ Adjusting the parameters of the DTD affects how steeply the abundance track in [
     \script{onezone_plateau_width.py}
 \end{figure}
 
-Figure \ref{fig:onezone-dtd} compares the one-zone model outputs from the full range of DTDs we investigate in this paper. In general, the choice of DTD has the greatest effect on the location of the knee in [Fe/H]-[O/Fe] space (center panel) and the high-$\alpha$ end of the distribution of [O/Fe] (right panel). The DTD also has a smaller effect on the MDF in the range $-15.5\lesssim$ [Fe/H] $\lesssim-0.5$ (top panel).
+Figure \ref{fig:onezone-dtd} compares the one-zone model outputs from the full range of DTDs we investigate in this paper. In general, the choice of DTD has the greatest effect on the location of the knee in [Fe/H]-[O/Fe] space (center panel) and the high-$\alpha$ end of the distribution of [O/Fe] (right panel). The DTD also has a smaller effect on the MDF in the range $-1.5\lesssim$ [Fe/H] $\lesssim-0.5$ (top panel).
 
 \begin{figure}
     \centering
@@ -347,17 +370,17 @@ Figure \ref{fig:onezone-dtd} compares the one-zone model outputs from the full r
 
 \subsection{The Minimum SN Ia Delay Time}
 
-Figure \ref{fig:onezone-dtd-delay} shows that the minimum SN Ia delay time has a much stronger effect on the abundance track and MDFs of models which assume a power-law DTD than models which assume an exponential, due to the much higher SN Ia rate in the power-law models at early times (see Figure \ref{fig:dtds}). Moreover, a power-law DTD with a long minimum delay may be observationally hard to distinguish from an exponential. 
+Figure \ref{fig:onezone-minimum-delay} shows that the minimum SN Ia delay time has a much stronger effect on the abundance track and MDFs of models which assume a power-law DTD than models which assume a plateau or exponential DTD, due to the much higher SN Ia rate in the power-law models at early times (see Figure \ref{fig:dtds}). Moreover, a power-law DTD with a long minimum delay may be observationally hard to distinguish from a plateau model. In Figure \ref{fig:onezone-minimum-delay}, the abundance track for the model with a power-law DTD and $t_D=150$ Myr (red dashed line) is similar to that of the plateau DTD with $W=0.3$ Gyr and $t_D=40$ Myr (blue solid line), and the [O/Fe] distributions are virtually identical.  
 
 \begin{figure}
     \centering
-    \includegraphics{figures/onezone_dtd_delay.pdf}
-    \caption{Similar to Figure \ref{fig:onezone-slope-timescale} but with varying minimum SN Ia delay time ($t_D$). Dashed curves represent models with a minimum delay time of 40 Myr, while solid curves represent models with a minimum delay time of 150 Myr. The black curves represent a power-law DTD with a slope of $-1.1$, while the blue curves represent an exponential DTD with a timescale of 1.5 Gyr.}
-    \label{fig:onezone-dtd-delay}
-    \script{onezone_dtd_delay.py}
+    \includegraphics{figures/onezone_minimum_delay.pdf}
+    \caption{Similar to Figure \ref{fig:onezone-powerlaw-slope} but with varying DTD models and minimum SN Ia delay time ($t_D$). Solid curves represent models with a minimum delay time of 40 Myr, while dashed curves represent models with a minimum delay time of 150 Myr. The red curves represent a power-law DTD with slope $\alpha=-1.1$; blue curves represent an plateau DTD with width $W=0.3$ Gyr and slope $\alpha=-1.1$; and orange curves represent an exponential DTD with timescale $\tau=3$ Gyr. In all cases an exponential rise-fall SFR is assumed.}
+    \label{fig:onezone-minimum-delay}
+    \script{onezone_minimum_delay.py}
 \end{figure}
 
-A 150 Myr minimum delay time is incompatible with the prompt DTD model, which has $\sim 50$\% of SNe Ia explode in the first 100 Myr.
+A 150 Myr minimum delay time is incompatible with the prompt DTD model, which has $\sim 50$\% of SNe Ia explode in the first 100 Myr, and would have a negligible effect on the triple-system DTD as its relative SN Ia rate is so low at early times.
 
 \subsection{The Star Formation History}
 
@@ -368,7 +391,7 @@ The minimum delay and SFE timescale have similar effects on the abundance tracks
 \begin{figure}
     \centering
     \includegraphics{figures/onezone_delay_taustar.pdf}
-    \caption{Similar to Figure \ref{fig:onezone-powerlaw-slope} but with varying minimum SN Ia delay time ($t_D$) and star formation efficiency timescale ($\tau_*$). Tracks with $\tau_*=2$ Gyr are represented in black, while a track with a shorter $\tau_*=1$ Gyr is shown in red and a track with a longer $\tau_*=4$ Gyr is in yellow. The dotted, solid, and dashed black curves represent a minimum delay time of 40 Myr, 80 Myr, and 160 Myr, respectively. A power-law DTD is assumed in all models.}
+    \caption{Similar to Figure \ref{fig:onezone-powerlaw-slope} but with varying minimum SN Ia delay time ($t_D$) and star formation efficiency timescale ($\tau_*$). Tracks with $\tau_*=2$ Gyr are represented in black, while a track with a shorter $\tau_*=1$ Gyr is shown in red and a track with a longer $\tau_*=4$ Gyr is in yellow. The dotted, solid, and dashed black curves represent a minimum delay time of 40 Myr, 80 Myr, and 160 Myr, respectively. A power-law DTD with $\alpha=-1.1$ is assumed in all models.}
     \label{fig:onezone-delay-taustar}
     \script{onezone_delay_taustar.py}
 \end{figure}
@@ -423,14 +446,14 @@ A multi-zone with the \citet{Greggio2005-AnalyticalRates} SD DTD produced nearly
         \colhead{Parameter} & \colhead{Median Uncertainty} & \colhead{Source}
     }
     \startdata
-        [Fe/H] & $9.2\times10^{-3}$ & APOGEE \\
-        $\rm [O/Fe]$ & $1.8\times10^{-2}$ & APOGEE \\
+        [Fe/H] & $9.2\times10^{-3}$ & APOGEE DR17 \\
+        $\rm [O/Fe]$ & $1.8\times10^{-2}$ & APOGEE DR17 \\
         log(Age/Gyr) & $0.12$ & \citet{Leung2023-Ages}
         % Age/Gyr & 29\% & astroNN
     \enddata
 \end{deluxetable}
 
-\subsection{Comparison to APOGEE MDFs}
+\subsection{The distribution of [Fe/H]}
 
 To quantify the similarity between the MDFs generated by VICE and the observed APOGEE MDF, we compute the Kullback-Leibler (KL) divergence \citep{KullbackLeibler1951}, defined as
 \begin{equation}
@@ -439,20 +462,32 @@ D_{\rm{KL}}(P \parallel Q) = \int_{-\infty}^{\infty} p(x) \log\Big(\frac{p(x)}{q
 \end{equation}
 for distributions $P$ and $Q$ with probability density functions $p(x)$ and $q(x)$. In this case, $P$ is the APOGEE MDF, $Q$ is the model MDF, and $x$ is [Fe/H]. For each model SFH and DTD, we compute $D_{\rm{KL}}$ in 18 different galactocentric zones defined by radial bins $3-5$ kpc, $5-7$ kpc, $7-9$ kpc, $9-11$ kpc, $11-13$ kpc, and $13-15$ kpc and absolute $z$-height bins $0-0.5$ kpc, $0.5-1$ kpc, and $1-2$ kpc. The KL divergence for the entire model is taken to be the average of $D_{\rm{KL}}$ for each zone, weighted by the number of APOGEE stars in each zone.
 
+Figure \ref{fig:feh-df-sfh} plots the distribution of [Fe/H] in multiple regions across the disk for the four SFHs in this paper.
+
 \begin{figure*}
     \centering
     \includegraphics{figures/feh_df_sfh.pdf}
-    \caption{Distributions of [Fe/H] for multi-zone simulations with different SFHs. Each row presents distributions of stars within a range of absolute midplane distance: $1\leq|z|<2$ kpc (\textit{top}), $0.5\leq|z|<1$ kpc (\textit{middle}), and $0\leq|z|<0.5$ kpc (\textit{bottom}). Within each panel, curves of different color represent the distributions of stars binned by Galactocentric radius $R_{\rm gal}$, from $3\leq R_{\rm gal}<5$ kpc (yellow) to $13\leq R_{\rm gal}<15$ kpc (blue). }
+    \caption{Distributions of [Fe/H] for multi-zone simulations with different SFHs. Each row presents distributions of stars within a range of absolute midplane distance: $1\leq|z|<2$ kpc (\textit{top}), $0.5\leq|z|<1$ kpc (\textit{middle}), and $0\leq|z|<0.5$ kpc (\textit{bottom}). Within each panel, curves of different color represent the distributions of stars binned by Galactocentric radius $R_{\rm gal}$, from $3\leq R_{\rm gal}<5$ kpc (yellow) to $13\leq R_{\rm gal}<15$ kpc (blue). Each distribution is normalized so the area under the curve is 1, and the vertical scale is consistent across each row. All distributions are convolved with observational uncertainties in APOGEE DR17 (see Table \ref{tab:uncertainties}) and smoothed with a box-car width of 0.2 dex. In all cases an exponential DTD with timescale $\tau=1.5$ Gyr is assumed. Distributions from APOGEE DR17, binned similarly, are presented in the right-most column for reference.}
     \label{fig:feh-df-sfh}
     \script{feh_df_sfh.py}
 \end{figure*}
 
-\subsection{Comparison to APOGEE ODFs}
+Holding the SFH fixed, varying the DTD has only a minor effect on the MDF. Figure \ref{fig:feh-df-dtd} plots the [Fe/H] distributions for two multi-zone simulations which both assume an inside-out SFH but different DTDs: a power-law with slope $\alpha=-1.4$, and an exponential with timescale $\tau=3$ Gyr. The balance between prompt and delayed SNe Ia is starkly different between the two models, with $\sim 80\%$ of SNe Ia exploding within 1 Gyr in the former model but only $\sim 30\%$ in the latter. Nevertheless, the effect of the DTD on the MDF is second-order compared to the effect of the SFH as seen in Figure \ref{fig:feh-df-sfh}.
+
+\begin{figure}
+    \centering
+    \includegraphics{figures/feh_df_dtd.pdf}
+    \caption{Distributions of [Fe/H] for multi-zone simulations with different DTDs: a power-law with slope $\alpha=-1.4$ (\textit{left}), and an exponential with timescale $\tau=3$ Gyr (\textit{right}). In both cases an inside-out SFH is assumed. The plot format is similar to Figure \ref{fig:feh-df-sfh}.}
+    \label{fig:feh-df-dtd}
+    \script{feh_df_dtd.py}
+\end{figure}
+
+\subsection{The distribution of [O/Fe]}
 
 \begin{figure*}
     \centering
     \includegraphics{figures/ofe_df_dtd.pdf}
-    \caption{Caption.}
+    \caption{Distributions of [O/Fe] for multi-zone simulations with different DTDs. In all cases an inside-out SFH is assumed. The plot format is similar to Figure \ref{fig:feh-df-sfh}. All distributions are smoothed with a box-car width of 0.05 dex.}
     \label{fig:ofe-df-dtd}
     \script{ofe_df_dtd.py}
 \end{figure*}
@@ -460,9 +495,28 @@ for distributions $P$ and $Q$ with probability density functions $p(x)$ and $q(x
 \begin{figure*}
     \centering
     \includegraphics{figures/ofe_df_sfh.pdf}
-    \caption{Caption.}
+    \caption{Distributions of [O/Fe] for multi-zone simulations with different SFHs. The plot format is similar to Figure \ref{fig:feh-df-sfh}. In all cases an exponential DTD with timescale $\tau=1.5$ Gyr is assumed.}
     \label{fig:ofe-df-sfh}
     \script{ofe_df_sfh.py}
+\end{figure*}
+
+\subsection{The [O/Fe]--[Fe/H] Plane}
+\label{sec:ofe-feh}
+
+\begin{figure}
+    \centering
+    \includegraphics{figures/ofe_feh_sfh.pdf}
+    \caption{Caption}
+    \label{fig:ofe-feh-sfh}
+    \script{ofe-feh-sfh.py}
+\end{figure}
+
+\begin{figure*}
+    \centering
+    \includegraphics{figures/ofe_feh_dtd.pdf}
+    \caption{Caption}
+    \label{fig:ofe-feh-dtd}
+    \script{ofe-feh-dtd.py}
 \end{figure*}
 
 
