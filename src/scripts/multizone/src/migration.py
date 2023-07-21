@@ -1,7 +1,7 @@
 import random
 import math as m
 from vice.toolkit import hydrodisk
-from .._globals import END_TIME, ZONE_WIDTH
+from .._globals import END_TIME, ZONE_WIDTH, RANDOM_SEED
 
 
 class diskmigration(hydrodisk.hydrodiskstars):
@@ -136,7 +136,9 @@ class gaussian_migration:
         Current simulation time in Gyr.
     """
     def __init__(self, radbins, zone_width=ZONE_WIDTH, end_time=END_TIME,
-                 filename="stars.out", absz_max=3.):
+                 filename="stars.out", absz_max=3., seed=RANDOM_SEED):
+        # Random number seed
+        random.seed(seed)
         self.radial_bins = radbins
         self.zone_width = zone_width
         self.end_time = end_time

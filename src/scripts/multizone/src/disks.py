@@ -82,7 +82,7 @@ class diskmodel(vice.milkyway):
 
     def __init__(self, zone_width = 0.1, name = "diskmodel", spec = "static",
         verbose = True, migration_mode = "diffusion", yields="J21",
-        delay = 0.04, RIa = "powerlaw", RIa_kwargs={}, **kwargs):
+        delay = 0.04, RIa = "powerlaw", RIa_kwargs={}, seed=42, **kwargs):
         super().__init__(zone_width = zone_width, name = name,
             verbose = verbose, **kwargs)
         if self.zone_width <= 0.2 and self.dt <= 0.02 and self.n_stars >= 6:
@@ -92,7 +92,7 @@ class diskmodel(vice.milkyway):
                 self.n_stars)
         analogdata_filename = "%s_analogdata.out" % name
         if migration_mode == "gaussian":
-            self.migration.stars = gaussian_migration(self.annuli, 
+            self.migration.stars = gaussian_migration(self.annuli, seed = seed,
                     zone_width = zone_width, filename = analogdata_filename)
         else:
             self.migration.stars = diskmigration(self.annuli,

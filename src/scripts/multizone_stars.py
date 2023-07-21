@@ -10,7 +10,7 @@ import numpy as np
 import pandas as pd
 import vice
 import paths
-from _globals import ZONE_WIDTH
+from _globals import ZONE_WIDTH, RANDOM_SEED
 from utils import sample_dataframe, box_smooth, mean_stellar_mass
 
 SOLAR_Z_TOTAL = 0.014
@@ -270,7 +270,7 @@ class MultizoneStars:
                                   noisy=self.noisy)
     
     def model_uncertainty(self, apogee_data=None, age_source='L23',
-                          inplace=False):
+                          inplace=False, seed=RANDOM_SEED):
         """
         Forward-model observational uncertainties from median data errors.
         Star particle data are modified in-place, so only run this once!
@@ -295,7 +295,7 @@ class MultizoneStars:
         noisy_stars = self.stars.copy()
         if apogee_data is None:
             apogee_data = pd.read_csv(paths.data/'APOGEE/sample.csv')
-        rng = np.random.default_rng()
+        rng = np.random.default_rng(seed)
         # age uncertainty depends on the age source
         if age_source == 'F19':
             log_age_err = 0.15 # Feuillet et al. (2016), ApJ, 817, 40
@@ -333,7 +333,7 @@ class MultizoneStars:
                                   absz_lim=self.absz_lim, 
                                   noisy=True)
         
-    def sample(self, N):
+    def sample(self, N, seed=RANDOM_SEED):
         """
         Randomly sample N rows from the full DataFrame, weighted by mass.
         
@@ -348,7 +348,8 @@ class MultizoneStars:
             N samples of full DataFrame.
         """
         sample_weights = self.stars['mstar'] / self.stars['mstar'].sum()
-        sample = sample_dataframe(self.stars.copy(), N, weights=sample_weights)
+        sample = sample_dataframe(self.stars.copy(), N, weights=sample_weights,
+                                  seed=seed)
         return sample
     
     def scatter_plot(self, ax, xcol, ycol, color=None, cmap=None, norm=None, 

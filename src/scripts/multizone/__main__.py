@@ -89,6 +89,11 @@ underscores. (Default: \"fe_o\")""",
         type = str,
         choices = _YIELD_SETS_,
         default = "J21")
+    
+    parser.add_argument("--seed", 
+                        help = "Seed for the random number generator.",
+                        type = int,
+                        default = _globals.RANDOM_SEED)
 
     return parser
 
@@ -120,7 +125,8 @@ def model(args):
         RIa = args.RIa,
         RIa_kwargs = RIa_kwargs,
         delay = args.minimum_delay,
-        yields = args.yields
+        yields = args.yields,
+        seed = args.seed
     )
     if args.migration == "post-process":
         kwargs["simple"] = True
@@ -138,7 +144,7 @@ def main():
     model_ = model(args)
     model_.run([_ * model_.dt for _ in range(round(
         _globals.END_TIME / model_.dt) + 1)],
-        overwrite = args.force, pickle = False)
+        overwrite = args.force, pickle = True)
 
 
 if __name__ == "__main__": 

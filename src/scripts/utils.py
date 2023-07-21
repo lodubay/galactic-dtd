@@ -15,7 +15,7 @@ from astropy.table import Table
 from astropy.io import fits
 import vice
 import paths
-from _globals import ZONE_WIDTH
+from _globals import ZONE_WIDTH, RANDOM_SEED
 
 # =============================================================================
 # DATA IMPORT
@@ -208,7 +208,7 @@ def get_bin_centers(bin_edges):
         raise ValueError('The length of bin_edges must be at least 2.')
 
 
-def sample_dataframe(df, n, weights=None, reset=True):
+def sample_dataframe(df, n, weights=None, reset=True, seed=RANDOM_SEED):
     """
     Randomly sample n unique rows from a pandas DataFrame.
 
@@ -231,7 +231,7 @@ def sample_dataframe(df, n, weights=None, reset=True):
         # Number of samples can't exceed length of DataFrame
         n = min(n, df.shape[0])
         # Initialize default numpy random number generator
-        rng = default_rng()
+        rng = default_rng(seed)
         # Randomly sample without replacement
         rand_indices = rng.choice(df.index, size=n, replace=False, p=weights)
         sample = df.loc[rand_indices]
@@ -242,7 +242,7 @@ def sample_dataframe(df, n, weights=None, reset=True):
         raise TypeError('Expected pandas DataFrame.')
 
 
-def median_standard_error(x, B=1000):
+def median_standard_error(x, B=1000, seed=RANDOM_SEED):
     """
     Use bootstrapping to calculate the standard error of the median.
     
@@ -258,7 +258,7 @@ def median_standard_error(x, B=1000):
     float
         Standard error of the median.
     """
-    rng = np.random.default_rng()
+    rng = np.random.default_rng(seed)
     # Randomly sample input array *with* replacement, all at once
     samples = rng.choice(x, size=len(x) * B, replace=True).reshape((B, len(x)))
     medians = np.median(samples, axis=1)
@@ -308,7 +308,7 @@ def error_fit(df, col, deg, err_col='', bins=30, range=None):
     return p
 
 
-def model_uncertainty(x, err, how='linear'):
+def model_uncertainty(x, err, how='linear', seed=RANDOM_SEED):
     """
     Apply Gaussian uncertainty to the given data array.
     
@@ -328,7 +328,7 @@ def model_uncertainty(x, err, how='linear'):
     y : array-like
         Noisy data, with same dimensions as x.
     """
-    rng = np.random.default_rng()
+    rng = np.random.default_rng(seed)
     noise = rng.normal(loc=0, scale=err, size=x.shape[0])
     if how.lower() == 'linear':
         y = x + noise

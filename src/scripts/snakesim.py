@@ -12,7 +12,8 @@ _DEFAULT_PARAMS_ = {
     'RIa': 'powerlaw',
     'RIa_params': {'slope': -1.1},
     'minimum_delay': _globals.MIN_RIA_DELAY,
-    'yields': 'J21'
+    'yields': 'J21',
+    'seed': _globals.RANDOM_SEED
 }
 
 def main():
@@ -25,7 +26,7 @@ def main():
     model_ = model(str(fullpath), snakemake.params)
     model_.run([_ * model_.dt for _ in range(round(
         _globals.END_TIME / model_.dt) + 1)],
-        overwrite = True, pickle = False)
+        overwrite = True, pickle = True)
 
 
 def model(name, params):
@@ -45,6 +46,7 @@ def model(name, params):
             - 'RIa_params': dict, kwargs passed to the DTD model
             - 'minimum_delay': float, the minimum SN Ia delay time in Gyr
             - 'yields': str, the nucleosynthetic yield set
+            - 'seed': int, seed for random number generator
         
         Any of these parameters left unspecified will be filled by the defaults
         from above.
@@ -60,16 +62,17 @@ def model(name, params):
         elements = _globals.ELEMENTS
     )
     # Fill in missing params with defaults
-    for key, value in _DEFAULT_PARAMS_.items():
+    for key, default_value in _DEFAULT_PARAMS_.items():
         if key not in params.keys():
-            params[key] = value
+            params[key] = default_value
     kwargs = dict(
         name = name,
         spec = params.evolution,
         RIa = params.RIa,
         RIa_kwargs = params.RIa_params,
         delay = params.minimum_delay,
-        yields = params.yields
+        yields = params.yields,
+        seed = params.seed
     )
     if params.migration == "post-process":
         kwargs["simple"] = True
