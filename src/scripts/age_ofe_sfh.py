@@ -19,10 +19,10 @@ AGE_SOURCE = 'L23'
 AGE_COL = 'LATENT_AGE'
 AGE_LABEL = 'Leung et al.\n(2023)'
 AGE_LIM = (0.3, 20)
-OFE_LIM = (-0.15, 0.55)
+OFE_LIM = (-0.15, 0.5)
 CMAP_NAME = 'winter'
 GALR_LIM = (7, 9)
-ABSZ_LIM = (0, 2)
+ABSZ_LIM = (0, 0.5)
 
 def main():
     plt.style.use(paths.styles / 'paper.mplstyle')
@@ -73,7 +73,7 @@ def main():
         ax.set_ylabel('[O/Fe]', labelpad=2)
         
     # Legend
-    axs[0,1].legend(loc='upper left', frameon=False, 
+    axs[0,0].legend(loc='upper left', frameon=False, 
                     bbox_to_anchor=(0.02, 0.89), handlelength=0.7)
     
     fig.savefig(paths.figures / 'age_ofe_sfh.pdf', dpi=300)

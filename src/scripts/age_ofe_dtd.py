@@ -2,58 +2,65 @@
 Compare plots of [O/Fe] vs age in a single Galactic region for various DTDs.
 """
 
-from utils import multioutput_to_pandas, \
-    filter_multioutput_stars, model_uncertainty
 from apogee_tools import import_apogee, apogee_region
 import matplotlib.pyplot as plt
 from matplotlib.ticker import MultipleLocator, FormatStrFormatter
+from multizone_stars import MultizoneStars
 from age_ofe import plot_vice_medians, plot_astroNN_medians
-from scatter_plot_grid import setup_colorbar, plot_vice_sample
-from _globals import ZONE_WIDTH, ONE_COLUMN_WIDTH
+from scatter_plot_grid import setup_colorbar
+from _globals import ZONE_WIDTH, TWO_COLUMN_WIDTH, MAX_SF_RADIUS, ABSZ_BINS
 import paths
 
-SFH = 'insideout'
-DTD_LIST = ['powerlaw_slope11', 'exponential_timescale15', 
-            'plateau_width1000_slope11', 'triple_delay040']
-LABEL_LIST = [r'Power law ($\alpha=-1.1$)', r'Exponential ($\tau=1.5$ Gyr)',
-              r'Plateau ($W=1.0$ Gyr)', 'Triple system evolution']
-AGE_LABELS = {'ASTRONN_AGE': 'Mackereth et al. 2019',
-              'LATENT_AGE': 'Leung et al. 2023'}
+SFH_MODEL = 'insideout'
+DTD_LIST = ['prompt', 
+            'powerlaw_slope11', 
+            'exponential_timescale15', 
+            'plateau_width10', 
+            'triple']
+LABEL_LIST = ['Two-population', 
+              'Power law\n($\\alpha=-1.1$)', 
+              'Exponential\n($\\tau=1.5$ Gyr)',
+              'Plateau\n($W=1.0$ Gyr)', 
+              'Triple-system']
+AGE_SOURCE = 'L23'
+AGE_COL = 'LATENT_AGE'
+AGE_LABEL = 'Leung et al.\n(2023)'
 AGE_LIM = (0.3, 20)
 OFE_LIM = (-0.15, 0.55)
+GALR_LIM = (7, 9)
+CMAP_NAME = 'winter'
 
-def main(cmap='winter', galr_lim=(7, 9), absz_lim=(0, 0.5), age_col='LATENT_AGE'):
-    apogee_data = import_apogee()
-    apogee_subset = apogee_region(apogee_data, galr_lim, absz_lim)
-    
-    fig, axs = plt.subplots(2, 2, figsize=(3.25, 3.),
-                            sharex=True, sharey=True)
-    plt.subplots_adjust(right=0.94, left=0.1, bottom=0.1, top=0.98,
-                        wspace=0, hspace=0)
-    cbar = setup_colorbar(fig, cmap=cmap, vmin=0, vmax=15.5, 
-                          label=r'Birth $R_{\rm{Gal}}$ [kpc]', pad=0.02, width=0.04)
+def main():
+    plt.style.use(paths.styles / 'paper.mplstyle')
+    width = TWO_COLUMN_WIDTH
+    fig, axs = plt.subplots(3, 5, sharex=True, sharey=True,
+                            figsize=(width, 3/5*width))
+    plt.subplots_adjust(top=0.92, right=0.98, left=0.06, bottom=0.08, 
+                        wspace=0., hspace=0.)
+    cbar = setup_colorbar(fig, cmap=CMAP_NAME, vmin=0, vmax=MAX_SF_RADIUS,
+                          label=r'Birth $R_{\rm{gal}}$ [kpc]')
+    cbar.ax.yaxis.set_major_locator(MultipleLocator(2))
     cbar.ax.yaxis.set_minor_locator(MultipleLocator(0.5))
     
-    for ax, dtd, label in zip(axs.flatten(), DTD_LIST, LABEL_LIST):
-        ax.text(0.07, 0.88, label, transform=ax.transAxes, fontsize=7)
-        output_name = '/'.join(['diffusion', SFH, dtd])
-        vice_stars = multioutput_to_pandas(output_name)
-        # [O/Fe] uncertainty 
-        ofe_err = apogee_data['O_FE_ERR'].median()
-        vice_stars['[o/fe]'] = model_uncertainty(vice_stars['[o/fe]'], ofe_err)
-        # Age uncertainty
-        age_err = apogee_data['LOG_LATENT_AGE_ERR'].median()
-        vice_stars['age'] = model_uncertainty(vice_stars['age'], age_err,
-                                              how='logarithmic')
-        vice_subset = filter_multioutput_stars(vice_stars, galr_lim, absz_lim,
-                                                zone_width=ZONE_WIDTH)
-        plot_vice_sample(ax, vice_subset, 'age', '[o/fe]', 
-                         cmap=cmap, norm=cbar.norm)
-        plot_astroNN_medians(ax, apogee_subset, age_col=age_col, 
-                              label=AGE_LABELS[age_col], 
-                              plot_low_count_bins=False)
-        plot_vice_medians(ax, vice_subset, label='VICE',
-                          plot_low_mass_bins=False)
+    apogee_data = import_apogee()
+    
+    for j, dtd in enumerate(DTD_LIST):
+        output_name = '/'.join(['gaussian', SFH_MODEL, dtd, 'diskmodel'])
+        # Import multioutput stars data
+        mzs = MultizoneStars.from_output(output_name)
+        mzs.model_uncertainty(inplace=True)
+        for i in range(len(ABSZ_BINS) - 1):
+            absz_lim = (ABSZ_BINS[-(i+2)], ABSZ_BINS[-(i+1)])
+            apogee_subset = apogee_region(apogee_data, GALR_LIM, absz_lim)
+            vice_subset = mzs.region(GALR_LIM, absz_lim)
+            # Plot sample of star particle abundances
+            vice_subset.scatter_plot(axs[i,j], 'age', '[o/fe]', 
+                                     color='galr_origin',
+                                     cmap=CMAP_NAME, norm=cbar.norm)
+            plot_astroNN_medians(axs[i,j], apogee_subset, age_col=AGE_COL, 
+                                 label=AGE_LABEL, plot_low_count_bins=False)
+            plot_vice_medians(axs[i,j], vice_subset.stars, label='Model',
+                              plot_low_mass_bins=False)
     
     # Set x-axis scale and ticks
     axs[0,0].set_xlim(AGE_LIM)
@@ -70,12 +77,17 @@ def main(cmap='winter', galr_lim=(7, 9), absz_lim=(0, 0.5), age_col='LATENT_AGE'
         ax.set_xlabel('Age [Gyr]')
     for i, ax in enumerate(axs[:,0]):
         ax.set_ylabel('[O/Fe]', labelpad=2)
+        absz_lim = (ABSZ_BINS[-(i+2)], ABSZ_BINS[-(i+1)])
+        ax.text(0.07, 0.93, r'$%s\leq |z| < %s$ kpc' % absz_lim, 
+                va='top', transform=ax.transAxes)
+    for j, ax in enumerate(axs[0]):
+        ax.set_title(LABEL_LIST[j])
         
     # Legend
-    axs[0,1].legend(loc='upper left', frameon=False, 
+    axs[0,0].legend(loc='upper left', frameon=False, 
                     bbox_to_anchor=(0.02, 0.89), handlelength=0.7)
     
-    fig.savefig(paths.figures / 'age_ofe_same_sfh.pdf', dpi=300)
+    fig.savefig(paths.figures / 'age_ofe_dtd.pdf', dpi=300)
     plt.close()
 
 

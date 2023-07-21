@@ -52,6 +52,17 @@ dependencies:
         - src/data/multizone/gaussian/insideout/exponential_timescale15/
         - src/data/multizone/gaussian/insideout/plateau_width10/
         - src/data/multizone/gaussian/insideout/triple/
+    src/scripts/age_ofe_sfh.py:
+        - src/data/multizone/gaussian/insideout/exponential_timescale15/
+        - src/data/multizone/gaussian/lateburst/exponential_timescale15/
+        - src/data/multizone/gaussian/earlyburst/exponential_timescale15/
+        - src/data/multizone/gaussian/twoinfall/exponential_timescale15/
+    src/scripts/age_ofe_dtd.py:
+        - src/data/multizone/gaussian/insideout/prompt/
+        - src/data/multizone/gaussian/insideout/powerlaw_slope11/
+        - src/data/multizone/gaussian/insideout/exponential_timescale15/
+        - src/data/multizone/gaussian/insideout/plateau_width10/
+        - src/data/multizone/gaussian/insideout/triple/
     src/scripts/summary_table.py:
         - src/data/multizone/gaussian/insideout/powerlaw_slope11/
         - src/data/multizone/gaussian/insideout/powerlaw_slope14/

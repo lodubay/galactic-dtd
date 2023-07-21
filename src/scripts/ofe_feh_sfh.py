@@ -9,15 +9,15 @@ from matplotlib.ticker import MultipleLocator
 import vice
 from multizone_stars import MultizoneStars
 from scatter_plot_grid import setup_colorbar
-from _globals import ZONE_WIDTH, ONE_COLUMN_WIDTH
+from _globals import ZONE_WIDTH, ONE_COLUMN_WIDTH, MAX_SF_RADIUS
 import paths
 from ofe_feh_dtd import apogee_contours
 from apogee_tools import import_apogee
 
 FEH_LIM = (-1.3, 0.6)
-OFE_LIM = (-0.1, 0.55)
+OFE_LIM = (-0.15, 0.55)
 GALR_LIM = (7, 9)
-ABSZ_LIM = (0, 2)
+ABSZ_LIM = (0, 0.5)
 
 SFH_LABELS = ['Inside-out', 'Late-burst', 'Early-burst', 'Two-infall']
 DTD_MODEL = 'exponential_timescale15'
@@ -29,9 +29,9 @@ def main():
     fig, axs = plt.subplots(2, 2, sharex=True, sharey=True,
                             figsize=(ONE_COLUMN_WIDTH, 0.9*ONE_COLUMN_WIDTH))
     plt.subplots_adjust(top=0.98, right=0.93, wspace=0., hspace=0.)
-    cbar = setup_colorbar(fig, cmap=CMAP_NAME, vmin=0, vmax=15.5, width=0.04,
+    cbar = setup_colorbar(fig, cmap=CMAP_NAME, vmin=0, vmax=MAX_SF_RADIUS,
                           label=r'Birth $R_{\rm{gal}}$ [kpc]', pad=0.02,
-                          labelpad=2)
+                          labelpad=2, width=0.04)
     cbar.ax.yaxis.set_major_locator(MultipleLocator(2))
     cbar.ax.yaxis.set_minor_locator(MultipleLocator(0.5))
     

@@ -258,7 +258,7 @@ class MultizoneStars:
                             (self.stars[galr_col]       <  galr_max) &
                             (self.stars['zfinal'].abs() >= absz_min) &
                             (self.stars['zfinal'].abs() <  absz_max) &
-                            (self.stars['mass']         >= min_mass)]
+                            (self.stars['mstar']        >= min_mass)]
         subset.reset_index(inplace=True, drop=True)
         if inplace:
             self.stars = subset
@@ -347,7 +347,7 @@ class MultizoneStars:
         pandas.DataFrame
             N samples of full DataFrame.
         """
-        sample_weights = self.stars['mass'] / self.stars['mass'].sum()
+        sample_weights = self.stars['mstar'] / self.stars['mstar'].sum()
         sample = sample_dataframe(self.stars.copy(), N, weights=sample_weights)
         return sample
     
@@ -451,13 +451,13 @@ class MultizoneStars:
         # Create dummy entries to count at least 0 mass at every age
         temp_df = pd.DataFrame({
             'age': bin_centers, 
-            'mass': np.zeros(bin_centers.shape)
+            'mstar': np.zeros(bin_centers.shape)
         })
         stars = pd.concat([self.stars, temp_df])
         # stars['age'] = np.round(stars['age'], decimals=2)
         # Sum stellar mass in each bin
         mass_total, _ = np.histogram(stars['age'], bins=bin_edges, 
-                                     weights=stars['mass'])
+                                     weights=stars['mstar'])
         # Calculate remaining stellar mass today
         mass_remaining = mass_total * (1 - np.array(
             [vice.cumulative_return_fraction(age) for age in bin_centers]))

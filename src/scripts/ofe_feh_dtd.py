@@ -18,7 +18,7 @@ from _globals import ZONE_WIDTH, TWO_COLUMN_WIDTH, MAX_SF_RADIUS, ABSZ_BINS
 import paths
 
 FEH_LIM = (-1.3, 0.6)
-OFE_LIM = (-0.1, 0.55)
+OFE_LIM = (-0.15, 0.55)
 GALR_LIM = (7, 9)
 
 SFH_MODEL = 'insideout'
@@ -27,7 +27,7 @@ DTD_LIST = ['prompt',
             'exponential_timescale15', 
             'plateau_width10', 
             'triple']
-DTD_LABELS = ['Prompt', 
+DTD_LABELS = ['Two-population', 
               'Power-law\n($\\alpha=-1.1$)', 
               'Exponential\n($\\tau=1.5$ Gyr)',
               'Plateau\n($W=1$ Gyr)',
@@ -50,21 +50,18 @@ def main():
     
     apogee_data = import_apogee()
     
-    for i, row in enumerate(axs):
-        absz_lim = (ABSZ_BINS[-(i+2)], ABSZ_BINS[-(i+1)])
-        # Axis row labels
-        axs[i,0].text(0.93, 0.93, r'$%s\leq |z| < %s$ kpc' % absz_lim, 
-                      va='top', ha='right', transform=axs[i,0].transAxes)
-        for j, ax in enumerate(row):
-            dtd = DTD_LIST[j]
-            output_name = '/'.join(['gaussian', SFH_MODEL, dtd, 'diskmodel'])
-            # Import multioutput stars data
-            mzs = MultizoneStars.from_output(output_name)
-            mzs.model_uncertainty(inplace=True)
-            mzs.region(GALR_LIM, absz_lim, inplace=True)
+    for j, dtd in enumerate(DTD_LIST):
+        output_name = '/'.join(['gaussian', SFH_MODEL, dtd, 'diskmodel'])
+        # Import multioutput stars data
+        mzs = MultizoneStars.from_output(output_name)
+        mzs.model_uncertainty(inplace=True)
+        for i in range(len(ABSZ_BINS) - 1):
+            absz_lim = (ABSZ_BINS[-(i+2)], ABSZ_BINS[-(i+1)])
+            vice_subset = mzs.region(GALR_LIM, absz_lim)
             # Plot sample of star particle abundances
-            mzs.scatter_plot(axs[i,j], '[fe/h]', '[o/fe]', color='galr_origin',
-                             cmap=CMAP_NAME, norm=cbar.norm, markersize=0.1)
+            vice_subset.scatter_plot(axs[i,j], '[fe/h]', '[o/fe]', 
+                                     color='galr_origin', markersize=0.1,
+                                     cmap=CMAP_NAME, norm=cbar.norm)
             # Plot APOGEE contours
             apogee_contours(axs[i,j], apogee_data, GALR_LIM, absz_lim)
             # Plot abundance tracks
@@ -86,9 +83,11 @@ def main():
     # Set axis labels
     for ax in axs[-1]:
         ax.set_xlabel('[Fe/H]')
-    for ax in axs[:,0]:
-        ax.set_ylabel('[O/Fe]')
-    # Axis titles
+    for i, ax in enumerate(axs[:,0]):
+        ax.set_ylabel('[O/Fe]', labelpad=2)
+        absz_lim = (ABSZ_BINS[-(i+2)], ABSZ_BINS[-(i+1)])
+        ax.text(0.93, 0.93, r'$%s\leq |z| < %s$ kpc' % absz_lim, 
+                va='top', ha='right', transform=ax.transAxes)
     for j, ax in enumerate(axs[0]):
         ax.set_title(DTD_LABELS[j])
     
