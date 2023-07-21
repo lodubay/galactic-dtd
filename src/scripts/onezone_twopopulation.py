@@ -77,7 +77,7 @@ def main():
     axs[0].set_ylim((-0.1, 0.52))
 
     axs[0].legend(frameon=False, loc='lower left', handlelength=1.2)
-    fig.savefig(paths.figures / 'onezone_prompt.pdf', dpi=300)
+    fig.savefig(paths.figures / 'onezone_twopopulation.pdf', dpi=300)
     plt.close()
 
 

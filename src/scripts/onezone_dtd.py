@@ -36,7 +36,7 @@ def main():
               r'Plateau ($W=1$ Gyr)',
               r'Exponential ($\tau=1.5$ Gyr)',
               r'Power-law ($\alpha=-1.1$)',
-              r'Prompt',]
+              r'Two-population',]
     colors = [paultol.vibrant.colors[i] for i in [5, 0, 1, 4, 2]]
     line_styles = ['-', '-.', '--', ':', ':']
 

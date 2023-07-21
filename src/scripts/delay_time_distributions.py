@@ -31,7 +31,7 @@ class styles:
     """Plot styling for different DTD models."""
     plaw = {
         'func': dtds.powerlaw(slope=-1.1, tmin=DELAY),
-        'label': r'Power law ($\alpha=-1.1$)',
+        'label': r'Power-law ($\alpha=-1.1$)',
         'color': paultol.bright.colors[0],
         'line': '-',
     }
@@ -49,15 +49,13 @@ class styles:
     }
     prompt = {
         'func': dtds.prompt(peak=0.05, stdev=0.015, timescale=3, tmin=DELAY),
-        'label': r'Prompt ($t_{\rm{max}}=50$ Myr)'
-                 '\n'
-                 r'+ exponential ($\tau=3$ Gyr)',
+        'label': 'Two-population',
         'color': paultol.bright.colors[1],
         'line': ':',
     }
     triple = {
         'func': dtds.triple(tmin=DELAY),
-        'label': r'Triple-system evolution',
+        'label': r'Triple-system',
         'color': paultol.bright.colors[2],
         'line': '-.'
     }
@@ -76,7 +74,7 @@ class styles:
     }
     plaw_steep = {
         'func': dtds.powerlaw(slope=-1.4, tmin=DELAY),
-        'label': r'Power law ($\alpha=-1.4$)',
+        'label': r'Power-law ($\alpha=-1.4$)',
         'color': paultol.muted.colors[1],
         'line': '--',
     }

@@ -29,7 +29,7 @@ DTD_LIST = ['prompt',
             'exponential_timescale15', 
             'plateau_width10', 
             'triple']
-DTD_LABELS = ['Prompt', 
+DTD_LABELS = ['Two-population', 
               'Power-law\n($\\alpha=-1.1$)', 
               'Exponential\n($\\tau=1.5$ Gyr)',
               'Plateau\n($W=1$ Gyr)',
