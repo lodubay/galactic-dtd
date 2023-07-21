@@ -12,9 +12,11 @@ overleaf:
 
 dependencies:
     src/scripts/radial_migration.py:
+        - src/scripts/multizone_stars.py
         - src/data/multizone/diffusion/insideout/powerlaw_slope11/
         - src/data/multizone/gaussian/insideout/powerlaw_slope11/
     src/scripts/midplane_distance.py:
+        - src/scripts/multizone_stars.py
         - src/data/multizone/diffusion/insideout/powerlaw_slope11/
         - src/data/multizone/gaussian/insideout/powerlaw_slope11/
     src/scripts/star_formation_histories.py:
@@ -23,41 +25,55 @@ dependencies:
         - src/data/multizone/gaussian/earlyburst/powerlaw_slope11/
         - src/data/multizone/gaussian/twoinfall/powerlaw_slope11/
     src/scripts/feh_df_sfh.py:
+        - src/scripts/multizone_stars.py
+        - src/scripts/distribution_functions.py
         - src/data/multizone/gaussian/insideout/exponential_timescale15/
         - src/data/multizone/gaussian/lateburst/exponential_timescale15/
         - src/data/multizone/gaussian/earlyburst/exponential_timescale15/
         - src/data/multizone/gaussian/twoinfall/exponential_timescale15/
     src/scripts/feh_df_dtd.py:
+        - src/scripts/multizone_stars.py
+        - src/scripts/distribution_functions.py
         - src/data/multizone/gaussian/insideout/powerlaw_slope14/
         - src/data/multizone/gaussian/insideout/exponential_timescale30/
     src/scripts/ofe_df_sfh.py:
+        - src/scripts/multizone_stars.py
+        - src/scripts/distribution_functions.py
         - src/data/multizone/gaussian/insideout/exponential_timescale15/
         - src/data/multizone/gaussian/lateburst/exponential_timescale15/
         - src/data/multizone/gaussian/earlyburst/exponential_timescale15/
         - src/data/multizone/gaussian/twoinfall/exponential_timescale15/
     src/scripts/ofe_df_dtd.py:
+        - src/scripts/multizone_stars.py
+        - src/scripts/distribution_functions.py
         - src/data/multizone/gaussian/insideout/prompt/
         - src/data/multizone/gaussian/insideout/powerlaw_slope11/
         - src/data/multizone/gaussian/insideout/exponential_timescale15/
         - src/data/multizone/gaussian/insideout/plateau_width10/
         - src/data/multizone/gaussian/insideout/triple/
     src/scripts/ofe_feh_sfh.py:
+        - src/scripts/multizone_stars.py
         - src/data/multizone/gaussian/insideout/exponential_timescale15/
         - src/data/multizone/gaussian/lateburst/exponential_timescale15/
         - src/data/multizone/gaussian/earlyburst/exponential_timescale15/
         - src/data/multizone/gaussian/twoinfall/exponential_timescale15/
     src/scripts/ofe_feh_dtd.py:
+        - src/scripts/multizone_stars.py
         - src/data/multizone/gaussian/insideout/prompt/
         - src/data/multizone/gaussian/insideout/powerlaw_slope11/
         - src/data/multizone/gaussian/insideout/exponential_timescale15/
         - src/data/multizone/gaussian/insideout/plateau_width10/
         - src/data/multizone/gaussian/insideout/triple/
     src/scripts/age_ofe_sfh.py:
+        - src/scripts/multizone_stars.py
+        - src/scripts/age_ofe.py
         - src/data/multizone/gaussian/insideout/exponential_timescale15/
         - src/data/multizone/gaussian/lateburst/exponential_timescale15/
         - src/data/multizone/gaussian/earlyburst/exponential_timescale15/
         - src/data/multizone/gaussian/twoinfall/exponential_timescale15/
     src/scripts/age_ofe_dtd.py:
+        - src/scripts/multizone_stars.py
+        - src/scripts/age_ofe.py
         - src/data/multizone/gaussian/insideout/prompt/
         - src/data/multizone/gaussian/insideout/powerlaw_slope11/
         - src/data/multizone/gaussian/insideout/exponential_timescale15/

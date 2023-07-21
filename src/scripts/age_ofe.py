@@ -216,7 +216,7 @@ def rms_median_diff(vice_stars, apogee_data, age_col='LATENT_AGE',
     # bin mass-weighted VICE ages by [O/Fe]
     vice_grouped = group_by_bins(vice_stars, '[o/fe]', bins=ofe_bins)
     # weighted medians of VICE
-    wm = lambda x: weighted_quantile(x, 'age', 'mass', quantile=0.5)
+    wm = lambda x: weighted_quantile(x, 'age', 'mstar', quantile=0.5)
     vice_medians = vice_grouped.apply(wm)
     # RMS of median difference
     notna = (pd.notna(apogee_medians) & pd.notna(vice_medians))
@@ -263,9 +263,9 @@ def plot_vice_medians(ax, stars, ofe_lim=OFE_LIM, ofe_bin_width=OFE_BIN_WIDTH,
     """
     stars = stars.dropna(how='any')
     # Lambda functions for weighted quantiles
-    wm = lambda x: weighted_quantile(x, 'age', 'mass', quantile=0.5)
-    wl = lambda x: weighted_quantile(x, 'age', 'mass', quantile=0.16)
-    wu = lambda x: weighted_quantile(x, 'age', 'mass', quantile=0.84)
+    wm = lambda x: weighted_quantile(x, 'age', 'mstar', quantile=0.5)
+    wl = lambda x: weighted_quantile(x, 'age', 'mstar', quantile=0.16)
+    wu = lambda x: weighted_quantile(x, 'age', 'mstar', quantile=0.84)
     # Define [O/Fe] bins
     ofe_bins = np.arange(ofe_lim[0], ofe_lim[1]+ofe_bin_width, ofe_bin_width)
     # Mass-weighted median and standard deviation of ages
@@ -274,7 +274,7 @@ def plot_vice_medians(ax, stars, ofe_lim=OFE_LIM, ofe_bin_width=OFE_BIN_WIDTH,
     age_lower = grouped.apply(wl)
     age_upper = grouped.apply(wu)
     # Separate bins with very little mass and plot with different marker
-    mtot = grouped['mass'].sum()
+    mtot = grouped['mstar'].sum()
     high_mass_bins = mtot[mtot >= low_mass_cutoff * mtot.sum()].index
     ax.errorbar(age_median[high_mass_bins], high_mass_bins, 
                 xerr=(age_median[high_mass_bins] - age_lower[high_mass_bins], 
