@@ -506,7 +506,7 @@ Holding the SFH fixed, varying the DTD has only a minor effect on the MDF. Figur
 \begin{figure}
     \centering
     \includegraphics{figures/ofe_feh_sfh.pdf}
-    \caption{Caption}
+    \caption{A comparison of the [O/Fe]--[Fe/H] plane between the four SFH models in our multi-zone simulations. All assume an exponential DTD with $\tau=1.5$ Gyr. Each point plots the abundances of a single star particle and is color-coded according to its Galactocentric radius at birth. Each panel plots a random sample of 10,000 star particles in the Solar neighborhood ($7\leq R_{\rm gal}<9$ kpc, $0\leq|z|<0.5$ kpc) weighted by their mass. A Gaussian scatter has been applied to all points based on the median abundance errors in APOGEE DR17. The black curves represent the ISM abundance tracks in the 8 kpc zone. The red contours represent the APOGEE abundance distribution, with the solid and dashed contours enclosing 68\% and 95\% of stars, respectively.}
     \label{fig:ofe-feh-sfh}
     \script{ofe-feh-sfh.py}
 \end{figure}
@@ -514,10 +514,21 @@ Holding the SFH fixed, varying the DTD has only a minor effect on the MDF. Figur
 \begin{figure*}
     \centering
     \includegraphics{figures/ofe_feh_dtd.pdf}
-    \caption{Caption}
+    \caption{Similar to Figure \ref{fig:ofe-feh-sfh} but comparing multi-zone simulations with different DTD models. All assume an inside-out SFH.}
     \label{fig:ofe-feh-dtd}
     \script{ofe-feh-dtd.py}
 \end{figure*}
+
+\subsection{The Age--[O/Fe] Plane}
+\label{sec:age-ofe}
+
+\begin{figure}
+    \centering
+    \includegraphics{figures/age_ofe_sfh.pdf}
+    \caption{Caption}
+    \label{fig:age-ofe-sfh}
+    \script{age_ofe_sfh.py}
+\end{figure}
 
 
 \section{Discussion}
