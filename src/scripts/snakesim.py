@@ -75,7 +75,7 @@ def model(name, params):
         yields = params['yields'],
         seed = params['seed']
     )
-    if params.migration == 'post-process':
+    if params['migration'] == 'post-process':
         kwargs['simple'] = True
     else:
         kwargs['migration_mode'] = params['migration']
