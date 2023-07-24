@@ -68,17 +68,17 @@ def model(name, params):
             params[key] = default_value
     kwargs = dict(
         name = name,
-        spec = params.evolution,
-        RIa = params.RIa,
-        RIa_kwargs = params.RIa_params,
-        delay = params.minimum_delay,
-        yields = params.yields,
-        seed = params.seed
+        spec = params['evolution'],
+        RIa = params['RIa'],
+        RIa_kwargs = params['RIa_params'],
+        delay = params['minimum_delay'],
+        yields = params['yields'],
+        seed = params['seed']
     )
-    if params.migration == "post-process":
-        kwargs["simple"] = True
+    if params.migration == 'post-process':
+        kwargs['simple'] = True
     else:
-        kwargs["migration_mode"] = params.migration
+        kwargs['migration_mode'] = params['migration']
     return multizone.src.diskmodel.from_config(config, **kwargs)
 
 
