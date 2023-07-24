@@ -23,9 +23,8 @@ def main():
     fullpath = paths.root / snakemake.output[0] / 'diskmodel'
     if not fullpath.parents[0].exists():
         fullpath.parents[0].mkdir(parents=True)
-    print(type(snakemake.params))
-    print(snakemake.params)
-    model_ = model(str(fullpath), snakemake.params)
+    # Convert snakemake params to dict
+    model_ = model(str(fullpath), dict(snakemake.params))
     model_.run([_ * model_.dt for _ in range(round(
         _globals.END_TIME / model_.dt) + 1)],
         overwrite = True, pickle = True)
@@ -66,7 +65,7 @@ def model(name, params):
     # Fill in missing params with defaults
     for key, default_value in _DEFAULT_PARAMS_.items():
         if key not in params.keys():
-            params.key = default_value
+            params[key] = default_value
     kwargs = dict(
         name = name,
         spec = params.evolution,
