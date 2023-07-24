@@ -66,7 +66,7 @@ def model(name, params):
     # Fill in missing params with defaults
     for key, default_value in _DEFAULT_PARAMS_.items():
         if key not in params.keys():
-            params[key] = default_value
+            params.key = default_value
     kwargs = dict(
         name = name,
         spec = params.evolution,
