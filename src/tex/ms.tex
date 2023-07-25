@@ -35,7 +35,11 @@
 
 \section{Introduction}
 
+Studies of galactic chemical evolution typically assume a single form for the SN Ia DTD. This is the first comprehensive look at the DTD in a model for GCE which includes the effects of radial migration.
 
+Why radial migration is important for SNe Ia.
+
+Summary of observational studies of the DTD. These studies all assume a particular form for the DTD and fit for the specific parameters. They do not quantitatively favor one form over another (e.g., power-law over exponential).
 
 \section{Methods}
 \label{sec:methods}
@@ -75,14 +79,6 @@ In this paper, we investigate the cases $\alpha=-1.1$ and $\alpha=-1.4$.
 \end{equation}
 where $B_W=[(W-t_{\rm min}) + \frac{t_{\rm max}^{\alpha+1} - W^{\alpha+1}}{(\alpha+1)W^\alpha}]^{-1}$ is the normalization coefficient.
 We investigate the cases $W=0.3$ Gyr and $W=1$ Gyr, taking $\alpha=-1.1$ for all plateau models. Figure \ref{fig:dtd-greggio05} illustrates the similarity between these models and two different treatments of the analytical double-degenerate DTD from \citet{Greggio2005-AnalyticalRates}.
-
-\begin{figure}
-    \centering
-    \includegraphics{figures/dtd_greggio05.pdf}
-    \caption{Analytical DTDs from \citet[][solid curves]{Greggio2005-AnalyticalRates} and close approximation simple functions (dashed curves). Some functions are presented with a constant multiplicative factor for visual clarity.}
-    \label{fig:dtd-greggio05}
-    \script{dtd_greggio05.py}
-\end{figure}
 
 \paragraph{Exponential} An exponentially declining DTD with timescale $\tau$ and normalization $C_\tau$:
 \begin{equation}
@@ -209,58 +205,6 @@ Figure \ref{fig:sfhs} presents an overview of these model star formation histori
     \script{star_formation_histories.py}
 \end{figure*}
 
-\subsection{Stellar Migration}
-\label{sec:migration}
-
-For each star particle in VICE, \citet{Johnson2021-Migration} randomly assign an analogue star particle from \texttt{h277} and adopt its radial migration distance $\Delta R$ and final midplane distance $z$. This allows VICE to adopt a realistic pattern of radial migration without needing to implement its own hydrodynamical simulation. However, in regions where the number of h277 star particles is relatively low, such as at large $R_{\rm gal}$ and small $t$, a single h277 star particle can be assigned as an analogue to multiple VICE stellar populations. These populations will have similar formation and migration histories and consequently similar abundances, which produces unphysical ``clumps'' of stars in the abundance distributions at high latitudes and large radii. 
-
-We fit a Gaussian to the distribution of $\Delta R = R_{\rm final} - R_{\rm initial}$ from the \texttt{h277} output in bins of $R_{\rm initial}$ and age. Each Gaussian is centered at 0 and we find that the scale $\sigma_{\Delta R}$ is best described by the function
-
-\begin{equation}
-    \sigma_{\Delta R} = 1.35\,{\rm kpc} \Big(\frac{R_{\rm form}}{8\,{\rm kpc}}\Big)^{0.61} \Big(\frac{\tau}{1\,{\rm Gyr}}\Big)^{0.33}
-    \label{eq:radial-migration}
-\end{equation}
-
-\noindent where $\tau$ is the age of the star particle. 
-
-We fit a sech$^2$ function \citep{Spitzer1942} to the distribution of midplane distances $z_{\rm final}$. Vertical migration away from the midplane does not affect the chemical evolution simulation, but we do use $z_{\rm final}$ in our analysis. The probability density function (PDF) of $z_{\rm final}$ given some scale height $h_z$ is
-\begin{equation}
-    {\rm PDF}(z_{\rm final}) = \frac{1}{4 h_z} {\rm sech}^2\Big(\frac{z_{\rm final}}{2 h_z}\Big)
-    \label{eq:sech-pdf}
-\end{equation}
-and the corresponding cumulative distribution function (CDF) is
-\begin{equation}
-    {\rm CDF}(z_{\rm final}) = \frac{1}{1 + e^{-z_{\rm final} / h_z}}.
-    \label{eq:sech-cdf}
-\end{equation}
-We fit the above function to the distributions of $z_{\rm final}$ in h277 in varying bins of $\tau$ and $R_{\rm final}$ and found that $h_z$ is best described by the function
-\begin{equation}
-    h_z = (0.25\,{\rm kpc}) 
-    e^{\frac{\tau-5\,{\rm Gyr}}{7.0\,{\rm Gyr}}}
-    e^{\frac{R_{\rm final}-8\,{\rm kpc}}{6.0\,{\rm kpc}}}.
-    \label{eq:scale-height}
-\end{equation}
-
-When a star particle is created by VICE at initial radius $R_{\rm form}$, we sample its total radial migration distance $\Delta R$ from a Gaussian with a width described by Equation \ref{eq:radial-migration}, and we sample its final midplane distance $z_{\rm final}$ from the distribution described by Equation \ref{eq:sech-pdf} with a width given by Equation \ref{eq:scale-height}. The star particle migrates to its final radius $R_{\rm final}$ in a similar manner to the ``diffusion'' case from \citet{Johnson2021-Migration}, but with a time dependence $\propto t^{1/3}$. This produces distributions of $R_{\rm final}$ and $z_{\rm final}$ which are similar to the analogue migration case for all but the oldest stars. 
-
-Figure \ref{fig:radial-migration} compares the distributions of $R_{\rm final}$ in bins of $R_{\rm form}$ and age between the analogue and Gaussian migration schema. The 
-
-\begin{figure*}
-    \centering
-    \includegraphics{figures/radial_migration.pdf}
-    \caption{The distribution of final radius $R_{\rm final}$ as a function of formation radius $R_{\rm form}$ and age for the h277 analogue (top row) and Gaussian sampling scheme (bottom row). From left to right, star particles are binned by formation annulus, from the inner disk (far left column) to the Solar annulus (center column) to the outer disk (far right column). Within each panel, colored curves represent the different age bins, ranging from the youngest stars (dark blue) to the oldest (dark red). All distributions are normalized so that the area under the curve is 1, and have been smoothed by a boxcar function of width 0.5 kpc. The vertical dotted black lines indicate the bounds of each bin in $R_{\rm form}$; stars within that region of the distribution have not migrated outside their birth annulus over their lifetime.}
-    \label{fig:radial-migration}
-    \script{radial_migration.py}
-\end{figure*}
-
-\begin{figure*}
-    \centering
-    \includegraphics{figures/midplane_distance.pdf}
-    \caption{Similar to Figure \ref{fig:radial-migration} but for the distribution of final midplane distance $z_{\rm final}$ as a function of final radius and age. From left to right, star particles are binned by \textit{final} annulus. All distributions have been smoothed by a boxcar function of width 0.1 kpc.}
-    \label{fig:midplane-distance}
-    \script{midplane_distance.py}
-\end{figure*}
-
 \subsection{Nucleosynthetic Yields}
 \label{sec:yields}
 
@@ -335,6 +279,19 @@ All models are run for a duration of $t_{\rm max}=13.2$ Gyr with a time-step of 
 \subsection{The SN Ia Delay-Time Distribution}
 \label{sec:onezone-dtd}
 
+\begin{figure*}
+    \centering
+    \includegraphics[width=0.32\linewidth]{figures/onezone_powerlaw_slope.pdf}
+    \includegraphics[width=0.32\linewidth]{figures/onezone_exponential_timescale.pdf}
+    \includegraphics[width=0.32\linewidth]{figures/onezone_plateau_width.pdf}
+    \\
+    \includegraphics[width=0.49\linewidth]{figures/onezone_minimum_delay.pdf}
+    \includegraphics[width=0.49\linewidth]{figures/onezone_dtd.pdf}
+    \caption{}
+    \label{fig:onezone-multipanel}
+    \script{onezone_multipanel.py}
+\end{figure*}
+
 % Adjusting the parameters of the DTD affects how steeply the abundance track in [Fe/H]-[O/Fe] space falls from its initial ``plateau'' and the location of the ``knee.'' Figure \ref{fig:onezone-slope-timescale} shows abundance tracks from one-zone models which assume different slopes of a power-law DTD or different timescales of an exponential DTD. A steeper power-law slope results in a steeper decline in [O/Fe] and a lower knee, as does a shorter exponential timescale. The consequence is that a very shallow power-law produces a similar abundance track to a very steep exponential, which suggests these models may be difficult to distinguish in this parameter space. However, these cases can be distinguished by their MDFs and [O/Fe] distributions, where the power-law DTD produces a narrower, less skewed distribution while the exponential DTD produces a broader, more skewed distribution. In the [O/Fe] distribution especially, an exponential DTD with a 6 Gyr timescale produces a large number of high-$\alpha$ stars.
 
 Figure \ref{fig:onezone-powerlaw-slope} compares the results of three one-zone models which are identical except for the slope of the power-law DTD. A steeper slope produces a sharper ``knee'' and a faster decline in [O/Fe], resulting in a narrower distribution of [O/Fe] around the low-$\alpha$ sequence and a dearth of high-$\alpha$ stars. Conversely, a shallower slope produces a gentler knee and slower decline in [O/Fe], resulting in a broader [O/Fe] distribution and a greater number of high-$\alpha$ stars. In all cases the [O/Fe] distribution is distinctly unimodal. The distribution of [Fe/H] is not as strongly affected by the power-law slope: a shallower slope results in only a modest increase in the width of the distribution.
@@ -397,19 +354,19 @@ Figure \ref{fig:onezone-minimum-delay} shows that the minimum SN Ia delay time h
 
 A 150 Myr minimum delay time is incompatible with the two-population DTD model, which has $\sim 50$\% of SNe Ia explode in the first 100 Myr, and would have a negligible effect on the triple-system DTD as its relative SN Ia rate is so low at early times.
 
-\subsection{The Star Formation History}
+% \subsection{The Star Formation History}
 
-Figure \ref{fig:onezone-delay-taustar} shows results from one-zone models with a power-law DTD which differ in their assumed minimum SN Ia delay time ($t_D$) or star formation efficiency timescale ($\tau_*$). In [Fe/H]-[O/Fe] space, doubling or halving the minimum delay time produces similar results to doubling or halving the SFE timescale. A shorter minimum delay time means SNe Ia will start to explode sooner after the star formation burst, giving less time for CCSNe to explode at the plateau of the abundance track. Similarly, a longer SFE timescale means fewer massive stars will be produced by the initial star formation burst, resulting in fewer CCSNe before the first SNe Ia explode. 
+% Figure \ref{fig:onezone-delay-taustar} shows results from one-zone models with a power-law DTD which differ in their assumed minimum SN Ia delay time ($t_D$) or star formation efficiency timescale ($\tau_*$). In [Fe/H]-[O/Fe] space, doubling or halving the minimum delay time produces similar results to doubling or halving the SFE timescale. A shorter minimum delay time means SNe Ia will start to explode sooner after the star formation burst, giving less time for CCSNe to explode at the plateau of the abundance track. Similarly, a longer SFE timescale means fewer massive stars will be produced by the initial star formation burst, resulting in fewer CCSNe before the first SNe Ia explode. 
 
-The minimum delay and SFE timescale have similar effects on the abundance tracks but very different effects on the MDFs. Altering the SFE timescale changes the stellar distribution of [Fe/H], especially at the low-metallicity end, as shown in the top panel of Figure \ref{fig:onezone-delay-taustar}. However, as a change in the SFE timescale affects both the number of high-mass and low-mass stars produced, it does not affect the distribution of [O/Fe], as shown in the right-hand panel of Figure \ref{fig:onezone-delay-taustar}. Meanwhile, a change in the minimum SN Ia delay time does not impact the total number of SNe which explode, so the distribution of [Fe/H] is largely unaffected, while it does result in a change in the number of high-$\alpha$ stars formed and therefore the distribution of [O/Fe].
+% The minimum delay and SFE timescale have similar effects on the abundance tracks but very different effects on the MDFs. Altering the SFE timescale changes the stellar distribution of [Fe/H], especially at the low-metallicity end, as shown in the top panel of Figure \ref{fig:onezone-delay-taustar}. However, as a change in the SFE timescale affects both the number of high-mass and low-mass stars produced, it does not affect the distribution of [O/Fe], as shown in the right-hand panel of Figure \ref{fig:onezone-delay-taustar}. Meanwhile, a change in the minimum SN Ia delay time does not impact the total number of SNe which explode, so the distribution of [Fe/H] is largely unaffected, while it does result in a change in the number of high-$\alpha$ stars formed and therefore the distribution of [O/Fe].
 
-\begin{figure}
-    \centering
-    \includegraphics{figures/onezone_delay_taustar.pdf}
-    \caption{Similar to Figure \ref{fig:onezone-powerlaw-slope} but with varying minimum SN Ia delay time ($t_D$) and star formation efficiency timescale ($\tau_*$). Tracks with $\tau_*=2$ Gyr are represented in black, while a track with a shorter $\tau_*=1$ Gyr is shown in red and a track with a longer $\tau_*=4$ Gyr is in yellow. The dotted, solid, and dashed black curves represent a minimum delay time of 40 Myr, 80 Myr, and 160 Myr, respectively. A power-law DTD with $\alpha=-1.1$ is assumed in all models.}
-    \label{fig:onezone-delay-taustar}
-    \script{onezone_delay_taustar.py}
-\end{figure}
+% \begin{figure}
+%     \centering
+%     \includegraphics{figures/onezone_delay_taustar.pdf}
+%     \caption{Similar to Figure \ref{fig:onezone-powerlaw-slope} but with varying minimum SN Ia delay time ($t_D$) and star formation efficiency timescale ($\tau_*$). Tracks with $\tau_*=2$ Gyr are represented in black, while a track with a shorter $\tau_*=1$ Gyr is shown in red and a track with a longer $\tau_*=4$ Gyr is in yellow. The dotted, solid, and dashed black curves represent a minimum delay time of 40 Myr, 80 Myr, and 160 Myr, respectively. A power-law DTD with $\alpha=-1.1$ is assumed in all models.}
+%     \label{fig:onezone-delay-taustar}
+%     \script{onezone_delay_taustar.py}
+% \end{figure}
 
 % \begin{figure}
 %     \centering
@@ -426,15 +383,6 @@ The minimum delay and SFE timescale have similar effects on the abundance tracks
 Figure \ref{fig:onezone-greggio05} shows the results of one-zone chemical evolution models with the \citet{Greggio2005-AnalyticalRates} DTDs. We assume $\eta=2.5$, $\tau_*=2$ Gyr, an inside-out SFH evaluated at a radius of 8 kpc, a continuous recycling approximation, and a minimum SN Ia delay of 40 Myr. We compare the SD, DD WIDE, and DD CLOSE schemes to standard power-law, broken power-law, and exponential DTDs. The SD and DD CLOSE DTDs follow nearly identical tracks in [O/Fe] vs [Fe/H]; however, their distributions on [O/Fe] differ at the low end. The SD DTD follows an exponential with a 1.5 Gyr timescale, whereas the DD CLOSE DTD is well-approximated by a broken power-law with an initial plateau of 350 Myr and a subsequent declining slope of -1.1. The WIDE prescription is likewise best approximated by a broken power-law, but with a longer plateau width of 1 Gyr. In all cases, the difference between the analytical DTD and the nearest broken power-law or exponential is likely too small to be observationally detectable, so in our multi-zone models we implement the more generic functions in lieu of the analytical DTDs.
 
 A multi-zone with the \citet{Greggio2005-AnalyticalRates} SD DTD produced nearly identical results to an exponential DTD with a 1.5 Gyr timescale.
-
-\begin{figure*}
-    \centering
-    \includegraphics{figures/onezone_greggio05_single.pdf}
-    \includegraphics{figures/onezone_greggio05_double.pdf}
-    \caption{Abundance tracks and distributions from one-zone models with the analytical DTDs from \citet{Greggio2005-AnalyticalRates}. \textit{Left:} a comparison between the analytical SD DTD (solid magenta curve), an exponential DTD with a 1.5 Gyr timescale (dashed pink curve), and a power-law DTD with a slope of -1.1 (dotted black curve). \textit{Right:} a comparison between WIDE and CLOSE prescriptions for an analytical DD DTD (solid blue and green curves, respectively), power-law DTDs with an initial plateau of 1 Gyr and 300 Myr (dashed cyan and yellow curves, respectively), and a power-law DTD with no plateau and a slope of -1.1 (dotted black curve).}
-    \label{fig:onezone-greggio05}
-    \script{onezone_greggio05.py}
-\end{figure*}
 
 \section{Results from Multi-Zone Models}
 \label{sec:multizone-results}
@@ -651,6 +599,65 @@ manuscript. The datasets are stored at [URL].
 \label{app:analytical-dtds}
 
 Discuss \citet{Greggio2005-AnalyticalRates} vs our simple function approximations here?
+
+\begin{figure*}
+    \centering
+    \includegraphics{figures/dtd_analytical.pdf}
+    \includegraphics{figures/onezone_analytical_dtd.pdf}
+    \caption{\textit{Left:} Analytical DTDs from \citet[][solid curves]{Greggio2005-AnalyticalRates} and close approximation simple functions (dashed curves). Some functions are presented with a constant multiplicative factor for visual clarity. \textit{Right:} Abundance tracks and distributions from one-zone models with the analytical DTDs from \citet{Greggio2005-AnalyticalRates}. \textit{Left:} a comparison between the analytical SD DTD (solid magenta curve), an exponential DTD with a 1.5 Gyr timescale (dashed pink curve), and a power-law DTD with a slope of -1.1 (dotted black curve). \textit{Right:} a comparison between WIDE and CLOSE prescriptions for an analytical DD DTD (solid blue and green curves, respectively), power-law DTDs with an initial plateau of 1 Gyr and 300 Myr (dashed cyan and yellow curves, respectively), and a power-law DTD with no plateau and a slope of -1.1 (dotted black curve).}
+    \label{fig:analytical-dtd}
+    \script{analytical_dtd_twopanel.py}
+\end{figure*}
+
+\section{Stellar Migration}
+\label{app:migration}
+
+For each star particle in VICE, \citet{Johnson2021-Migration} randomly assign an analogue star particle from \texttt{h277} and adopt its radial migration distance $\Delta R$ and final midplane distance $z$. This allows VICE to adopt a realistic pattern of radial migration without needing to implement its own hydrodynamical simulation. However, in regions where the number of h277 star particles is relatively low, such as at large $R_{\rm gal}$ and small $t$, a single h277 star particle can be assigned as an analogue to multiple VICE stellar populations. These populations will have similar formation and migration histories and consequently similar abundances, which produces unphysical ``clumps'' of stars in the abundance distributions at high latitudes and large radii. 
+
+We fit a Gaussian to the distribution of $\Delta R = R_{\rm final} - R_{\rm initial}$ from the \texttt{h277} output in bins of $R_{\rm initial}$ and age. Each Gaussian is centered at 0 and we find that the scale $\sigma_{\Delta R}$ is best described by the function
+\begin{equation}
+    \sigma_{\Delta R} = 1.35\,{\rm kpc} \Big(\frac{R_{\rm form}}{8\,{\rm kpc}}\Big)^{0.61} \Big(\frac{\tau}{1\,{\rm Gyr}}\Big)^{0.33}
+    \label{eq:radial-migration}
+\end{equation}
+where $\tau$ is the age of the star particle. 
+
+We fit a sech$^2$ function \citep{Spitzer1942} to the distribution of midplane distances $z_{\rm final}$. Vertical migration away from the midplane does not affect the chemical evolution simulation, but we do use $z_{\rm final}$ in our analysis. The probability density function (PDF) of $z_{\rm final}$ given some scale height $h_z$ is
+\begin{equation}
+    {\rm PDF}(z_{\rm final}) = \frac{1}{4 h_z} {\rm sech}^2\Big(\frac{z_{\rm final}}{2 h_z}\Big)
+    \label{eq:sech-pdf}
+\end{equation}
+and the corresponding cumulative distribution function (CDF) is
+\begin{equation}
+    {\rm CDF}(z_{\rm final}) = \frac{1}{1 + e^{-z_{\rm final} / h_z}}.
+    \label{eq:sech-cdf}
+\end{equation}
+We fit the above function to the distributions of $z_{\rm final}$ in h277 in varying bins of $\tau$ and $R_{\rm final}$ and found that $h_z$ is best described by the function
+\begin{equation}
+    h_z = (0.25\,{\rm kpc}) 
+    e^{\frac{\tau-5\,{\rm Gyr}}{7.0\,{\rm Gyr}}}
+    e^{\frac{R_{\rm final}-8\,{\rm kpc}}{6.0\,{\rm kpc}}}.
+    \label{eq:scale-height}
+\end{equation}
+
+When a star particle is created by VICE at initial radius $R_{\rm form}$, we sample its total radial migration distance $\Delta R$ from a Gaussian with a width described by Equation \ref{eq:radial-migration}, and we sample its final midplane distance $z_{\rm final}$ from the distribution described by Equation \ref{eq:sech-pdf} with a width given by Equation \ref{eq:scale-height}. The star particle migrates to its final radius $R_{\rm final}$ in a similar manner to the ``diffusion'' case from \citet{Johnson2021-Migration}, but with a time dependence $\propto t^{1/3}$. This produces distributions of $R_{\rm final}$ and $z_{\rm final}$ which are similar to the analogue migration case for all but the oldest stars. 
+
+Figure \ref{fig:radial-migration} compares the distributions of $R_{\rm final}$ in bins of $R_{\rm form}$ and age between the analogue and Gaussian migration schema. The 
+
+\begin{figure*}
+    \centering
+    \includegraphics{figures/radial_migration.pdf}
+    \caption{The distribution of final radius $R_{\rm final}$ as a function of formation radius $R_{\rm form}$ and age for the h277 analogue (top row) and Gaussian sampling scheme (bottom row). From left to right, star particles are binned by formation annulus, from the inner disk (far left column) to the Solar annulus (center column) to the outer disk (far right column). Within each panel, colored curves represent the different age bins, ranging from the youngest stars (dark blue) to the oldest (dark red). All distributions are normalized so that the area under the curve is 1, and have been smoothed by a boxcar function of width 0.5 kpc. The vertical dotted black lines indicate the bounds of each bin in $R_{\rm form}$; stars within that region of the distribution have not migrated outside their birth annulus over their lifetime.}
+    \label{fig:radial-migration}
+    \script{radial_migration.py}
+\end{figure*}
+
+\begin{figure*}
+    \centering
+    \includegraphics{figures/midplane_distance.pdf}
+    \caption{Similar to Figure \ref{fig:radial-migration} but for the distribution of final midplane distance $z_{\rm final}$ as a function of final radius and age. From left to right, star particles are binned by \textit{final} annulus. All distributions have been smoothed by a boxcar function of width 0.1 kpc.}
+    \label{fig:midplane-distance}
+    \script{midplane_distance.py}
+\end{figure*}
 
 \bibliography{bib}
 
