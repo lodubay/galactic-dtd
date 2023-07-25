@@ -33,7 +33,7 @@ def main():
     
     simtime = np.arange(0, END_TIME + DT, DT)
 
-    fig, axs = setup_axes(logmdf=False)
+    fig, axs = setup_axes()
 
     for i in range(NRUNS):
         delay = MINIMUM_DELAY[i]
@@ -65,16 +65,14 @@ def main():
         plot_vice_onezone(str(output_dir / name), fig=fig, axs=axs,
                           label=label, color=COLOR[i],
                           marker_labels=marker_labels,
-                          style_kw={
-                              'linestyle': LINE_STYLE[i],
-                              'linewidth': line_width,
-                              'zorder': zorder},
-                          logmdf=False
+                          linestyle=LINE_STYLE[i],
+                          linewidth=line_width,
+                          zorder=zorder
                           )
 
-    # Adjust axis limits
-    # axs[0].set_xlim((-2.7, 0.3))
-    # axs[0].set_ylim((-0.1, 0.54))
+    # Re-scale marginal axis limits
+    axs[1].set_ylim(bottom=0)
+    axs[2].set_xlim(left=0)
 
     axs[0].legend(frameon=False, loc='lower left', handlelength=1.2)
     fig.savefig(paths.figures / 'onezone_delay_taustar.pdf', dpi=300)

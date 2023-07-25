@@ -20,7 +20,7 @@ ONEZONE_DEFAULTS = {
     'recycling': 'continuous',
     'delay': MIN_RIA_DELAY,
     'tau_star': 2,
-    'dt': DT,
+    'dt': 0.01,
     'bins': [i*0.01 - 3 for i in range(401)],
     'Mg0': 0.
 }

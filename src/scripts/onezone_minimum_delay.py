@@ -11,7 +11,7 @@ import vice
 import paths
 from multizone.src.yields import J21
 from multizone.src import models, dtds
-from _globals import END_TIME, ONEZONE_DEFAULTS, DT
+from _globals import END_TIME, ONEZONE_DEFAULTS
 from colormaps import paultol
 from track_and_mdf import setup_axes, plot_vice_onezone
 
@@ -27,17 +27,16 @@ def main(overwrite=False):
 
     fig, axs = setup_axes()
 
-    simtime = np.arange(0, END_TIME + DT, DT)
+    dt = ONEZONE_DEFAULTS['dt']
+    simtime = np.arange(0, END_TIME + dt, dt)
 
-    labels = [r'Exponential ($\tau=3$ Gyr)',
-              r'Plateau ($W=0.3$ Gyr)',
+    labels = [r'Exponential ($\tau=1.5$ Gyr)',
               r'Power-Law ($\alpha=-1.1$)',]
     colors = [paultol.vibrant.colors[i] for i in [0, 1, 4]]
 
     for delay, ls in zip(DELAYS, LINE_STYLES):
         ONEZONE_DEFAULTS['delay'] = delay
-        distributions = [dtds.exponential(timescale=3, tmin=delay),
-                         dtds.plateau(width=0.3, slope=-1.1, tmin=delay),
+        distributions = [dtds.exponential(timescale=1.5, tmin=delay),
                          dtds.powerlaw(slope=-1.1, tmin=delay),]
         for i, dtd in enumerate(distributions):
             if delay == DELAYS[1]:
@@ -47,19 +46,21 @@ def main(overwrite=False):
             name = dtd.name + '_delay{:03d}'.format(int(delay * 1000))
             sz = vice.singlezone(name=str(output_dir / name),
                                  RIa=dtd,
-                                 func=models.insideout(8, dt=DT), 
+                                 func=models.insideout(8, dt=dt), 
                                  mode='sfr',
                                  **ONEZONE_DEFAULTS)
             sz.run(simtime, overwrite=True)
             plot_vice_onezone(str(output_dir / name), 
                               fig=fig, axs=axs,
                               label=label, color=colors[i],
-                              style_kw={'linestyle': ls,
-                                        'linewidth': 1,
-                                        'zorder': 5-i+2*int(delay*10)},
-                              marker_labels=(i==0 and delay==DELAYS[1])
+                              linestyle=ls,
+                              zorder=i,
+                              marker_labels=(i==0 and delay==DELAYS[0])
                               )
 
+    # Re-scale marginal axis limits
+    axs[1].set_ylim(bottom=0)
+    axs[2].set_xlim(left=0)
     # Legend
     handles, labels = axs[0].get_legend_handles_labels()
     handles += [Line2D([], [], color='k', ls=ls, lw=1) for ls in LINE_STYLES]

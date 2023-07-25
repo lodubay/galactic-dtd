@@ -38,7 +38,6 @@ def main():
               r'Power-law ($\alpha=-1.1$)',
               r'Two-population',]
     colors = [paultol.vibrant.colors[i] for i in [5, 0, 1, 4, 2]]
-    line_styles = ['-', '-.', '--', ':', ':']
 
     for i, dtd in enumerate(distributions):
         sz = vice.singlezone(name=str(output_dir / dtd.name),
@@ -51,17 +50,12 @@ def main():
                           fig=fig, axs=axs,
                           label=labels[i], 
                           color=colors[i],
-                          style_kw={'linestyle': '-',
-                                    'linewidth': 1},
                           marker_labels=(i==0),
-                          # mdf_style='curve'
                           )
 
-    # Adjust axis limits
-    axs[0].set_xlim((-2.1, 0.4))
-    axs[0].set_ylim((-0.1, 0.52))
-    axs[1].set_ylim((0, None))
-    axs[2].set_xlim((0, None))
+    # Re-scale marginal axis limits
+    axs[1].set_ylim(bottom=0)
+    axs[2].set_xlim(left=0)
 
     axs[0].legend(frameon=False, loc='lower left', handlelength=1.2, fontsize=7)
     fig.savefig(paths.figures / 'onezone_dtd.pdf', dpi=300)

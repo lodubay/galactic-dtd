@@ -16,6 +16,7 @@ mathtext.fontset: cm
 # Font size
 font.size: 8
 legend.fontsize: 7
+legend.handlelength: 1.2
 axes.labelsize: 9
 axes.titlesize: 9
 xtick.labelsize: 8

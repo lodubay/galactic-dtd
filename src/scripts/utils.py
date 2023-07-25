@@ -959,6 +959,28 @@ def box_smooth(hist, bins, width):
     hist_smooth = np.convolve(hist, box, mode='same')
     return hist_smooth
 
+
+def gaussian_smooth(hist, bins, width):
+    """
+    Box-car smoothing function for a pre-generated histogram.
+
+    Parameters
+    ----------
+    bins : array-like
+        Bins dividing the histogram, including the end. Length must be 1 more
+        than the length of hist, and bins must be evenly spaced.
+    hist : array-like
+        Histogram of data
+    width : float
+        Standard deviation of the Gaussian in data units
+    """
+    from scipy.stats import norm
+    bin_width = bins[1] - bins[0]
+    sigma = int(width / bin_width)
+    gaussian = norm.pdf(np.arange(-5*sigma, 5*sigma), loc=0, scale=sigma)
+    hist_smooth = np.convolve(hist, gaussian, mode='same')
+    return hist_smooth
+
 # =============================================================================
 # SCIENCE FUNCTIONS
 # =============================================================================
