@@ -81,6 +81,8 @@ def save_kde(xx, yy, logz, path):
     Generate a text file containing the KDE of the given region along with its
     corresponding x and y coordinates.
     """
+    if not path.parents[0].is_dir():
+        path.parents[0].mkdir(parents=True)
     with open(path, 'w') as f:
         for arr in [xx, yy, logz]:
             f.write('#\n')
