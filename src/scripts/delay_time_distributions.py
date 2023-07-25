@@ -7,9 +7,8 @@ from matplotlib.ticker import FuncFormatter
 import paths
 from multizone.src import dtds
 from colormaps import paultol
+from _globals import MIN_RIA_DELAY
 plt.rcParams['axes.prop_cycle'] = plt.cycler('color', paultol.bright.colors)
-
-DELAY = 0.04 # minimum Ia delay time in Gyr
 
 def main():
     plt.style.use(paths.styles / 'paper.mplstyle')
@@ -30,52 +29,52 @@ def main():
 class styles:
     """Plot styling for different DTD models."""
     plaw = {
-        'func': dtds.powerlaw(slope=-1.1, tmin=DELAY),
+        'func': dtds.powerlaw(slope=-1.1, tmin=MIN_RIA_DELAY),
         'label': r'Power-law ($\alpha=-1.1$)',
         'color': paultol.bright.colors[0],
         'line': '-',
     }
     plateau = {
-        'func': dtds.plateau(width=0.3, slope=-1.1, tmin=DELAY),
+        'func': dtds.plateau(width=0.3, slope=-1.1, tmin=MIN_RIA_DELAY),
         'label': r'Plateau ($W=0.3$ Gyr)',
         'color': paultol.bright.colors[4],
         'line': '--',
     }
     exp = {
-        'func': dtds.exponential(timescale=1.5, tmin=DELAY),
+        'func': dtds.exponential(timescale=1.5, tmin=MIN_RIA_DELAY),
         'label': r'Exponential ($\tau=1.5$ Gyr)',
         'color': paultol.bright.colors[5],
         'line': '-',
     }
     prompt = {
-        'func': dtds.prompt(peak=0.05, stdev=0.015, timescale=3, tmin=DELAY),
+        'func': dtds.prompt(peak=0.05, stdev=0.015, timescale=3, tmin=MIN_RIA_DELAY),
         'label': 'Two-population',
         'color': paultol.bright.colors[1],
         'line': ':',
     }
     triple = {
-        'func': dtds.triple(tmin=DELAY),
+        'func': dtds.triple(tmin=MIN_RIA_DELAY),
         'label': r'Triple-system',
         'color': paultol.bright.colors[2],
         'line': '-.'
     }
     # Additional DTDs
     exp_long = {
-        'func': dtds.exponential(timescale=3, tmin=DELAY),
+        'func': dtds.exponential(timescale=3, tmin=MIN_RIA_DELAY),
         'label': r'Exponential ($\tau=3$ Gyr)',
-        'color': paultol.muted.colors[5],
+        'color': paultol.bright.colors[5],
         'line': '--',
     }
     plateau_long = {
-        'func': dtds.plateau(width=1., slope=-1.1, tmin=DELAY),
+        'func': dtds.plateau(width=1., slope=-1.1, tmin=MIN_RIA_DELAY),
         'label': r'Plateau ($W=1$ Gyr)',
-        'color': paultol.muted.colors[3],
+        'color': paultol.bright.colors[4],
         'line': ':',
     }
     plaw_steep = {
-        'func': dtds.powerlaw(slope=-1.4, tmin=DELAY),
+        'func': dtds.powerlaw(slope=-1.4, tmin=MIN_RIA_DELAY),
         'label': r'Power-law ($\alpha=-1.4$)',
-        'color': paultol.muted.colors[1],
+        'color': paultol.bright.colors[0],
         'line': '--',
     }
 
