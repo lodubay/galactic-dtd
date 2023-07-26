@@ -17,7 +17,6 @@ PLATEAUS = [1., 0.3, 0.1] # Gyr
 SLOPE = -1.1
 # Plot settings
 LINE_STYLE = ['-', '--', '-.']
-LOG_MDF = False
 
 def main(overwrite=False):
     plt.style.use(paths.styles / 'paper.mplstyle')
@@ -30,7 +29,7 @@ def main(overwrite=False):
     delay = ONEZONE_DEFAULTS['delay']
     simtime = np.arange(0, END_TIME + dt, dt)
 
-    fig, axs = setup_axes(logmdf=LOG_MDF, title='Plateau DTD')
+    fig, axs = setup_axes(title='Plateau DTD')
 
     # Plot exponentials for reference
     # for tau, ls in zip([1.5, 3], ['--', '-']):
@@ -47,10 +46,9 @@ def main(overwrite=False):
                       fig=fig, axs=axs,
                       label=rf'Exponential ($\tau={tau:.01f}$ Gyr)',
                       color=paultol.bright.colors[0],
-                      style_kw={'linestyle': ':',
-                                'linewidth': 1.5,
-                                'zorder': 1},
-                      logmdf=LOG_MDF
+                      linestyle=':',
+                      linewidth=1.5,
+                      zorder=1
                       )
 
     for i, plateau in enumerate(PLATEAUS):
@@ -71,12 +69,9 @@ def main(overwrite=False):
                           fig=fig, axs=axs,
                           label=r'$W={:1.1f}$ Gyr'.format(plateau), 
                           color=paultol.bright.colors[1],
-                          style_kw={
-                              'linestyle': LINE_STYLE[i],
-                              'linewidth': 1,
-                              'zorder': 9},
+                          linestyle=LINE_STYLE[i],
+                          zorder=9,
                           marker_labels=(i==0),
-                          logmdf=LOG_MDF
                           )
 
     # Plot standard power-law for reference
@@ -90,17 +85,15 @@ def main(overwrite=False):
     plot_vice_onezone(str(output_dir / plaw.name),
                       fig=fig, axs=axs,
                       label='No plateau', color='k',
-                      style_kw={'linestyle': ':',
-                                'linewidth': 1,
-                                'zorder': 2},
-                      logmdf=LOG_MDF
+                      linestyle=':',
+                      zorder=2
                       )
 
     # Adjust axis limits
-    axs[0].set_xlim((-2.1, 0.4))
-    axs[0].set_ylim((-0.1, 0.52))
+    axs[1].set_ylim(bottom=0)
+    axs[2].set_xlim(left=0)
 
-    axs[0].legend(frameon=False, loc='lower left', handlelength=1.2)
+    axs[0].legend(frameon=False, loc='lower left')
     fig.savefig(paths.figures / 'onezone_plateau_width.pdf', dpi=300)
     plt.close()
 

@@ -35,7 +35,7 @@ def main():
     if not output_dir.exists():
         output_dir.mkdir(parents=True)
 
-    fig, axs = setup_axes(logmdf=False)
+    fig, axs = setup_axes()
 
     simtime = np.arange(0, END_TIME + DT, DT)
 
@@ -49,9 +49,7 @@ def main():
     sz.run(simtime, overwrite=True)
     plot_vice_onezone(str(output_dir / dtd.name), fig=fig, axs=axs,
                       label=rf'Exponential ($\tau={TIMESCALE:.01f}$ Gyr)',
-                      style_kw={'linewidth': 1, 'zorder': 1},
-                      marker_labels=True,
-                      logmdf=False
+                      zorder=1
     )
 
     for i in range(len(PEAKS)):
@@ -66,17 +64,15 @@ def main():
         plot_vice_onezone(str(output_dir / dtd.name), fig=fig, axs=axs,
                           label=r'$\bar t={}$ Myr, $\sigma_t={}$ Myr'.format(
                               int(PEAKS[i]*1000), int(WIDTHS[i]*1000)),
-                          style_kw={'linestyle': LINE_STYLE[i], 
-                                    'linewidth': 1, 
-                                    'zorder': 10-i},
-                          logmdf=False
+                          linestyle=LINE_STYLE[i],
+                          zorder=10-i
         )
 
     # Adjust axis limits
-    axs[0].set_xlim((-2.1, 0.4))
-    axs[0].set_ylim((-0.1, 0.52))
+    axs[1].set_ylim(bottom=0)
+    axs[2].set_xlim(left=0)
 
-    axs[0].legend(frameon=False, loc='lower left', handlelength=1.2)
+    axs[0].legend(frameon=False, loc='lower left')
     fig.savefig(paths.figures / 'onezone_twopopulation.pdf', dpi=300)
     plt.close()
 
