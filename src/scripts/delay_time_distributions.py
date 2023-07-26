@@ -2,6 +2,7 @@
 Plot the Type Ia supernova delay time distributions (DTDs) as a function of time.
 """
 
+import numpy as np
 import matplotlib.pyplot as plt
 from matplotlib.ticker import FuncFormatter
 import paths
@@ -15,13 +16,30 @@ def main():
     fig, ax= setup_axes()
     times = [t*0.001 for t in range(40, 13200)]
     distributions = [styles.prompt, styles.plaw, styles.plateau, 
-                      styles.exp, styles.triple]
+                     styles.exp, styles.triple]
     for dtd in distributions:
         func = dtd['func']
         ax.plot(times, [func(t) / func(1) for t in times], 
                 label=dtd['label'], c=dtd['color'], ls=dtd['line'], lw=1)
     ax.set_ylim((3e-3, 3e2))
-    ax.legend(frameon=False, loc='upper right', fontsize=8, handlelength=1.25)
+    # Plot the SDSS-II DTD recovered by Maoz et al. (2012), MNRAS 426, 3282
+    # (see their Table 2)
+    tbins = np.array([0.04, 0.42, 2.4, 14])
+    times = (tbins[:-1] + tbins[1:])/2
+    tbin_widths = (tbins[1:] - tbins[:-1])/2
+    sn_rates = np.array([140, 25.1, 1.83])
+    sn_rate_errors = np.array([30, 6.3, 0.42])
+    # Linear regression
+    A = np.vstack([np.log10(times), np.ones(len(times))]).T
+    m, c = np.linalg.lstsq(A, np.log10(sn_rates), rcond=None)[0]
+    # Scale so best-fit line passes through (1, 1)
+    norm = 1 / 10**c
+    ax.errorbar(times, sn_rates*norm, xerr=tbin_widths, yerr=sn_rate_errors*norm,
+                color='k', linestyle='none', capsize=1, elinewidth=0.5,
+                capthick=0.5, marker='s', markersize=2, 
+                label='Maoz et al. (2012)')
+    
+    ax.legend(frameon=False, loc='upper right')
     fig.savefig(paths.figures / 'delay_time_distributions.pdf')
     plt.close()
 
