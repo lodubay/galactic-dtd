@@ -3,8 +3,7 @@ This script plots [Fe/H] distribution functions from VICE runs with the same
 DTD but different SFHs.
 """
 
-import argparse
-from pathlib import Path
+import numpy as np
 import matplotlib.pyplot as plt
 import distribution_functions as dfs
 from multizone_stars import MultizoneStars
@@ -24,7 +23,7 @@ DTD_LABELS = ['Power-law\n($\\alpha=-1.4$)',
 SFH_MODEL = 'insideout' # hold constant while varying DTD
 # Plot settings
 NBINS = 100
-FEH_LIM = (-1.1, 0.6)
+FEH_LIM = (-1.2, 0.6)
 SMOOTH_WIDTH = 0.2
 CMAP = 'plasma_r'
 
@@ -56,10 +55,29 @@ def main():
         dfs.plot_multizone_mdfs(mzs, axs[:,3+i], '[fe/h]', colors, 
                                 label=DTD_LABELS[i], bins=NBINS,
                                 range=FEH_LIM, smoothing=SMOOTH_WIDTH)
+    # Add vertical lines for visual separation
+    for x in get_subplot_edges(fig, axs)[1:-1]:
+        line = plt.Line2D([x,x], [0.13,0.98], transform=fig.transFigure, color='k')
+        fig.add_artist(line)
+    
+    
     for ax in axs[:,0]:
         ax.set_ylim((0, None))
     plt.savefig(paths.figures / 'feh_df_comparison.pdf', dpi=300)
     plt.close()
+
+
+def get_subplot_edges(fig, axs):
+    # Get the bounding boxes of the axes including text decorations
+    r = fig.canvas.get_renderer()
+    get_bbox = lambda ax: ax.get_tightbbox(r).transformed(fig.transFigure.inverted())
+    bboxes = list(map(get_bbox, axs.flat))
+    
+    #Get the minimum and maximum extent, get the coordinate half-way between those
+    xmax = np.array(list(map(lambda b: b.x1, bboxes))).reshape(axs.shape).max(axis=0)
+    xmin = np.array(list(map(lambda b: b.x0, bboxes))).reshape(axs.shape).min(axis=0)
+    xs = np.c_[xmax[1:], xmin[:-1]].mean(axis=1)
+    return xs
 
 
 if __name__ == '__main__':

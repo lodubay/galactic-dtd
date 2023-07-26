@@ -14,7 +14,7 @@ import paths
 import _globals
 
 # Multizone outputs
-SFH = 'insideout'
+SFH = 'earlyburst'
 DTD_LIST = ['prompt', 
             'powerlaw_slope11', 
             'exponential_timescale15', 
