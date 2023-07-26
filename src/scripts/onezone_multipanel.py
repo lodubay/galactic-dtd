@@ -98,7 +98,7 @@ def plot_plateau_width():
     plot_vice_onezone(str(output_dir / dtd.name), 
                       fig=fig, axs=axs,
                       linestyle=':', 
-                      color=styles.plateau['color'], 
+                      color=styles.exp['color'], 
                       label=rf'Exponential ($\tau=3$ Gyr)', 
                       marker_labels=True, 
                       linewidth=1.5)
@@ -110,7 +110,7 @@ def plot_plateau_width():
         plot_vice_onezone(str(output_dir / dtd.name), 
                           fig=fig, axs=axs,
                           linestyle=line_styles[i], 
-                          color=styles.exp['color'], 
+                          color=styles.plateau['color'], 
                           label=r'$W={:1.1f}$ Gyr'.format(width))
     
     # Power law for comparison
