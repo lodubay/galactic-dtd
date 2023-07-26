@@ -336,6 +336,8 @@ def plot_astroNN_medians(ax, data, ofe_lim=OFE_LIM, ofe_bin_width=OFE_BIN_WIDTH,
     age_col : str, optional
         Name of column containing ages. The default is 'ASTRONN_AGE'
     """
+    # Remove entries with no age estimate
+    data.dropna(subset=age_col, inplace=True)
     # Define [O/Fe] bins
     ofe_bins = np.arange(ofe_lim[0], ofe_lim[1]+ofe_bin_width, ofe_bin_width)
     age_grouped = group_by_bins(data, 'O_FE', bins=ofe_bins)[age_col]

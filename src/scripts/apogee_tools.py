@@ -306,6 +306,9 @@ def join_latent_ages(apogee_df, leung23_df):
     latent_ages = leung23_df[cols].copy()
     latent_ages.columns = ['LOG_LATENT_AGE', 'LOG_LATENT_AGE_ERR', 
                            'LATENT_AGE', 'LATENT_AGE_ERR']
+    # Limit to stars with <40% age uncertainty per recommendation
+    frac_err = latent_ages['LATENT_AGE_ERR'] / latent_ages['LATENT_AGE']
+    latent_ages.where(frac_err < 0.4, inplace=True)
     joined = apogee_df.join(latent_ages)
     return joined
 
