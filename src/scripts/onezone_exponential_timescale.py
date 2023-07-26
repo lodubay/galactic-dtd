@@ -9,13 +9,13 @@ import vice
 import paths
 from multizone.src.yields import J21
 from multizone.src import models, dtds
-from _globals import END_TIME, ONEZONE_DEFAULTS
+from _globals import END_TIME, ONEZONE_DEFAULTS, TWO_COLUMN_WIDTH
 from colormaps import paultol
 from track_and_mdf import setup_axes, plot_vice_onezone
+from delay_time_distributions import styles
 
 TIMESCALES = [6, 3, 1.5]
-LINE_STYLE = ['-', '--', ':']
-COLOR = paultol.bright.colors[0]
+LINE_STYLES = ['-', '--', ':']
 
 def main():
     plt.style.use(paths.styles / 'paper.mplstyle')
@@ -24,7 +24,7 @@ def main():
     if not output_dir.exists():
         output_dir.mkdir(parents=True)
 
-    fig, axs = setup_axes(title='Exponential DTD')
+    fig, axs = setup_axes(width=0.4*TWO_COLUMN_WIDTH, title='Exponential DTD')
 
     dt = ONEZONE_DEFAULTS['dt']
     simtime = np.arange(0, END_TIME + dt, dt)
@@ -41,12 +41,11 @@ def main():
         sz.run(simtime, overwrite=True)
         # Plot one-zone models
         plot_vice_onezone(str(output_dir / dtd.name), 
-                          fig=fig, axs=axs,
-                          label=rf'$\tau={timescale:.1f}$ Gyr',
-                          color=paultol.bright.colors[0],
-                          linestyle=LINE_STYLE[i],
-                          marker_labels=(i==0)
-                          )
+                          fig=fig, axs=axs, 
+                          linestyle=LINE_STYLES[i], 
+                          color=styles.exp['color'], 
+                          label=rf'$\tau={timescale:.1f}$ Gyr', 
+                          marker_labels=(i==0))
 
     # Adjust axis limits
     axs[1].set_ylim(bottom=0)

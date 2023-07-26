@@ -202,7 +202,7 @@ def setup_axes(width=ONE_COLUMN_WIDTH, title='',
         Ordered [ax_main, ax_mdf, ax_odf]
     """
     fig = plt.figure(figsize=(width, width))
-    gs = fig.add_gridspec(2, 2, width_ratios=(3, 1), height_ratios=(1, 3),
+    gs = fig.add_gridspec(2, 2, width_ratios=(4, 1), height_ratios=(1, 4),
                           top=0.98, right=0.98, bottom=0.1, left=0.13,
                           wspace=0., hspace=0.)
     # Start with the center panel for [Fe/H] vs [O/Fe]
@@ -216,13 +216,14 @@ def setup_axes(width=ONE_COLUMN_WIDTH, title='',
     ax_main.set_xlim(xlim)
     ax_main.set_ylim(ylim)
     # Add plot title
-    ax_main.text(0.95, 0.95, title, 
+    ax_main.text(0.96, 0.96, title, 
                  ha='right', va='top', transform=ax_main.transAxes)
     # Add panel above for MDF in [Fe/H]
     ax_mdf = fig.add_subplot(gs[0,0], sharex=ax_main)
     ax_mdf.tick_params(axis='x', labelbottom=False)
     ax_mdf.tick_params(axis='y', which='both', left=False, right=False, 
                        labelleft=False)
+    ax_mdf.set_ylabel(r'$P($[Fe/H]$)$', size=7)
     # Add panel to the right for MDF in [O/Fe]
     ax_odf = fig.add_subplot(gs[1,1], sharey=ax_main)
     ax_odf.tick_params(axis='y', labelleft=False)

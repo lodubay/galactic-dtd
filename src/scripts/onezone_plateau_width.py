@@ -9,14 +9,15 @@ import vice
 import paths
 from multizone.src.yields import J21
 from multizone.src import models, dtds
-from _globals import END_TIME, ONEZONE_DEFAULTS
+from _globals import END_TIME, ONEZONE_DEFAULTS, TWO_COLUMN_WIDTH
 from colormaps import paultol
 from track_and_mdf import setup_axes, plot_vice_onezone
+from delay_time_distributions import styles
 
-PLATEAUS = [1., 0.3, 0.1] # Gyr
+PLATEAU_WIDTHS = [1., 0.3, 0.1] # Gyr
 SLOPE = -1.1
 # Plot settings
-LINE_STYLE = ['-', '--', '-.']
+LINE_STYLES = ['-', '--', '-.']
 
 def main(overwrite=False):
     plt.style.use(paths.styles / 'paper.mplstyle')
@@ -29,65 +30,57 @@ def main(overwrite=False):
     delay = ONEZONE_DEFAULTS['delay']
     simtime = np.arange(0, END_TIME + dt, dt)
 
-    fig, axs = setup_axes(title='Plateau DTD')
+    fig, axs = setup_axes(width=0.4*TWO_COLUMN_WIDTH, title='Plateau DTD')
 
-    # Plot exponentials for reference
-    # for tau, ls in zip([1.5, 3], ['--', '-']):
+    # Plot exponentials for referenc
     tau = 3
-    exp = dtds.exponential(timescale=tau, tmin=delay)
-    sz = vice.singlezone(name=str(output_dir / exp.name),
-                         RIa=exp,
+    dtd = dtds.exponential(timescale=tau, tmin=delay)
+    sz = vice.singlezone(name=str(output_dir / dtd.name),
+                         RIa=dtd,
                          func=models.insideout(8, dt=dt), 
                          mode='sfr',
                          **ONEZONE_DEFAULTS)
     sz.run(simtime, overwrite=True)
-    
-    plot_vice_onezone(str(output_dir / exp.name),
+    plot_vice_onezone(str(output_dir / dtd.name), 
                       fig=fig, axs=axs,
-                      label=rf'Exponential ($\tau={tau:.01f}$ Gyr)',
-                      color=paultol.bright.colors[0],
-                      linestyle=':',
-                      linewidth=1.5,
-                      zorder=1
-                      )
+                      linestyle=':', 
+                      color=styles.exp['color'], 
+                      label=rf'Exponential ($\tau=3$ Gyr)', 
+                      marker_labels=True, 
+                      linewidth=1.5)
 
-    for i, plateau in enumerate(PLATEAUS):
-        if plateau >= 1:
-            label = f'{plateau:.01f} Gyr plateau'
+    for i, width in enumerate(PLATEAU_WIDTHS):
+        if width >= 1:
+            label = f'{width:.01f} Gyr plateau'
         else:
-            label = f'{int(plateau*1000)} Myr plateau'
+            label = f'{int(width*1000)} Myr plateau'
 
-        dtd = dtds.plateau(width=plateau, slope=SLOPE, tmin=delay)
+        dtd = dtds.plateau(width=width, slope=SLOPE, tmin=delay)
         sz = vice.singlezone(name=str(output_dir / dtd.name),
                              RIa=dtd,
                              func=models.insideout(8, dt=dt), 
                              mode='sfr',
                              **ONEZONE_DEFAULTS)
         sz.run(simtime, overwrite=True)
-
-        plot_vice_onezone(str(output_dir / dtd.name),
+        plot_vice_onezone(str(output_dir / dtd.name), 
                           fig=fig, axs=axs,
-                          label=r'$W={:1.1f}$ Gyr'.format(plateau), 
-                          color=paultol.bright.colors[1],
-                          linestyle=LINE_STYLE[i],
-                          zorder=9,
-                          marker_labels=(i==0),
-                          )
+                          linestyle=LINE_STYLES[i], 
+                          color=styles.plateau['color'], 
+                          label=r'$W={:1.1f}$ Gyr'.format(width))
 
     # Plot standard power-law for reference
-    plaw = dtds.powerlaw(slope=SLOPE, tmin=delay)
-    sz = vice.singlezone(name=str(output_dir / plaw.name),
-                         RIa=plaw,
+    dtd = dtds.powerlaw(slope=SLOPE, tmin=delay)
+    sz = vice.singlezone(name=str(output_dir / dtd.name),
+                         RIa=dtd,
                          func=models.insideout(8, dt=dt), 
                          mode='sfr',
                          **ONEZONE_DEFAULTS)
     sz.run(simtime, overwrite=True)
-    plot_vice_onezone(str(output_dir / plaw.name),
-                      fig=fig, axs=axs,
-                      label='No plateau', color='k',
-                      linestyle=':',
-                      zorder=2
-                      )
+    plot_vice_onezone(str(output_dir / dtd.name), 
+                      fig=fig, axs=axs, 
+                      linestyle=':', 
+                      color=styles.plaw['color'], 
+                      label='No plateau')
 
     # Adjust axis limits
     axs[1].set_ylim(bottom=0)

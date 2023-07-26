@@ -12,6 +12,7 @@ from multizone.src import models, dtds
 from _globals import END_TIME, ONEZONE_DEFAULTS
 from colormaps import paultol
 from track_and_mdf import setup_axes, plot_vice_onezone
+from delay_time_distributions import styles
 
 def main():
     plt.style.use(paths.styles / 'paper.mplstyle')
@@ -26,30 +27,20 @@ def main():
     simtime = np.arange(0, END_TIME + dt, dt)
 
     delay = ONEZONE_DEFAULTS['delay']
-    distributions = [dtds.triple(tmin=delay),
-                     dtds.plateau(width=1., slope=-1.1, tmin=delay),
-                     dtds.exponential(timescale=1.5, tmin=delay),
-                     dtds.powerlaw(slope=-1.1, tmin=delay),
-                     dtds.prompt(peak=0.05, stdev=0.015, timescale=3, tmin=delay),
-                     ]
-    labels = [r'Triple-system',
-              r'Plateau ($W=1$ Gyr)',
-              r'Exponential ($\tau=1.5$ Gyr)',
-              r'Power-law ($\alpha=-1.1$)',
-              r'Two-population',]
-    colors = [paultol.vibrant.colors[i] for i in [5, 0, 1, 4, 2]]
+    distributions = [styles.triple, styles.plateau_long, styles.exp, 
+                     styles.plaw, styles.prompt]
 
     for i, dtd in enumerate(distributions):
-        sz = vice.singlezone(name=str(output_dir / dtd.name),
-                             RIa=dtd,
+        sz = vice.singlezone(name=str(output_dir / dtd['func'].name),
+                             RIa=dtd['func'],
                              func=models.insideout(8, dt=dt), 
                              mode='sfr',
                              **ONEZONE_DEFAULTS)
         sz.run(simtime, overwrite=True)
-        plot_vice_onezone(str(output_dir / dtd.name), 
+        plot_vice_onezone(str(output_dir / dtd['func'].name), 
                           fig=fig, axs=axs,
-                          label=labels[i], 
-                          color=colors[i],
+                          label=dtd['label'], 
+                          color=dtd['color'],
                           marker_labels=(i==0),
                           )
 
@@ -57,7 +48,7 @@ def main():
     axs[1].set_ylim(bottom=0)
     axs[2].set_xlim(left=0)
 
-    axs[0].legend(frameon=False, loc='lower left', handlelength=1.2, fontsize=7)
+    axs[0].legend(frameon=False, loc='lower left')
     fig.savefig(paths.figures / 'onezone_dtd.pdf', dpi=300)
     plt.close()
 

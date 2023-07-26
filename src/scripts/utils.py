@@ -570,42 +570,6 @@ def format_bracket_string(bracket):
             bracket[i] = bracket[i].upper()
     return bracket
 
-# =============================================================================
-# ONE-ZONE MODELS
-# =============================================================================
-
-def run_singlezone(name, simtime, overwrite=False, **kwargs):
-    """
-    Run a VICE one-zone simulation, or, if it has already been run, import
-    it instead.
-
-    Parameters
-    ----------
-    name : str
-        Path to the one-zone output directory, not necessarily including the
-        '.vice' extension
-    simtime : array-like
-        Array of simulation times in Gyr
-    overwrite : bool, optional
-        If True, re-run the model regardless of whether an output already exists
-    kwargs : dict, optional
-        Keyword arguments passed to vice.singlezone
-
-    Returns
-    -------
-    vice.singlezone object
-    """
-    if overwrite:
-        sz = vice.singlezone(name=name, **kwargs)
-        sz.run(simtime, overwrite=True)
-    else:
-        try:
-            sz = vice.singlezone.from_output(name)
-        except OSError:
-            sz = vice.singlezone(name=name, **kwargs)
-            sz.run(simtime, overwrite=True)
-    return sz
-
     
 # =============================================================================
 # PLOTTING FUNCTIONS

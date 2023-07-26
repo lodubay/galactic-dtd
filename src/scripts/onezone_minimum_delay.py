@@ -14,6 +14,7 @@ from multizone.src import models, dtds
 from _globals import END_TIME, ONEZONE_DEFAULTS
 from colormaps import paultol
 from track_and_mdf import setup_axes, plot_vice_onezone
+from delay_time_distributions import styles
 
 DELAYS = [0.15, 0.04]
 LINE_STYLES = ['--', '-']
@@ -30,33 +31,30 @@ def main(overwrite=False):
     dt = ONEZONE_DEFAULTS['dt']
     simtime = np.arange(0, END_TIME + dt, dt)
 
-    labels = [r'Exponential ($\tau=1.5$ Gyr)',
-              r'Power-Law ($\alpha=-1.1$)',]
-    colors = [paultol.vibrant.colors[i] for i in [0, 1, 4]]
-
     for delay, ls in zip(DELAYS, LINE_STYLES):
         ONEZONE_DEFAULTS['delay'] = delay
-        distributions = [dtds.exponential(timescale=1.5, tmin=delay),
-                         dtds.powerlaw(slope=-1.1, tmin=delay),]
+        distributions = [styles.exp, styles.plaw]
         for i, dtd in enumerate(distributions):
             if delay == DELAYS[1]:
-                label = labels[i]
+                label = dtd['label']
             else:
                 label = None
-            name = dtd.name + '_delay{:03d}'.format(int(delay * 1000))
+            name = dtd['func'].name + '_delay{:03d}'.format(int(delay * 1000))
             sz = vice.singlezone(name=str(output_dir / name),
-                                 RIa=dtd,
+                                 RIa=dtd['func'],
                                  func=models.insideout(8, dt=dt), 
                                  mode='sfr',
                                  **ONEZONE_DEFAULTS)
             sz.run(simtime, overwrite=True)
             plot_vice_onezone(str(output_dir / name), 
                               fig=fig, axs=axs,
-                              label=label, color=colors[i],
+                              label=label, 
+                              color=dtd['color'],
                               linestyle=ls,
                               zorder=i,
                               marker_labels=(i==0 and delay==DELAYS[0])
                               )
+
 
     # Re-scale marginal axis limits
     axs[1].set_ylim(bottom=0)
