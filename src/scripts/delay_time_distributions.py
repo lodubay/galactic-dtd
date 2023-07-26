@@ -31,19 +31,19 @@ class styles:
     plaw = {
         'func': dtds.powerlaw(slope=-1.1, tmin=MIN_RIA_DELAY),
         'label': r'Power-law ($\alpha=-1.1$)',
-        'color': paultol.bright.colors[0],
+        'color': paultol.bright.colors[5],
         'line': '-',
     }
     plateau = {
         'func': dtds.plateau(width=0.3, slope=-1.1, tmin=MIN_RIA_DELAY),
         'label': r'Plateau ($W=0.3$ Gyr)',
-        'color': paultol.bright.colors[4],
+        'color': paultol.bright.colors[2],
         'line': '--',
     }
     exp = {
         'func': dtds.exponential(timescale=1.5, tmin=MIN_RIA_DELAY),
         'label': r'Exponential ($\tau=1.5$ Gyr)',
-        'color': paultol.bright.colors[5],
+        'color': paultol.bright.colors[0],
         'line': '-',
     }
     prompt = {
@@ -55,26 +55,26 @@ class styles:
     triple = {
         'func': dtds.triple(tmin=MIN_RIA_DELAY),
         'label': r'Triple-system',
-        'color': paultol.bright.colors[2],
+        'color': paultol.bright.colors[3],
         'line': '-.'
     }
     # Additional DTDs
     exp_long = {
         'func': dtds.exponential(timescale=3, tmin=MIN_RIA_DELAY),
         'label': r'Exponential ($\tau=3$ Gyr)',
-        'color': paultol.bright.colors[5],
+        'color': paultol.bright.colors[0],
         'line': '--',
     }
     plateau_long = {
         'func': dtds.plateau(width=1., slope=-1.1, tmin=MIN_RIA_DELAY),
         'label': r'Plateau ($W=1$ Gyr)',
-        'color': paultol.bright.colors[4],
+        'color': paultol.bright.colors[2],
         'line': ':',
     }
     plaw_steep = {
         'func': dtds.powerlaw(slope=-1.4, tmin=MIN_RIA_DELAY),
         'label': r'Power-law ($\alpha=-1.4$)',
-        'color': paultol.bright.colors[0],
+        'color': paultol.bright.colors[5],
         'line': '--',
     }
 
