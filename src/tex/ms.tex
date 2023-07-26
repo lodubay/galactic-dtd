@@ -408,16 +408,6 @@ D_{\rm{KL}}(P \parallel Q) = \int_{-\infty}^{\infty} p(x) \log\Big(\frac{p(x)}{q
 \end{equation}
 for distributions $P$ and $Q$ with probability density functions $p(x)$ and $q(x)$. In this case, $P$ is the APOGEE MDF, $Q$ is the model MDF, and $x$ is [Fe/H]. For each model SFH and DTD, we compute $D_{\rm{KL}}$ in 18 different galactocentric zones defined by radial bins $3-5$ kpc, $5-7$ kpc, $7-9$ kpc, $9-11$ kpc, $11-13$ kpc, and $13-15$ kpc and absolute $z$-height bins $0-0.5$ kpc, $0.5-1$ kpc, and $1-2$ kpc. The KL divergence for the entire model is taken to be the average of $D_{\rm{KL}}$ for each zone, weighted by the number of APOGEE stars in each zone.
 
-Figure \ref{fig:feh-df-sfh} plots the distribution of [Fe/H] in multiple regions across the disk for the four SFHs in this paper.
-
-\begin{figure*}
-    \centering
-    \includegraphics{figures/feh_df_sfh.pdf}
-    \caption{Distributions of [Fe/H] for multi-zone simulations with different SFHs. Each row presents distributions of stars within a range of absolute midplane distance: $1\leq|z|<2$ kpc (\textit{top}), $0.5\leq|z|<1$ kpc (\textit{middle}), and $0\leq|z|<0.5$ kpc (\textit{bottom}). Within each panel, curves of different color represent the distributions of stars binned by Galactocentric radius $R_{\rm gal}$, from $3\leq R_{\rm gal}<5$ kpc (yellow) to $13\leq R_{\rm gal}<15$ kpc (blue). Each distribution is normalized so the area under the curve is 1, and the vertical scale is consistent across each row. All distributions are convolved with observational uncertainties in APOGEE DR17 (see Table \ref{tab:uncertainties}) and smoothed with a box-car width of 0.2 dex. In all cases an exponential DTD with timescale $\tau=1.5$ Gyr is assumed. Distributions from APOGEE DR17, binned and smoothed similarly, are presented in the right-most column for reference.}
-    \label{fig:feh-df-sfh}
-    \script{feh_df_sfh.py}
-\end{figure*}
-
 Holding the SFH fixed, varying the DTD has only a minor effect on the MDF across the disk. Figure \ref{fig:feh-df-dtd} plots the [Fe/H] distributions for two multi-zone simulations which both assume an inside-out SFH but different DTDs: a power-law with slope $\alpha=-1.4$, and an exponential with timescale $\tau=3$ Gyr. The balance between prompt and delayed SNe Ia is starkly different between the two models, with $\sim 80\%$ of SNe Ia exploding within 1 Gyr in the former model but only $\sim 30\%$ in the latter. Nevertheless, the effect of the DTD on the MDF is second-order compared to the effect of the SFH as seen in Figure \ref{fig:feh-df-sfh}.
 
 \begin{figure}
@@ -428,6 +418,15 @@ Holding the SFH fixed, varying the DTD has only a minor effect on the MDF across
     \script{feh_df_dtd.py}
 \end{figure}
 
+Figure \ref{fig:feh-df-sfh} plots the distribution of [Fe/H] in multiple regions across the disk for the four SFHs in this paper.
+
+\begin{figure*}
+    \centering
+    \includegraphics{figures/feh_df_sfh.pdf}
+    \caption{Distributions of [Fe/H] for multi-zone simulations with different SFHs. Each row presents distributions of stars within a range of absolute midplane distance: $1\leq|z|<2$ kpc (\textit{top}), $0.5\leq|z|<1$ kpc (\textit{middle}), and $0\leq|z|<0.5$ kpc (\textit{bottom}). Within each panel, curves of different color represent the distributions of stars binned by Galactocentric radius $R_{\rm gal}$, from $3\leq R_{\rm gal}<5$ kpc (yellow) to $13\leq R_{\rm gal}<15$ kpc (blue). Each distribution is normalized so the area under the curve is 1, and the vertical scale is consistent across each row. All distributions are convolved with observational uncertainties in APOGEE DR17 (see Table \ref{tab:uncertainties}) and smoothed with a box-car width of 0.2 dex. In all cases an exponential DTD with timescale $\tau=1.5$ Gyr is assumed. Distributions from APOGEE DR17, binned and smoothed similarly, are presented in the right-most column for reference.}
+    \label{fig:feh-df-sfh}
+    \script{feh_df_sfh.py}
+\end{figure*}
 \subsection{The distribution of [O/Fe]}
 
 \begin{figure*}
