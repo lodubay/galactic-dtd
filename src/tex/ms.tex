@@ -47,7 +47,7 @@ Summary of observational studies of the DTD. These studies all assume a particul
 \subsection{DTD Models}
 \label{sec:dtd-models}
 
-We explore five different functional forms for the SN Ia DTD: a power-law, a broken power-law with an initial flat plateau, an exponential, a two-population model, and a model based on triple-system dynamics, with a one or two different parameterizations for each. Figure \ref{fig:dtds} presents these DTDs as a function of time since star formation.
+We explore five different functional forms for the SN Ia DTD: a power-law, a broken power-law with an initial flat plateau, an exponential, a two-population model, and a model based on triple-system dynamics, with a one or two different parameterizations for each. Figure \ref{fig:dtds} presents these DTDs as a function of time after star formation.
 
 \begin{figure}
     \centering
@@ -279,89 +279,37 @@ All models are run for a duration of $t_{\rm max}=13.2$ Gyr with a time-step of 
 \subsection{The SN Ia Delay-Time Distribution}
 \label{sec:onezone-dtd}
 
+The left-hand panel of Figure \ref{fig:onezone-threepanel} compares the results of three one-zone models which are identical except for the slope of the power-law DTD. A steeper slope produces a sharper ``knee'' and a faster decline in [O/Fe], resulting in a narrower distribution of [O/Fe] around the low-$\alpha$ sequence and a dearth of high-$\alpha$ stars. Conversely, a shallower slope produces a gentler knee and slower decline in [O/Fe], resulting in a broader [O/Fe] distribution and a greater number of high-$\alpha$ stars. In all cases the [O/Fe] distribution is distinctly unimodal. The distribution of [Fe/H] is not as strongly affected by the power-law slope: a shallower slope results in only a modest increase in the width of the distribution.
+
+Similar trends can be seen when adjusting the timescale of the exponential DTD, as shown in the middle panel of Figure \ref{fig:onezone-threepanel}. Here, the knee is not a sharp feature associated with the onset of SNe Ia as in the power-law case, but rather a gentle curve in the abundance track around 1 Gyr. A short exponential timescale shifts this knee down to lower [O/Fe] values, while a longer timescale raises it. The effect on the [O/Fe] distribution is similar to the power-law slope: a short timescale produces more low-$\alpha$ stars, while a long timescale produces more high-$\alpha$ stars (but still a unimodal distribution). The effect on the [Fe/H] distribution is somewhat more pronounced, with longer timescales skewing to lower [Fe/H] values. A doubling of the timescale from 1.5 Gyr to 3 Gyr raises the [O/Fe] abundance ratio at $t=1$ Gyr by $\sim0.05$ dex and at $t=3$ Gyr by $\sim0.1$ dex, but the equilibrium abundance reached at $t=10$ Gyr remains unchanged.
+
 \begin{figure*}
     \centering
     \includegraphics[width=0.32\linewidth]{figures/onezone_powerlaw_slope.pdf}
     \includegraphics[width=0.32\linewidth]{figures/onezone_exponential_timescale.pdf}
     \includegraphics[width=0.32\linewidth]{figures/onezone_plateau_width.pdf}
-    \caption{\textit{Left:} Abundance tracks in the [Fe/H]--[O/Fe] plane for one-zone models with a power-law DTD. The dotted, dashed, and solid curves represent models with power-law slopes $\alpha=-0.8$, $-1.1$, and $-1.4$, respectively. The open symbols located along each curve mark logarithmic steps in simulation time. In all cases a minimum SN Ia delay time of 40 Myr is assumed. The marginal panels above and to the right present the distributions of [Fe/H] and [O/Fe], respectively, convolved with a Gaussian with a standard deviation of 0.02 dex for display purposes.
+    \caption{\textit{Left:} Abundance tracks in the [Fe/H]--[O/Fe] plane for one-zone chemical evolution models models which assume a power-law DTD. The dotted, dashed, and solid curves represent models with power-law slopes $\alpha=-0.8$, $-1.1$, and $-1.4$, respectively. In all cases a minimum SN Ia delay time of 40 Myr is assumed. The open symbols located along each curve mark logarithmic steps in simulation time. The marginal panels above and to the right of the central panel present the distributions of [Fe/H] and [O/Fe], respectively. For display purposes these distributions are convolved with a Gaussian with a standard deviation of 0.02 dex.
     \textit{Middle:} A similar plot comparing exponential DTDs with varying timescales. The solid, dashed, and dotted curves represent timescales $\tau=6$, 3, and 1.5 Gyr, respectively.
-    \textit{Right:} Similar, comparing plateau DTDs with varying plateau widths. The solid, dashed, and dotted curves represent widths $W=1$, 0.3, and 0.1 Gyr, respectively. All plateau DTD models assume a post-plateau power-law slope of $\alpha=-1.1$. For reference, the dotted purple curve represents an exponential DTD with $\tau=3$ Gyr, and the dotted blue curve represents a power-law DTD $\alpha=-1.1$ and no plateau.}
+    \textit{Right:} Similar, comparing plateau DTDs with varying plateau widths. The solid, dashed, and dotted green curves represent widths $W=1$, 0.3, and 0.1 Gyr, respectively. All plateau DTD models assume a post-plateau power-law slope of $\alpha=-1.1$. For reference, the dotted blue curve represents an exponential DTD with $\tau=3$ Gyr, and the dotted purple curve represents a power-law DTD $\alpha=-1.1$ and no plateau.}
     \label{fig:onezone-threepanel}
     \script{onezone_threepanel.py}
 \end{figure*}
+
+The left-hand panel of Figure \ref{fig:onezone-twopanel} shows that the minimum SN Ia delay time has a much stronger effect on the abundance track and MDFs of models which assume a power-law DTD than models which assume a plateau or exponential DTD, due to the much higher SN Ia rate in the power-law models at early times (see Figure \ref{fig:dtds}). Moreover, a power-law DTD with a long minimum delay may be observationally hard to distinguish from a plateau model. In Figure \ref{fig:onezone-twopanel}, the abundance track for the model with a power-law DTD and $t_D=150$ Myr (red dashed line) is similar to that of the plateau DTD with $W=0.3$ Gyr and $t_D=40$ Myr (blue solid line), and the [O/Fe] distributions are virtually identical. 
+
+A 150 Myr minimum delay time is incompatible with the two-population DTD model, which has $\sim 50$\% of SNe Ia explode in the first 100 Myr, and would have a negligible effect on the triple-system DTD as its relative SN Ia rate is so low at early times. 
+
+The right-hand panel of Figure \ref{fig:onezone-twopanel} compares the one-zone model outputs from the full range of DTDs we investigate in this paper. In general, the choice of DTD has the greatest effect on the location of the knee in [Fe/H]-[O/Fe] space (center panel) and the high-$\alpha$ end of the distribution of [O/Fe] (right panel). The DTD also has a smaller effect on the MDF in the range $-1.5\lesssim$ [Fe/H] $\lesssim-0.5$ (top panel).
 
 \begin{figure*}
     \centering
     \includegraphics[width=0.49\linewidth]{figures/onezone_minimum_delay.pdf}
     \includegraphics[width=0.49\linewidth]{figures/onezone_dtd.pdf}
-    \caption{\textit{Left:} A similar plot comparing minimum SN Ia delay times of 40 Myr (solid) and 150 Myr (dashed) for two DTDs: a power-law with $\alpha=-1.1$ (blue), and an exponential with $\tau=1.5$ Gyr (purple).
-    \textit{Right:} A similar plot comparing all five functional forms for the DTD in this paper: triple-system (green), plateau with $W=1$ Gyr (cyan), exponential with $\tau=1.5$ Gyr (purple), power-law with $\alpha=-1.1$ (blue), and two-population (pink). In all cases a minimum SN Ia delay time of 40 Myr is assumed.}
+    \caption{\textit{Left:} Comparison of one-zone models with minimum SN Ia delay times of 40 Myr (solid) and 150 Myr (dashed curves) for two DTDs: a power-law with $\alpha=-1.1$ (blue), and an exponential with $\tau=1.5$ Gyr (purple curves). The layout is similar to the plots in Figure \ref{fig:onezone-threepanel}.
+    \textit{Right:} Comparison of one-zone models which assume all five functional forms for the DTD in this paper: triple-system (green), plateau with $W=1$ Gyr (cyan), exponential with $\tau=1.5$ Gyr (purple), power-law with $\alpha=-1.1$ (blue), and two-population (pink). In all cases a minimum SN Ia delay time of 40 Myr is assumed.}
     \label{fig:onezone-twopanel}
     \script{onezone_twopanel.py}
 \end{figure*}
-
-% Adjusting the parameters of the DTD affects how steeply the abundance track in [Fe/H]-[O/Fe] space falls from its initial ``plateau'' and the location of the ``knee.'' Figure \ref{fig:onezone-slope-timescale} shows abundance tracks from one-zone models which assume different slopes of a power-law DTD or different timescales of an exponential DTD. A steeper power-law slope results in a steeper decline in [O/Fe] and a lower knee, as does a shorter exponential timescale. The consequence is that a very shallow power-law produces a similar abundance track to a very steep exponential, which suggests these models may be difficult to distinguish in this parameter space. However, these cases can be distinguished by their MDFs and [O/Fe] distributions, where the power-law DTD produces a narrower, less skewed distribution while the exponential DTD produces a broader, more skewed distribution. In the [O/Fe] distribution especially, an exponential DTD with a 6 Gyr timescale produces a large number of high-$\alpha$ stars.
-
-Figure \ref{fig:onezone-powerlaw-slope} compares the results of three one-zone models which are identical except for the slope of the power-law DTD. A steeper slope produces a sharper ``knee'' and a faster decline in [O/Fe], resulting in a narrower distribution of [O/Fe] around the low-$\alpha$ sequence and a dearth of high-$\alpha$ stars. Conversely, a shallower slope produces a gentler knee and slower decline in [O/Fe], resulting in a broader [O/Fe] distribution and a greater number of high-$\alpha$ stars. In all cases the [O/Fe] distribution is distinctly unimodal. The distribution of [Fe/H] is not as strongly affected by the power-law slope: a shallower slope results in only a modest increase in the width of the distribution.
-
-% \begin{figure}
-%     \centering
-%     \includegraphics{figures/onezone_powerlaw_slope.pdf}
-%     \caption{\textit{Center:} Abundance tracks in the [Fe/H]--[O/Fe] plane for one-zone models with a power-law DTD. The dotted, dashed, and solid curves represent models with power-law slopes $\alpha=-0.8$, $-1.1$, and $-1.4$, respectively. The open symbols located along each curve mark logarithmic steps in simulation time. In all cases a minimum SN Ia delay time of 40 Myr is assumed. \textit{Top:} Metalliticy distribution functions (MDFs) generated by the one-zone models. \textit{Right:} Distributions of [O/Fe] generated by the one-zone models.}
-%     \label{fig:onezone-powerlaw-slope}
-%     \script{onezone_powerlaw_slope.py}
-% \end{figure}
-
-Similar trends can be seen when adjusting the timescale of the exponential DTD, as shown in Figure \ref{fig:onezone-exponential-timescale}. Here, the knee is not a sharp feature associated with the onset of SNe Ia as in the power-law case, but rather a gentle curve in the abundance track around 1 Gyr. A short exponential timescale shifts this knee down to lower [O/Fe] values, while a longer timescale raises it. The effect on the [O/Fe] distribution is similar to the power-law slope: a short timescale produces more low-$\alpha$ stars, while a long timescale produces more high-$\alpha$ stars (but still a unimodal distribution). The effect on the [Fe/H] distribution is somewhat more pronounced, with longer timescales skewing to lower [Fe/H] values. A doubling of the timescale from 1.5 Gyr to 3 Gyr raises the [O/Fe] abundance ratio at $t=1$ Gyr by $\sim0.05$ dex and at $t=3$ Gyr by $\sim0.1$ dex, but the equilibrium abundance reached at $t=10$ Gyr remains unchanged.
-
-% \begin{figure}
-%     \centering
-%     \includegraphics{figures/onezone_exponential_timescale.pdf}
-%     \caption{Similar to Figure \ref{fig:onezone-powerlaw-slope} but for one-zone models with an exponential DTD. The dotted, dashed, and solid curves represent exponential decay timescales $\tau=1.5$ Gyr, 3 Gyr, and 6 Gyr, respectively.}
-%     \label{fig:onezone-exponential-timescale}
-%     \script{onezone_exponential_timescale.py}
-% \end{figure}
-
-% \begin{figure}
-%     \centering
-%     \includegraphics{figures/onezone_plateau_width.pdf}
-%     \caption{Similar to Figure \ref{fig:onezone-powerlaw-slope} but for one-zone models with a plateau DTD. The solid, dashed, and dot-dashed pink curves represent plateau widths $W=1.0$, 0.3, and 0.1 Gyr, respectively. All plateau DTDs assume a power-law slope of $\alpha=-1.1$. For comparison, the blue dotted curve represents an exponential DTD with a timescale $\tau=3$ Gyr, and the black dotted curve represents a power-law DTD with the same slope but no plateau.}
-%     \label{fig:onezone-plateau-width}
-%     \script{onezone_plateau_width.py}
-% \end{figure}
-
-% \begin{figure}
-%     \centering
-%     \includegraphics{figures/onezone_twopopulation.pdf}
-%     \caption{One-zone model abundance tracks and distributions for variants of the two-population DTD.}
-%     \label{fig:onezone-prompt}
-%     \script{onezone_twopopulation.py}
-% \end{figure}
-
-Figure \ref{fig:onezone-dtd} compares the one-zone model outputs from the full range of DTDs we investigate in this paper. In general, the choice of DTD has the greatest effect on the location of the knee in [Fe/H]-[O/Fe] space (center panel) and the high-$\alpha$ end of the distribution of [O/Fe] (right panel). The DTD also has a smaller effect on the MDF in the range $-1.5\lesssim$ [Fe/H] $\lesssim-0.5$ (top panel).
-
-% \begin{figure}
-%     \centering
-%     \includegraphics{figures/onezone_dtd.pdf}
-%     \caption{Similar to Figure \ref{fig:onezone-powerlaw-slope} but with a different selection of DTDs. In all cases a minimum delay time of 40 Myr is assumed.}
-%     \label{fig:onezone-dtd}
-%     \script{onezone_dtd.py}
-% \end{figure}
-
-\subsection{The Minimum SN Ia Delay Time}
-
-Figure \ref{fig:onezone-minimum-delay} shows that the minimum SN Ia delay time has a much stronger effect on the abundance track and MDFs of models which assume a power-law DTD than models which assume a plateau or exponential DTD, due to the much higher SN Ia rate in the power-law models at early times (see Figure \ref{fig:dtds}). Moreover, a power-law DTD with a long minimum delay may be observationally hard to distinguish from a plateau model. In Figure \ref{fig:onezone-minimum-delay}, the abundance track for the model with a power-law DTD and $t_D=150$ Myr (red dashed line) is similar to that of the plateau DTD with $W=0.3$ Gyr and $t_D=40$ Myr (blue solid line), and the [O/Fe] distributions are virtually identical.  
-
-% \begin{figure}
-%     \centering
-%     \includegraphics{figures/onezone_minimum_delay.pdf}
-%     \caption{Similar to Figure \ref{fig:onezone-powerlaw-slope} but with varying DTD models and minimum SN Ia delay time ($t_D$). Solid curves represent models with a minimum delay time of 40 Myr, while dashed curves represent models with a minimum delay time of 150 Myr. The red curves represent a power-law DTD with slope $\alpha=-1.1$; blue curves represent an plateau DTD with width $W=0.3$ Gyr and slope $\alpha=-1.1$; and orange curves represent an exponential DTD with timescale $\tau=3$ Gyr. In all cases an exponential rise-fall SFR is assumed.}
-%     \label{fig:onezone-minimum-delay}
-%     \script{onezone_minimum_delay.py}
-% \end{figure}
-
-A 150 Myr minimum delay time is incompatible with the two-population DTD model, which has $\sim 50$\% of SNe Ia explode in the first 100 Myr, and would have a negligible effect on the triple-system DTD as its relative SN Ia rate is so low at early times.
 
 % \subsection{The Star Formation History}
 
@@ -375,14 +323,6 @@ A 150 Myr minimum delay time is incompatible with the two-population DTD model, 
 %     \caption{Similar to Figure \ref{fig:onezone-powerlaw-slope} but with varying minimum SN Ia delay time ($t_D$) and star formation efficiency timescale ($\tau_*$). Tracks with $\tau_*=2$ Gyr are represented in black, while a track with a shorter $\tau_*=1$ Gyr is shown in red and a track with a longer $\tau_*=4$ Gyr is in yellow. The dotted, solid, and dashed black curves represent a minimum delay time of 40 Myr, 80 Myr, and 160 Myr, respectively. A power-law DTD with $\alpha=-1.1$ is assumed in all models.}
 %     \label{fig:onezone-delay-taustar}
 %     \script{onezone_delay_taustar.py}
-% \end{figure}
-
-% \begin{figure}
-%     \centering
-%     \includegraphics{figures/onezone_sfh.pdf}
-%     \caption{Similar to Figure \ref{fig:onezone-powerlaw-slope} but with varying star formation history (SFH). An exponential DTD with $\tau=1.5$ Gyr is assumed in all models.}
-%     \label{fig:onezone-sfh}
-%     \script{onezone_sfh.py}
 % \end{figure}
 
 \section{Results from Multi-Zone Models}
@@ -415,7 +355,7 @@ Holding the SFH fixed, varying the DTD has only a minor effect on the MDF across
 \begin{figure}
     \centering
     \includegraphics{figures/feh_df_dtd.pdf}
-    \caption{Distributions of [Fe/H] for multi-zone simulations with different DTDs: a power-law with slope $\alpha=-1.4$ (\textit{left}), and an exponential with timescale $\tau=3$ Gyr (\textit{right}). In both cases an inside-out SFH is assumed. The plot format is similar to Figure \ref{fig:feh-df-sfh}.}
+    \caption{Distributions of [Fe/H] from multi-zone simulations with different DTDs: a power-law with slope $\alpha=-1.4$ (\textit{left}), and an exponential with timescale $\tau=3$ Gyr (\textit{right}). Each row presents distributions of stars within a range of absolute midplane distance: $1\leq|z|<2$ kpc (\textit{top}), $0.5\leq|z|<1$ kpc (\textit{middle}), and $0\leq|z|<0.5$ kpc (\textit{bottom}). Within each panel, curves of different color represent the distributions of stars binned by Galactocentric radius $R_{\rm gal}$, from $3\leq R_{\rm gal}<5$ kpc (yellow) to $13\leq R_{\rm gal}<15$ kpc (blue). Each distribution is normalized so the area under the curve is 1, and the vertical scale is consistent across each row. All distributions are convolved with observational uncertainties in APOGEE DR17 (see Table \ref{tab:uncertainties}) and smoothed with a box-car width of 0.2 dex. In both cases an inside-out SFH is assumed.}
     \label{fig:feh-df-dtd}
     \script{feh_df_dtd.py}
 \end{figure}
@@ -425,7 +365,7 @@ Figure \ref{fig:feh-df-sfh} plots the distribution of [Fe/H] in multiple regions
 \begin{figure*}
     \centering
     \includegraphics{figures/feh_df_sfh.pdf}
-    \caption{Distributions of [Fe/H] for multi-zone simulations with different SFHs. Each row presents distributions of stars within a range of absolute midplane distance: $1\leq|z|<2$ kpc (\textit{top}), $0.5\leq|z|<1$ kpc (\textit{middle}), and $0\leq|z|<0.5$ kpc (\textit{bottom}). Within each panel, curves of different color represent the distributions of stars binned by Galactocentric radius $R_{\rm gal}$, from $3\leq R_{\rm gal}<5$ kpc (yellow) to $13\leq R_{\rm gal}<15$ kpc (blue). Each distribution is normalized so the area under the curve is 1, and the vertical scale is consistent across each row. All distributions are convolved with observational uncertainties in APOGEE DR17 (see Table \ref{tab:uncertainties}) and smoothed with a box-car width of 0.2 dex. In all cases an exponential DTD with timescale $\tau=1.5$ Gyr is assumed. Distributions from APOGEE DR17, binned and smoothed similarly, are presented in the right-most column for reference.}
+    \caption{Distributions of [Fe/H] from multi-zone simulations with different SFHs. The plot format is similar to Figure \ref{fig:feh-df-dtd}. In all cases an exponential DTD with timescale $\tau=1.5$ Gyr is assumed. Distributions from APOGEE DR17, binned and smoothed similarly, are presented in the right-most column for reference.}
     \label{fig:feh-df-sfh}
     \script{feh_df_sfh.py}
 \end{figure*}
@@ -434,7 +374,7 @@ Figure \ref{fig:feh-df-sfh} plots the distribution of [Fe/H] in multiple regions
 \begin{figure*}
     \centering
     \includegraphics{figures/ofe_df_sfh.pdf}
-    \caption{Distributions of [O/Fe] for multi-zone simulations with different SFHs. The plot format is similar to Figure \ref{fig:feh-df-sfh}. In all cases an exponential DTD with timescale $\tau=1.5$ Gyr is assumed.}
+    \caption{Distributions of [O/Fe] from multi-zone simulations with different SFHs. The format of each panel is similar to Figure \ref{fig:feh-df-dtd}. In all cases an exponential DTD with timescale $\tau=1.5$ Gyr is assumed. Distributions from APOGEE DR17, binned and smoothed similarly, are presented in the right-most column for reference.}
     \label{fig:ofe-df-sfh}
     \script{ofe_df_sfh.py}
 \end{figure*}
@@ -442,7 +382,7 @@ Figure \ref{fig:feh-df-sfh} plots the distribution of [Fe/H] in multiple regions
 \begin{figure*}
     \centering
     \includegraphics{figures/ofe_df_dtd.pdf}
-    \caption{Distributions of [O/Fe] for multi-zone simulations with different DTDs. In all cases an inside-out SFH is assumed. The plot format is similar to Figure \ref{fig:feh-df-sfh}. All distributions are smoothed with a box-car width of 0.05 dex.}
+    \caption{Distributions of [O/Fe] from multi-zone simulations with different DTDs. In all cases an inside-out SFH is assumed. The plot format is similar to Figure \ref{fig:feh-df-sfh}. All distributions are smoothed with a box-car width of 0.05 dex.}
     \label{fig:ofe-df-dtd}
     \script{ofe_df_dtd.py}
 \end{figure*}
