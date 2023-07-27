@@ -52,7 +52,7 @@ We explore five different functional forms for the SN Ia DTD: a power-law, a bro
 \begin{figure}
     \centering
     \includegraphics{figures/delay_time_distributions.pdf}
-    \caption{Models of the SN Ia delay time distribution used in this paper. All functions are normalized to $f_{\rm Ia}=1$ at $\tau=1$ Gyr.}
+    \caption{Models of the SN Ia delay time distribution used in this paper. All functions are normalized to $f_{\rm Ia}=1$ at $\tau=1$ Gyr. The black squares represent the DTD recovered for the SDSS-II sample of SNe Ia by \citet{Maoz2012-SloanIIDTD}. The horizontal error bars indicate the time range of each DTD measurement, and the vertical error bars represent the 1$\sigma$ uncertainties.}
     \label{fig:dtds}
     \script{delay_time_distributions.py}
 \end{figure}
@@ -369,6 +369,15 @@ Figure \ref{fig:feh-df-sfh} plots the distribution of [Fe/H] in multiple regions
     \label{fig:feh-df-sfh}
     \script{feh_df_sfh.py}
 \end{figure*}
+
+\begin{figure*}
+    \centering
+    \includegraphics{figures/feh_df_comparison.pdf}
+    \caption{Distributions of [Fe/H] from multi-zone simulations with different SFHs. The plot format is similar to Figure \ref{fig:feh-df-dtd}. In all cases an exponential DTD with timescale $\tau=1.5$ Gyr is assumed. Distributions from APOGEE DR17, binned and smoothed similarly, are presented in the right-most column for reference.}
+    \label{fig:feh-df-comparison}
+    \script{feh_df_comparison.py}
+\end{figure*}
+
 \subsection{The distribution of [O/Fe]}
 
 \begin{figure*}
