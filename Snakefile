@@ -684,6 +684,17 @@ rule feh_df_dtd:
         "src/tex/figures/feh_df_dtd.pdf"
     script:
         "src/scripts/feh_df_dtd.py"
+        
+rule feh_df_comparison:
+    input:
+        "src/data/multizone/gaussian/insideout/exponential_timescale15"
+        "src/data/multizone/gaussian/twoinfall/exponential_timescale15"
+        "src/data/multizone/gaussian/insideout/powerlaw_slope14"
+        "src/data/multizone/gaussian/insideout/exponential_timescale30"
+    output:
+        "src/tex/figures/feh_df_comparison.pdf"
+    script:
+        "src/scripts/feh_df_comparison.py"
 
 rule ofe_df_sfh:
     input:

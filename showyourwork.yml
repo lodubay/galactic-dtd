@@ -36,6 +36,13 @@ dependencies:
         - src/scripts/distribution_functions.py
         - src/data/multizone/gaussian/insideout/powerlaw_slope14/
         - src/data/multizone/gaussian/insideout/exponential_timescale30/
+    src/scripts/feh_df_comparison.py:
+        - src/scripts/multizone_stars.py
+        - src/scripts/distribution_functions.py
+        - src/data/multizone/gaussian/insideout/exponential_timescale15/
+        - src/data/multizone/gaussian/twoinfall/exponential_timescale15/
+        - src/data/multizone/gaussian/insideout/powerlaw_slope14/
+        - src/data/multizone/gaussian/insideout/exponential_timescale30/
     src/scripts/ofe_df_sfh.py:
         - src/scripts/multizone_stars.py
         - src/scripts/distribution_functions.py
