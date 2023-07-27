@@ -28,6 +28,23 @@ def main():
 
     dt = ONEZONE_DEFAULTS['dt']
     simtime = np.arange(0, END_TIME + dt, dt)
+    
+    # Exponential DTD for reference
+    dtd = dtds.exponential(timescale=3, tmin=ONEZONE_DEFAULTS['delay'])
+    sz = vice.singlezone(name=str(output_dir / dtd.name),
+                         RIa=dtd,
+                         func=models.insideout(8, dt=dt), 
+                         mode='sfr',
+                         **ONEZONE_DEFAULTS)
+    sz.run(simtime, overwrite=True)
+    plot_vice_onezone(str(output_dir / dtd.name), 
+                      fig=fig, axs=axs, 
+                      linestyle='-', 
+                      linewidth=2,
+                      color='#bbbbbb', 
+                      label=r'Exponential ($\tau=3$ Gyr)', 
+                      marker_labels=True,
+                      zorder=1)
 
     for i, slope in enumerate(SLOPES):
         dtd = dtds.powerlaw(slope=slope, tmin=ONEZONE_DEFAULTS['delay'])
@@ -43,7 +60,7 @@ def main():
                           linestyle=LINE_STYLES[i], 
                           color=styles.plaw['color'], 
                           label=rf'$\alpha={slope:.1f}$', 
-                          marker_labels=(i==0))
+                          marker_labels=False)
 
     # Adjust axis limits
     axs[1].set_ylim(bottom=0)

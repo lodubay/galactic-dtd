@@ -32,9 +32,8 @@ def main(overwrite=False):
 
     fig, axs = setup_axes(width=0.4*TWO_COLUMN_WIDTH, title='Plateau DTD')
 
-    # Plot exponentials for referenc
-    tau = 3
-    dtd = dtds.exponential(timescale=tau, tmin=delay)
+    # Plot exponentials for reference
+    dtd = dtds.exponential(timescale=3, tmin=delay)
     sz = vice.singlezone(name=str(output_dir / dtd.name),
                          RIa=dtd,
                          func=models.insideout(8, dt=dt), 
@@ -43,18 +42,14 @@ def main(overwrite=False):
     sz.run(simtime, overwrite=True)
     plot_vice_onezone(str(output_dir / dtd.name), 
                       fig=fig, axs=axs,
-                      linestyle=':', 
-                      color=styles.exp['color'], 
-                      label=rf'Exponential ($\tau=3$ Gyr)', 
+                      linestyle='-', 
+                      linewidth=2,
+                      color='#bbbbbb', 
+                      label=r'Exponential ($\tau=3$ Gyr)', 
                       marker_labels=True, 
-                      linewidth=1.5)
+                      zorder=1)
 
     for i, width in enumerate(PLATEAU_WIDTHS):
-        if width >= 1:
-            label = f'{width:.01f} Gyr plateau'
-        else:
-            label = f'{int(width*1000)} Myr plateau'
-
         dtd = dtds.plateau(width=width, slope=SLOPE, tmin=delay)
         sz = vice.singlezone(name=str(output_dir / dtd.name),
                              RIa=dtd,
