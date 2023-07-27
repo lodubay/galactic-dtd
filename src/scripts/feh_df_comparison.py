@@ -14,12 +14,12 @@ import _globals
 
 # Multizone outputs
 SFH_LIST = ['insideout', 'twoinfall']
-SFH_LABELS = ['Inside-out', 'Two-infall']
+SFH_LABELS = ['Inside-out SFH', 'Two-infall SFH']
 DTD_MODEL = 'exponential_timescale15' # hold constant while varying SFH
 DTD_LIST = ['powerlaw_slope14',
             'exponential_timescale30']
-DTD_LABELS = ['Power-law\n($\\alpha=-1.4$)',
-              'Exponential\n($\\tau=3$ Gyr)']
+DTD_LABELS = ['Power-law DTD\n($\\alpha=-1.4$)',
+              'Exponential DTD\n($\\tau=3$ Gyr)']
 SFH_MODEL = 'insideout' # hold constant while varying DTD
 # Plot settings
 NBINS = 100
@@ -57,7 +57,8 @@ def main():
                                 range=FEH_LIM, smoothing=SMOOTH_WIDTH)
     # Add vertical lines for visual separation
     for x in get_subplot_edges(fig, axs)[1:-1]:
-        line = plt.Line2D([x,x], [0.13,0.98], transform=fig.transFigure, color='k')
+        line = plt.Line2D([x,x], [0.13,0.98], transform=fig.transFigure, 
+                          color='k', linewidth=0.5)
         fig.add_artist(line)
     
     
