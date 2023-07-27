@@ -284,15 +284,21 @@ All models are run for a duration of $t_{\rm max}=13.2$ Gyr with a time-step of 
     \includegraphics[width=0.32\linewidth]{figures/onezone_powerlaw_slope.pdf}
     \includegraphics[width=0.32\linewidth]{figures/onezone_exponential_timescale.pdf}
     \includegraphics[width=0.32\linewidth]{figures/onezone_plateau_width.pdf}
+    \caption{\textit{Left:} Abundance tracks in the [Fe/H]--[O/Fe] plane for one-zone models with a power-law DTD. The dotted, dashed, and solid curves represent models with power-law slopes $\alpha=-0.8$, $-1.1$, and $-1.4$, respectively. The open symbols located along each curve mark logarithmic steps in simulation time. In all cases a minimum SN Ia delay time of 40 Myr is assumed. The marginal panels above and to the right present the distributions of [Fe/H] and [O/Fe], respectively, convolved with a Gaussian with a standard deviation of 0.02 dex for display purposes.
+    \textit{Middle:} A similar plot comparing exponential DTDs with varying timescales. The solid, dashed, and dotted curves represent timescales $\tau=6$, 3, and 1.5 Gyr, respectively.
+    \textit{Right:} Similar, comparing plateau DTDs with varying plateau widths. The solid, dashed, and dotted curves represent widths $W=1$, 0.3, and 0.1 Gyr, respectively. All plateau DTD models assume a post-plateau power-law slope of $\alpha=-1.1$. For reference, the dotted purple curve represents an exponential DTD with $\tau=3$ Gyr, and the dotted blue curve represents a power-law DTD $\alpha=-1.1$ and no plateau.}
+    \label{fig:onezone-threepanel}
+    \script{onezone_threepanel.py}
+\end{figure*}
+
+\begin{figure*}
+    \centering
     \includegraphics[width=0.49\linewidth]{figures/onezone_minimum_delay.pdf}
     \includegraphics[width=0.49\linewidth]{figures/onezone_dtd.pdf}
-    \caption{\textit{Top left:} Abundance tracks in the [Fe/H]--[O/Fe] plane for one-zone models with a power-law DTD. The dotted, dashed, and solid curves represent models with power-law slopes $\alpha=-0.8$, $-1.1$, and $-1.4$, respectively. The open symbols located along each curve mark logarithmic steps in simulation time. In all cases a minimum SN Ia delay time of 40 Myr is assumed. The marginal panels above and to the right present the distributions of [Fe/H] and [O/Fe], respectively, convolved with a Gaussian with a standard deviation of 0.02 dex for display purposes.
-    \textit{Top middle:} A similar plot comparing exponential DTDs with varying timescales. The solid, dashed, and dotted curves represent timescales $\tau=6$, 3, and 1.5 Gyr, respectively.
-    \textit{Top right:} Similar, comparing plateau DTDs with varying plateau widths. The solid, dashed, and dotted curves represent widths $W=1$, 0.3, and 0.1 Gyr, respectively. All plateau DTD models assume a post-plateau power-law slope of $\alpha=-1.1$. For reference, the dotted purple curve represents an exponential DTD with $\tau=3$ Gyr, and the dotted blue curve represents a power-law DTD $\alpha=-1.1$ and no plateau.
-    \textit{Bottom left:} A similar plot comparing minimum SN Ia delay times of 40 Myr (solid) and 150 Myr (dashed) for two DTDs: a power-law with $\alpha=-1.1$ (blue), and an exponential with $\tau=1.5$ Gyr (purple).
-    \textit{Bottom right:} A similar plot comparing all five functional forms for the DTD in this paper: triple-system (green), plateau with $W=1$ Gyr (cyan), exponential with $\tau=1.5$ Gyr (purple), power-law with $\alpha=-1.1$ (blue), and two-population (pink). In all cases a minimum SN Ia delay time of 40 Myr is assumed.}
-    \label{fig:onezone-multipanel}
-    \script{onezone_multipanel.py}
+    \caption{\textit{Left:} A similar plot comparing minimum SN Ia delay times of 40 Myr (solid) and 150 Myr (dashed) for two DTDs: a power-law with $\alpha=-1.1$ (blue), and an exponential with $\tau=1.5$ Gyr (purple).
+    \textit{Right:} A similar plot comparing all five functional forms for the DTD in this paper: triple-system (green), plateau with $W=1$ Gyr (cyan), exponential with $\tau=1.5$ Gyr (purple), power-law with $\alpha=-1.1$ (blue), and two-population (pink). In all cases a minimum SN Ia delay time of 40 Myr is assumed.}
+    \label{fig:onezone-twopanel}
+    \script{onezone_twopanel.py}
 \end{figure*}
 
 % Adjusting the parameters of the DTD affects how steeply the abundance track in [Fe/H]-[O/Fe] space falls from its initial ``plateau'' and the location of the ``knee.'' Figure \ref{fig:onezone-slope-timescale} shows abundance tracks from one-zone models which assume different slopes of a power-law DTD or different timescales of an exponential DTD. A steeper power-law slope results in a steeper decline in [O/Fe] and a lower knee, as does a shorter exponential timescale. The consequence is that a very shallow power-law produces a similar abundance track to a very steep exponential, which suggests these models may be difficult to distinguish in this parameter space. However, these cases can be distinguished by their MDFs and [O/Fe] distributions, where the power-law DTD produces a narrower, less skewed distribution while the exponential DTD produces a broader, more skewed distribution. In the [O/Fe] distribution especially, an exponential DTD with a 6 Gyr timescale produces a large number of high-$\alpha$ stars.
@@ -427,18 +433,18 @@ Figure \ref{fig:feh-df-sfh} plots the distribution of [Fe/H] in multiple regions
 
 \begin{figure*}
     \centering
-    \includegraphics{figures/ofe_df_dtd.pdf}
-    \caption{Distributions of [O/Fe] for multi-zone simulations with different DTDs. In all cases an inside-out SFH is assumed. The plot format is similar to Figure \ref{fig:feh-df-sfh}. All distributions are smoothed with a box-car width of 0.05 dex.}
-    \label{fig:ofe-df-dtd}
-    \script{ofe_df_dtd.py}
-\end{figure*}
-
-\begin{figure*}
-    \centering
     \includegraphics{figures/ofe_df_sfh.pdf}
     \caption{Distributions of [O/Fe] for multi-zone simulations with different SFHs. The plot format is similar to Figure \ref{fig:feh-df-sfh}. In all cases an exponential DTD with timescale $\tau=1.5$ Gyr is assumed.}
     \label{fig:ofe-df-sfh}
     \script{ofe_df_sfh.py}
+\end{figure*}
+
+\begin{figure*}
+    \centering
+    \includegraphics{figures/ofe_df_dtd.pdf}
+    \caption{Distributions of [O/Fe] for multi-zone simulations with different DTDs. In all cases an inside-out SFH is assumed. The plot format is similar to Figure \ref{fig:feh-df-sfh}. All distributions are smoothed with a box-car width of 0.05 dex.}
+    \label{fig:ofe-df-dtd}
+    \script{ofe_df_dtd.py}
 \end{figure*}
 
 \subsection{The [O/Fe]--[Fe/H] Plane}
@@ -463,6 +469,14 @@ Figure \ref{fig:feh-df-sfh} plots the distribution of [Fe/H] in multiple regions
 \subsection{The Age--[O/Fe] Plane}
 \label{sec:age-ofe}
 
+\begin{figure}
+    \centering
+    \includegraphics{figures/age_ofe_sfh.pdf}
+    \caption{A comparison of the age--[O/Fe] relation between multi-zone simulations with different SFH models. All assume an inside-out SFH. Each row contains star particles from a different bin in $|z|$, with stars closest to the midplane in the bottom row and stars farthest from the midplane in the top row. Each panel plots a random mass-weighted sample of 10,000 star particles in the Solar annulus ($7\leq R_{\rm gal}<9$ kpc) color-coded by the Galactocentric radius at birth. A Gaussian scatter has been applied to all points based on the median [O/Fe] error from APOGEE DR17 and the median age error from \citet{Leung2023-Ages}. Black squares represent the mass-weighted median age of star particles within bins of [O/Fe] with a width of 0.05 dex, and the horizontal black error bars encompass the 16th and 84th percentiles. Red triangles represent the median age from \citet{Leung2023-Ages} in bins of [O/Fe], and the horizontal red error bars encompass the 16th and 84th percentiles. For clarity, bins which contain less than 1\% of the total mass (in the simulations) or total number of stars (in the data) are not plotted. Similar to Figure \ref{fig:age-ofe-dtd} but for simulations with different SFH models. All assume an exponential DTD with $\tau=1.5$ Gyr. In all panels, stars are limited to the Solar neighborhood ($7\leq R_{\rm gal}<9$ kpc, $0\leq|z|<0.5$ kpc)}
+    \label{fig:age-ofe-sfh}
+    \script{age_ofe_sfh.py}
+\end{figure}
+
 \begin{figure*}
     \centering
     \includegraphics{figures/age_ofe_dtd.pdf}
@@ -470,14 +484,6 @@ Figure \ref{fig:feh-df-sfh} plots the distribution of [Fe/H] in multiple regions
     \label{fig:age-ofe-dtd}
     \script{age_ofe_dtd.py}
 \end{figure*}
-
-\begin{figure}
-    \centering
-    \includegraphics{figures/age_ofe_sfh.pdf}
-    \caption{Similar to Figure \ref{fig:age-ofe-dtd} but for simulations with different SFH models. All assume an exponential DTD with $\tau=1.5$ Gyr. In all panels, stars are limited to the Solar neighborhood ($7\leq R_{\rm gal}<9$ kpc, $0\leq|z|<0.5$ kpc)}
-    \label{fig:age-ofe-sfh}
-    \script{age_ofe_sfh.py}
-\end{figure}
 
 
 \section{Discussion}
@@ -604,7 +610,7 @@ A multi-zone with the \citet{Greggio2005-AnalyticalRates} SD DTD produced nearly
     \centering
     \includegraphics{figures/dtd_analytical.pdf}
     \includegraphics{figures/onezone_analytical_dtd.pdf}
-    \caption{\textit{Left:} Analytical DTDs from \citet[][solid curves]{Greggio2005-AnalyticalRates} and close approximation simple functions (dashed curves). Some functions are presented with a constant multiplicative factor for visual clarity. \textit{Right:} Abundance tracks and distributions from one-zone models with the analytical DTDs from \citet{Greggio2005-AnalyticalRates}. \textit{Left:} a comparison between the analytical SD DTD (solid magenta curve), an exponential DTD with a 1.5 Gyr timescale (dashed pink curve), and a power-law DTD with a slope of -1.1 (dotted black curve). \textit{Right:} a comparison between WIDE and CLOSE prescriptions for an analytical DD DTD (solid blue and green curves, respectively), power-law DTDs with an initial plateau of 1 Gyr and 300 Myr (dashed cyan and yellow curves, respectively), and a power-law DTD with no plateau and a slope of -1.1 (dotted black curve).}
+    \caption{\textit{Left:} Analytical DTDs from \citet[][solid curves]{Greggio2005-AnalyticalRates} and close approximation simple functions (dashed curves). Some functions are presented with a constant multiplicative factor for visual clarity. \textit{Right:} Abundance tracks and distributions from one-zone models with the analytical DTDs from \citet{Greggio2005-AnalyticalRates}. For clarity}
     \label{fig:analytical-dtd}
     \script{analytical_dtd_twopanel.py}
 \end{figure*}
