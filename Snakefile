@@ -620,6 +620,23 @@ rule apogee_sample:
     script:
         "src/scripts/apogee_tools.py"
 
+rule multizone_scores:
+    input:
+        expand("src/data/multizone/gaussian/{evolution}/{dtd}",
+               evolution=["insideout", "lateburst", "earlyburst", "twoinfall"],
+               dtd=["powerlaw_slope11", "powerlaw_slope14", 
+                    "exponential_timescale15", "exponential_timescale30", 
+                    "plateau_width03", "plateau_width10", "prompt", "triple"
+               ]
+        ),
+        "src/data/APOGEE/sample.csv"
+    output:
+        "src/data/multizone/scores.csv"
+    cache:
+        True
+    script:
+        "src/scripts/score_multizone_outputs.py"
+
 # Figures
 rule star_formation_histories:
     input:
@@ -734,16 +751,9 @@ rule age_ofe_dtd:
 # Tables
 rule summary_table:
     input:
-        expand("src/data/multizone/gaussian/{evolution}/{dtd}",
-               evolution=["insideout", "lateburst", "earlyburst", "twoinfall"],
-               dtd=["powerlaw_slope11", "powerlaw_slope14", 
-                    "exponential_timescale15", "exponential_timescale30", 
-                    "plateau_width03", "plateau_width10", "prompt", "triple"
-               ]
-        ),
-        "src/data/APOGEE/sample.csv"
+        "src/data/multizone/scores.csv"
     output:
-        multiext("src/tex/output/summary_table", ".csv", ".tex")
+        "src/tex/output/summary_table.tex"
     script:
         "src/scripts/summary_table.py"
 

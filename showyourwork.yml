@@ -79,7 +79,7 @@ dependencies:
         - src/data/multizone/gaussian/insideout/exponential_timescale15/
         - src/data/multizone/gaussian/insideout/plateau_width10/
         - src/data/multizone/gaussian/insideout/triple/
-    src/scripts/summary_table.py:
+    src/scripts/score_multizone_outputs.py:
         - src/data/multizone/gaussian/insideout/powerlaw_slope11/
         - src/data/multizone/gaussian/insideout/powerlaw_slope14/
         - src/data/multizone/gaussian/insideout/exponential_timescale15/
@@ -113,5 +113,7 @@ dependencies:
         - src/data/multizone/gaussian/twoinfall/prompt/
         - src/data/multizone/gaussian/twoinfall/triple/
         - src/data/APOGEE/sample.csv
+    src/scripts/summary_table.py:
+        - src/data/multizone/scores.csv
     src/scripts/sample_size.py:
         - src/data/APOGEE/sample.csv
