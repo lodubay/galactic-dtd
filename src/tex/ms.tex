@@ -352,28 +352,31 @@ for distributions $P$ and $Q$ with probability density functions $p(x)$ and $q(x
 
 Holding the SFH fixed, varying the DTD has only a minor effect on the MDF across the disk. Figure \ref{fig:feh-df-dtd} plots the [Fe/H] distributions for two multi-zone simulations which both assume an inside-out SFH but different DTDs: a power-law with slope $\alpha=-1.4$, and an exponential with timescale $\tau=3$ Gyr. The balance between prompt and delayed SNe Ia is starkly different between the two models, with $\sim 80\%$ of SNe Ia exploding within 1 Gyr in the former model but only $\sim 30\%$ in the latter. Nevertheless, the effect of the DTD on the MDF is second-order compared to the effect of the SFH as seen in Figure \ref{fig:feh-df-sfh}.
 
-\begin{figure}
-    \centering
-    \includegraphics{figures/feh_df_dtd.pdf}
-    \caption{Distributions of [Fe/H] from multi-zone simulations with different DTDs: a power-law with slope $\alpha=-1.4$ (\textit{left}), and an exponential with timescale $\tau=3$ Gyr (\textit{right}). Each row presents distributions of stars within a range of absolute midplane distance: $1\leq|z|<2$ kpc (\textit{top}), $0.5\leq|z|<1$ kpc (\textit{middle}), and $0\leq|z|<0.5$ kpc (\textit{bottom}). Within each panel, curves of different color represent the distributions of stars binned by Galactocentric radius $R_{\rm gal}$, from $3\leq R_{\rm gal}<5$ kpc (yellow) to $13\leq R_{\rm gal}<15$ kpc (blue). Each distribution is normalized so the area under the curve is 1, and the vertical scale is consistent across each row. All distributions are convolved with observational uncertainties in APOGEE DR17 (see Table \ref{tab:uncertainties}) and smoothed with a box-car width of 0.2 dex. In both cases an inside-out SFH is assumed.}
-    \label{fig:feh-df-dtd}
-    \script{feh_df_dtd.py}
-\end{figure}
+% \begin{figure}
+%     \centering
+%     \includegraphics{figures/feh_df_dtd.pdf}
+%     \caption{Distributions of [Fe/H] from multi-zone simulations with different DTDs: a power-law with slope $\alpha=-1.4$ (\textit{left}), and an exponential with timescale $\tau=3$ Gyr (\textit{right}). Each row presents distributions of stars within a range of absolute midplane distance: $1\leq|z|<2$ kpc (\textit{top}), $0.5\leq|z|<1$ kpc (\textit{middle}), and $0\leq|z|<0.5$ kpc (\textit{bottom}). Within each panel, curves of different color represent the distributions of stars binned by Galactocentric radius $R_{\rm gal}$, from $3\leq R_{\rm gal}<5$ kpc (yellow) to $13\leq R_{\rm gal}<15$ kpc (blue). Each distribution is normalized so the area under the curve is 1, and the vertical scale is consistent across each row. All distributions are convolved with observational uncertainties in APOGEE DR17 (see Table \ref{tab:uncertainties}) and smoothed with a box-car width of 0.2 dex. In both cases an inside-out SFH is assumed.}
+%     \label{fig:feh-df-dtd}
+%     \script{feh_df_dtd.py}
+% \end{figure}
 
 Figure \ref{fig:feh-df-sfh} plots the distribution of [Fe/H] in multiple regions across the disk for the four SFHs in this paper.
 
-\begin{figure*}
-    \centering
-    \includegraphics{figures/feh_df_sfh.pdf}
-    \caption{Distributions of [Fe/H] from multi-zone simulations with different SFHs. The plot format is similar to Figure \ref{fig:feh-df-dtd}. In all cases an exponential DTD with timescale $\tau=1.5$ Gyr is assumed. Distributions from APOGEE DR17, binned and smoothed similarly, are presented in the right-most column for reference.}
-    \label{fig:feh-df-sfh}
-    \script{feh_df_sfh.py}
-\end{figure*}
+% \begin{figure*}
+%     \centering
+%     \includegraphics{figures/feh_df_sfh.pdf}
+%     \caption{Distributions of [Fe/H] from multi-zone simulations with different SFHs. The plot format is similar to Figure \ref{fig:feh-df-dtd}. In all cases an exponential DTD with timescale $\tau=1.5$ Gyr is assumed. Distributions from APOGEE DR17, binned and smoothed similarly, are presented in the right-most column for reference.}
+%     \label{fig:feh-df-sfh}
+%     \script{feh_df_sfh.py}
+% \end{figure*}
 
 \begin{figure*}
     \centering
     \includegraphics{figures/feh_df_comparison.pdf}
-    \caption{Distributions of [Fe/H] from multi-zone simulations with different SFHs. The plot format is similar to Figure \ref{fig:feh-df-dtd}. In all cases an exponential DTD with timescale $\tau=1.5$ Gyr is assumed. Distributions from APOGEE DR17, binned and smoothed similarly, are presented in the right-most column for reference.}
+    \caption{Distributions of [Fe/H] from multi-zone simulations with various models for the SFH and DTD. Each row presents distributions of stars within a range of absolute midplane distance: $1\leq|z|<2$ kpc (\textit{top}), $0.5\leq|z|<1$ kpc (\textit{middle}), and $0\leq|z|<0.5$ kpc (\textit{bottom}). Within each panel, curves of different color represent the distributions of stars binned by Galactocentric radius $R_{\rm gal}$, from $3\leq R_{\rm gal}<5$ kpc (yellow) to $13\leq R_{\rm gal}<15$ kpc (blue). Each distribution is normalized so the area under the curve is 1, and the vertical scale is consistent across each row. All distributions are convolved with observational uncertainties in APOGEE DR17 (see Table \ref{tab:uncertainties}) and smoothed with a box-car width of 0.2 dex. 
+    \textit{Left columns:} comparison between the inside-out and two-infall SFH models. In both cases an exponential DTD with timescale $\tau=1.5$ Gyr is assumed. 
+    \textit{Center column:} the distributions from APOGEE DR17 for reference, binned and smoothed similarly.
+    \textit{Right columns:} comparison between the power-law ($\alpha=-1.4$) and exponential ($\tau=3$ Gyr) DTD models. In both cases the inside-out SFH is assumed.}
     \label{fig:feh-df-comparison}
     \script{feh_df_comparison.py}
 \end{figure*}
@@ -383,7 +386,7 @@ Figure \ref{fig:feh-df-sfh} plots the distribution of [Fe/H] in multiple regions
 \begin{figure*}
     \centering
     \includegraphics{figures/ofe_df_sfh.pdf}
-    \caption{Distributions of [O/Fe] from multi-zone simulations with different SFHs. The format of each panel is similar to Figure \ref{fig:feh-df-dtd}. In all cases an exponential DTD with timescale $\tau=1.5$ Gyr is assumed. Distributions from APOGEE DR17, binned and smoothed similarly, are presented in the right-most column for reference.}
+    \caption{Distributions of [O/Fe] from multi-zone simulations with different SFHs. In all cases an exponential DTD with timescale $\tau=1.5$ Gyr is assumed. The format of each panel is the same as in Figure \ref{fig:feh-df-comparison}, except that all distributions are smoothed with a box-car width of 0.05 dex. Distributions from APOGEE DR17, binned and smoothed similarly, are presented in the right-most column for reference.}
     \label{fig:ofe-df-sfh}
     \script{ofe_df_sfh.py}
 \end{figure*}
@@ -391,7 +394,7 @@ Figure \ref{fig:feh-df-sfh} plots the distribution of [Fe/H] in multiple regions
 \begin{figure*}
     \centering
     \includegraphics{figures/ofe_df_dtd.pdf}
-    \caption{Distributions of [O/Fe] from multi-zone simulations with different DTDs. In all cases an inside-out SFH is assumed. The plot format is similar to Figure \ref{fig:feh-df-sfh}. All distributions are smoothed with a box-car width of 0.05 dex.}
+    \caption{Distributions of [O/Fe] from multi-zone simulations with different DTDs. In all cases an inside-out SFH is assumed. The plot format is similar to Figure \ref{fig:ofe-df-sfh}.}
     \label{fig:ofe-df-dtd}
     \script{ofe_df_dtd.py}
 \end{figure*}
@@ -402,7 +405,7 @@ Figure \ref{fig:feh-df-sfh} plots the distribution of [Fe/H] in multiple regions
 \begin{figure}
     \centering
     \includegraphics{figures/ofe_feh_sfh.pdf}
-    \caption{A comparison of the [O/Fe]--[Fe/H] plane between the four SFH models in our multi-zone simulations. All assume an exponential DTD with $\tau=1.5$ Gyr. Each panel plots a random mass-weighted sample of 10,000 star particles in the Solar neighborhood ($7\leq R_{\rm gal}<9$ kpc, $0\leq|z|<0.5$ kpc) color-coded by the Galactocentric radius at birth. A Gaussian scatter has been applied to all points based on the median abundance errors in APOGEE DR17. The black curves represent the ISM abundance tracks in the 8 kpc zone. The red contours represent the APOGEE abundance distribution, with the solid and dashed contours enclosing 68\% and 95\% of stars, respectively.}
+    \caption{A comparison of the [O/Fe]--[Fe/H] plane between the four SFH models in our multi-zone simulations. All assume an exponential DTD with $\tau=1.5$ Gyr. Each panel plots a random mass-weighted sample of 10,000 star particles in the Solar neighborhood ($7\leq R_{\rm gal}<9$ kpc, $0\leq|z|<0.5$ kpc) color-coded by the Galactocentric radius at birth. A Gaussian scatter has been applied to all points based on the median abundance errors in APOGEE DR17 (ses Table \ref{tab:uncertainties}). The black curves represent the ISM abundance tracks in the 8 kpc zone. The red contours represent the APOGEE abundance distribution, with the solid and dashed contours enclosing 68\% and 95\% of stars in the sample, respectively.}
     \label{fig:ofe-feh-sfh}
     \script{ofe-feh-sfh.py}
 \end{figure}
@@ -410,7 +413,7 @@ Figure \ref{fig:feh-df-sfh} plots the distribution of [Fe/H] in multiple regions
 \begin{figure*}
     \centering
     \includegraphics{figures/ofe_feh_dtd.pdf}
-    \caption{Similar to Figure \ref{fig:ofe-feh-sfh} but comparing multi-zone simulations with different DTD models. All assume an inside-out SFH. Each row contains star particles from a different bin in $|z|$, with stars closest to the midplane in the bottom row and stars farthest from the midplane in the top row. All panels present stars within the Solar annulus ($7\leq R_{\rm gal}<9$ kpc).}
+    \caption{The [O/Fe]--[Fe/H] plane from multi-zone simulations with different DTD models. All assume the inside-out SFH. Each panel is similar to those in Figure \ref{fig:ofe-feh-sfh}, except each row contains star particles from a different bin in $|z|$, with stars closest to the midplane in the bottom row and stars farthest from the midplane in the top row. All panels present stars within the Solar annulus ($7\leq R_{\rm gal}<9$ kpc).}
     \label{fig:ofe-feh-dtd}
     \script{ofe-feh-dtd.py}
 \end{figure*}
@@ -559,7 +562,7 @@ A multi-zone with the \citet{Greggio2005-AnalyticalRates} SD DTD produced nearly
     \centering
     \includegraphics{figures/dtd_analytical.pdf}
     \includegraphics{figures/onezone_analytical_dtd.pdf}
-    \caption{\textit{Left:} Analytical DTDs from \citet[][solid curves]{Greggio2005-AnalyticalRates} and close approximation simple functions (dashed curves). Some functions are presented with a constant multiplicative factor for visual clarity. \textit{Right:} Abundance tracks and distributions from one-zone models with the analytical DTDs from \citet{Greggio2005-AnalyticalRates}. For clarity}
+    \caption{\textit{Left:} Analytical DTDs from \citet[][solid curves]{Greggio2005-AnalyticalRates} and simple DTD functions (dashed curves). Some functions are presented with a constant multiplicative factor for visual clarity. \textit{Right:} Abundance tracks and distributions from one-zone models with the analytical and simple DTDs (same color scheme). For clarity, we vary the mass-loading factor to be $\eta=4$, $\eta=2$, and $\eta=1$ for the red, green, and blue curves, respectively.}
     \label{fig:analytical-dtd}
     \script{analytical_dtd_twopanel.py}
 \end{figure*}
