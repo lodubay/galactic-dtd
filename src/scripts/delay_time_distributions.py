@@ -8,11 +8,11 @@ from matplotlib.ticker import FuncFormatter
 import paths
 from multizone.src import dtds
 from colormaps import paultol
-from _globals import MIN_RIA_DELAY
-plt.rcParams['axes.prop_cycle'] = plt.cycler('color', paultol.bright.colors)
+from _globals import MIN_RIA_DELAY, ONE_COLUMN_WIDTH
 
 def main():
     plt.style.use(paths.styles / 'paper.mplstyle')
+    plt.rcParams['axes.prop_cycle'] = plt.cycler('color', paultol.bright.colors)
     fig, ax= setup_axes()
     times = [t*0.001 for t in range(40, 13200)]
     distributions = [styles.prompt, styles.plaw, styles.plateau, 
@@ -68,13 +68,13 @@ class styles:
         'func': dtds.prompt(peak=0.05, stdev=0.015, timescale=3, tmin=MIN_RIA_DELAY),
         'label': 'Two-population',
         'color': paultol.bright.colors[1],
-        'line': ':',
+        'line': '-.',
     }
     triple = {
         'func': dtds.triple(tmin=MIN_RIA_DELAY),
         'label': r'Triple-system',
         'color': paultol.bright.colors[3],
-        'line': '-.'
+        'line': ':'
     }
     # Additional DTDs
     exp_long = {
@@ -87,7 +87,7 @@ class styles:
         'func': dtds.plateau(width=1., slope=-1.1, tmin=MIN_RIA_DELAY),
         'label': r'Plateau ($W=1$ Gyr)',
         'color': paultol.bright.colors[2],
-        'line': ':',
+        'line': '--',
     }
     plaw_steep = {
         'func': dtds.powerlaw(slope=-1.4, tmin=MIN_RIA_DELAY),
@@ -98,7 +98,8 @@ class styles:
 
 
 def setup_axes():
-    fig, ax = plt.subplots(figsize=(3.25, 3.25), tight_layout=True)
+    fig, ax = plt.subplots(figsize=(ONE_COLUMN_WIDTH, ONE_COLUMN_WIDTH), 
+                           tight_layout=True)
     ax.set_xscale('log')
     ax.set_yscale('log')
     ax.xaxis.set_major_formatter(FuncFormatter(lambda y, _: '{:g}'.format(y)))

@@ -56,7 +56,7 @@ def plot_onezone():
     params = ONEZONE_DEFAULTS
     
     for i, dtd in enumerate(styles.distlist):
-        params['eta'] = dtd['offset']
+        params['eta'] = dtd['eta']
         sz = vice.singlezone(name=str(output_dir / dtd['func'].name),
                              RIa=dtd['func'],
                              func=models.insideout(8, dt=dt), 
@@ -85,7 +85,8 @@ class styles:
         'label': r'Single Degenerate $\times6$',
         'color': paultol.muted.colors[5],
         'linestyle': '-',
-        'offset': 4,
+        'offset': 6,
+        'eta': 4,
     }
     dd_wide = {
         'func': dtds.greggio05_double('wide', dt=INTSTEP, nsamples=NSAMPLES,
@@ -103,6 +104,7 @@ class styles:
         'color': paultol.muted.colors[3],
         'linestyle': '-',
         'offset': 2,
+        'eta': 2,
     }
     # Comparison DTDs
     plateau = {
@@ -111,6 +113,7 @@ class styles:
         'color': paultol.muted.colors[7],
         'linestyle': '--',
         'offset': 2,
+        'eta': 2,
     }
     plateau_long = {
         'func': dtds.plateau(width=1., slope=-1.1, tmin=MIN_RIA_DELAY),
@@ -118,13 +121,15 @@ class styles:
         'color': paultol.muted.colors[6],
         'linestyle': '--',
         'offset': 1,
+        'eta': 1,
     }
     exp = {
         'func': dtds.exponential(timescale=1.5, tmin=MIN_RIA_DELAY),
         'label': r'Exponential ($\tau=1.5$ Gyr) $\times6$',
         'color': paultol.muted.colors[0],
         'linestyle': '--',
-        'offset': 4,
+        'offset': 6,
+        'eta': 4,
     }
     distlist = [sd, exp, dd_close, plateau, dd_wide, plateau_long]
 

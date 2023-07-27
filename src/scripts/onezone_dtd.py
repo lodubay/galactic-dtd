@@ -41,6 +41,7 @@ def main():
                           fig=fig, axs=axs,
                           label=dtd['label'], 
                           color=dtd['color'],
+                          linestyle=dtd['line'],
                           marker_labels=(i==0),
                           )
 
