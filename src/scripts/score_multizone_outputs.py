@@ -230,8 +230,8 @@ def test_bimodality(mzs, prominence=0.1, feh_bins=[(-0.6, -0.4), (-0.4, -0.2)],
     for feh_bin in feh_bins:
         subset_slice = subset.filter({'[fe/h]': feh_bin})
         mdf, bin_edges = subset_slice.mdf('[o/fe]', smoothing=smoothing,
-                                          bins=np.arange(-0.5, 0.56, 0.01))
-        peaks, _ = find_peaks(mdf/mdf.max(), prominence=0.1)
+                                          bins=np.arange(-0.15, 0.56, 0.01))
+        peaks, _ = find_peaks(mdf/mdf.max(), prominence=prominence)
         is_bimodal = (len(peaks) > 1)
         if is_bimodal:
             break
