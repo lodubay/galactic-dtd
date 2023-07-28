@@ -48,6 +48,7 @@ def main():
                 # Set up lists to track scores by region
                 scores = {col: [] for col in summary_table.columns[:-1]}
                 weights = []
+                age_weights = []
                 for i in range(len(ABSZ_BINS) - 1):
                     absz_lim = (ABSZ_BINS[-(i+2)], ABSZ_BINS[-(i+1)])
                     for j in range(len(GALR_BINS) - 1):
@@ -67,9 +68,13 @@ def main():
                             score_age_ofe(vice_subset, apogee_subset, 
                                           age_col=age_col))
                         weights.append(apogee_subset.shape[0])
+                        age_weights.append(apogee_subset.dropna(
+                            subset=age_col).shape[0])
                 # Append weighted mean scores
                 weighted_sums = {col: np.average(scores[col], weights=weights) 
-                                 for col in summary_table.columns[:-1]}
+                                 for col in summary_table.columns[:-2]}
+                weighted_sums['age_ofe'] = np.average(scores['age_ofe'], 
+                                                      weights=age_weights)
                 # Separate bimodality test (binary output)
                 weighted_sums['bimodality'] = test_bimodality(mzs)
                 summary_table.loc[dtd, sfh] = weighted_sums
