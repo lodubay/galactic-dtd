@@ -708,7 +708,7 @@ rule ofe_df_sfh:
 
 rule ofe_df_dtd:
     input:
-        expand("src/data/multizone/gaussian/insideout/{dtd}",
+        expand("src/data/multizone/gaussian/earlyburst/{dtd}",
                dtd=["prompt", "powerlaw_slope11", "exponential_timescale15",
                     "plateau_width10", "triple"]
         )
