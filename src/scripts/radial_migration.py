@@ -52,9 +52,10 @@ def main():
                 age_lim = tuple(AGE_BINS[j:j+2])
                 # bin data by formation radius and age
                 subset = mzs.filter({'age': age_lim, 'galr_origin': rform_lim})
-                # limit to bins with a meaningful number of stars
-                # nodups = subset.stars.copy().drop_duplicates('galr_final')
-                # if nodups.shape[0] > 100:
+                # for analogue migration, limit to bins with >100 stars
+                nodups = subset.stars.copy().drop_duplicates('analog_id')
+                if nodups.shape[0] < 100 and mig == 'diffusion':
+                    continue
                 hist, _ = np.histogram(subset('galr_final'), rfinal_bins, 
                                        density=True)
                 # apply boxcar smoothing with a width of 0.5 kpc
