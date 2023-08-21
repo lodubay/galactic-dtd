@@ -698,7 +698,7 @@ rule feh_df_comparison:
 
 rule ofe_df_sfh:
     input:
-        expand("src/data/multizone/gaussian/{evolution}/powerlaw_slope11",
+        expand("src/data/multizone/gaussian/{evolution}/exponential_timescale15",
                evolution=["insideout", "lateburst", "earlyburst", "twoinfall"]
         )
     output:
