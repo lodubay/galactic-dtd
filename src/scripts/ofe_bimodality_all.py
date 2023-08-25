@@ -1,5 +1,5 @@
 """
-This script plots [O/Fe] MDFs for all VICE multizone runs.
+This script plots the [O/Fe] bimodality for all VICE multizone runs.
 """
 
 from tqdm import tqdm
