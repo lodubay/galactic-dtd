@@ -58,6 +58,19 @@ dependencies:
         - src/data/multizone/gaussian/earlyburst/exponential_timescale15/
         - src/data/multizone/gaussian/earlyburst/plateau_width10/
         - src/data/multizone/gaussian/earlyburst/triple/
+    src/scripts/ofe_bimodality_summary.py:
+        - src/scripts/multizone_stars.py
+        - src/scripts/distribution_functions.py
+        - src/data/APOGEE/sample.csv
+        - src/data/multizone/gaussian/insideout/exponential_timescale15/
+        - src/data/multizone/gaussian/lateburst/exponential_timescale15/
+        - src/data/multizone/gaussian/earlyburst/exponential_timescale15/
+        - src/data/multizone/gaussian/twoinfall/exponential_timescale15/
+        - src/data/multizone/gaussian/earlyburst/prompt/
+        - src/data/multizone/gaussian/earlyburst/powerlaw_slope11/
+        - src/data/multizone/gaussian/earlyburst/exponential_timescale15/
+        - src/data/multizone/gaussian/earlyburst/plateau_width10/
+        - src/data/multizone/gaussian/earlyburst/triple/
     src/scripts/ofe_feh_sfh.py:
         - src/scripts/multizone_stars.py
         - src/data/multizone/gaussian/insideout/exponential_timescale15/

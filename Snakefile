@@ -717,6 +717,21 @@ rule ofe_df_dtd:
     script:
         "src/scripts/ofe_df_dtd.py"
 
+rule ofe_bimodality_summary:
+    input:
+        expand("src/data/multizone/gaussian/{evolution}/exponential_timescale15",
+               evolution=["insideout", "lateburst", "earlyburst", "twoinfall"]
+        ),
+        expand("src/data/multizone/gaussian/lateburst/{dtd}",
+               dtd=["prompt", "powerlaw_slope11", "exponential_timescale15",
+                    "plateau_width10", "triple"]
+        ),
+        "src/data/APOGEE/sample.csv"
+    output:
+        "src/tex/figures/ofe_bimodality_summary.pdf"
+    script:
+        "src/scripts/ofe_bimodality_summary.py"
+
 rule ofe_feh_sfh:
     input:
         expand("src/data/multizone/gaussian/{evolution}/exponential_timescale15",
