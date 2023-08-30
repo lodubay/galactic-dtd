@@ -27,7 +27,7 @@ def main():
     model_ = model(str(fullpath), dict(snakemake.params))
     model_.run([_ * model_.dt for _ in range(round(
         _globals.END_TIME / model_.dt) + 1)],
-        overwrite = True, pickle = True)
+        overwrite = True, pickle = False)
 
 
 def model(name, params):
