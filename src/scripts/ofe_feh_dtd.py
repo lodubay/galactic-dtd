@@ -3,7 +3,6 @@ Compare [O/Fe]-[Fe/H] plots for the Solar annulus for VICE outputs with
 different star formation histories and delay time distributions
 """
 
-from tqdm import tqdm
 from pathlib import Path
 import numpy as np
 import matplotlib.pyplot as plt
@@ -18,7 +17,7 @@ from _globals import ZONE_WIDTH, TWO_COLUMN_WIDTH, MAX_SF_RADIUS, ABSZ_BINS
 import paths
 
 FEH_LIM = (-1.3, 0.6)
-OFE_LIM = (-0.15, 0.55)
+OFE_LIM = (-0.1, 0.6)
 GALR_LIM = (7, 9)
 
 SFH_MODEL = 'insideout'
