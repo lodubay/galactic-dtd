@@ -799,3 +799,11 @@ rule sample_size:
         "src/tex/output/sample_size.txt"
     script:
         "src/scripts/sample_size.py"
+
+rule age_sample_size:
+    input:
+        "src/data/APOGEE/sample.csv"
+    output:
+        "src/tex/output/age_sample_size.txt"
+    script:
+        "src/scripts/age_sample_size.py"

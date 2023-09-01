@@ -145,3 +145,5 @@ dependencies:
         - src/data/multizone/scores.csv
     src/scripts/sample_size.py:
         - src/data/APOGEE/sample.csv
+    src/scripts/age_sample_size.py:
+        - src/data/APOGEE/sample.csv
