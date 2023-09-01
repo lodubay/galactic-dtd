@@ -27,6 +27,7 @@ dependencies:
     src/scripts/feh_df_sfh.py:
         - src/scripts/multizone_stars.py
         - src/scripts/distribution_functions.py
+        - src/data/APOGEE/sample.csv
         - src/data/multizone/gaussian/insideout/exponential_timescale15/
         - src/data/multizone/gaussian/lateburst/exponential_timescale15/
         - src/data/multizone/gaussian/earlyburst/exponential_timescale15/
@@ -39,6 +40,7 @@ dependencies:
     src/scripts/feh_df_comparison.py:
         - src/scripts/multizone_stars.py
         - src/scripts/distribution_functions.py
+        - src/data/APOGEE/sample.csv
         - src/data/multizone/gaussian/insideout/exponential_timescale15/
         - src/data/multizone/gaussian/twoinfall/exponential_timescale15/
         - src/data/multizone/gaussian/insideout/powerlaw_slope14/
@@ -46,6 +48,7 @@ dependencies:
     src/scripts/ofe_df_sfh.py:
         - src/scripts/multizone_stars.py
         - src/scripts/distribution_functions.py
+        - src/data/APOGEE/sample.csv
         - src/data/multizone/gaussian/insideout/exponential_timescale15/
         - src/data/multizone/gaussian/lateburst/exponential_timescale15/
         - src/data/multizone/gaussian/earlyburst/exponential_timescale15/
@@ -53,6 +56,7 @@ dependencies:
     src/scripts/ofe_df_dtd.py:
         - src/scripts/multizone_stars.py
         - src/scripts/distribution_functions.py
+        - src/data/APOGEE/sample.csv
         - src/data/multizone/gaussian/earlyburst/prompt/
         - src/data/multizone/gaussian/earlyburst/powerlaw_slope11/
         - src/data/multizone/gaussian/earlyburst/exponential_timescale15/
@@ -73,12 +77,14 @@ dependencies:
         - src/data/multizone/gaussian/earlyburst/triple/
     src/scripts/ofe_feh_sfh.py:
         - src/scripts/multizone_stars.py
+        - src/data/APOGEE/sample.csv
         - src/data/multizone/gaussian/insideout/exponential_timescale15/
         - src/data/multizone/gaussian/lateburst/exponential_timescale15/
         - src/data/multizone/gaussian/earlyburst/exponential_timescale15/
         - src/data/multizone/gaussian/twoinfall/exponential_timescale15/
     src/scripts/ofe_feh_dtd.py:
         - src/scripts/multizone_stars.py
+        - src/data/APOGEE/sample.csv
         - src/data/multizone/gaussian/insideout/prompt/
         - src/data/multizone/gaussian/insideout/powerlaw_slope11/
         - src/data/multizone/gaussian/insideout/exponential_timescale15/
@@ -87,6 +93,7 @@ dependencies:
     src/scripts/age_ofe_sfh.py:
         - src/scripts/multizone_stars.py
         - src/scripts/age_ofe.py
+        - src/data/APOGEE/sample.csv
         - src/data/multizone/gaussian/insideout/exponential_timescale15/
         - src/data/multizone/gaussian/lateburst/exponential_timescale15/
         - src/data/multizone/gaussian/earlyburst/exponential_timescale15/
@@ -94,6 +101,7 @@ dependencies:
     src/scripts/age_ofe_dtd.py:
         - src/scripts/multizone_stars.py
         - src/scripts/age_ofe.py
+        - src/data/APOGEE/sample.csv
         - src/data/multizone/gaussian/insideout/prompt/
         - src/data/multizone/gaussian/insideout/powerlaw_slope11/
         - src/data/multizone/gaussian/insideout/exponential_timescale15/

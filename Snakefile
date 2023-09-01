@@ -670,7 +670,8 @@ rule feh_df_sfh:
     input:
         expand("src/data/multizone/gaussian/{evolution}/powerlaw_slope11",
                evolution=["insideout", "lateburst", "earlyburst", "twoinfall"]
-        )
+        ),
+        "src/data/APOGEE/sample.csv"
     output:
         "src/tex/figures/feh_df_sfh.pdf"
     script:
@@ -691,6 +692,7 @@ rule feh_df_comparison:
         "src/data/multizone/gaussian/twoinfall/exponential_timescale15"
         "src/data/multizone/gaussian/insideout/powerlaw_slope14"
         "src/data/multizone/gaussian/insideout/exponential_timescale30"
+        "src/data/APOGEE/sample.csv"
     output:
         "src/tex/figures/feh_df_comparison.pdf"
     script:
@@ -700,7 +702,8 @@ rule ofe_df_sfh:
     input:
         expand("src/data/multizone/gaussian/{evolution}/exponential_timescale15",
                evolution=["insideout", "lateburst", "earlyburst", "twoinfall"]
-        )
+        ),
+        "src/data/APOGEE/sample.csv"
     output:
         "src/tex/figures/ofe_df_sfh.pdf"
     script:
@@ -711,7 +714,8 @@ rule ofe_df_dtd:
         expand("src/data/multizone/gaussian/earlyburst/{dtd}",
                dtd=["prompt", "powerlaw_slope11", "exponential_timescale15",
                     "plateau_width10", "triple"]
-        )
+        ),
+        "src/data/APOGEE/sample.csv"
     output:
         "src/tex/figures/ofe_df_dtd.pdf"
     script:
@@ -736,7 +740,8 @@ rule ofe_feh_sfh:
     input:
         expand("src/data/multizone/gaussian/{evolution}/exponential_timescale15",
                evolution=["insideout", "lateburst", "earlyburst", "twoinfall"]
-        )
+        ),
+        "src/data/APOGEE/sample.csv"
     output:
         "src/tex/figures/ofe_feh_sfh.pdf"
     script:
@@ -747,7 +752,8 @@ rule ofe_feh_dtd:
         expand("src/data/multizone/gaussian/insideout/{dtd}",
                dtd=["prompt", "powerlaw_slope11", "exponential_timescale15",
                     "plateau_width10", "triple"]
-        )
+        ),
+        "src/data/APOGEE/sample.csv"
     output:
         "src/tex/figures/ofe_feh_dtd.pdf"
     script:
@@ -757,7 +763,8 @@ rule age_ofe_sfh:
     input:
         expand("src/data/multizone/gaussian/{evolution}/powerlaw_slope11",
                evolution=["insideout", "lateburst", "earlyburst", "twoinfall"]
-        )
+        ),
+        "src/data/APOGEE/sample.csv"
     output:
         "src/tex/figures/age_ofe_sfh.pdf"
     script:
@@ -768,7 +775,8 @@ rule age_ofe_dtd:
         expand("src/data/multizone/gaussian/insideout/{dtd}",
                dtd=["prompt", "powerlaw_slope11", "exponential_timescale15",
                     "plateau_width10", "triple"]
-        )
+        ),
+        "src/data/APOGEE/sample.csv"
     output:
         "src/tex/figures/age_ofe_dtd.pdf"
     script:
