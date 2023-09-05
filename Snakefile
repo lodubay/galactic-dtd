@@ -782,6 +782,29 @@ rule age_ofe_dtd:
     script:
         "src/scripts/age_ofe_dtd.py"
 
+rule age_ofe_sfh_alt:
+    input:
+        expand("src/data/multizone/gaussian/{evolution}/powerlaw_slope11",
+               evolution=["insideout", "lateburst", "earlyburst", "twoinfall"]
+        ),
+        "src/data/APOGEE/sample.csv"
+    output:
+        "src/tex/figures/age_ofe_sfh.pdf"
+    script:
+        "src/scripts/age_ofe_sfh.py"
+
+rule age_ofe_dtd_alt:
+    input:
+        expand("src/data/multizone/gaussian/insideout/{dtd}",
+               dtd=["prompt", "powerlaw_slope11", "exponential_timescale15",
+                    "plateau_width10", "triple"]
+        ),
+        "src/data/APOGEE/sample.csv"
+    output:
+        "src/tex/figures/age_ofe_dtd.pdf"
+    script:
+        "src/scripts/age_ofe_dtd.py"
+
 # Tables
 rule summary_table:
     input:
