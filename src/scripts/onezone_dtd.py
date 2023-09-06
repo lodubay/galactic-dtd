@@ -49,7 +49,7 @@ def main():
     axs[1].set_ylim(bottom=0)
     axs[2].set_xlim(left=0)
 
-    axs[0].legend(frameon=False, loc='lower left')
+    axs[0].legend(frameon=False, loc='lower left', handlelength=1.8)
     fig.savefig(paths.figures / 'onezone_dtd.pdf', dpi=300)
     plt.close()
 

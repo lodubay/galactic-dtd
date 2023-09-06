@@ -39,7 +39,7 @@ def main():
                 capthick=0.5, marker='s', markersize=2, 
                 label='Maoz et al. (2012)')
     
-    ax.legend(frameon=False, loc='upper right')
+    ax.legend(frameon=False, loc='upper right', handlelength=1.8)
     fig.savefig(paths.figures / 'delay_time_distributions.pdf')
     plt.close()
 
@@ -49,50 +49,50 @@ class styles:
     plaw = {
         'func': dtds.powerlaw(slope=-1.1, tmin=MIN_RIA_DELAY),
         'label': r'Power-law ($\alpha=-1.1$)',
-        'color': paultol.bright.colors[5],
+        'color': paultol.bright.colors[5], # purple
         'line': '-',
     }
     plateau = {
         'func': dtds.plateau(width=0.3, slope=-1.1, tmin=MIN_RIA_DELAY),
         'label': r'Plateau ($W=0.3$ Gyr)',
-        'color': paultol.bright.colors[2],
+        'color': paultol.bright.colors[2], # green
         'line': '--',
     }
     exp = {
         'func': dtds.exponential(timescale=1.5, tmin=MIN_RIA_DELAY),
         'label': r'Exponential ($\tau=1.5$ Gyr)',
-        'color': paultol.bright.colors[0],
-        'line': '-',
+        'color': paultol.bright.colors[0], # blue
+        'line': (5, (10, 3)), # long dashed with offset
     }
     prompt = {
         'func': dtds.prompt(peak=0.05, stdev=0.015, timescale=3, tmin=MIN_RIA_DELAY),
         'label': 'Two-population',
-        'color': paultol.bright.colors[1],
-        'line': '-.',
+        'color': paultol.bright.colors[1], # red
+        'line': ':',
     }
     triple = {
         'func': dtds.triple(tmin=MIN_RIA_DELAY),
         'label': r'Triple-system',
-        'color': paultol.bright.colors[3],
-        'line': ':'
+        'color': paultol.bright.colors[3], # yellow
+        'line': '-.'
     }
     # Additional DTDs
     exp_long = {
         'func': dtds.exponential(timescale=3, tmin=MIN_RIA_DELAY),
         'label': r'Exponential ($\tau=3$ Gyr)',
-        'color': paultol.bright.colors[0],
+        'color': paultol.bright.colors[0], # blue
         'line': '--',
     }
     plateau_long = {
         'func': dtds.plateau(width=1., slope=-1.1, tmin=MIN_RIA_DELAY),
         'label': r'Plateau ($W=1$ Gyr)',
-        'color': paultol.bright.colors[2],
+        'color': paultol.bright.colors[2], # green
         'line': '--',
     }
     plaw_steep = {
         'func': dtds.powerlaw(slope=-1.4, tmin=MIN_RIA_DELAY),
         'label': r'Power-law ($\alpha=-1.4$)',
-        'color': paultol.bright.colors[5],
+        'color': paultol.bright.colors[5], # purple
         'line': '--',
     }
 
