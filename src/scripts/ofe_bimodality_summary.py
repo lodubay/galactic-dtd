@@ -7,6 +7,7 @@ whether the output exhibits alpha-element bimodality.
 from tqdm import tqdm
 import numpy as np
 import matplotlib.pyplot as plt
+import matplotlib.transforms as trans
 from matplotlib.ticker import MultipleLocator
 from multizone_stars import MultizoneStars
 import paths
@@ -96,6 +97,22 @@ def main():
     axs[1,0].set_ylim((0, 1.1))
     axs[0,0].legend(loc='upper left', frameon=False, bbox_to_anchor=(0.65, 1.),
                     title='[Fe/H] bin')
+    
+    # Add gray box underneath APOGEE subpanel for visual separation
+    # Note: bbox coordinates converted from display to figure
+    bbox00 = axs[0,0].get_window_extent().transformed(fig.transFigure.inverted())
+    bbox01 = axs[0,1].get_window_extent().transformed(fig.transFigure.inverted())
+    bbox10 = axs[1,0].get_window_extent().transformed(fig.transFigure.inverted())
+    pad_h = bbox01.x0 - bbox00.x0 - bbox00.width
+    pad_v = bbox00.y0 - bbox10.y0 - bbox10.height
+    bg_color = '#cccccc'
+    bbox = axs[1,-1].get_tightbbox().transformed(fig.transFigure.inverted())
+    fig.patches.extend([plt.Rectangle((bbox.x0 - pad_h/2, bbox.y0 - pad_v/4),
+                                      bbox.x1 - bbox.x0 + pad_h, # width
+                                      bbox.y1 - bbox.y0 + pad_v/2, # height
+                                      fill=True, color=bg_color, zorder=-1,
+                                      transform=fig.transFigure, figure=fig)])
+    
     # Save
     plt.savefig(paths.figures / 'ofe_bimodality_summary.pdf', dpi=300)
     plt.close()
