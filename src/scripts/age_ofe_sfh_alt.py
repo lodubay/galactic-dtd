@@ -6,9 +6,10 @@ different star formation histories.
 from apogee_tools import import_apogee, apogee_region
 import matplotlib.pyplot as plt
 from matplotlib.ticker import MultipleLocator, FormatStrFormatter
+from matplotlib.colors import Normalize
+from matplotlib.cm import ScalarMappable
 from multizone_stars import MultizoneStars
 from age_ofe import plot_vice_medians, plot_astroNN_medians
-from scatter_plot_grid import setup_colorbar
 from _globals import ZONE_WIDTH, ONE_COLUMN_WIDTH, MAX_SF_RADIUS
 import paths
 
@@ -31,10 +32,18 @@ def main():
     
     fig, axs = plt.subplots(2, 2, sharex=True, sharey=True,
                             figsize=(ONE_COLUMN_WIDTH, 0.85*ONE_COLUMN_WIDTH))
-    plt.subplots_adjust(top=0.98, right=0.9, wspace=0., hspace=0.)
-    cbar = setup_colorbar(fig, cmap=CMAP_NAME, vmin=-1.2, vmax=0.3, 
-                          label=r'[Fe/H]', pad=0.02, 
-                          width=0.04, labelpad=2)
+    plt.subplots_adjust(top=0.98, right=0.85, wspace=0., hspace=0.)
+    # Define colorbar axis
+    height = fig.subplotpars.top - fig.subplotpars.bottom - 0.06
+    cax = plt.axes([fig.subplotpars.right + 0.02, fig.subplotpars.bottom, 
+                    0.04, height])
+    # Add colorbar
+    norm = Normalize(vmin=-1.3, vmax=0.3)
+    cbar = fig.colorbar(ScalarMappable(norm, CMAP_NAME), cax)
+    # align title to colorbar bounding box
+    bbox = cbar.ax.get_window_extent()
+    x, _ = cbar.ax.transAxes.inverted().transform([bbox.x0, bbox.y0])
+    cbar.ax.set_title('[Fe/H]', ha='left', x=x)
     cbar.ax.yaxis.set_major_locator(MultipleLocator(0.5))
     cbar.ax.yaxis.set_minor_locator(MultipleLocator(0.1))
     
@@ -47,10 +56,10 @@ def main():
         mzs.region(GALR_LIM, ABSZ_LIM, inplace=True)
         # Plot sample of star particle abundances
         mzs.scatter_plot(ax, 'age', '[o/fe]', color='[fe/h]',
-                         cmap=CMAP_NAME, norm=cbar.norm)
+                          cmap=CMAP_NAME, norm=cbar.norm)
         plot_astroNN_medians(ax, apogee_subset, age_col=AGE_COL, 
-                             label=AGE_LABEL, 
-                             plot_low_count_bins=False)
+                              label=AGE_LABEL, 
+                              plot_low_count_bins=False)
         plot_vice_medians(ax, mzs.stars, label='Model',
                           plot_low_mass_bins=False)
         # Label axis

@@ -35,10 +35,13 @@ def main():
     width = TWO_COLUMN_WIDTH
     fig, axs = plt.subplots(3, 5, sharex=True, sharey=True,
                             figsize=(width, 3/5*width))
-    plt.subplots_adjust(top=0.92, right=0.97, left=0.06, bottom=0.08, 
+    plt.subplots_adjust(top=0.92, right=0.98, left=0.06, bottom=0.08, 
                         wspace=0., hspace=0.)
-    cbar = setup_colorbar(fig, cmap=CMAP_NAME, vmin=-1.3, vmax=0.3,
-                          label=r'[Fe/H]')
+    cbar = setup_colorbar(fig, cmap=CMAP_NAME, vmin=-1.3, vmax=0.3)
+    # align title to colorbar bounding box
+    bbox = cbar.ax.get_window_extent()
+    x, _ = cbar.ax.transAxes.inverted().transform([bbox.x0, bbox.y0])
+    cbar.ax.set_title('[Fe/H]', ha='left', x=x)
     cbar.ax.yaxis.set_major_locator(MultipleLocator(0.5))
     cbar.ax.yaxis.set_minor_locator(MultipleLocator(0.1))
     
