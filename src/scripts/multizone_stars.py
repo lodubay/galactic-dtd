@@ -17,12 +17,24 @@ SOLAR_Z_TOTAL = 0.014
 
 def main():
     # test
-    output_name = 'diffusion/insideout/powerlaw_slope11'
-    mzs1 = MultizoneStars.from_output(output_name)
-    mzs2 = mzs1.copy()
-    mzs1.filter({'[fe/h]': (-0.4, -0.2)}, inplace=True)
-    print(mzs1.stars.shape)
-    print(mzs2.stars.shape)
+    import matplotlib.pyplot as plt
+    apogee_data = pd.read_csv(paths.data/'APOGEE/sample.csv')
+    output_name = 'gaussian/insideout/powerlaw_slope11/diskmodel'
+    mzs = MultizoneStars.from_output(output_name)
+    mzs_resample = mzs.resample_zheight(10000, apogee_data=apogee_data)
+    bin_edges = np.linspace(0., 3., 100)
+    plt.hist(apogee_data['GALZ'].abs(), bins=bin_edges, histtype='step', 
+             density=True, label='APOGEE')
+    plt.hist(mzs('zfinal').abs(), bins=bin_edges, histtype='step', 
+             density=True, label='VICE')
+    plt.hist(mzs_resample('zfinal').abs(), bins=bin_edges, histtype='step', 
+             density=True, label='VICE re-sample')
+    plt.xlabel('|z|')
+    plt.ylabel('P(|z|)')
+    plt.legend()
+    plt.xlim((0, 3))
+    plt.savefig(paths.figures / 'zheight_resample_test.png')
+    plt.close()
 
 
 class MultizoneStars:
@@ -351,6 +363,58 @@ class MultizoneStars:
         sample = sample_dataframe(self.stars.copy(), N, weights=sample_weights,
                                   seed=seed)
         return sample
+    
+    def resample_zheight(self, N, apogee_data=None, seed=RANDOM_SEED,
+                         inplace=False):
+        """
+        Randomly sample N rows from the full DataFrame of stellar populations,
+        weighted by the vertical distribution of stars in APOGEE.
+        
+        Parameters
+        ----------
+        N : int
+            Number of samples to draw without replacement.
+        apogee_data : pandas.DataFrame or NoneType, optional
+            Full APOGEE data. If None, will be imported from ``sample.csv``.
+            The default is None.
+        seed : int, optional
+            Random seed for sampling. The default is taken from _globals.py.
+        inplace : bool, optional
+            If True, update the current class instance. If False, returns a 
+            new class instance with the noisy outputs. The default is False.
+            
+        Returns
+        -------
+        MultizoneStars instance or None
+        """
+        if apogee_data is None:
+            apogee_data = pd.read_csv(paths.data/'APOGEE/sample.csv')
+        absz_final = self.stars['zfinal'].abs()
+        bin_edges = np.linspace(absz_final.min(), absz_final.max(), 100)
+        # limit APOGEE data to VICE z-height range
+        apogee_data = apogee_data[
+            (apogee_data['GALZ'].abs() >= absz_final.min()) &
+            (apogee_data['GALZ'].abs() <= absz_final.max())]
+        # calculate weights to re-sample to APOGEE vertical distribution
+        apogee_dist, _ = np.histogram(apogee_data['GALZ'].abs(), bins=bin_edges, 
+                                      density=True)
+        vice_dist, _ = np.histogram(absz_final, bins=bin_edges, density=True)
+        absz_weights = apogee_dist / vice_dist
+        # cut z-height values into above bins
+        bin_cuts = pd.cut(absz_final, bins=bin_edges, labels=False, 
+                          include_lowest=True)
+        sample_weights = absz_weights[bin_cuts] / absz_weights[bin_cuts].sum()
+        resample = sample_dataframe(self.stars.copy(), N, 
+                                    weights=sample_weights, seed=seed)
+        if inplace:
+            self.stars = resample
+        else:
+            return MultizoneStars(resample, name=self.name, 
+                                  fullpath=self.fullpath, 
+                                  zone_width=self.zone_width, 
+                                  galr_lim=self.galr_lim, 
+                                  absz_lim=self.absz_lim, 
+                                  noisy=self.noisy)
     
     def scatter_plot(self, ax, xcol, ycol, color=None, cmap=None, norm=None, 
                      sampled=True, nsamples=10000, markersize=0.1, **kwargs):

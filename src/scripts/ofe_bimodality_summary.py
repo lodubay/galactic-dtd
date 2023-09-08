@@ -7,7 +7,6 @@ whether the output exhibits alpha-element bimodality.
 from tqdm import tqdm
 import numpy as np
 import matplotlib.pyplot as plt
-import matplotlib.transforms as trans
 from matplotlib.ticker import MultipleLocator
 from multizone_stars import MultizoneStars
 import paths
@@ -57,28 +56,30 @@ def main():
         # Set bottom ticks pointing out
         ax.tick_params(axis='x', which='both', direction='out')
     
+    apogee_data = import_apogee()
+    apogee_subset = apogee_region(apogee_data, galr_lim=GALR_LIM, 
+                                  absz_lim=ABSZ_LIM)
+    
     print('Plotting DTDs...')
     for i, RIa in enumerate(tqdm(DTD_LIST)):
         axs[0,i].set_title(DTD_LABELS[i], va='top', pad=18)
         # Import VICE multi-zone output data
         output_name = '/'.join(['gaussian', 'lateburst', RIa, 'diskmodel'])
-        plot_bimodality(axs[0,i], output_name, uncertainties=True)
+        plot_bimodality(axs[0,i], output_name, apogee_subset, uncertainties=True)
     axs[0,0].set_ylabel('Late-burst SFH')
     
     print('Plotting SFHs...')
     for j, evolution in enumerate(tqdm(SFH_LIST)):
         axs[1,j].set_title(SFH_LABELS[j], pad=-8)
         output_name = '/'.join(['gaussian', evolution, 'exponential_timescale15', 'diskmodel'])
-        plot_bimodality(axs[1,j], output_name, uncertainties=True)
+        plot_bimodality(axs[1,j], output_name, apogee_subset, uncertainties=True)
     axs[1,0].set_ylabel('Exponential DTD\n($\\tau=1.5$ Gyr)')
         
     # Plot APOGEE
     print('Plotting APOGEE...')
-    data = import_apogee()
-    subset = apogee_region(data, galr_lim=GALR_LIM, absz_lim=ABSZ_LIM)
     for i, feh_bin in enumerate(FEH_BINS):
-        subset_slice = subset[(subset['FE_H'] >= feh_bin[0]) &
-                              (subset['FE_H'] < feh_bin[1])]
+        subset_slice = apogee_subset[(apogee_subset['FE_H'] >= feh_bin[0]) &
+                                     (apogee_subset['FE_H'] < feh_bin[1])]
         mdf, bin_edges = apogee_mdf(subset_slice, col='O_FE', 
                                     smoothing=SMOOTH_WIDTH, 
                                     bins=np.arange(-0.15, 0.56, 0.01))
@@ -119,11 +120,13 @@ def main():
     print('Done!')
     
 
-def plot_bimodality(ax, output_name, smoothing=SMOOTH_WIDTH, uncertainties=True):
+def plot_bimodality(ax, output_name, apogee_data, smoothing=SMOOTH_WIDTH, 
+                    uncertainties=True):
     mzs = MultizoneStars.from_output(output_name)
     if uncertainties:
-        mzs.model_uncertainty(inplace=True)
+        mzs.model_uncertainty(inplace=True, apogee_data=apogee_data)
     subset = mzs.region(galr_lim=GALR_LIM, absz_lim=ABSZ_LIM)
+    subset.resample_zheight(20000, apogee_data, inplace=True)
     for i, feh_bin in enumerate(FEH_BINS):
         subset_slice = subset.filter({'[fe/h]': feh_bin})
         mdf, bin_edges = subset_slice.mdf('[o/fe]', smoothing=smoothing,
