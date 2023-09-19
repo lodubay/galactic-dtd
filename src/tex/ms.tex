@@ -32,7 +32,7 @@
 
 \section{Introduction}
 
-Studies of galactic chemical evolution typically assume a single form for the SN Ia DTD. This is the first comprehensive look at the DTD in a model for GCE which includes the effects of radial migration.
+Studies of galactic chemical evolution typically assume a single form for the SN Ia DTD. This is the first comprehensive look at the DTD in a multi-zone GCE model which includes the effects of radial migration.
 
 Why radial migration is important for SNe Ia.
 
@@ -42,10 +42,42 @@ Summary of DTDs used in simulations and theoretical studies. The Feedback In Rea
 
 A few chemical evolution studies have compared DTDs with different functional forms. \citet{Poulhazan2018-PrecisionPollution} investigate six different DTDs in a smoothed-particle hydrodynamics simulation. \citet{Palicio2023-AnalyticDTD} derive analytic solutions to one-zone chemical evolution equations for seven DTDs (three theoretical and four empirical), approximating the more complicated DTD functions as a linear combination of exponential, Gaussian, and power-law components.
 
-The origin of the [$\alpha$/Fe] bimodality is debated. \citet{Schonrich2009-RadialMixing} argue that it arises due to radial migration (churning) even with a smooth star formation rate. \citet{Johnson2021-Migration} use a smooth SFR and a prescription for radial migration but are unable to reproduce the bimodality. \citet{Spitoni2021-TwoInfall} (definitely earlier papers too) argue that two distinct infall episodes can explain the bimodality.
+Studies which have noted the [$\alpha$/Fe] bimodality: \citet{Furhmann1998-NearbyStars,Hayden2015-ChemicalCartography}. The origin of the [$\alpha$/Fe] bimodality is debated. \citet{Schonrich2009-RadialMixing} argue that it arises due to radial migration (churning) even with a smooth star formation rate. \citet{Johnson2021-Migration} use a smooth SFR and a prescription for radial migration but are unable to reproduce the bimodality. \citet{Spitoni2021-TwoInfall} (definitely earlier papers too) argue that two distinct infall episodes can explain the bimodality.
 
 \section{Methods}
 \label{sec:methods}
+
+\begin{deluxetable*}{Cccl}
+    \tablecaption{A summary of parameters and their fiducial values for our chemical evolution models. We omit parameters which have been left unchanged from \citet{Johnson2021-Migration}; see their Table 1 for details.\label{tab:multizone-parameters}}
+    \tablehead{
+        \colhead{Quantity} & \colhead{Fiducial Value(s)} & \colhead{Section} & \colhead{Description}
+    }
+    \startdata
+        % Multi-zone simulation parameters
+        R_{\rm gal}     & [0, 20] kpc   & & Galactocentric radius \\
+        \delta R_{\rm gal}  & 100 pc    & & Width of each concentric ring \\
+        \Delta R_{\rm gal}  & N/A       & \ref{app:migration} & Change in orbital radius due to stellar migration \\
+        p(\Delta R_{\rm gal}|\tau,R_{\rm form}) & Equation \ref{eq:radial-migration}    & \ref{app:migration} & Probability density function of radial migration \\
+        z                   & [-3, 3] kpc                & \ref{app:migration} & Distance from Galactic midplane at present day \\
+        p(z|\tau,R_{\rm final}) & Equation \ref{eq:sech-pdf}            & \ref{app:migration} & Probability density function of Galactic midplane distance\\
+        \Delta t        & 10 Myr    & & Time-step size \\
+        t_{\rm max}     & 13.2 Gyr  & & Maximum simulation time \\
+        n               & 8         & & Number of stellar populations formed per ring per time-step \\
+        R_{\rm Ia}(t)   & Equations \ref{eq:powerlaw-dtd}--\ref{eq:triple-dtd}  & \ref{sec:dtd-models}  & Delay time distribution of Type Ia supernovae \\
+        t_D             & 40 Myr    & \ref{sec:dtd-models}  & Minimum SN Ia delay time \\
+        M_{\rm gas,0}   & 0         & & Initial gas mass \\
+        % Nucleosynthetic yields
+        y_{\rm O}^{\rm CC}  & 0.015     & & CCSN yield of O    \\
+        y_{\rm Fe}^{\rm CC} & 0.0012    & & CCSN yield of Fe   \\
+        y_{\rm O}^{\rm Ia}  & 0         & & SN Ia yield of O       \\
+        y_{\rm Fe}^{\rm Ia} & 0.00214   & & SN Ia yield of Fe \\
+        f_{\rm IO}(t|R_{\rm gal})   & Equation \ref{eq:insideout-sfh}   & & Time-dependence of the star formation rate in the inside-out model \\
+        f_{\rm LB}(t|R_{\rm gal})   & Equation \ref{eq:lateburst-sfh}   & & Time-dependence of the star formation rate in the late-burst model \\
+        f_{\rm EB}(t|R_{\rm gal})   & Equation \ref{eq:earlyburst-ifr}  & & Time-dependence of the infall rate in the early-burst model \\
+        \uptau_{*,\rm EB}(t|R_{\rm gal})  & Equation \ref{eq:earlyburst-conroy22} & & Time-dependence of the SFE timescale in the early-burst model \\
+        f_{\rm TI}(t|R_{\rm gal})   & Equation \ref{eq:twoinfall-ifr}   & & Time-dependence of the infall rate in the two-infall model \\
+    \enddata
+\end{deluxetable*}
 
 \subsection{DTD Models}
 \label{sec:dtd-models}
@@ -232,7 +264,7 @@ Table \ref{tab:yields} summarizes the nucleosynthetic yields assumed in this pap
 
 We compare our simulation results to abundance measurements from the 17th data release \citep[DR17;][]{Abdurro'uf2022-SDSSIV-DR17} of the Apache Point Observatory Galactic Evolution Experiment \citep[APOGEE;][]{Majewski2017-APOGEE}. APOGEE uses infrared spectrographs \citep{Wilson2019-APOGEE-Spectrographs} mounted on two telescopes: the 2.5-meter Sloan Foundation Telescope \citep{Gunn2006-SloanTelescope} at Apache Point Observatory, United States in the Northern Hemisphere, and the Ir{\'e}n{\'e}e DuPont Telescope \citep{BowenVaughan1973-DuPontTelescope} at Las Campanas Observatory, Chile in the Southern Hemisphere. After the spectra are passed through the data reduction pipeline \citep{Nidever2015-APOGEE-DataReduction}, the APOGEE Stellar Parameter and Chemical Abundance Pipeline \citep[ASPCAP;][]{Holtzmann2015-ASPCAP,GarciaPerez2016-ASPCAP} extracts chemical abundances using the model grids and interpolation method described by \citet{Jonsson2020-APOGEE-DR16}.
 
-We limit our sample to red giant branch and red clump stars with high-quality spectra; Table \ref{tab:sample-selection} lists our selection criteria, which produce a final sample of \variable{output/sample_size.txt}stars.
+We limit our sample to red giant branch and red clump stars with high-quality spectra. Table \ref{tab:sample-selection} lists our selection criteria, which largely follow from \citet{Hayden2015-ChemicalCartography}. This produces a final sample of \variable{output/sample_size.txt}stars.
 
 \begin{deluxetable*}{lll}
     \tablecaption{Sample selection parameters from APOGEE DR17\label{tab:sample-selection}}
@@ -252,7 +284,9 @@ We limit our sample to red giant branch and red clump stars with high-quality sp
 \subsubsection{Stellar Ages}
 \label{sec:stellar-ages}
 
-191,179 stars in our sample have astroNN ages and 71,684 have ages from \citet{Leung2023-Ages}.
+\citet{Leung2023-Ages} use a variational encoder-decoder network to estimate the age of APOGEE giants without contamination from age-abundance correlations. Their sample does not experience the $\sim10$ Gyr plateau that affects ages from astroNN \citep{Mackereth2019-astroNN-Ages}. We use an age uncertainty cut of 40\% per the recommendations of \citet{Leung2023-Ages}, which produces a total sample of \variable{output/age_sample_size.txt}APOGEE stars with age estimates.
+
+% 191,179 stars in our sample have astroNN ages and 71,684 have ages from \citet{Leung2023-Ages}.
 
 % For $19784$ stars, or $\sim3.5\%$ of the sample, the astroNN [Fe/H] abundance estimate is $\gtrsim0.5$ dex lower than the value provided by ASPCAP. The vast majority of these stars are on the lower-main sequence according to \textit{Gaia} photometry, so we exclude stars with $\log(g) > 4$ in ASPCAP. In addition, 197 or $\sim3\%$ of stars with APOKASC-2 asteroseismic ages are reported to be $>5$ Gyr younger by astroNN. The APOKASC-2 age is unphysically high for many of these stars, often exceeding 15 Gyr. We identify prior mass loss as the cause of this discrepancy, so the astroNN ages are likely closer to the truth.
 
@@ -329,21 +363,6 @@ The right-hand panel of Figure \ref{fig:onezone-twopanel} compares the one-zone 
 \section{Results from Multi-Zone Models}
 \label{sec:multizone-results}
 
-\begin{deluxetable*}{Ccl}
-    \tablecaption{A summary of parameters and their fiducial values for our multi-zone chemical evolution models. We omit parameters which have been left unchanged from \citet{Johnson2021-Migration}; see their Table 1 for details.\label{tab:multizone-parameters}}
-    \tablehead{
-        \colhead{Quantity} & \colhead{Value} & \colhead{Description}
-    }
-    \startdata
-        t_D                 & 40 Myr                                & Minimum SN Ia delay time \\
-        \Delta R_{\rm gal}  & Equation \ref{eq:radial-migration}    & Change in radius due to stellar migration (see Appendix \ref{app:migration}) \\
-        z                   & Equation \ref{eq:sech-pdf}            & Distance from Galactic midplane at present day (see Appendix \ref{app:migration}) \\
-        f_{\rm EB}(t|R_{\rm gal})   & Equation \ref{eq:earlyburst-ifr}  & Time-dependence of the infall rate in the early-burst model \\
-        f_{\rm TI}(t|R_{\rm gal})   & Equation \ref{eq:twoinfall-ifr}   & Time-dependence of the infall rate in the two-infall model \\
-        \uptau_{*,\rm EB}(t|R_{\rm gal})  & Equation \ref{eq:earlyburst-conroy22} & Time-dependence of the SFE timescale in the early-burst model \\
-    \enddata
-\end{deluxetable*}
-
 \begin{deluxetable}{lll}
     \tablecaption{Median Parameter Uncertainties\label{tab:uncertainties}}
     \tablehead{
@@ -398,6 +417,8 @@ While there are some quantitative differences in how the shape of the MDF varies
 
 The early-burst model produces a bimodal distribution of [O/Fe] even out to large radii and close to the midplane, whereas the APOGEE distribution does not show a prominent high-$\alpha$ peak beyond $R_{\rm{Gal}}\sim11$ kpc.
 
+Away from the midplane, there is a clear trend of a higher average stellar [O/Fe] at small $R_{\rm gal}$ and lower [O/Fe] at large $R_{\rm gal}$. However, the APOGEE data show a clear dichotomy between inner-galaxy, high-$\alpha$ stars and outer-galaxy, low-$\alpha$ stars, with few in between. In the inside-out and late-burst SFHs, the shift from high-$\alpha$ to low-$\alpha$ is much more gradual and the trough at [O/Fe]$\approx0.2$ does not appear. The two-infall SFH appears to produce \textit{three} modes, at [O/Fe]$\approx 0.0$, $0.2$, and $0.4$, with the first and last showing the most variation with $R_{\rm gal}$ at high latitudes. The early-burst SFH produces the closest match to the data by far: the low-$\alpha$ sequence away from the midplane shows increasing contribution with larger radii, with the innermost radii containing very few low-$\alpha$ stars. However, the high-$\alpha$ sequence contains substantial contribution from stars at large radii, which is not seen in the data.
+
 \begin{figure*}
     \centering
     \includegraphics{figures/ofe_df_sfh.pdf}
@@ -419,10 +440,12 @@ Figure \ref{fig:ofe-df-dtd} shows [O/Fe] distributions from simulations with the
 \subsection{Bimodality in [O/Fe]}
 \label{sec:bimodality}
 
+A striking feature of the [O/Fe] distribution in the Milky Way is the distinct separation into two components, the high- and low-$\alpha$ sequences. 
+
 \begin{figure*}
     \centering
     \includegraphics{figures/ofe_bimodality_summary.pdf}
-    \caption{The distributions of [O/Fe] along two slices of [Fe/H]: $-0.6\leq$[Fe/H]$<-0.4$ (blue dashed) and $-0.4\leq$[Fe/H]$<-0.2$ (red solid). \textit{Top row:} results from five multi-zone simulations which assume the late-bust SFH but different DTD models. \textit{Bottom row}: the first four panels compare the four SFH models, all assuming an exponential DTD with $\tau=1.5$ Gyr. The bottom-right panel plots data from APOGEE DR17 for reference. All panels contain stars within the Galactic region defined by $7\leq R_{\rm gal}<9$ kpc and $0\leq|z|<2$ kpc. The maximum of each distribution is normalized to 1.}
+    \caption{The distributions of [O/Fe] along two slices of [Fe/H]: $-0.6\leq$[Fe/H]$<-0.4$ (blue dashed) and $-0.4\leq$[Fe/H]$<-0.2$ (red solid). \textit{Top row:} results from five multi-zone simulations which assume the late-bust SFH but different DTD models. \textit{Bottom row}: the first four panels compare the four SFH models, all assuming an exponential DTD with $\tau=1.5$ Gyr. The bottom-right panel plots data from APOGEE DR17 for reference. All panels contain stars within the Galactic region defined by $7\leq R_{\rm gal}<9$ kpc and $0\leq|z|<2$ kpc. The distributions of stars in $|z|$ The maximum of each distribution is normalized to 1 and the vertical scale is consistent across all panels.}
     \label{fig:ofe-bimodality}
     \script{ofe_bimodality_summary.py}
 \end{figure*}
@@ -453,18 +476,18 @@ Figure \ref{fig:ofe-feh-sfh} compares the [O/Fe]--[Fe/H] plane in the Solar neig
 
 \begin{figure}
     \centering
-    \includegraphics{figures/age_ofe_sfh.pdf}
+    \includegraphics{figures/age_ofe_sfh_alt.pdf}
     \caption{A comparison of the age--[O/Fe] relation between multi-zone simulations with different SFH models. All assume an exponential DTD with $\tau=1.5$ Gyr. Each panel plots a random mass-weighted sample of 10,000 star particles in the Solar neighborhood ($7\leq R_{\rm gal}<9$ kpc, $0\leq|z|<0.5$ kpc) color-coded by the Galactocentric radius at birth. A Gaussian scatter has been applied to all points based on the median [O/Fe] error from APOGEE DR17 and the median age error from \citet{Leung2023-Ages} (see Table \ref{tab:uncertainties}). Black squares represent the mass-weighted median age of star particles within bins of [O/Fe] with a width of 0.05 dex, and the horizontal black error bars encompass the 16th and 84th percentiles. Red triangles represent the median age from \citet{Leung2023-Ages} in bins of [O/Fe], and the horizontal red error bars encompass the 16th and 84th percentiles. For clarity, bins which contain less than 1\% of the total mass (in the simulations) or total number of stars (in the data) are not plotted.}
     \label{fig:age-ofe-sfh}
-    \script{age_ofe_sfh.py}
+    \script{age_ofe_sfh_alt.py}
 \end{figure}
 
 \begin{figure*}
     \centering
-    \includegraphics{figures/age_ofe_dtd.pdf}
+    \includegraphics{figures/age_ofe_dtd_alt.pdf}
     \caption{A comparison of the age--[O/Fe] relation between multi-zone simulations with different DTD models. All assume an inside-out SFH. Each row contains star particles from a different bin in $|z|$, with stars closest to the midplane in the bottom row and stars farthest from the midplane in the top row. In all panels stars are limited to the Solar annulus ($7\leq R_{\rm gal}<9$ kpc), and the layout of each panel is as in Figure \ref{fig:age-ofe-sfh}.}
     \label{fig:age-ofe-dtd}
-    \script{age_ofe_dtd.py}
+    \script{age_ofe_dtd_alt.py}
 \end{figure*}
 
 
@@ -496,6 +519,8 @@ The results of these tests are presented in Table \ref{tab:results}. Instead of 
 Compare to previous studies: \citet{Poulhazan2018-PrecisionPollution,Palicio2023-AnalyticDTD}.
 
 \citet{Poulhazan2018-PrecisionPollution} found that DTD models with a significant prompt component (power-law and two-population) produced the highest average stellar abundance of [O/Fe]. They also found that these models produced the narrowest [O/Fe] distributions and suppressed the long tail to low [O/Fe] ratios. Conversely, their models with essentially 0 prompt SNe Ia produced a lower average stellar [O/Fe] ratio at late times and a broader distribution of [O/Fe]. Their isolated galaxy simulations have an SFR which features an early ($<1$ Gyr) burst followed by a roughly exponential decline, qualitatively similar to our early-burst model but with the peak of star formation occuring $\sim3$ Gyr earlier. We note that their simulations were not designed to reproduce a Milky Way-like galaxy; as such, their [O/Fe] distributions peak around $\sim0.45$ which is higher than the APOGEE high-$\alpha$ sequence. Nevertheless, our study reproduces their finding that a DTD with more prompt SNe Ia will produce a narrower distribution of [O/Fe]. One exception to this is the exponential DTD, which has a marginally narrower distribution than the power-law DTD close to the midplane [numbers here] but a more prominent hith-$\alpha$ tail. This is likely a consequence of the fact that the exponential DTD has a much lower SN Ia rate at late times ($\sim10$ Gyr) than other models [expand on this].
+
+\citet{Palicio2023-AnalyticDTD} compare seven different DTDs, including the analytical SD, DD-WIDE, and DD-CLOSE, as well as the empirical two-population and $t^{-1}$ power-law DTDs, in a one-zone model with a two-infall SFH. [Note that they use some different parameters for the analytical models than we do). Critically for our purposes, and in contrast to previous studies of the two-infall model \citep[e.g.,][others]{Chiappini1997-TwoInfall,Spitoni2021-TwoInfall}, the authors include the effects of outflows, although they explore mass-loading values of $\eta=0.2-0.8$ which is significantly lower than in our simulations.
 
 \subsection{Radial Migration \& Bimodality}
 
@@ -646,9 +671,11 @@ We fit the above function to the distributions of $z$ in h277 in varying bins of
     \label{eq:scale-height}
 \end{equation}
 
-When a star particle is created by VICE at initial radius $R_{\rm form}$, we sample its total radial migration distance $\Delta R$ from a Gaussian with a width described by Equation \ref{eq:radial-migration}, and we sample its final midplane distance $z_{\rm final}$ from the distribution described by Equation \ref{eq:sech-pdf} with a width given by Equation \ref{eq:scale-height}. The star particle migrates to its final radius $R_{\rm final}$ in a similar manner to the ``diffusion'' case from \citet{Johnson2021-Migration}, but with a time dependence $\propto t^{1/3}$. This produces distributions of $R_{\rm final}$ and $z_{\rm final}$ which are similar to the analogue migration case for all but the oldest stars. 
+When a star particle is created by VICE at initial radius $R_{\rm form}$, we sample its total radial migration distance $\Delta R$ from a Gaussian with a width described by Equation \ref{eq:radial-migration}, and we sample its final midplane distance $z_{\rm final}$ from the distribution described by Equation \ref{eq:sech-pdf} with a width given by Equation \ref{eq:scale-height}. The star particle migrates to its final radius $R_{\rm final}$ in a similar manner to the ``diffusion'' case from \citet{Johnson2021-Migration}, but with a time dependence $\propto \Delta t^{1/3}$. This produces distributions of $R_{\rm final}$ and $z_{\rm final}$ which are similar to the analogue migration case for all but the oldest stars. 
 
-Figure \ref{fig:radial-migration} compares the distributions of $R_{\rm final}$ in bins of $R_{\rm form}$ and age between the analogue and Gaussian migration schema. The 
+\citet{Okalidis2022-AurigaMigration} studied the stellar migration in the Auriga simulations and found that the migration strength had both a dependence on age and formation radius. They also found that in strongly-barred galaxies, the migration is stronger overall but has a slower timestep evolution than diffusion ($\Delta t^{0.5}$).
+
+Figure \ref{fig:radial-migration} compares the distributions of $R_{\rm final}$ in bins of $R_{\rm form}$ and age between the analogue and Gaussian migration schema. 
 
 \begin{figure*}
     \centering
