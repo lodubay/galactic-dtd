@@ -37,7 +37,14 @@ def main():
         output_name = '/'.join((mig, 'insideout/powerlaw_slope11/diskmodel'))
         mzs = MultizoneStars.from_output(output_name)
         row[2].text(0.5, 0.85, ROW_LABELS[m], 
-                    ha='center', transform=row[2].transAxes)
+                    ha='center', transform=row[2].transAxes,
+                    bbox={
+                        'facecolor': 'w',
+                        'edgecolor': 'none',
+                        'boxstyle': 'round',
+                        'pad': 0.15,
+                        'alpha': 1.,
+                    })
         for i, ax in enumerate(row):
             rfinal_lim = tuple(RFINAL_BINS[i:i+2])
             if m == 0:
