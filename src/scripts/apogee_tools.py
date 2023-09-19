@@ -13,17 +13,16 @@ from utils import fits_to_pandas, box_smooth, kde2D
 
 # Data file names
 ALLSTAR_FNAME = 'allStarLite-dr17-synspec_rev1.fits'
-ASTRONN_FNAME = 'apogee_astroNN-DR17.fits'
 LEUNG23_FNAME = 'nn_latent_age_dr17.csv'
 # List of columns to include in the final sample
 SAMPLE_COLS = ['APOGEE_ID', 'RA', 'DEC', 'GALR', 'GALPHI', 'GALZ', 'SNREV',
                'TEFF', 'TEFF_ERR', 'LOGG', 'LOGG_ERR', 'FE_H', 'FE_H_ERR',
-               'O_FE', 'O_FE_ERR', 'ASTRONN_AGE', 'ASTRONN_AGE_ERR', 
-               'LATENT_AGE', 'LATENT_AGE_ERR', 'LOG_LATENT_AGE', 
-               'LOG_LATENT_AGE_ERR']
+               'O_FE', 'O_FE_ERR', 'LATENT_AGE', 'LATENT_AGE_ERR', 
+               'LOG_LATENT_AGE', 'LOG_LATENT_AGE_ERR']
 
 def main():
-    import_apogee(overwrite=True, verbose=True)
+    apogee_data = import_apogee(overwrite=True, verbose=True)
+    print(apogee_data)
 
 
 def gen_kde(data, bandwidth=0.02, absz_lim=(0, 5), galr_lim=(0, 20), 
@@ -230,16 +229,6 @@ def gen_apogee_sample(parent_dir=paths.data/'APOGEE', verbose=False):
     if verbose: print('Importing allStar file...')
     apogee_catalog = fits_to_pandas(apogee_catalog_path, hdu=1)
     # Add ages from row-matched datasets BEFORE any cuts
-    # Add ages from astroNN (Leung & Bovy 2019)
-    astroNN_catalog_path = parent_dir / ASTRONN_FNAME
-    if not astroNN_catalog_path.is_file():
-        # Download astroNN DR17 from SDSSserver
-        if verbose:
-            print('Downloading astroNN age data (this will take a minute)...')
-        get_astroNN_ages()
-    if verbose: print('Joining with astroNN age catalog...')
-    astroNN_catalog = fits_to_pandas(astroNN_catalog_path)
-    full_catalog = join_astroNN_ages(apogee_catalog, astroNN_catalog)
     # Add ages from Leung et al. (2023)
     leung23_catalog_path = parent_dir / LEUNG23_FNAME
     if not leung23_catalog_path.is_file():
@@ -249,7 +238,7 @@ def gen_apogee_sample(parent_dir=paths.data/'APOGEE', verbose=False):
         get_Leung2023_ages()
     if verbose: print('Joining with latent age catalog...')
     leung23_catalog = pd.read_csv(leung23_catalog_path)
-    full_catalog = join_latent_ages(full_catalog, leung23_catalog)
+    full_catalog = join_latent_ages(apogee_catalog, leung23_catalog)
     if verbose: print('Implementing quality cuts...')
     sample = apogee_quality_cuts(full_catalog)
     # Calculate galactocentric coordinates based on galactic l, b and Gaia dist
@@ -261,29 +250,6 @@ def gen_apogee_sample(parent_dir=paths.data/'APOGEE', verbose=False):
     sample['GALZ'] = galz # kpc
     # Drop unneeded columns
     return sample[SAMPLE_COLS].copy()
-
-
-def join_astroNN_ages(apogee_df, astroNN_df):
-    """
-    Join the recommended age from astroNN to the row-matched APOGEE dataset.
-    
-    Parameters
-    ----------
-    apogee_df : pandas.DataFrame
-        Full APOGEE dataset without cuts
-    astroNN_df : pandas.DataFrame
-        astroNN dataset
-    
-    Returns
-    -------
-    joined_df : pandas.DataFrame
-        APOGEE dataset with astroNN ages
-    """
-    cols = ['age_lowess_correct', 'age_total_error']
-    astroNN_ages = astroNN_df[cols].copy()
-    astroNN_ages.columns = ['ASTRONN_AGE', 'ASTRONN_AGE_ERR']
-    joined = apogee_df.join(astroNN_ages)
-    return joined
 
 
 def join_latent_ages(apogee_df, leung23_df):
@@ -300,7 +266,7 @@ def join_latent_ages(apogee_df, leung23_df):
     Returns
     -------
     joined_df : pandas.DataFrame
-        APOGEE dataset with astroNN ages
+        APOGEE dataset with latent ages
     """
     cols = ['LogAge', 'LogAge_Error', 'Age', 'Age_Error']
     latent_ages = leung23_df[cols].copy()
@@ -399,18 +365,6 @@ def get_allStar_dr17():
     with urllib.request.urlopen(url) as response:
         fits = response.read()
     with open(paths.data / 'APOGEE' / ALLSTAR_FNAME, 'wb') as f:
-        f.write(fits)
-
-
-def get_astroNN_ages():
-    """
-    Retrieve the value-added catalog of astroNN ages from 
-    Mackereth et al. (2019)
-    """
-    url = 'https://data.sdss.org/sas/dr17/env/APOGEE_ASTRO_NN/%s' % ASTRONN_FNAME
-    with urllib.request.urlopen(url) as response:
-        fits = response.read()
-    with open(paths.data / 'APOGEE' / ASTRONN_FNAME, 'wb') as f:
         f.write(fits)
         
 
