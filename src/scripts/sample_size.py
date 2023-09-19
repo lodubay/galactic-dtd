@@ -10,4 +10,4 @@ import paths
 data = import_apogee()
 
 with open(paths.output / 'sample_size.txt', 'w') as f:
-    f.write(str(data.shape[0]))
+    f.write('\\num{%s}' % str(data.shape[0]))

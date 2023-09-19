@@ -11,4 +11,4 @@ data = import_apogee()
 ages = data[data['LATENT_AGE'].notna()]
 
 with open(paths.output / 'age_sample_size.txt', 'w') as f:
-    f.write(str(ages.shape[0]))
+    f.write('\\num{%s}' % str(ages.shape[0]))
