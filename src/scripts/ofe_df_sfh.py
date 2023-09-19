@@ -3,13 +3,12 @@ This script plots [O/Fe] distribution functions from VICE runs with the same
 DTD but different SFHs.
 """
 
-import argparse
 from pathlib import Path
 import matplotlib.pyplot as plt
 import distribution_functions as dfs
 from multizone_stars import MultizoneStars
 from apogee_tools import import_apogee
-from utils import get_color_list
+from utils import get_color_list, highlight_panels
 import paths
 import _globals
 
@@ -43,6 +42,7 @@ def main():
         dfs.plot_multizone_mdfs(mzs, axs[:,i], '[o/fe]', colors, 
                                 label=SFH_LABELS[i], **mdf_kwargs)
     dfs.plot_apogee_mdfs(apogee_data, axs[:,-1], 'O_FE', colors, **mdf_kwargs)
+    highlight_panels(fig, axs, [(0,-1),(1,-1),(2,-1)])
     for ax in axs[:,0]:
         ax.set_ylim((0, None))
     plt.savefig(paths.figures / 'ofe_df_sfh.pdf', dpi=300)

@@ -740,7 +740,41 @@ def setup_discrete_colorbar(fig, cmap, norm, label='', width=0.6):
                         orientation='horizontal')
     cbar.set_label(label)
     return cax
+
+
+def highlight_panels(fig, axs, idx, color='#cccccc'):
+    """
+    Add a colored box behind subplots to make them stand out.
+    
+    Parameters
+    ----------
+    fig : matplotlib.figure.Figure
+        Main plot figure.
+    axs : list of matplotlib.axes.Axes
+        All subplots of the figure.
+    idx : tuple or list of tuples
+        Index of the subplot(s) to highlight.
+    color : str, optional
+        Color to highlight the panel. The default is '#cccccc'.
+    """
+    # Get spacing between subplots (assuming all are identical)
+    # Note: bbox coordinates converted from display to figure
+    bbox00 = axs[0,0].get_window_extent().transformed(fig.transFigure.inverted())
+    bbox01 = axs[0,1].get_window_extent().transformed(fig.transFigure.inverted())
+    bbox10 = axs[1,0].get_window_extent().transformed(fig.transFigure.inverted())
+    pad_h = bbox01.x0 - bbox00.x0 - bbox00.width
+    pad_v = bbox00.y0 - bbox10.y0 - bbox10.height
+    if not isinstance(idx, list):
+        idx = [idx]
+    for i in idx:
+        bbox = axs[i].get_tightbbox().transformed(fig.transFigure.inverted())
+        fig.patches.extend([plt.Rectangle((bbox.x0 - pad_h/2, bbox.y0 - pad_v/4),
+                                          bbox.x1 - bbox.x0 + pad_h, # width
+                                          bbox.y1 - bbox.y0 + pad_v/2, # height
+                                          fill=True, color=color, zorder=-1,
+                                          transform=fig.transFigure, figure=fig)])
                
+
 # =============================================================================
 # DISTRIBUTION STATISTICS
 # =============================================================================

@@ -8,7 +8,7 @@ import matplotlib.pyplot as plt
 import distribution_functions as dfs
 from multizone_stars import MultizoneStars
 from apogee_tools import import_apogee
-from utils import get_color_list
+from utils import get_color_list, highlight_panels
 import paths
 import _globals
 
@@ -53,14 +53,13 @@ def main():
         mzs = MultizoneStars.from_output(output_name)
         mzs.model_uncertainty(apogee_data, inplace=True)
         dfs.plot_multizone_mdfs(mzs, axs[:,3+i], '[fe/h]', colors, 
-                                label=DTD_LABELS[i], bins=NBINS,
-                                range=FEH_LIM, smoothing=SMOOTH_WIDTH)
+                                label=DTD_LABELS[i], **mdf_kwargs)
     # Add vertical lines for visual separation
-    for x in get_subplot_edges(fig, axs)[1:-1]:
-        line = plt.Line2D([x,x], [0.13,0.98], transform=fig.transFigure, 
-                          color='k', linewidth=0.5)
-        fig.add_artist(line)
-    
+    # for x in get_subplot_edges(fig, axs)[1:-1]:
+    #     line = plt.Line2D([x,x], [0.13,0.98], transform=fig.transFigure, 
+    #                       color='k', linewidth=0.5)
+    #     fig.add_artist(line)
+    highlight_panels(fig, axs, [(0,2),(1,2),(2,2)])
     
     for ax in axs[:,0]:
         ax.set_ylim((0, None))
