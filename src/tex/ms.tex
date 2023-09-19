@@ -7,6 +7,8 @@
 % \usepackage{layouts}
 \usepackage{xcolor}
 \usepackage{upgreek}
+\let\tablenum\relax
+\usepackage{siunitx}
 
 % user-defined commands
 \newcommand{\yes}{\textcolor{green}{\checkmark}}
@@ -240,31 +242,34 @@ Figure \ref{fig:sfhs} presents an overview of these model star formation histori
     \script{star_formation_histories.py}
 \end{figure*}
 
-\subsection{Nucleosynthetic Yields}
-\label{sec:yields}
+We adopt the same nucleosynthetic yields as \citet{Johnson2021-Migration}; the values are presented in Table \ref{tab:multizone-parameters}.
 
-Table \ref{tab:yields} summarizes the nucleosynthetic yields assumed in this paper, which we adopt from \citet{Johnson2021-Migration}.
-
-\begin{deluxetable}{lll}
-    \tablecaption{Nucleosynthetic yields assumed in our simulations.\label{tab:yields}}
-    \tablehead{
-        \colhead{Source} & \colhead{Element} & \colhead{Yield}
-    }
-    \startdata
-    CCSN    & O     & 0.015     \\
-    CCSN    & Fe    & 0.0012    \\
-    \hline
-    SN Ia   & O     & 0         \\
-    SN Ia   & Fe    & 0.00214
-    \enddata
-\end{deluxetable}
+% \subsection{Nucleosynthetic Yields}
+% \label{sec:yields}
+% 
+% Table \ref{tab:yields} summarizes the nucleosynthetic yields assumed in this paper, which we adopt from \citet{Johnson2021-Migration}.
+% 
+% \begin{deluxetable}{lll}
+%     \tablecaption{Nucleosynthetic yields assumed in our simulations.\label{tab:yields}}
+%     \tablehead{
+%         \colhead{Source} & \colhead{Element} & \colhead{Yield}
+%     }
+%     \startdata
+%     CCSN    & O     & 0.015     \\
+%     CCSN    & Fe    & 0.0012    \\
+%     \hline
+%     SN Ia   & O     & 0         \\
+%     SN Ia   & Fe    & 0.00214
+%     \enddata
+% \end{deluxetable}
 
 \subsection{Observational Sample}
 \label{sec:observational-sample}
 
-We compare our simulation results to abundance measurements from the 17th data release \citep[DR17;][]{Abdurro'uf2022-SDSSIV-DR17} of the Apache Point Observatory Galactic Evolution Experiment \citep[APOGEE;][]{Majewski2017-APOGEE}. APOGEE uses infrared spectrographs \citep{Wilson2019-APOGEE-Spectrographs} mounted on two telescopes: the 2.5-meter Sloan Foundation Telescope \citep{Gunn2006-SloanTelescope} at Apache Point Observatory, United States in the Northern Hemisphere, and the Ir{\'e}n{\'e}e DuPont Telescope \citep{BowenVaughan1973-DuPontTelescope} at Las Campanas Observatory, Chile in the Southern Hemisphere. After the spectra are passed through the data reduction pipeline \citep{Nidever2015-APOGEE-DataReduction}, the APOGEE Stellar Parameter and Chemical Abundance Pipeline \citep[ASPCAP;][]{Holtzmann2015-ASPCAP,GarciaPerez2016-ASPCAP} extracts chemical abundances using the model grids and interpolation method described by \citet{Jonsson2020-APOGEE-DR16}.
+We compare our simulation results to abundance measurements from the 17th data release \citep[DR17;][]{Abdurro'uf2022-SDSSIV-DR17} of the Apache Point Observatory Galactic Evolution Experiment \citep[APOGEE;][]{Majewski2017-APOGEE}. APOGEE used infrared spectrographs \citep{Wilson2019-APOGEE-Spectrographs} mounted on two telescopes: the 2.5-meter Sloan Foundation Telescope \citep{Gunn2006-SloanTelescope} at Apache Point Observatory, United States in the Northern Hemisphere, and the Ir{\'e}n{\'e}e DuPont Telescope \citep{BowenVaughan1973-DuPontTelescope} at Las Campanas Observatory, Chile in the Southern Hemisphere. After the spectra were passed through the data reduction pipeline \citep{Nidever2015-APOGEE-DataReduction}, the APOGEE Stellar Parameter and Chemical Abundance Pipeline \citep[ASPCAP;][]{Holtzmann2015-ASPCAP,GarciaPerez2016-ASPCAP} extracted chemical abundances using the model grids and interpolation method described by \citet{Jonsson2020-APOGEE-DR16}.
 
-We limit our sample to red giant branch and red clump stars with high-quality spectra. Table \ref{tab:sample-selection} lists our selection criteria, which largely follow from \citet{Hayden2015-ChemicalCartography}. This produces a final sample of \variable{output/sample_size.txt}stars.
+We restrict our sample to red giant branch and red clump stars with high-quality spectra. Table \ref{tab:sample-selection} lists our selection criteria, which largely follow from \citet{Hayden2015-ChemicalCartography}. This produces a final sample of \variable{output/sample_size.txt}stars. APOGEE stars are matched with their Bailer-Jones photo-geometric distance estimate from \textit{Gaia} Early Data Release 3 \citep{Gaia2016-Mission,Gaia2021-EDR3}, which we use to calculate galactocentric radius $R_{\rm gal}$ and midplane distance $z$.
+We adopt estimated ages from \citet{Leung2023-Ages}, who use a variational encoder-decoder network to estimate the age of APOGEE giants without contamination from age-abundance correlations. Their sample does not experience the $\sim10$ Gyr plateau that affects ages from astroNN \citep{Mackereth2019-astroNN-Ages}. We use an age uncertainty cut of 40\% per the recommendations of \citet{Leung2023-Ages}, which produces a total sample of \variable{output/age_sample_size.txt}APOGEE stars with age estimates. The median uncertainty in log-age space is $\sim 0.1$.
 
 \begin{deluxetable*}{lll}
     \tablecaption{Sample selection parameters from APOGEE DR17\label{tab:sample-selection}}
@@ -281,14 +286,6 @@ We limit our sample to red giant branch and red clump stars with high-quality sp
     \enddata
 \end{deluxetable*}
 
-\subsubsection{Stellar Ages}
-\label{sec:stellar-ages}
-
-\citet{Leung2023-Ages} use a variational encoder-decoder network to estimate the age of APOGEE giants without contamination from age-abundance correlations. Their sample does not experience the $\sim10$ Gyr plateau that affects ages from astroNN \citep{Mackereth2019-astroNN-Ages}. We use an age uncertainty cut of 40\% per the recommendations of \citet{Leung2023-Ages}, which produces a total sample of \variable{output/age_sample_size.txt}APOGEE stars with age estimates.
-
-% 191,179 stars in our sample have astroNN ages and 71,684 have ages from \citet{Leung2023-Ages}.
-
-% For $19784$ stars, or $\sim3.5\%$ of the sample, the astroNN [Fe/H] abundance estimate is $\gtrsim0.5$ dex lower than the value provided by ASPCAP. The vast majority of these stars are on the lower-main sequence according to \textit{Gaia} photometry, so we exclude stars with $\log(g) > 4$ in ASPCAP. In addition, 197 or $\sim3\%$ of stars with APOKASC-2 asteroseismic ages are reported to be $>5$ Gyr younger by astroNN. The APOKASC-2 age is unphysically high for many of these stars, often exceeding 15 Gyr. We identify prior mass loss as the cause of this discrepancy, so the astroNN ages are likely closer to the truth.
 
 \section{Results from One-Zone Models}
 \label{sec:onezone-results}
@@ -601,6 +598,13 @@ of Washington, University of
 Wisconsin, Vanderbilt University, 
 and Yale University.
 
+This work has made use of data from the European Space Agency (ESA) mission
+{\it Gaia} (\url{https://www.cosmos.esa.int/gaia}), processed by the {\it Gaia}
+Data Processing and Analysis Consortium (DPAC,
+\url{https://www.cosmos.esa.int/web/gaia/dpac/consortium}). Funding for the DPAC
+has been provided by national institutions, in particular the institutions
+participating in the {\it Gaia} Multilateral Agreement.
+
 \end{acknowledgments}
 
 \appendix
@@ -680,7 +684,7 @@ Figure \ref{fig:radial-migration} compares the distributions of $R_{\rm final}$ 
 \begin{figure*}
     \centering
     \includegraphics{figures/radial_migration.pdf}
-    \caption{The distribution of final radius $R_{\rm final}$ as a function of formation radius $R_{\rm form}$ and age for the h277 analogue (top row) and Gaussian sampling scheme (bottom row). From left to right, star particles are binned by formation annulus, from the inner disk (far left column) to the Solar annulus (center column) to the outer disk (far right column). Within each panel, colored curves represent the different age bins, ranging from the youngest stars (dark blue) to the oldest (dark red). In the top row, we exclude age bins with fewer than 100 unique analogue IDs for clarity. All distributions are normalized so that the area under the curve is 1, and have been smoothed by a boxcar function of width 0.5 kpc. The vertical dotted black lines indicate the bounds of each bin in $R_{\rm form}$; stars within that region of the distribution have not migrated outside their birth annulus over their lifetime.}
+    \caption{The distribution of final radius $R_{\rm final}$ as a function of formation radius $R_{\rm form}$ and age for the h277 analogue (top row) and Gaussian sampling scheme (bottom row). From left to right, star particles are binned by formation annulus, from the inner disk (far left column) to the Solar annulus (center column) to the outer disk (far right column). Within each panel, colored curves represent the different age bins, ranging from the youngest stars (dark blue) to the oldest (dark red). In the top row, we exclude age bins with fewer than 100 unique analogue IDs for clarity. All distributions are normalized so that the area under the curve is 1, and have been smoothed by a boxcar function with a width of 0.5 kpc. The vertical dotted black lines indicate the bounds of each bin in $R_{\rm form}$; stars within that region of the distribution have not migrated outside their birth annulus over their lifetime.}
     \label{fig:radial-migration}
     \script{radial_migration.py}
 \end{figure*}
@@ -688,7 +692,7 @@ Figure \ref{fig:radial-migration} compares the distributions of $R_{\rm final}$ 
 \begin{figure*}
     \centering
     \includegraphics{figures/midplane_distance.pdf}
-    \caption{Similar to Figure \ref{fig:radial-migration} but for the distribution of final midplane distance $z_{\rm final}$ as a function of final radius and age. From left to right, star particles are binned by \textit{final} annulus. In the top row, we exclude age bins with fewer than 500 unique analogue IDs for clarity. All distributions have been smoothed by a boxcar function of width 0.1 kpc.}
+    \caption{Similar to Figure \ref{fig:radial-migration} but for the distribution of final midplane distance $z_{\rm final}$ as a function of final radius and age. From left to right, star particles are binned by \textit{final} annulus. In the top row, we exclude age bins with fewer than 500 unique analogue IDs for clarity. All distributions have been smoothed by a boxcar function with a width of 0.1 kpc.}
     \label{fig:midplane-distance}
     \script{midplane_distance.py}
 \end{figure*}
