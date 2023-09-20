@@ -37,7 +37,7 @@ def main():
                   'Plateau', '($W=0.3$ Gyr)', '', '',
                   'Plateau', '($W=1.0$ Gyr)', '', '',
                   'Two-population', '($t_{\\rm max}=0.05$ Gyr)', '', '',
-                  'Triple-system', '($t_d=0.5$ Gyr)', '', '']
+                  'Triple-system', '($t_{\\rm rise}=0.5$ Gyr)', '', '']
     sfh_labels = ['Inside-out', 'Late-burst', 'Early-burst', 'Two-infall']
     df.reset_index(drop=False, inplace=True)
     df['DTD'] = dtd_labels
