@@ -25,7 +25,7 @@ def main():
     print(apogee_data)
 
 
-def gen_kde(data, bandwidth=0.02, absz_lim=(0, 5), galr_lim=(0, 20), 
+def gen_kde(data, bandwidth=0.03, absz_lim=(0, 5), galr_lim=(0, 20), 
             overwrite=False):
     """
     Generate kernel density estimate (KDE) of APOGEE data, or import previously

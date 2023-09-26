@@ -1,6 +1,11 @@
 # Default figure size and resolution
 figure.figsize: 11, 4.5
 figure.dpi: 300
+# Ticks on all axes pointing in
+xtick.direction: in
+ytick.direction: in
+xtick.top: True
+ytick.right: True
 # Font style
 font.family: sans-serif
 mathtext.fontset: dejavusans

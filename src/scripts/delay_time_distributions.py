@@ -1,7 +1,9 @@
 """
-Plot the Type Ia supernova delay time distributions (DTDs) as a function of time.
+Plot a selection of models for the Type Ia supernova delay time distributions 
+(DTD) as a function of time.
 """
 
+import argparse
 import numpy as np
 import matplotlib.pyplot as plt
 from matplotlib.ticker import FuncFormatter
@@ -10,17 +12,17 @@ from multizone.src import dtds
 from colormaps import paultol
 from _globals import MIN_RIA_DELAY, ONE_COLUMN_WIDTH
 
-def main():
-    plt.style.use(paths.styles / 'paper.mplstyle')
+def main(style='paper'):
+    plt.style.use(paths.styles / ('%s.mplstyle' % style))
     plt.rcParams['axes.prop_cycle'] = plt.cycler('color', paultol.bright.colors)
-    fig, ax= setup_axes()
+    fig, ax = setup_axes()
     times = [t*0.001 for t in range(40, 13200)]
     distributions = [styles.prompt, styles.plaw, styles.plateau, 
                      styles.exp, styles.triple]
     for dtd in distributions:
         func = dtd['func']
         ax.plot(times, [func(t) / func(1) for t in times], 
-                label=dtd['label'], c=dtd['color'], ls=dtd['line'], lw=1)
+                label=dtd['label'], c=dtd['color'], ls=dtd['line'])
     ax.set_ylim((3e-3, 3e2))
     # Plot the SDSS-II DTD recovered by Maoz et al. (2012), MNRAS 426, 3282
     # (see their Table 2)
@@ -40,7 +42,8 @@ def main():
                 label='Maoz et al. (2012)')
     
     ax.legend(frameon=False, loc='upper right', handlelength=1.8)
-    fig.savefig(paths.figures / 'delay_time_distributions.pdf')
+    filetype = {'paper': 'pdf', 'poster': 'png'}
+    fig.savefig(paths.figures / ('delay_time_distributions.%s' % filetype[style]))
     plt.close()
 
 
@@ -97,9 +100,8 @@ class styles:
     }
 
 
-def setup_axes():
-    fig, ax = plt.subplots(figsize=(ONE_COLUMN_WIDTH, ONE_COLUMN_WIDTH), 
-                           tight_layout=True)
+def setup_axes(width=ONE_COLUMN_WIDTH):
+    fig, ax = plt.subplots(figsize=(width, width), tight_layout=True)
     ax.set_xscale('log')
     ax.set_yscale('log')
     ax.xaxis.set_major_formatter(FuncFormatter(lambda y, _: '{:g}'.format(y)))
@@ -110,4 +112,14 @@ def setup_axes():
     
 
 if __name__ == '__main__':
-    main()
+    parser = argparse.ArgumentParser(
+        prog='delay_time_distributions.py',
+        description='Plot a selection of the delay time distribution models ' +
+                    'as a function of time',
+        )
+    parser.add_argument('-s', '--style', 
+                        choices=['paper', 'poster'],
+                        default='paper', 
+                        help='Plot style to use (default: paper)')
+    args = parser.parse_args()
+    main(**vars(args))

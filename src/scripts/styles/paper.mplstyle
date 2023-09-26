@@ -1,5 +1,5 @@
 # Default figure size and resolution
-figure.figsize: 4, 4
+figure.figsize: 3.25, 3.25
 figure.dpi: 300
 # Ticks on all axes pointing in
 xtick.direction: in
@@ -28,3 +28,5 @@ axes.linewidth: 0.5
 savefig.pad_inches: 0.0
 # Lines
 lines.linewidth: 1
+# Errorbar plots
+errorbar.capsize: 1.
