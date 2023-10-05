@@ -36,10 +36,12 @@ def main(style='paper'):
     apogee_data = import_apogee()
     # Limit size of plot in poster format
     if style == 'poster':
-        dtd_list = ['powerlaw_slope11', 'exponential_timescale15', 'plateau_width10']
+        dtd_list = DTD_LIST[1:4]
+        dtd_labels = DTD_LABELS[1:4]
         figwidth = _globals.ONE_COLUMN_WIDTH * 1.8
     else:
         dtd_list = DTD_LIST
+        dtd_labels = DTD_LABELS
         figwidth = _globals.TWO_COLUMN_WIDTH
     # Set up plot
     fig, axs = dfs.setup_axes(ncols=len(dtd_list)+1, 
@@ -56,7 +58,7 @@ def main(style='paper'):
         mzs = MultizoneStars.from_output(output_name)
         mzs.model_uncertainty(apogee_data, inplace=True)
         dfs.plot_multizone_mdfs(mzs, axs[:,i], '[o/fe]', colors, 
-                                label=DTD_LABELS[i], **mdf_kwargs)
+                                label=dtd_labels[i], **mdf_kwargs)
     dfs.plot_apogee_mdfs(apogee_data, axs[:,-1], 'O_FE', colors, **mdf_kwargs)
     highlight_panels(fig, axs, [(0,-1),(1,-1),(2,-1)])
     for ax in axs[:,0]:
