@@ -1,6 +1,6 @@
 # Default figure size and resolution
 figure.figsize: 8, 8
-figure.dpi: 300
+figure.dpi: 600
 # Ticks on all axes pointing in
 xtick.direction: in
 ytick.direction: in

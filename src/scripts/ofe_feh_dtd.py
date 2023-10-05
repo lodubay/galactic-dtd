@@ -106,7 +106,7 @@ def main(style='paper'):
                      loc='upper right', fontsize=6)
     
     filetype = {'paper': 'pdf', 'poster': 'png'}
-    plt.savefig(paths.figures / ('ofe_feh_dtd.%s' % filetype[style]), dpi=300)
+    plt.savefig(paths.figures / ('ofe_feh_dtd.%s' % filetype[style]))
     plt.close()
 
 
