@@ -34,9 +34,16 @@ CMAP = 'plasma_r'
 def main(style='paper'):
     plt.style.use(paths.styles / f'{style}.mplstyle')
     apogee_data = import_apogee()
+    # Limit size of plot in poster format
+    if style == 'poster':
+        dtd_list = ['powerlaw_slope11', 'exponential_timescale15', 'plateau_width10']
+        figwidth = _globals.ONE_COLUMN_WIDTH * 1.8
+    else:
+        dtd_list = DTD_LIST
+        figwidth = _globals.TWO_COLUMN_WIDTH
     # Set up plot
-    fig, axs = dfs.setup_axes(ncols=len(DTD_LIST)+1, 
-                              figure_width=_globals.TWO_COLUMN_WIDTH, 
+    fig, axs = dfs.setup_axes(ncols=len(dtd_list)+1, 
+                              figure_width=figwidth, 
                               cmap_name=CMAP, xlabel='[O/Fe]', xlim=OFE_LIM, 
                               major_tick_spacing=0.2, major_minor_tick_ratio=4.,
                               cbar_width=0.4)
@@ -44,7 +51,7 @@ def main(style='paper'):
     colors = get_color_list(plt.get_cmap(CMAP), _globals.GALR_BINS)
     # plot
     mdf_kwargs = {'bins': NBINS, 'range': OFE_LIM, 'smoothing': SMOOTH_WIDTH}
-    for i, dtd in enumerate(DTD_LIST):
+    for i, dtd in enumerate(dtd_list):
         output_name = '/'.join(['gaussian', SFH, dtd, 'diskmodel'])
         mzs = MultizoneStars.from_output(output_name)
         mzs.model_uncertainty(apogee_data, inplace=True)

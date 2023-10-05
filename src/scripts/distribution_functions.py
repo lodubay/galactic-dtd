@@ -153,7 +153,7 @@ def setup_axes(ncols=2, figure_width=3.25, xlabel='', xlim=None,
         # Set bottom ticks pointing out
         ax.tick_params(axis='x', which='both', direction='out')
     # Add common y-axis label
-    fig.text(0.02, 0.58, r'Distance from Galactic midplane $|z|$',
+    fig.text(0.01, 0.58, r'Distance from Galactic midplane $|z|$',
              ha='left', va='center', rotation='vertical', 
              size=plt.rcParams['axes.labelsize'])
     # Label rows
