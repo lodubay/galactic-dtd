@@ -1,6 +1,8 @@
 # Default figure size and resolution
 figure.figsize: 8, 8
 figure.dpi: 600
+# Default figure file extension
+savefig.format: png
 # Ticks on all axes pointing in
 xtick.direction: in
 ytick.direction: in

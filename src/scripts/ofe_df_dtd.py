@@ -31,8 +31,8 @@ OFE_LIM = (-0.15, 0.55)
 SMOOTH_WIDTH = 0.05
 CMAP = 'plasma_r'
 
-def main():
-    plt.style.use(paths.styles / 'paper.mplstyle')
+def main(style='paper'):
+    plt.style.use(paths.styles / f'{style}.mplstyle')
     apogee_data = import_apogee()
     # Set up plot
     fig, axs = dfs.setup_axes(ncols=len(DTD_LIST)+1, 
@@ -54,9 +54,20 @@ def main():
     highlight_panels(fig, axs, [(0,-1),(1,-1),(2,-1)])
     for ax in axs[:,0]:
         ax.set_ylim((0, None))
-    plt.savefig(paths.figures / 'ofe_df_dtd.pdf', dpi=300)
+    plt.savefig(paths.figures / 'ofe_df_dtd')
     plt.close()
 
 
 if __name__ == '__main__':
-    main()
+    parser = argparse.ArgumentParser(
+        prog='ofe_df_dtd.py',
+        description='Compare distribution functions of [O/Fe] from many ' +
+        'Galactic regions for VICE outputs with different delay time ' +
+        'distributions.',
+        )
+    parser.add_argument('-s', '--style', 
+                        choices=['paper', 'poster'],
+                        default='paper', 
+                        help='Plot style to use (default: paper)')
+    args = parser.parse_args()
+    main(**vars(args))

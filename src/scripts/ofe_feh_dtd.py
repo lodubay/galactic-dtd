@@ -36,7 +36,7 @@ CMAP_NAME = 'winter'
 
 def main(style='paper'):
     # Set up the figure
-    plt.style.use(paths.styles / ('%s.mplstyle' % style))
+    plt.style.use(paths.styles / f'{style}.mplstyle')
     width = TWO_COLUMN_WIDTH
     fig, axs = plt.subplots(3, 5, sharex=True, sharey=True,
                             figsize=(width, 3/5*width))
@@ -48,6 +48,10 @@ def main(style='paper'):
     cbar.ax.yaxis.set_minor_locator(MultipleLocator(0.5))
     
     apogee_data = import_apogee()
+    
+    # Limit size of plot in poster format
+    if style == 'poster':
+        DTD_LIST = ['powerlaw_slope11', 'exponential_timescale15', 'plateau_width10']
     
     for j, dtd in enumerate(DTD_LIST):
         output_name = '/'.join(['gaussian', SFH_MODEL, dtd, 'diskmodel'])
@@ -105,8 +109,7 @@ def main(style='paper'):
     axs[2, 0].legend(custom_lines, legend_labels, frameon=False, 
                      loc='upper right', fontsize=6)
     
-    filetype = {'paper': 'pdf', 'poster': 'png'}
-    plt.savefig(paths.figures / ('ofe_feh_dtd.%s' % filetype[style]))
+    plt.savefig(paths.figures / 'ofe_feh_dtd')
     plt.close()
 
 

@@ -13,7 +13,7 @@ from colormaps import paultol
 from _globals import MIN_RIA_DELAY, ONE_COLUMN_WIDTH
 
 def main(style='paper'):
-    plt.style.use(paths.styles / ('%s.mplstyle' % style))
+    plt.style.use(paths.styles / f'{style}.mplstyle')
     plt.rcParams['axes.prop_cycle'] = plt.cycler('color', paultol.bright.colors)
     fig, ax = setup_axes()
     times = [t*0.001 for t in range(40, 13200)]
@@ -42,8 +42,7 @@ def main(style='paper'):
                 label='Maoz et al. (2012)')
     
     ax.legend(frameon=False, loc='upper right', handlelength=1.8)
-    filetype = {'paper': 'pdf', 'poster': 'png'}
-    fig.savefig(paths.figures / ('delay_time_distributions.%s' % filetype[style]))
+    fig.savefig(paths.figures / 'delay_time_distributions')
     plt.close()
 
 
