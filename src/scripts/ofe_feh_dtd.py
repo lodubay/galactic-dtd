@@ -51,9 +51,11 @@ def main(style='paper'):
     
     # Limit size of plot in poster format
     if style == 'poster':
-        DTD_LIST = ['powerlaw_slope11', 'exponential_timescale15', 'plateau_width10']
+        dtd_list = ['powerlaw_slope11', 'exponential_timescale15', 'plateau_width10']
+    else:
+        dtd_list = DTD_LIST
     
-    for j, dtd in enumerate(DTD_LIST):
+    for j, dtd in enumerate(dtd_list):
         output_name = '/'.join(['gaussian', SFH_MODEL, dtd, 'diskmodel'])
         # Import multioutput stars data
         mzs = MultizoneStars.from_output(output_name)
