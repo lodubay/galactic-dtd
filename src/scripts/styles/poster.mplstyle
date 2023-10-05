@@ -12,6 +12,7 @@ ytick.major.width: 0.5
 ytick.minor.width: 0.3
 # Font style
 font.family: sans-serif
+font.sans-serif: Bahnschrift, DejaVu Sans
 mathtext.fontset: dejavusans
 # Font size
 font.size: 8

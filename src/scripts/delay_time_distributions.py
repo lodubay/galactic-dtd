@@ -17,8 +17,8 @@ def main(style='paper'):
     plt.rcParams['axes.prop_cycle'] = plt.cycler('color', paultol.bright.colors)
     fig, ax = setup_axes()
     times = [t*0.001 for t in range(40, 13200)]
-    distributions = [styles.prompt, styles.plaw, styles.plateau, 
-                     styles.exp, styles.triple]
+    distributions = [styles.prompt, styles.plaw, styles.exp, 
+                     styles.plateau_long, styles.triple]
     for dtd in distributions:
         func = dtd['func']
         ax.plot(times, [func(t) / func(1) for t in times], 
