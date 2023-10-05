@@ -13,6 +13,8 @@ xtick.minor.width: 0.3
 ytick.major.width: 0.5
 ytick.minor.width: 0.3
 # Font style
+# Note: for non-matplotlib fonts in WSL, copy the ttf file into 
+# ~/.local/share/fonts and delete the matplotlib font cache
 font.family: sans-serif
 font.sans-serif: Bahnschrift, DejaVu Sans
 mathtext.fontset: dejavusans
