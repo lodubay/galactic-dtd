@@ -33,7 +33,7 @@ def main(overwrite=False):
 
     for delay, ls in zip(DELAYS, LINE_STYLES):
         ONEZONE_DEFAULTS['delay'] = delay
-        distributions = [styles.exp, styles.plaw]
+        distributions = [styles.exp_long, styles.plateau, styles.plaw]
         for i, dtd in enumerate(distributions):
             if delay == DELAYS[1]:
                 label = dtd['label']
