@@ -119,11 +119,11 @@ dependencies:
         - src/scripts/multizone_stars.py
         - src/scripts/age_ofe.py
         - src/data/APOGEE/sample.csv
-        - src/data/multizone/gaussian/insideout/prompt/
-        - src/data/multizone/gaussian/insideout/powerlaw_slope11/
-        - src/data/multizone/gaussian/insideout/exponential_timescale15/
-        - src/data/multizone/gaussian/insideout/plateau_width10/
-        - src/data/multizone/gaussian/insideout/triple/
+        - src/data/multizone/gaussian/earlyburst/prompt/
+        - src/data/multizone/gaussian/earlyburst/powerlaw_slope11/
+        - src/data/multizone/gaussian/earlyburst/exponential_timescale15/
+        - src/data/multizone/gaussian/earlyburst/plateau_width10/
+        - src/data/multizone/gaussian/earlyburst/triple/
     src/scripts/score_multizone_outputs.py:
         - src/data/multizone/gaussian/insideout/powerlaw_slope11/
         - src/data/multizone/gaussian/insideout/powerlaw_slope14/

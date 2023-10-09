@@ -2,6 +2,7 @@
 Compare plots of [O/Fe] vs age in a single Galactic region for various DTDs.
 """
 
+import argparse
 from apogee_tools import import_apogee, apogee_region
 import matplotlib.pyplot as plt
 from matplotlib.ticker import MultipleLocator, FormatStrFormatter
@@ -30,8 +31,8 @@ OFE_LIM = (-0.15, 0.55)
 GALR_LIM = (7, 9)
 CMAP_NAME = 'winter'
 
-def main():
-    plt.style.use(paths.styles / 'paper.mplstyle')
+def main(style='paper'):
+    plt.style.use(paths.styles / f'{style}.mplstyle')
     width = TWO_COLUMN_WIDTH
     fig, axs = plt.subplots(3, 5, sharex=True, sharey=True,
                             figsize=(width, 3/5*width))
@@ -87,9 +88,19 @@ def main():
     axs[0,0].legend(loc='upper left', frameon=False, 
                     bbox_to_anchor=(0.02, 0.89), handlelength=0.7)
     
-    fig.savefig(paths.figures / 'age_ofe_dtd.pdf', dpi=300)
+    fig.savefig(paths.figures / 'age_ofe_dtd')
     plt.close()
 
 
 if __name__ == '__main__':
-    main()
+    parser = argparse.ArgumentParser(
+        prog='age_ofe_dtd.py',
+        description='Compare age-[O/Fe] plots for the Solar annulus for ' +
+        'VICE outputs with different delay time distributions.',
+        )
+    parser.add_argument('-s', '--style', 
+                        choices=['paper', 'poster'],
+                        default='paper', 
+                        help='Plot style to use (default: paper)')
+    args = parser.parse_args()
+    main(**vars(args))
