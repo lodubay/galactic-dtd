@@ -35,7 +35,7 @@
 \affiliation{Center for Cosmology and Astroparticle Physics (CCAPP), The Ohio State University, 191 W. Woodruff Ave., Columbus OH 43210, USA}
 \author[0000-0002-6534-8783]{James W. Johnson}
 \affiliation{\osuaffil}
-\affiliation{Carnegie Observatories}
+\affiliation{Observatories of the Carnegie Institution for Science, 813 Santa Barbara St., Pasadena CA 91101, USA}
 % \author[0000-0001-7775-7261]{David H. Weinberg}
 
 % Abstract from AAS 241
@@ -45,11 +45,22 @@
 
 \section{Introduction}
 
+Galactic chemical evolution (GCE) studies seek to reproduce the observed distribution of metals throughout the Milky Way Galaxy.
+
+Type Ia supernovae (SNe Ia), the explosions of carbon-oxygen white dwarfs (WDs), are responsible for roughly half of the iron produced in the Galaxy. Despite their importance, the mechanism(s) for producing SNe Ia are not fully understood. Two general production channels have been proposed: in the single-degenerate (SD) case, the WD accretes mass from a close non-degenerate companion until it surpasses a mass of $\sim1.4$ M$_\odot$ and explodes. In the double-degenerate (DD) case, two WDs merge after a gravitational-wave inspiral or head-on collision. Recent observations have placed tight constraints on the SD channel, heavily disfavoring it as the main pathway for producing ``normal'' SNe Ia. Though it is now the preferred model, the DD channel faces issues of its own with matching observed SN Ia rates as well as the fact that not all WD mergers may lead to a thermonuclear explosion.
+
+The delay-time distribution (DTD) is the rate of SNe Ia which explode as a function of time after a hypothetical single star formation event. By convolving the DTD with the star formation rate (SFR) as a function of time, one can produce a function describing the time-variation in the SN Ia rate.
+
+Uncertainties in the progenitor channels of SNe Ia translate into uncertainties in the form of the DTD. 
+
 Studies of galactic chemical evolution typically assume a single form for the SN Ia DTD. This is the first comprehensive look at the DTD in a multi-zone GCE model which includes the effects of radial migration.
 
-Why radial migration is important for SNe Ia.
+% Why radial migration is important for SNe Ia.
+Core-collapse SNe explode on timescales of a few Myr, before the progenitor has a chance to migrate far from its birth location. On the other hand, SNe Ia have a broad distribution of delay times and their progenitors can migrate great distances between birth and explosion. The consequence is that SNe Ia can enrich regions of the Galaxy far removed from regions which have experienced a high rate of star formation.
 
 Summary of observational studies of the DTD. These studies all assume a particular form for the DTD and fit for the specific parameters. They do not quantitatively favor one form over another (e.g., power-law over exponential).
+
+\citet{Greggio2005-AnalyticalRates} used analytical approximations of binary population synthesis to produce theoretical DTDs for the SD and DD channels.
 
 Summary of DTDs used in simulations and theoretical studies. The Feedback In Realistic Environments \citep[FIRE;][]{Hopkins2014-FIRE-1} and FIRE-2 \citep{Hopkins2018-FIRE-2} simulations implement the DTD from \citet{Mannucci2006-TwoPopulations} (explain previously). Following \citet{Schonrich2009-RadialMixing}, \citet{Weinberg2017-ChemicalEquilibrium} assume an exponential DTD for the purposes of producing an analytical solution to the equations of chemical equilibrium, but they show that it can be extended to a double-exponential DTD which closely approximates a power-law. 
 
@@ -513,7 +524,7 @@ Figure \ref{fig:ofe-feh-sfh} compares the [O/Fe]--[Fe/H] plane in the Solar neig
 \begin{figure*}
     \centering
     \includegraphics[width=\linewidth]{figures/age_ofe_dtd_alt.pdf}
-    \caption{A comparison of the age--[O/Fe] relation between multi-zone simulations with different DTD models. All assume an inside-out SFH. Each row contains star particles from a different bin in $|z|$, with stars closest to the midplane in the bottom row and stars farthest from the midplane in the top row. In all panels stars are limited to the Solar annulus ($7\leq R_{\rm gal}<9$ kpc), and the layout of each panel is as in Figure \ref{fig:age-ofe-sfh}.}
+    \caption{A comparison of the age--[O/Fe] relation between multi-zone simulations with different DTD models. All assume the early-burst SFH. Each row contains star particles from a different bin in $|z|$, with stars closest to the midplane in the bottom row and stars farthest from the midplane in the top row. In all panels stars are limited to the Solar annulus ($7\leq R_{\rm gal}<9$ kpc), and the layout of each panel is as in Figure \ref{fig:age-ofe-sfh}.}
     \label{fig:age-ofe-dtd}
     \script{age_ofe_dtd_alt.py}
 \end{figure*}
