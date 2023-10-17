@@ -9,6 +9,9 @@ jobs:
     name: Build the article PDF
     concurrency: showyourwork-${{ github.ref }}
     steps:
+      - name: Delete huge unnecessary tools forlder
+        run: rm -rf /opt/hostedtoolcache
+        
       - name: Checkout
         uses: actions/checkout@v3
         with:
