@@ -39,17 +39,19 @@ def main(style='paper'):
         dtd_list = DTD_LIST[1:4]
         dtd_labels = DTD_LABELS[1:4]
         figwidth = _globals.ONE_COLUMN_WIDTH * 1.8
+        cbar_width = 0.4
     else:
         dtd_list = DTD_LIST
         dtd_labels = DTD_LABELS
         figwidth = _globals.TWO_COLUMN_WIDTH
+        cbar_width = 0.4
     # Set up plot
     fig, axs = dfs.setup_axes(ncols=len(dtd_list)+1, 
                               figure_width=figwidth, 
                               cmap_name=CMAP, xlabel='[O/Fe]', xlim=OFE_LIM, 
                               major_tick_spacing=0.2, major_minor_tick_ratio=4.,
-                              cbar_width=0.4)
-    fig.subplots_adjust(top=0.9, left=0.07, right=0.98, bottom=0.25)
+                              cbar_width=cbar_width)
+    fig.subplots_adjust(top=0.9, left=0.08, right=0.98, bottom=0.25)
     colors = get_color_list(plt.get_cmap(CMAP), _globals.GALR_BINS)
     # plot
     mdf_kwargs = {'bins': NBINS, 'range': OFE_LIM, 'smoothing': SMOOTH_WIDTH}

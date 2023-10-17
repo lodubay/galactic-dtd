@@ -40,7 +40,7 @@ def main(style='paper'):
     width = TWO_COLUMN_WIDTH
     fig, axs = plt.subplots(3, 5, sharex=True, sharey=True,
                             figsize=(width, 3/5*width))
-    plt.subplots_adjust(top=0.92, right=0.98, left=0.06, bottom=0.08, 
+    plt.subplots_adjust(top=0.91, right=0.98, left=0.06, bottom=0.08, 
                         wspace=0., hspace=0.)
     cbar = setup_colorbar(fig, cmap=CMAP_NAME, vmin=0, vmax=MAX_SF_RADIUS,
                           label=r'Birth $R_{\rm{gal}}$ [kpc]')
@@ -48,6 +48,9 @@ def main(style='paper'):
     cbar.ax.yaxis.set_minor_locator(MultipleLocator(0.5))
     
     apogee_data = import_apogee()
+    
+    ism_track_color = 'k'
+    ism_track_width = 0.5
     
     for j, dtd in enumerate(DTD_LIST):
         output_name = '/'.join(['gaussian', SFH_MODEL, dtd, 'diskmodel'])
@@ -61,14 +64,14 @@ def main(style='paper'):
             vice_subset.scatter_plot(axs[i,j], '[fe/h]', '[o/fe]', 
                                       color='galr_origin', markersize=0.1,
                                       cmap=CMAP_NAME, norm=cbar.norm)
-            # Plot APOGEE contours
-            apogee_contours(axs[i,j], apogee_data, GALR_LIM, absz_lim)
             # Plot abundance tracks
             zone = int(0.5 * (GALR_LIM[0] + GALR_LIM[1]) / ZONE_WIDTH)
             zone_path = str(mzs.fullpath / ('zone%d' % zone))
             hist = vice.history(zone_path)
-            axs[i,j].plot(hist['[fe/h]'], hist['[o/fe]'], c='k', ls='-', 
-                          linewidth=0.5)
+            axs[i,j].plot(hist['[fe/h]'], hist['[o/fe]'], c=ism_track_color, 
+                          ls='-', linewidth=ism_track_width)
+            # Plot APOGEE contours
+            apogee_contours(axs[i,j], apogee_data, GALR_LIM, absz_lim)
     
     # Set x-axis ticks
     axs[0,0].xaxis.set_major_locator(MultipleLocator(0.5))
@@ -98,12 +101,13 @@ def main(style='paper'):
     for j, ax in enumerate(axs[0]):
         ax.set_title(DTD_LABELS[j])
     # Custom legend
-    custom_lines = [Line2D([0], [0], color='k', linestyle='-', linewidth=0.5),
+    custom_lines = [Line2D([0], [0], color=ism_track_color, linestyle='-', 
+                           linewidth=ism_track_width),
                     Line2D([0], [0], color='r', linestyle='-', linewidth=0.5),
                     Line2D([0], [0], color='r', linestyle='--', linewidth=0.5)]
     legend_labels = ['Gas abundance', 'APOGEE 30% contour', 'APOGEE 80% contour']
     axs[2, 0].legend(custom_lines, legend_labels, frameon=False, 
-                     loc='upper right', fontsize=6)
+                     loc='upper left', fontsize=6)
     
     plt.savefig(paths.figures / 'ofe_feh_dtd')
     plt.close()
