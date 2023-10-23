@@ -45,28 +45,35 @@
 
 \section{Introduction}
 
+[Hook and intro paragraph]
 Galactic chemical evolution (GCE) studies seek to reproduce the observed distribution of metals throughout the Milky Way Galaxy.
 
+[Introduction to SNe Ia]
 Type Ia supernovae (SNe Ia), the explosions of carbon-oxygen white dwarfs (WDs), are responsible for roughly half of the iron produced in the Galaxy. Despite their importance, the mechanism(s) for producing SNe Ia are not fully understood. Two general production channels have been proposed: in the single-degenerate (SD) case, the WD accretes mass from a close non-degenerate companion until it surpasses a mass of $\sim1.4$ M$_\odot$ and explodes. In the double-degenerate (DD) case, two WDs merge after a gravitational-wave inspiral or head-on collision. Recent observations have placed tight constraints on the SD channel, heavily disfavoring it as the main pathway for producing ``normal'' SNe Ia. Though it is now the preferred model, the DD channel faces issues of its own with matching observed SN Ia rates as well as the fact that not all WD mergers may lead to a thermonuclear explosion.
 
+[What is the delay time distribution]
 The delay-time distribution (DTD) is the rate of SNe Ia which explode as a function of time after a hypothetical single star formation event. By convolving the DTD with the star formation rate (SFR) as a function of time, one can produce a function describing the time-variation in the SN Ia rate.
 
+[Analytical DTDs]
 Uncertainties in the progenitor channels of SNe Ia translate into uncertainties in the form of the DTD. 
+\citet{Greggio2005-AnalyticalRates} used analytical approximations of binary population synthesis to produce theoretical DTDs for the SD and DD channels.
+
+[Observational DTDs]
+\citet{Mannucci2005-SNRate} found that the SN Ia rate per unit mass has a strong dependence on host galaxy morphology and color. Using these results, \citet{Mannucci2006-TwoPopulations} obtain a best-fit model for the DTD which consists of both a prompt component ($<100$ Myr) and a long exponential tail. These studies all assume a particular form for the DTD and fit for the specific parameters. They do not quantitatively favor one form over another (e.g., power-law over exponential).
+
+[Why radial migration is important for SNe Ia]
+Core-collapse SNe explode on timescales of a few Myr, before the progenitor has a chance to migrate far from its birth location. On the other hand, SNe Ia have a broad distribution of delay times and their progenitors can migrate great distances between birth and explosion. The consequence is that SNe Ia can enrich regions of the Galaxy far removed from regions which have experienced a high rate of star formation.
+
+[Summary of DTDs used in simulations and theoretical studies]. The Feedback In Realistic Environments \citep[FIRE;][]{Hopkins2014-FIRE-1} and FIRE-2 \citep{Hopkins2018-FIRE-2} simulations implement the DTD from \citet{Mannucci2006-TwoPopulations} (explain previously). Following \citet{Schonrich2009-RadialMixing}, \citet{Weinberg2017-ChemicalEquilibrium} assume an exponential DTD for the purposes of producing an analytical solution to the equations of chemical equilibrium, but they show that it can be extended to a double-exponential DTD which closely approximates a power-law. 
 
 Studies of galactic chemical evolution typically assume a single form for the SN Ia DTD. This is the first comprehensive look at the DTD in a multi-zone GCE model which includes the effects of radial migration.
 
-% Why radial migration is important for SNe Ia.
-Core-collapse SNe explode on timescales of a few Myr, before the progenitor has a chance to migrate far from its birth location. On the other hand, SNe Ia have a broad distribution of delay times and their progenitors can migrate great distances between birth and explosion. The consequence is that SNe Ia can enrich regions of the Galaxy far removed from regions which have experienced a high rate of star formation.
+A few chemical evolution studies have compared DTDs with different functional forms. \citet{Palicio2023-AnalyticDTD} derive analytic solutions to one-zone chemical evolution equations for seven DTDs (three theoretical and four empirical), approximating the more complicated DTD functions as a linear combination of exponential, Gaussian, and power-law components. They predict observables such as abundance tracks and MDFs and compare to APOGEE, but comparisons are limited to the Solar neighborhood. \citet{Poulhazan2018-PrecisionPollution} investigate six different DTDs in a smoothed-particle hydrodynamics simulation, but they only present global results for the entire galaxy, they don't compare abundances throughout the disk, and they don't compare to observations.
 
-Summary of observational studies of the DTD. These studies all assume a particular form for the DTD and fit for the specific parameters. They do not quantitatively favor one form over another (e.g., power-law over exponential).
+One curious chemical feature of the Milky Way disk is the existence of two populations separated by their [$\alpha$/Fe] abundance ratios. First noted by \citet{Furhmann1998-NearbyStars}, expanded by \citet{Hayden2015-ChemicalCartography}, definitely others too. The ``high-$\alpha$'' population is associated with the thick disk and contains stars with low enrichment from SNe Ia, so their abundance ratios reflect that of pure CCSN enrichment. The ``low-$\alpha$'' population is associated with the thin disk and contains stars with roughly solar $\alpha$-abundances.
+The origin of the [$\alpha$/Fe] bimodality is debated. \citet{Schonrich2009-RadialMixing} argue that it arises due to radial migration (churning) even with a smooth star formation rate. \citet{Johnson2021-Migration} use a smooth SFR and a prescription for radial migration but are unable to reproduce the bimodality. \citet{Spitoni2021-TwoInfall} (definitely earlier papers too) argue that two distinct infall episodes can explain the bimodality. What separates the two sequences is SN Ia enrichment, so the DTD ought to have some impact on the [$\alpha$/Fe] bimodality, perhaps even determining whether or not it exists.
 
-\citet{Greggio2005-AnalyticalRates} used analytical approximations of binary population synthesis to produce theoretical DTDs for the SD and DD channels.
-
-Summary of DTDs used in simulations and theoretical studies. The Feedback In Realistic Environments \citep[FIRE;][]{Hopkins2014-FIRE-1} and FIRE-2 \citep{Hopkins2018-FIRE-2} simulations implement the DTD from \citet{Mannucci2006-TwoPopulations} (explain previously). Following \citet{Schonrich2009-RadialMixing}, \citet{Weinberg2017-ChemicalEquilibrium} assume an exponential DTD for the purposes of producing an analytical solution to the equations of chemical equilibrium, but they show that it can be extended to a double-exponential DTD which closely approximates a power-law. 
-
-A few chemical evolution studies have compared DTDs with different functional forms. \citet{Poulhazan2018-PrecisionPollution} investigate six different DTDs in a smoothed-particle hydrodynamics simulation. \citet{Palicio2023-AnalyticDTD} derive analytic solutions to one-zone chemical evolution equations for seven DTDs (three theoretical and four empirical), approximating the more complicated DTD functions as a linear combination of exponential, Gaussian, and power-law components.
-
-Studies which have noted the [$\alpha$/Fe] bimodality: \citet{Furhmann1998-NearbyStars,Hayden2015-ChemicalCartography}. The origin of the [$\alpha$/Fe] bimodality is debated. \citet{Schonrich2009-RadialMixing} argue that it arises due to radial migration (churning) even with a smooth star formation rate. \citet{Johnson2021-Migration} use a smooth SFR and a prescription for radial migration but are unable to reproduce the bimodality. \citet{Spitoni2021-TwoInfall} (definitely earlier papers too) argue that two distinct infall episodes can explain the bimodality.
+In this paper we comprehensively evaluate a selection of DTD models from the literature with multiple SFHs and a prescription for radial migration in the Versatile Integrator for Chemical Evolution (VICE). In Section \ref{sec:methods}, we present our models for the DTD and SFH, and we describe our chemical evolution simulations. In Section \ref{sec:onezone-results}, we present the results of our one-zone chemical evolution simulations. In Section \ref{sec:multizone-results}, we present the results of our multi-zone simulations and compare to observations. In Section \ref{sec:discussion}, we discuss the implications for the DTD and future surveys. In Section \ref{sec:conclusions}, we conclude.
 
 \section{Methods}
 \label{sec:methods}
