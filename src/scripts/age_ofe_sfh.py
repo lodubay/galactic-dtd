@@ -13,7 +13,7 @@ from _globals import ZONE_WIDTH, ONE_COLUMN_WIDTH, MAX_SF_RADIUS
 import paths
 
 SFH_LIST = ['insideout', 'lateburst', 'earlyburst', 'twoinfall']
-DTD_MODEL = 'powerlaw_slope11'
+DTD_MODEL = 'exponential_timescale15'
 LABEL_LIST = ['Inside-out', 'Late-burst', 'Early-burst', 'Two-infall']
 AGE_SOURCE = 'L23'
 AGE_COL = 'LATENT_AGE'
