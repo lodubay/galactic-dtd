@@ -53,7 +53,7 @@ def plot_onezone():
     
     dt = ONEZONE_DEFAULTS['dt']
     simtime = np.arange(0, END_TIME + dt, dt)
-    params = ONEZONE_DEFAULTS
+    params = ONEZONE_DEFAULTS.copy()
     
     for i, dtd in enumerate(styles.distlist):
         params['eta'] = dtd['eta']

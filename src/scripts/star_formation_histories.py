@@ -32,8 +32,10 @@ def main():
         for zone, color in zip(zones, colors):
             plot_history(axs[:,i], output, zone, color=color, 
                          label='%d kpc' % (zone * ZONE_WIDTH))
-    leg = axs[0,0].legend(loc='upper center', frameon=False, ncols=3, 
-                          handlelength=1, columnspacing=1, handletextpad=0.5)
+    leg = axs[0,0].legend(loc='center right', frameon=True, ncols=1, 
+                          handlelength=0, columnspacing=1.5, handletextpad=0,
+                          facecolor='#ffffff', fancybox=False, framealpha=0.7,
+                          edgecolor='none')
     # Set legend text colors
     # for i in range(len(zones)):
     #     leg.get_texts()[i].set_color(colors[i])
@@ -99,13 +101,13 @@ def setup_axes(tmax=END_TIME, width=TWO_COLUMN_WIDTH):
     # y-axis log scale
     axs[0,0].set_yscale('log')
     # axs[0,0].set_ylim((5e-5, 0.2))
-    axs[0,0].set_ylim((5e-5, 0.5))
+    axs[0,0].set_ylim((5e-5, 0.2))
     axs[1,0].set_yscale('log')
-    axs[1,0].set_ylim((1e-3, 0.3))
+    axs[1,0].set_ylim((1e-3, 0.2))
     axs[2,0].set_yscale('log')
     axs[2,0].set_ylim((3e6, 3e8))
     axs[3,0].set_yscale('log')
-    axs[3,0].set_ylim((0.5, 3e2))
+    axs[3,0].set_ylim((0.5, 5e2))
 
     return fig, axs
 

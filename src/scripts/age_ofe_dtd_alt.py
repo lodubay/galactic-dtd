@@ -36,7 +36,7 @@ def main(style='paper'):
     width = TWO_COLUMN_WIDTH
     fig, axs = plt.subplots(3, 5, sharex=True, sharey=True,
                             figsize=(width, 3/5*width))
-    plt.subplots_adjust(top=0.92, right=0.98, left=0.06, bottom=0.08, 
+    plt.subplots_adjust(top=0.91, right=0.98, left=0.06, bottom=0.08, 
                         wspace=0., hspace=0.)
     cbar = setup_colorbar(fig, cmap=CMAP_NAME, vmin=-1.3, vmax=0.3)
     # align title to colorbar bounding box
@@ -81,6 +81,7 @@ def main(style='paper'):
         ax.set_xlabel('Age [Gyr]')
     for i, ax in enumerate(axs[:,0]):
         ax.set_ylabel('[O/Fe]', labelpad=2)
+    for i, ax in enumerate(axs[:,2]):
         absz_lim = (ABSZ_BINS[-(i+2)], ABSZ_BINS[-(i+1)])
         ax.text(0.07, 0.93, r'$%s\leq |z| < %s$ kpc' % absz_lim, 
                 va='top', transform=ax.transAxes)

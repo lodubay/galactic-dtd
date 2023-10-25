@@ -100,7 +100,8 @@ class styles:
 
 
 def setup_axes(width=ONE_COLUMN_WIDTH):
-    fig, ax = plt.subplots(figsize=(width, width), tight_layout=True)
+    fig, ax = plt.subplots(figsize=(width, width))
+    fig.subplots_adjust(left=0.14, right=0.98, bottom=0.1, top=0.98)
     ax.set_xscale('log')
     ax.set_yscale('log')
     ax.xaxis.set_major_formatter(FuncFormatter(lambda y, _: '{:g}'.format(y)))

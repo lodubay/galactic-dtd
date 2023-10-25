@@ -30,21 +30,27 @@ def main(overwrite=False):
 
     dt = ONEZONE_DEFAULTS['dt']
     simtime = np.arange(0, END_TIME + dt, dt)
+    params = ONEZONE_DEFAULTS.copy()
 
     for delay, ls in zip(DELAYS, LINE_STYLES):
-        ONEZONE_DEFAULTS['delay'] = delay
+        params['delay'] = delay
         distributions = [styles.exp_long, styles.plateau, styles.plaw]
         for i, dtd in enumerate(distributions):
             if delay == DELAYS[1]:
                 label = dtd['label']
             else:
                 label = None
+            # Modify mass-loading factor for clarity
+            if i == 0:
+                params['eta'] = 1.
+            else:
+                params['eta'] = ONEZONE_DEFAULTS['eta']
             name = dtd['func'].name + '_delay{:03d}'.format(int(delay * 1000))
             sz = vice.singlezone(name=str(output_dir / name),
                                  RIa=dtd['func'],
                                  func=models.insideout(8, dt=dt), 
                                  mode='sfr',
-                                 **ONEZONE_DEFAULTS)
+                                 **params)
             sz.run(simtime, overwrite=True)
             plot_vice_onezone(str(output_dir / name), 
                               fig=fig, axs=axs,
@@ -56,6 +62,7 @@ def main(overwrite=False):
                               )
 
 
+    axs[0].set_xlim(right=0.7)
     # Re-scale marginal axis limits
     axs[1].set_ylim(bottom=0)
     axs[2].set_xlim(left=0)

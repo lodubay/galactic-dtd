@@ -7,6 +7,7 @@ from pathlib import Path
 import matplotlib.pyplot as plt
 from matplotlib.ticker import MultipleLocator
 from matplotlib.lines import Line2D
+from matplotlib.legend_handler import HandlerTuple
 import vice
 from multizone_stars import MultizoneStars
 from scatter_plot_grid import setup_colorbar
@@ -29,7 +30,7 @@ def main():
     plt.style.use(paths.styles / 'paper.mplstyle')
     fig, axs = plt.subplots(2, 2, sharex=True, sharey=True,
                             figsize=(ONE_COLUMN_WIDTH, 0.9*ONE_COLUMN_WIDTH))
-    plt.subplots_adjust(top=0.95, right=0.93, wspace=0., hspace=0., left=0.11)
+    plt.subplots_adjust(top=0.93, right=0.92, wspace=0., hspace=0., left=0.11)
     cbar = setup_colorbar(fig, cmap=CMAP_NAME, vmin=0, vmax=MAX_SF_RADIUS,
                           label=r'Birth $R_{\rm{gal}}$ [kpc]', pad=0.02,
                           labelpad=2, width=0.04)
@@ -75,16 +76,18 @@ def main():
         ax.set_ylabel('[O/Fe]')
     # Custom legend
     custom_lines = [Line2D([0], [0], color='k', linestyle='-', linewidth=0.5),
-                    Line2D([0], [0], color='r', linestyle='-', linewidth=0.5),
-                    Line2D([0], [0], color='r', linestyle='--', linewidth=0.5)]
-    legend_labels = ['Gas abundance', 'APOGEE 30% contour', 'APOGEE 80% contour']
+                    (Line2D([0], [0], color='r', linestyle='-', linewidth=0.5),
+                    Line2D([0], [0], color='r', linestyle='--', linewidth=0.5))]
+    legend_labels = ['Gas abundance', 'APOGEE 30/80% contours']
     # axs[0,1].legend(custom_lines, legend_labels, frameon=False, 
     #                  loc='lower left', fontsize=6, handlelength=1.2, 
     #                  handletextpad=0.5, labelspacing=0.3)
     axs[0,0].legend(custom_lines, legend_labels, frameon=False,
                     loc='lower left', bbox_to_anchor=(0, 1, 2, 0.1),
-                    ncols=3, borderaxespad=0., fontsize=6,
-                    handlelength=0.8, handletextpad=0.3, columnspacing=1.0)
+                    ncols=3, borderaxespad=0., #fontsize=6,
+                    handlelength=1.5, #handletextpad=0.3, 
+                    columnspacing=1.0,
+                    handler_map={tuple: HandlerTuple(ndivide=None)})
     
     plt.savefig(paths.figures / 'ofe_feh_sfh.pdf', dpi=300)
     plt.close()

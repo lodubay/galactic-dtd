@@ -42,7 +42,7 @@ def main():
                       linestyle='-', 
                       linewidth=2,
                       color='#bbbbbb', 
-                      label=r'Exponential ($\tau=3$ Gyr)', 
+                      label='Exponential\n($\\tau=3$ Gyr)', 
                       marker_labels=True,
                       zorder=1)
 

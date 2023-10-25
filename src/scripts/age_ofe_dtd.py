@@ -78,6 +78,7 @@ def main(style='paper'):
         ax.set_xlabel('Age [Gyr]')
     for i, ax in enumerate(axs[:,0]):
         ax.set_ylabel('[O/Fe]', labelpad=2)
+    for i, ax in enumerate(axs[:,2]):
         absz_lim = (ABSZ_BINS[-(i+2)], ABSZ_BINS[-(i+1)])
         ax.text(0.07, 0.93, r'$%s\leq |z| < %s$ kpc' % absz_lim, 
                 va='top', transform=ax.transAxes)

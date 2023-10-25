@@ -7,8 +7,9 @@ import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
 from matplotlib.ticker import MultipleLocator
+from matplotlib.cm import ScalarMappable
 from multizone_stars import MultizoneStars
-from utils import box_smooth, get_color_list
+from utils import box_smooth, get_color_list, discrete_colormap
 import paths
 from _globals import TWO_COLUMN_WIDTH
 
@@ -18,25 +19,26 @@ RFINAL_BINS = [3, 5, 7, 9, 11, 13]
 AGE_BINS = [0, 2, 4, 6, 8, 10, 12]
 ABSZ_MAX = 3.
 DZ = 0.01
+CMAP_NAME = 'jet'
 
 def main():
     plt.style.use(paths.styles / 'paper.mplstyle')
     zfinal_bins = np.arange(-ABSZ_MAX, ABSZ_MAX + DZ, DZ)
     
     # pick discrete colors
-    cmap = plt.get_cmap('jet')
+    cmap, norm = discrete_colormap(CMAP_NAME, AGE_BINS)
     colors = get_color_list(cmap, AGE_BINS)
     
     fig, axs = plt.subplots(len(MIGRATION_SCHEMES), len(RFINAL_BINS)-1, 
                             figsize=(TWO_COLUMN_WIDTH, 3), 
                             sharex=True, sharey=True)
-    plt.subplots_adjust(left=0.06, right=0.98, top=0.92, wspace=0., hspace=0.)
+    plt.subplots_adjust(left=0.05, right=0.93, top=0.92, wspace=0., hspace=0.)
     
     for m, row in enumerate(axs):
         mig = MIGRATION_SCHEMES[m]
         output_name = '/'.join((mig, 'insideout/powerlaw_slope11/diskmodel'))
         mzs = MultizoneStars.from_output(output_name)
-        row[2].text(0.5, 0.85, ROW_LABELS[m], 
+        row[2].text(0.5, 0.85, ROW_LABELS[m], zorder=10,
                     ha='center', transform=row[2].transAxes,
                     bbox={
                         'facecolor': 'w',
@@ -63,7 +65,7 @@ def main():
                 hist_smooth = box_smooth(hist, zfinal_bins, 0.1)
                 bin_centers = (zfinal_bins[:-1] + zfinal_bins[1:]) / 2
                 ax.plot(bin_centers, hist_smooth, c=color, ls='-', 
-                        label=r'$%d - %d$ Gyr' % age_lim, zorder=10-j)
+                        label=r'$%d - %d$' % age_lim, zorder=10-j)
     
     axs[0,0].xaxis.set_major_locator(MultipleLocator(1))
     axs[0,0].xaxis.set_minor_locator(MultipleLocator(0.2))
@@ -75,8 +77,16 @@ def main():
         ax.set_xlabel(r'$z_{\rm{final}}$ [kpc]')
     for ax in axs[:,0]:
         ax.set_ylabel('PDF')
-    axs[1,-1].legend(loc='upper right', frameon=False, 
-                     handlelength=1, handletextpad=0.5)
+        
+    # axs[1,-1].legend(loc='upper right', frameon=False, 
+    #                  handlelength=1, handletextpad=0.5, title='Age [Gyr]')
+    
+    # Add colorbar on right side
+    height = fig.subplotpars.top - fig.subplotpars.bottom
+    cax = plt.axes([0.94, fig.subplotpars.bottom, 0.01, height])
+    cbar = fig.colorbar(ScalarMappable(norm, cmap), cax)
+    cbar.set_label('Age [Gyr]')
+    
     plt.savefig(paths.figures / 'midplane_distance.pdf', dpi=300)
 
 if __name__ == '__main__':

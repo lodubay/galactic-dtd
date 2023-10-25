@@ -105,9 +105,9 @@ def main(style='paper'):
                            linewidth=ism_track_width),
                     Line2D([0], [0], color='r', linestyle='-', linewidth=0.5),
                     Line2D([0], [0], color='r', linestyle='--', linewidth=0.5)]
-    legend_labels = ['Gas abundance', 'APOGEE 30% contour', 'APOGEE 80% contour']
+    legend_labels = ['Gas abundance', 'APOGEE 30% cont.', 'APOGEE 80% cont.']
     axs[2, 0].legend(custom_lines, legend_labels, frameon=False, 
-                     loc='upper left', fontsize=6)
+                     loc='upper left', handlelength=0.6, handletextpad=0.4)
     
     plt.savefig(paths.figures / 'ofe_feh_dtd')
     plt.close()
