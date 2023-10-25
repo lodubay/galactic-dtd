@@ -184,7 +184,7 @@ def group_by_bins(df, bin_col, bins=10):
               'bin', 
               pd.cut(df[bin_col], bin_edges, labels=bin_centers))
     # group data by bins
-    return df.groupby('bin')
+    return df.groupby('bin', observed=False)
 
 
 def get_bin_centers(bin_edges):
