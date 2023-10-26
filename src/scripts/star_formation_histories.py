@@ -37,9 +37,9 @@ def main():
                           facecolor='#ffffff', fancybox=False, framealpha=0.7,
                           edgecolor='none')
     # Set legend text colors
-    # for i in range(len(zones)):
+    for i in range(len(zones)):
     #     leg.get_texts()[i].set_color(colors[i])
-    #     leg.legend_handles[i].set_visible(False)
+        leg.legend_handles[i].set_visible(False)
     plt.savefig(paths.figures / 'star_formation_histories.pdf', dpi=300)
     plt.close()
 
