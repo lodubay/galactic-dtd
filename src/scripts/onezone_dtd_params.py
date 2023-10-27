@@ -17,12 +17,14 @@ from delay_time_distributions import styles
 
 def main():
     plt.style.use(paths.styles / 'paper.mplstyle')
-    fig = plt.figure(figsize=(TWO_COLUMN_WIDTH, 0.33*TWO_COLUMN_WIDTH))
-    subfigs = fig.subfigures(1, 3, wspace=0.)
+    fig = plt.figure(figsize=(TWO_COLUMN_WIDTH, 0.36*TWO_COLUMN_WIDTH))
+    gs = fig.add_gridspec(7, 22, wspace=0.)
+    # subfigs = fig.subfigures(1, 3, wspace=0.)
+    subfigs = [fig.add_subfigure(gs[:,i:i+w]) for i, w in zip((0, 8, 15), (8, 7, 7))]
     plaw_axs = powerlaw_slope(subfigs[0])
     exp_axs = exponential_timescale(subfigs[1])
     plat_axs = plateau_width(subfigs[2])
-    plt.subplots_adjust(bottom=0.14, top=0.98, left=0.18, right=0.98, wspace=0.5)
+    plt.subplots_adjust(bottom=0.13, top=0.98, left=0.16, right=0.98, wspace=0.5)
     fig.savefig(paths.figures / 'onezone_dtd_params.pdf', dpi=300)
     plt.close()
 
@@ -33,7 +35,8 @@ def powerlaw_slope(subfig, slopes=[-0.8, -1.1, -1.4],
     if not output_dir.exists():
         output_dir.mkdir(parents=True)
 
-    axs = setup_axes(subfig, title='Power-law DTD')
+    axs = setup_axes(subfig, title='Power-law DTD', xlim=(-2.1, 0.6))
+    # subfig.gridspec.update(right=1.)
 
     dt = ONEZONE_DEFAULTS['dt']
     simtime = np.arange(0, END_TIME + dt, dt)
@@ -51,7 +54,7 @@ def powerlaw_slope(subfig, slopes=[-0.8, -1.1, -1.4],
                       linestyle='-', 
                       linewidth=2,
                       color='#bbbbbb', 
-                      label='Exponential\n($\\tau=3$ Gyr)', 
+                      label='Exp.\n($\\tau=3$ Gyr)', 
                       marker_labels=True,
                       zorder=1)
 
@@ -85,7 +88,7 @@ def exponential_timescale(subfig, timescales=[6, 3, 1.5],
     if not output_dir.exists():
         output_dir.mkdir(parents=True)
 
-    axs = setup_axes(subfig, title='Exponential DTD', ylabel=False)
+    axs = setup_axes(subfig, title='Exponential DTD', ylabel=False, xlim=(-2.1, 0.6))
 
     dt = ONEZONE_DEFAULTS['dt']
     simtime = np.arange(0, END_TIME + dt, dt)
@@ -126,7 +129,7 @@ def plateau_width(subfig, plateau_widths=[1., 0.3, 0.1],
     delay = ONEZONE_DEFAULTS['delay']
     simtime = np.arange(0, END_TIME + dt, dt)
 
-    axs = setup_axes(subfig, title='Plateau DTD', ylabel=False)
+    axs = setup_axes(subfig, title='Plateau DTD', ylabel=False, xlim=(-2.1, 0.6))
 
     # Plot exponentials for reference
     dtd = dtds.exponential(timescale=3, tmin=delay)
@@ -141,7 +144,7 @@ def plateau_width(subfig, plateau_widths=[1., 0.3, 0.1],
                       linestyle='-', 
                       linewidth=2,
                       color='#bbbbbb', 
-                      label='Exponential\n($\\tau=3$ Gyr)', 
+                      label='Exp.\n($\\tau=3$ Gyr)', 
                       marker_labels=True, 
                       zorder=1)
 
