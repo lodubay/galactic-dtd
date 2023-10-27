@@ -11,7 +11,7 @@ from multizone.src.yields import J21
 from multizone.src import models, dtds
 from _globals import END_TIME, ONEZONE_DEFAULTS, TWO_COLUMN_WIDTH
 from colormaps import paultol
-from track_and_mdf import setup_axes, plot_vice_onezone
+from track_and_mdf import setup_figure, plot_vice_onezone
 from delay_time_distributions import styles
 
 PLATEAU_WIDTHS = [1., 0.3, 0.1] # Gyr
@@ -30,7 +30,7 @@ def main(overwrite=False):
     delay = ONEZONE_DEFAULTS['delay']
     simtime = np.arange(0, END_TIME + dt, dt)
 
-    fig, axs = setup_axes(width=0.4*TWO_COLUMN_WIDTH, title='Plateau DTD')
+    fig, axs = setup_figure(width=0.4*TWO_COLUMN_WIDTH, title='Plateau DTD')
 
     # Plot exponentials for reference
     dtd = dtds.exponential(timescale=3, tmin=delay)

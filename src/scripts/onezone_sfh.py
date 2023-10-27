@@ -12,7 +12,7 @@ from colormaps import paultol
 plt.rcParams['axes.prop_cycle'] = plt.cycler('color', paultol.bright.colors)
 from multizone.src.yields import J21
 from multizone.src import models, dtds
-from track_and_mdf import setup_axes, plot_vice_onezone
+from track_and_mdf import setup_figure, plot_vice_onezone
 from _globals import END_TIME, ONEZONE_DEFAULTS
 
 def main():
@@ -59,7 +59,7 @@ def main():
     sz.run(simtime, overwrite=True)
     
     # Plot
-    fig, axs = setup_axes()
+    fig, axs = setup_figure()
     plot_vice_onezone(str(output_dir / 'insideout'), 
                       fig=fig, axs=axs, label='Inside-out',
                       style_kw={'zorder': 1, 'linestyle': '-'})

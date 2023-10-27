@@ -12,7 +12,7 @@ from multizone.src.yields import J21
 from multizone.src import models, dtds
 from _globals import END_TIME, ONEZONE_DEFAULTS, DT
 from colormaps import paultol
-from track_and_mdf import setup_axes, plot_vice_onezone
+from track_and_mdf import setup_figure, plot_vice_onezone
 from utils import run_singlezone
 
 # Set color cycle from Paul Tol colorscheme
@@ -35,7 +35,7 @@ def main():
     if not output_dir.exists():
         output_dir.mkdir(parents=True)
 
-    fig, axs = setup_axes()
+    fig, axs = setup_figure()
 
     simtime = np.arange(0, END_TIME + DT, DT)
 

@@ -46,7 +46,7 @@ def plot_vice_onezone(output, fig=None, axs=[], label=None, color=None,
     axs : list of matplotlib.axes.Axes
     """
     if fig == None or len(axs) != 3:
-        fig, axs = setup_axes()
+        fig, axs = setup_figure()
     hist = vice.history(output)
     mdf = vice.mdf(output)
     mdf_bins = mdf['bin_edge_left'] + mdf['bin_edge_right'][-1:]
@@ -175,21 +175,41 @@ def plot_mdf_curve(ax, mdf, bins, smoothing=0., orientation='vertical', **kwargs
         ax.plot(mdf, bin_centers, **kwargs)
     else:
         ax.plot(bin_centers, mdf, **kwargs)
+        
 
-
-def setup_axes(width=ONE_COLUMN_WIDTH, title='', 
-               xlim=(-2.1, 0.4), ylim=(-0.1, 0.52)):
+def setup_figure(width=ONE_COLUMN_WIDTH, **kwargs):
     """
-    Create a figure with three axes: the main abundance track axis plus two
-    side panels for [Fe/H] and [O/Fe] distribution functions.
+    Create a figure with a three-panel setup for onezone evolutionary tracks.
 
     Parameters
     ----------
     width : float, optional
         Width of the figure in inches. The default is 3.25 in.
-    logmdf : bool, optional
-        If True, plot the marginal distributions on a log scale. The default
-        is False.
+    **kwargs : dict
+        Keyword arguments passed to setup_axes().
+
+    Returns
+    -------
+    fig : matplotlib.figure.Figure
+    axs : list of matplotlib.axes.Axes
+    """
+    fig = plt.figure(figsize=(width, width))
+    axs = setup_axes(fig, **kwargs)
+    plt.subplots_adjust(top=0.98, right=0.98, bottom=0.11, left=0.14)
+    return fig, axs
+
+
+def setup_axes(fig, title='', xlim=(-2.1, 0.4), ylim=(-0.1, 0.52)):
+    """
+    Create three axes: the main abundance track axis plus two
+    side panels for [Fe/H] and [O/Fe] distribution functions.
+
+    Parameters
+    ----------
+    fig : matplotlib.figure.Figure or matplotlib.figure.SubFigure
+        Figure or SubFigure which will contain the axes.
+    title : str, optional
+        Figure title which will be positioned in the upper MDF panel.
     xlim : tuple, optional
         Bounds on x-axis.
     ylim : tuple, optional
@@ -201,9 +221,8 @@ def setup_axes(width=ONE_COLUMN_WIDTH, title='',
     axs : list of matplotlib.axes.Axes
         Ordered [ax_main, ax_mdf, ax_odf]
     """
-    fig = plt.figure(figsize=(width, width))
     gs = fig.add_gridspec(2, 2, width_ratios=(4, 1), height_ratios=(1, 4),
-                          top=0.98, right=0.98, bottom=0.11, left=0.14,
+                          # top=0.98, right=0.98, bottom=0.11, left=0.14,
                           wspace=0., hspace=0.)
     # Start with the center panel for [Fe/H] vs [O/Fe]
     ax_main = fig.add_subplot(gs[1,0])
@@ -232,4 +251,4 @@ def setup_axes(width=ONE_COLUMN_WIDTH, title='',
                        labelbottom=False)
     ax_odf.set_xlabel(r'$P($[O/Fe]$)$', size=7)
     axs = [ax_main, ax_mdf, ax_odf]
-    return fig, axs
+    return axs

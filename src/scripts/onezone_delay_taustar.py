@@ -12,7 +12,7 @@ from multizone.src.yields import J21
 from multizone.src import models, dtds
 from _globals import END_TIME, DT, ONEZONE_DEFAULTS
 from colormaps import paultol
-from track_and_mdf import setup_axes, plot_vice_onezone
+from track_and_mdf import setup_figure, plot_vice_onezone
 
 # One-zone model settings
 MINIMUM_DELAY = [0.16, 0.08, 0.04, 0.08, 0.08] # Gyr
@@ -33,7 +33,7 @@ def main():
     
     simtime = np.arange(0, END_TIME + DT, DT)
 
-    fig, axs = setup_axes()
+    fig, axs = setup_figure()
 
     for i in range(NRUNS):
         delay = MINIMUM_DELAY[i]

@@ -11,7 +11,7 @@ from multizone.src.yields import J21
 from multizone.src import models, dtds
 from _globals import END_TIME, ONEZONE_DEFAULTS, TWO_COLUMN_WIDTH
 from colormaps import paultol
-from track_and_mdf import setup_axes, plot_vice_onezone
+from track_and_mdf import setup_figure, plot_vice_onezone
 from delay_time_distributions import styles
 
 SLOPES = [-0.8, -1.1,-1.4]
@@ -24,7 +24,7 @@ def main():
     if not output_dir.exists():
         output_dir.mkdir(parents=True)
 
-    fig, axs = setup_axes(width=0.4*TWO_COLUMN_WIDTH, title='Power-law DTD')
+    fig, axs = setup_figure(width=0.4*TWO_COLUMN_WIDTH, title='Power-law DTD')
 
     dt = ONEZONE_DEFAULTS['dt']
     simtime = np.arange(0, END_TIME + dt, dt)
