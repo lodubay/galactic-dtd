@@ -199,7 +199,7 @@ def setup_figure(width=ONE_COLUMN_WIDTH, **kwargs):
     return fig, axs
 
 
-def setup_axes(fig, title='', xlim=(-2.1, 0.4), ylim=(-0.1, 0.52)):
+def setup_axes(fig, title='', xlim=(-2.1, 0.4), ylim=(-0.1, 0.52), ylabel=True):
     """
     Create three axes: the main abundance track axis plus two
     side panels for [Fe/H] and [O/Fe] distribution functions.
@@ -214,6 +214,8 @@ def setup_axes(fig, title='', xlim=(-2.1, 0.4), ylim=(-0.1, 0.52)):
         Bounds on x-axis.
     ylim : tuple, optional
         Bounds on y-axis.
+    ylabel : bool, optional
+        If False, remove y-axis labels and tick labels.
 
     Returns
     -------
@@ -231,7 +233,10 @@ def setup_axes(fig, title='', xlim=(-2.1, 0.4), ylim=(-0.1, 0.52)):
     ax_main.yaxis.set_major_locator(MultipleLocator(0.1))
     ax_main.yaxis.set_minor_locator(MultipleLocator(0.02))
     ax_main.set_xlabel('[Fe/H]')
-    ax_main.set_ylabel('[O/Fe]', labelpad=-2)
+    if ylabel:
+        ax_main.set_ylabel('[O/Fe]', labelpad=-2)
+    else:
+        ax_main.yaxis.set_ticklabels([])
     ax_main.set_xlim(xlim)
     ax_main.set_ylim(ylim)
     # Add panel above for MDF in [Fe/H]
@@ -239,7 +244,8 @@ def setup_axes(fig, title='', xlim=(-2.1, 0.4), ylim=(-0.1, 0.52)):
     ax_mdf.tick_params(axis='x', labelbottom=False)
     ax_mdf.tick_params(axis='y', which='both', left=False, right=False, 
                        labelleft=False)
-    ax_mdf.set_ylabel(r'$P($[Fe/H]$)$', size=7)
+    if ylabel:
+        ax_mdf.set_ylabel(r'$P($[Fe/H]$)$', size=7)
     # Add plot title
     # ax_mdf.text(0.05, 0.05, title, 
     #             ha='left', va='top', transform=ax_mdf.transAxes)
