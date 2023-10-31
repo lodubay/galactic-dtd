@@ -58,7 +58,7 @@ def main():
         ax.plot(hist['[fe/h]'], hist['[o/fe]'], c='k', ls='-', 
                 linewidth=0.5)
         # Label axis
-        ax.text(0.9, 0.9, label, va='top', ha='right', transform=ax.transAxes)
+        ax.set_title(label, loc='right', x=0.93, y=0.93, va='top', pad=0)
     
     # Set x-axis ticks
     axs[0,0].xaxis.set_major_locator(MultipleLocator(0.5))
@@ -78,14 +78,11 @@ def main():
     custom_lines = [Line2D([0], [0], color='k', linestyle='-', linewidth=0.5),
                     (Line2D([0], [0], color='r', linestyle='-', linewidth=0.5),
                     Line2D([0], [0], color='r', linestyle='--', linewidth=0.5))]
+    # Combine contour legend entries
     legend_labels = ['Gas abundance', 'APOGEE 30/80% contours']
-    # axs[0,1].legend(custom_lines, legend_labels, frameon=False, 
-    #                  loc='lower left', fontsize=6, handlelength=1.2, 
-    #                  handletextpad=0.5, labelspacing=0.3)
     axs[0,0].legend(custom_lines, legend_labels, frameon=False,
                     loc='lower left', bbox_to_anchor=(0, 1, 2, 0.1),
-                    ncols=3, borderaxespad=0., #fontsize=6,
-                    handlelength=1.5, #handletextpad=0.3, 
+                    ncols=3, borderaxespad=0., handlelength=1.5, 
                     columnspacing=1.0,
                     handler_map={tuple: HandlerTuple(ndivide=None)})
     

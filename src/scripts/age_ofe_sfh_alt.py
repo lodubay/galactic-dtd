@@ -63,7 +63,7 @@ def main():
         plot_vice_medians(ax, mzs.stars, label='Model',
                           plot_low_mass_bins=False)
         # Label axis
-        ax.text(0.07, 0.93, label, va='top', transform=ax.transAxes)
+        ax.set_title(label, loc='left', x=0.07, y=0.93, va='top', pad=0)
     
     # Set x-axis scale and ticks
     axs[0,0].set_xlim(AGE_LIM)
