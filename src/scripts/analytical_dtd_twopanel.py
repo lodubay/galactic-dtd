@@ -42,14 +42,14 @@ def plot_dtd():
 
 
 def plot_onezone():
-    from track_and_mdf import setup_axes, plot_vice_onezone
+    from track_and_mdf import setup_figure, plot_vice_onezone
     from multizone.src.yields import J21
     
     output_dir = paths.data / 'onezone' / 'analytical_dtd'
     if not output_dir.exists():
         output_dir.mkdir(parents=True)
     
-    fig, axs = setup_axes(xlim=(-1.9, 0.6))
+    fig, axs = setup_figure(xlim=(-1.9, 0.6))
     
     dt = ONEZONE_DEFAULTS['dt']
     simtime = np.arange(0, END_TIME + dt, dt)
@@ -69,6 +69,16 @@ def plot_onezone():
                           marker_labels=(i==4),
                           linestyle=dtd['linestyle']
                           )
+        # label with eta value
+        if dtd['linestyle'] == '-':
+            data = axs[0].lines[-1].get_xydata()
+            textxy = data[-1]
+            if i == 0:
+                label = r'$\eta=%s$' % dtd['eta']
+            else:
+                label = str(dtd['eta'])
+            axs[0].text(textxy[0]+0.05, textxy[1]-0.02, label, 
+                        va='top', ha='right')
     
     # Re-scale marginal axis limits
     axs[1].set_ylim(bottom=0)

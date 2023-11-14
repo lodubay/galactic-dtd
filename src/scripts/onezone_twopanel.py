@@ -39,6 +39,7 @@ def minimum_delay(subfig, delays=[0.15, 0.04], line_styles=['--', '-']):
     simtime = np.arange(0, END_TIME + dt, dt)
     params = ONEZONE_DEFAULTS.copy()
 
+    prev_eta = 0.
     for delay, ls in zip(delays, line_styles):
         params['delay'] = delay
         distributions = [styles.exp_long, styles.plateau, styles.plaw]
@@ -67,6 +68,17 @@ def minimum_delay(subfig, delays=[0.15, 0.04], line_styles=['--', '-']):
                               zorder=i,
                               marker_labels=(i==0 and delay==delays[0])
                               )
+            # label with eta value
+            if ls == '-' and prev_eta != params['eta']:
+                data = axs[0].lines[-1].get_xydata()
+                textxy = data[-1]
+                if i == 1:
+                    label = r'$\eta=%s$' % params['eta']
+                else:
+                    label = str(params['eta'])
+                axs[0].text(textxy[0]+0.1, textxy[1]-0.02, label, 
+                            va='top', ha='right')
+            prev_eta = params['eta']
 
 
     axs[0].set_xlim(right=0.7)
