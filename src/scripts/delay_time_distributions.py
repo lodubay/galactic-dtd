@@ -16,13 +16,19 @@ def main(style='paper'):
     plt.style.use(paths.styles / f'{style}.mplstyle')
     plt.rcParams['axes.prop_cycle'] = plt.cycler('color', paultol.bright.colors)
     fig, ax = setup_axes()
-    times = [t*0.001 for t in range(40, 13200)]
+    times = np.arange(0.04, 13.2, 0.001)
     distributions = [styles.prompt, styles.plaw, styles.exp, 
                      styles.plateau_long, styles.triple]
     for dtd in distributions:
         func = dtd['func']
-        ax.plot(times, [func(t) / func(1) for t in times], 
+        yvals = np.array([func(t) for t in times])
+        ax.plot(times, yvals / func(1.), 
                 label=dtd['label'], c=dtd['color'], ls=dtd['line'])
+        # indicate median delay times
+        cdf = np.cumsum(yvals / np.sum(yvals))
+        med_idx = np.where(cdf >= 0.5)[0][0]
+        med = times[med_idx]
+        ax.scatter(med, 5e-3, c=dtd['color'], s=10, marker='o')
     ax.set_ylim((3e-3, 3e2))
     # Plot the SDSS-II DTD recovered by Maoz et al. (2012), MNRAS 426, 3282
     # (see their Table 2)
