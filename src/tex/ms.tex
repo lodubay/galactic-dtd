@@ -27,8 +27,9 @@
 \begin{document}
 
 % Title
-\title{The Galactic Delay-Time Distribution of Type Ia Supernovae:\\
-       A Chemical Evolution Perspective}
+% \title{The Galactic Delay-Time Distribution of Type Ia Supernovae:\\
+%        A Chemical Evolution Perspective}
+\title{Galactic Chemical Evolution Simulations Favor Long Delay Times for Type Ia Supernovae}
 
 % Author list
 \author[0000-0003-3781-0747]{Liam O. Dubay}
@@ -66,7 +67,7 @@ Uncertainties in the progenitor channels of SNe Ia translate into uncertainties 
 \citet{Greggio2005-AnalyticalRates} used analytical approximations of binary population synthesis to produce theoretical DTDs for the SD and DD channels.
 
 [Observational DTDs]
-\citet{Mannucci2005-SNRate} found that the SN Ia rate per unit mass has a strong dependence on host galaxy morphology and color. Using these results, \citet{Mannucci2006-TwoPopulations} obtain a best-fit model for the DTD which consists of both a prompt component ($<100$ Myr) and a long exponential tail. These studies all assume a particular form for the DTD and fit for the specific parameters. They do not quantitatively favor one form over another (e.g., power-law over exponential).
+\citet{Mannucci2005-SNRate} found that the SN Ia rate per unit mass has a strong dependence on host galaxy morphology and color. Using these results, \citet{Mannucci2006-TwoPopulations} obtained a best-fit model for the DTD which consists of both a prompt component ($<100$ Myr) and a long exponential tail. These studies all assume a particular form for the DTD and fit for the specific parameters. They do not quantitatively favor one form over another (e.g., power-law over exponential).
 
 [Why radial migration is important for SNe Ia]
 Core-collapse SNe explode on timescales of a few Myr, before the progenitor has a chance to migrate far from its birth location. On the other hand, SNe Ia have a broad distribution of delay times and their progenitors can migrate great distances between birth and explosion. The consequence is that SNe Ia can enrich regions of the Galaxy far removed from regions which have experienced a high rate of star formation.
@@ -140,7 +141,7 @@ We explore five different functional forms for the SN Ia DTD: a power-law, a bro
 \begin{figure}
     \centering
     \includegraphics{figures/delay_time_distributions.pdf}
-    \caption{Selection of models for the SN Ia delay time distribution (DTD) used in this paper. All functions are normalized such that $R_{\rm Ia}(t=1\,{\rm Gyr})=1$. The black squares represent the DTD recovered for the SDSS-II sample of SNe Ia by \citet{Maoz2012-SloanIIDTD} at the same scale as the DTD models. The horizontal and vertical error bars indicate the time range and 1$\sigma$ uncertainties, respectively, of each DTD measurement.}
+    \caption{Selection of models for the SN Ia delay time distribution (DTD) used in this paper. All functions are normalized such that $R_{\rm Ia}(t=1\,{\rm Gyr})=1$. The black squares represent the DTD recovered for the SDSS-II sample of SNe Ia by \citet{Maoz2012-SloanIIDTD} at the same scale as the DTD models. The horizontal and vertical error bars indicate the time range and 1$\sigma$ uncertainties, respectively, of each DTD measurement. The colored circles along the horizontal axis indicate the median delay time for each model in the same order as the legend.}
     \label{fig:dtds}
     \script{delay_time_distributions.py}
 \end{figure}
@@ -514,7 +515,9 @@ Reference \citet{Vincenzo2021-AlphaDistribution} for how the bimodality is made 
 \subsection{The [O/Fe]--[Fe/H] Plane}
 \label{sec:ofe-feh}
 
-Figure \ref{fig:ofe-feh-sfh} compares the [O/Fe]--[Fe/H] plane in the Solar neighborhood ($7\leq R_{\rm gal}<9$ kpc, $0\leq|z|<0.5$ kpc) between our four model SFHs. 
+Figure \ref{fig:ofe-feh-sfh} compares the [O/Fe]--[Fe/H] plane in the Solar neighborhood ($7\leq R_{\rm gal}<9$ kpc, $0\leq|z|<0.5$ kpc) between our four model SFHs. All simulations presented in this figure assume an exponential DTD model with $\tau=1.5$ Gyr, as it lies in the middle in terms of balance between prompt and delayed SNe Ia. The black curves represent the ISM abundance as a function of time in the central zone; in the absence of radial migration, all simulated stellar populations would lie along these lines. Stars to the left of the abundance tracks were born in the outer disk, while stars to the right of the tracks were born in the inner disk, as evidenced by the color-coding in the figure.
+
+The inside-out and late-burst models produce similar results, the main difference being a slightly broader core of the abundance distribution around [O/Fe]$\approx0.05$ dex. The Gaussian burst in SFH in the late-burst model introduces a loop in the ISM abundance track, where an uptick in star formation at $t\approx11$ Gyr raises the CCSN rate, leading to a slight increase in [O/Fe] before the subsequent increase in the SN Ia rate brings it back down. This same pattern is seen much more strongly in the abundance tracks for the two-infall model: here, the significant infall of pristine gas at $t=4$ Gyr leads to rapid dilution of the ISM, followed by a large burst in the SFR which raises [O/Fe] by $\sim 0.2$ dex. In this case the second infall produces a ``ridge line'' in the abundance distribution at [O/Fe]$\approx 0.2$. Finally, the early-burst model shows the clearest separation between a high-[O/Fe] track which follows the ISM abundance from low metallicities, and a low-[O/Fe] sequence composed of stars with a wide range of birth radii. The early-burst model sees a higher density of points which closely follow the ISM track at [Fe/H]$\lesssim 0.5$ which is likely the result of an increased SFR at early times relative to the other models.
 
 \begin{figure}
     \centering
@@ -523,6 +526,8 @@ Figure \ref{fig:ofe-feh-sfh} compares the [O/Fe]--[Fe/H] plane in the Solar neig
     \label{fig:ofe-feh-sfh}
     \script{ofe_feh_sfh.py}
 \end{figure}
+
+Figure \ref{fig:ofe-feh-dtd} compares [O/Fe]--[Fe/H] distributions for five simulations with the same SFH (inside-out) but different DTD models. We choose the inside-out SFH model for this figure because it produces a monotonically-decreasing abundance track, making comparisons between the different DTD models relatively straightforward. We note that in this model, both the low- and high-$\alpha$ sequences are composed of stars with a wide range of birth $R_{\rm gal}$. The simulation results are arranged so that from left to right the fraction of prompt SNe Ia decreases and the mean delay time increases. Results for the two-population and power-law ($\alpha$=-1.1) DTD models, with a large fraction of prompt SNe Ia, are presented in the first and second columns, respectively. For these models, the simulated stellar abundances are reasonably well-aligned with the APOGEE contours at low $|z|$ (bottom panels), but they entirely miss the observed high-$\alpha$ sequence at high $|z|$ (top panels). In the center column, the exponential ($\tau=1.5$ Gyr) DTD produces a distribution which aligns quite well with the APOGEE contours in all $|z|$-bins, and even produces a ``ridge'' which extends to large [O/Fe] at low- and mid-latitudes (bottom and center panels, respectively). While it does better at populating the high-$\alpha$ sequence than the previous DTD models, the bulk of the simulated populations at large $|z|$ still fall below the APOGEE 30\% contour (top panel). The two right-hand columns present simulation results for the plateau ($W=1$ Gyr) and triple-system DTD models, 
 
 \begin{figure*}
     \centering
