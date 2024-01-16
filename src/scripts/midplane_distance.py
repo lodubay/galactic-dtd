@@ -72,7 +72,7 @@ def main():
     axs[0,0].yaxis.set_major_locator(MultipleLocator(1))
     axs[0,0].yaxis.set_minor_locator(MultipleLocator(0.2))
     axs[0,0].set_xlim((-2.2, 2.2))
-    axs[0,0].set_ylim((0, 4.6))
+    axs[0,0].set_ylim((0, 3.8))
     for ax in axs[-1]:
         ax.set_xlabel(r'$z_{\rm{final}}$ [kpc]')
     for ax in axs[:,0]:
