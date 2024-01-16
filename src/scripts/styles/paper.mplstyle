@@ -19,6 +19,7 @@ mathtext.fontset: cm
 font.size: 8
 legend.fontsize: 8
 legend.handlelength: 1.2
+figure.titlesize: 11
 axes.labelsize: 10
 axes.titlesize: 10
 xtick.labelsize: 8

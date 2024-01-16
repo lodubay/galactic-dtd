@@ -23,6 +23,7 @@ LINESTYLES = ['--', '-']
 GALR_LIM = (7, 9)
 ABSZ_LIM = (0, 2)
 SMOOTH_WIDTH = 0.05
+TITLE_SIZE = 11
 
 SFH_LIST = ['insideout', 'lateburst', 'earlyburst', 'twoinfall']
 SFH_LABELS = ['Inside-out', 'Late-burst', 'Early-burst', 'Two-infall']
@@ -40,10 +41,13 @@ DTD_LABELS = ['Two-population',
 def main():
     plt.style.use(paths.styles / 'paper.mplstyle')
     figwidth = TWO_COLUMN_WIDTH
-    fig, axs = plt.subplots(2, 5, figsize=(figwidth, figwidth*0.4), 
+    # create subfigures for top and bottom rows
+    # fig = plt.figure(layout='constrained', figsize=(figwidth, figwidth*0.4))
+    # subfigs = fig.subfigures(2, 1, hspace=0.1)
+    fig, axs = plt.subplots(2, 5, figsize=(figwidth, figwidth*0.45), 
                             sharex=True, sharey='row')
-    fig.subplots_adjust(left=0.06, top=0.89, right=0.98, bottom=0.13,
-                        wspace=0.07, hspace=0.3)
+    fig.subplots_adjust(left=0.04, top=0.83, right=0.98, bottom=0.12,
+                        wspace=0.07, hspace=0.52)
     # Remove spines and y-axis labels
     for ax in axs.flatten():
         ax.spines['right'].set_visible(False)
@@ -66,14 +70,20 @@ def main():
         # Import VICE multi-zone output data
         output_name = '/'.join(['gaussian', 'lateburst', RIa, 'diskmodel'])
         plot_bimodality(axs[0,i], output_name, apogee_subset, uncertainties=True)
-    axs[0,0].set_ylabel('Late-burst SFH')
+    axs[0,0].set_ylabel('Normalized PDF')
+    fig.text(0.51, 0.98, 'Late-burst SFH',
+             ha='center', va='top', size=TITLE_SIZE)
+    # axs[0,0].set_ylabel('Late-burst SFH')
     
     print('Plotting SFHs...')
     for j, evolution in enumerate(tqdm(SFH_LIST)):
         axs[1,j].set_title(SFH_LABELS[j], pad=-8)
         output_name = '/'.join(['gaussian', evolution, 'exponential_timescale15', 'diskmodel'])
         plot_bimodality(axs[1,j], output_name, apogee_subset, uncertainties=True)
-    axs[1,0].set_ylabel('Exponential DTD\n($\\tau=1.5$ Gyr)')
+    axs[1,0].set_ylabel('Normalized PDF')
+    fig.text(0.42, 0.5, 'Exponential DTD ($\\tau=1.5$ Gyr)',
+             ha='center', va='top', size=TITLE_SIZE)
+    # axs[1,0].set_ylabel('Exponential DTD\n($\\tau=1.5$ Gyr)')
         
     # Plot APOGEE
     print('Plotting APOGEE...')
@@ -86,7 +96,7 @@ def main():
         mdf /= mdf.max()
         bin_centers = get_bin_centers(bin_edges)
         axs[1,-1].plot(bin_centers, mdf, ls=LINESTYLES[i], label=feh_bin, c=COLORS[i])
-    axs[1,-1].set_title('APOGEE', pad=-8)
+    axs[1,-1].set_title('APOGEE', pad=8, size=TITLE_SIZE)
     
     for ax in axs[-1]:
         ax.set_xlabel('[O/Fe]')
