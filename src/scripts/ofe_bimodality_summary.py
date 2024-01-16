@@ -23,7 +23,6 @@ LINESTYLES = ['--', '-']
 GALR_LIM = (7, 9)
 ABSZ_LIM = (0, 2)
 SMOOTH_WIDTH = 0.05
-TITLE_SIZE = 11
 
 SFH_LIST = ['insideout', 'lateburst', 'earlyburst', 'twoinfall']
 SFH_LABELS = ['Inside-out', 'Late-burst', 'Early-burst', 'Two-infall']
@@ -41,6 +40,7 @@ DTD_LABELS = ['Two-population',
 def main():
     plt.style.use(paths.styles / 'paper.mplstyle')
     figwidth = TWO_COLUMN_WIDTH
+    title_size = plt.rcParams['figure.titlesize']
     # create subfigures for top and bottom rows
     # fig = plt.figure(layout='constrained', figsize=(figwidth, figwidth*0.4))
     # subfigs = fig.subfigures(2, 1, hspace=0.1)
@@ -72,7 +72,7 @@ def main():
         plot_bimodality(axs[0,i], output_name, apogee_subset, uncertainties=True)
     axs[0,0].set_ylabel('Normalized PDF')
     fig.text(0.51, 0.98, 'Late-burst SFH',
-             ha='center', va='top', size=TITLE_SIZE)
+             ha='center', va='top', size=title_size)
     # axs[0,0].set_ylabel('Late-burst SFH')
     
     print('Plotting SFHs...')
@@ -82,7 +82,7 @@ def main():
         plot_bimodality(axs[1,j], output_name, apogee_subset, uncertainties=True)
     axs[1,0].set_ylabel('Normalized PDF')
     fig.text(0.42, 0.5, 'Exponential DTD ($\\tau=1.5$ Gyr)',
-             ha='center', va='top', size=TITLE_SIZE)
+             ha='center', va='top', size=title_size)
     # axs[1,0].set_ylabel('Exponential DTD\n($\\tau=1.5$ Gyr)')
         
     # Plot APOGEE
@@ -96,7 +96,7 @@ def main():
         mdf /= mdf.max()
         bin_centers = get_bin_centers(bin_edges)
         axs[1,-1].plot(bin_centers, mdf, ls=LINESTYLES[i], label=feh_bin, c=COLORS[i])
-    axs[1,-1].set_title('APOGEE', pad=8, size=TITLE_SIZE)
+    axs[1,-1].set_title('APOGEE', pad=8, size=title_size)
     
     for ax in axs[-1]:
         ax.set_xlabel('[O/Fe]')

@@ -35,7 +35,7 @@ def main():
                               figure_width=_globals.TWO_COLUMN_WIDTH, 
                               cmap_name=CMAP, xlabel='[Fe/H]', xlim=FEH_LIM, 
                               major_tick_spacing=0.5, cbar_width=0.4)
-    fig.subplots_adjust(top=0.9, left=0.07, right=0.98)
+    fig.subplots_adjust(top=0.9, left=0.04, right=0.96)
     colors = get_color_list(plt.get_cmap(CMAP), _globals.GALR_BINS)
     # plot varying SFH, constant DTD
     mdf_kwargs = {'bins': NBINS, 'range': FEH_LIM, 'smoothing': SMOOTH_WIDTH}
