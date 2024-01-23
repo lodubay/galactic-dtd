@@ -1,7 +1,6 @@
 % Define document class
 % \documentclass[modern,linenumbers]{aastex631}
 \documentclass[twocolumn,twocolappendix,linenumbers,trackchanges]{aastex631}
-%twocolappendix
 
 \usepackage{showyourwork}
 \usepackage{amsmath}
@@ -21,15 +20,16 @@
 \newcommand{\osuaffil}{Department of Astronomy, The Ohio State University, 140 W. 18th Ave, Columbus OH 43210, USA}
 \newcommand{\aFe}{[$\alpha$/Fe]\xspace}
 
-\shorttitle{Galactic SN Ia DTD}
+\shorttitle{SN Ia DTD in GCE Simulations}
 \shortauthors{Dubay, Johnson, \& Johnson}
+% \linespread{1.8}
 
 \begin{document}
 
 % Title
 % \title{The Galactic Delay-Time Distribution of Type Ia Supernovae:\\
 %        A Chemical Evolution Perspective}
-\title{Galactic Chemical Evolution Simulations Favor Long Delay Times for Type Ia Supernovae}
+\title{Galactic Chemical Evolution Models Favor Extended Type Ia Supernova Delay-Time Distributions}
 
 % Author list
 \author[0000-0003-3781-0747]{Liam O. Dubay}
@@ -38,57 +38,78 @@
 \affiliation{\osuaffil}
 \affiliation{Center for Cosmology and Astroparticle Physics (CCAPP), The Ohio State University, 191 W. Woodruff Ave., Columbus OH 43210, USA}
 \author[0000-0002-6534-8783]{James W. Johnson}
-\affiliation{\osuaffil}
+% \affiliation{\osuaffil}
 \affiliation{Observatories of the Carnegie Institution for Science, 813 Santa Barbara St., Pasadena CA 91101, USA}
 % \author[0000-0001-7775-7261]{David H. Weinberg}
 
 % Abstract from AAS 241
 \begin{abstract}
-    Type Ia supernovae (SNe Ia) produce most of the Fe-peak elements in the Universe and therefore are a crucial ingredient in galactic chemical evolution models. SNe Ia do not explode immediately after star formation and the delay-time distribution (DTD) has not been definitively determined by supernova surveys or theoretical models. Because the DTD also affects the relationship among age, [Fe/H], and \aFe in chemical evolution models, comparison with observations of stars in the Milky Way is an important consistency check for any proposed DTD. We implement several popular forms of the DTD in combination with multiple star formation histories for the Milky Way in one-zone and multi-zone chemical evolution models using the Versatile Integrator for Chemical Evolution (VICE). VICE includes a prescription for radial stellar migration in multi-zone models. We compare our predicted interstellar medium abundance tracks, stellar abundance distributions, and stellar age distributions to the 17th data release of the Apache Point Observatory Galactic Evolution Experiment (APOGEE). We find that the SN Ia DTD has the largest effect on the \aFe distribution: a DTD with more prompt SNe Ia produces a stellar abundance distribution that is skewed toward a lower \aFe ratio, whereas a DTD with more delayed SNe Ia produces a distribution that is skewed toward higher \aFe. While the DTD alone cannot explain the observed bimodality in the \aFe distribution, in combination with an appropriate star formation history it affects the goodness of fit between the simulated and observed high-$\alpha$ sequence. Our model results favor a DTD with longer delay times and fewer prompt SNe Ia than the fiducial $t^{-1}$ power law.
+    Type Ia supernovae (SNe Ia) produce most of the Fe-peak elements in the Universe and therefore are a crucial ingredient in galactic chemical evolution models. SNe Ia do not explode immediately after star formation and the delay-time distribution (DTD) has not been definitively determined by supernova surveys or theoretical models. Because the DTD also affects the relationship among age, [Fe/H], and \aFe in chemical evolution models, comparison with observations of stars in the Milky Way is an important consistency check for any proposed DTD. We implement several popular forms of the DTD in combination with multiple star formation histories for the Milky Way in one-zone and multi-zone chemical evolution models using the Versatile Integrator for Chemical Evolution (VICE). VICE includes a prescription for radial stellar migration in multi-zone models. We compare our predicted interstellar medium abundance tracks, stellar abundance distributions, and stellar age distributions to the final data release of the Apache Point Observatory Galactic Evolution Experiment (APOGEE). We find that the SN Ia DTD has the largest effect on the \aFe distribution: a DTD with more prompt SNe Ia produces a stellar abundance distribution that is skewed toward a lower \aFe ratio, whereas a DTD with more delayed SNe Ia produces a distribution that is skewed toward higher \aFe. While the DTD alone cannot explain the observed bimodality in the \aFe distribution, in combination with an appropriate star formation history it affects the goodness of fit between the simulated and observed high-$\alpha$ sequence. Our model results favor a DTD with longer delay times and fewer prompt SNe Ia than the fiducial $t^{-1}$ power law.
 \end{abstract}
 
 \section{Introduction}
 
 % [Hook and intro paragraph]
-Galactic chemical evolution studies seek to explain the observed distribution of metals %as a function of age 
-throughout the Milky Way Galaxy. \citet{Tinsley1979-StellarLifetimes} proposed that the non-Solar \aFe\footnote{
+Galactic chemical evolution (GCE) studies seek to explain the observed distribution of metals throughout the Milky Way Galaxy. One curious chemical feature of the Milky Way disk is the existence of two populations separated by their \aFe\footnote{
     In standard bracket notation, $[X/Y]\equiv \log_{10}(X/Y) - \log_{10}(X/Y)_{\odot}$. In this work we will use \aFe and [O/Fe] interchangeably, although observational studies will often use a combination of $\alpha$-elements to calculate \aFe.
-} ratios seen by, e.g., \citet{Wallerstein1962-GDwarfAbundances} were caused by different stellar lifetimes for the contributors of the Fe-peak elements than the $\alpha$-elements. Type Ia supernovae (SNe Ia), the explosions of carbon-oxygen white dwarfs (WDs), are responsible for a majority of the Fe produced in the Galaxy \citep{Matteucci1986-SupernovaEnrichment}; meanwhile, core collapse supernovae (CCSNe), the explosions of massive stars, produce the $\alpha$-elements (e.g., O and Mg) in addition to a smaller fraction of Fe. SNe Ia have long been known to occur in elliptical galaxies, suggesting that their progenitors may have lifetimes of up to many Gyr. 
-% \citet{Tinsley1979-StellarLifetimes} assumed a range of $\sim 3\times 10^7 - 10^8$ years for the lifetimes of SN Ia progenitors, although they argued against the hypothesis that SNe Ia are exploding white dwarfs. 
-\citet{Matteucci1986-SupernovaEnrichment} modeled SNe Ia as the end product of binary evolution and %arrived at much longer lifetimes for the progenitors, finding 
-concluded that SNe Ia did not contribute substantially to chemical enrichment for $\sim 10^8$ years after the commencement of star formation. The timescale for Fe enrichment in the Galaxy, a key component of chemical evolution models, is directly linked to the progenitor lifetimes of SNe Ia. 
-Therefore, the balance of SN rates over time regulates the relative abundances of the $\alpha$-elements and Fe as a function of stellar age. [Better concluding sentence]
+} abundance ratios at similar metallicity. 
+\citet{Tinsley1979-StellarLifetimes} first[?] proposed that the non-Solar \aFe ratios seen by, e.g., \citet{Wallerstein1962-GDwarfAbundances} were caused by different stellar lifetimes for the contributors of the Fe-peak elements than the $\alpha$-elements. 
+Type Ia supernovae (SNe Ia), the thermonuclear explosions of carbon-oxygen white dwarfs (WDs), are responsible for most of the Fe produced in the Galaxy \citep{Matteucci1986-SupernovaEnrichment}; meanwhile, core collapse supernovae (CCSNe), the explosions of massive stars, produce the $\alpha$-elements (e.g., O and Mg) in addition to a smaller fraction of Fe.
+SNe Ia are delayed by $\sim10^8 - 10^{10}$ years after star formation events, as evidenced by observations at large distances from star forming regions and in elliptical galaxies \citep[e.g.,][]{Maza1976-SNStatistics}.
+This delayed enrichment leads to a decrease in \aFe with increasing [Fe/H] \citep{Matteucci1986-SupernovaEnrichment}.
+% The decrease in \aFe with [Fe/H] has long been understood to be a consequence of the delayed nature of SNe Ia, which do not contribute substantially to chemical enrichment for $\sim 10^8$ years after the commencement of star formation \citep{Tinsley1979-StellarLifetimes,Matteucci1986-SupernovaEnrichment}. 
+% As SNe Ia are a product of intermediate-mass stars which undergo binary evolution, they do not contribute substantially to chemical enrichment for $\sim 10^8$ years after the commencement of star formation \citep{Matteucci1986-SupernovaEnrichment}.
+% The timescale for Fe enrichment in the Galaxy, a key component of chemical evolution models, is directly linked to the progenitor lifetimes of SNe Ia. 
+Therefore, the relative abundances of the $\alpha$-elements and Fe as a function of stellar age trace the balance of SN rates over time.
 
 % [What is the delay time distribution]
-SNe Ia are delayed by $\sim10^8 - 10^{10}$ years after the formation of their progenitors as a result of their stellar and binary evolution. The delay-time distribution (DTD) is the rate of SNe Ia which explode as a function of time after the formation of a hypothetical unit-mass single stellar population. When the DTD is convolved with the Galactic star formation rate (SFR) as a function of time, it yields the SN Ia rate as a function of time. The DTD controls the delay between chemical enrichment from CCSNe, which explode on timescales of a few Myr (smaller than the timestep size of many chemical evolution simulations), and SNe Ia. As such, it is a key parameter in the chemical evolution of the Galaxy. The DTD reflects the evolution of the SNe Ia progenitor systems, so different models for the progenitors of SNe Ia will naturally predict different forms for the DTD.
+The rate of SNe Ia which explode as a function of time after the formation of a hypothetical unit-mass single stellar population is known as the delay-time distribution (DTD).
+When the DTD is convolved with the Galactic star formation rate (SFR) as a function of time, it yields the SN Ia rate as a function of time. 
+The quantitative details of the relationship between \aFe and [Fe/H] are set by the DTD, and as such it is a key parameter in GCE models.
+The DTD remains poorly constrained, however, because it reflects the detailed evolution of the SNe Ia progenitor systems, so different models for the progenitors of SNe Ia will naturally predict different forms for the DTD.
 
 % [Introduction to SNe Ia]
-The mechanism(s) for producing SNe Ia are not fully understood \citep[for reviews, see][]{Maoz2014-Review,Livio2018-ProgenitorReview,Ruiter2020-ProgenitorReview}. Two general production channels have been proposed: in the single-degenerate (SD) case, the WD accretes mass from a close non-degenerate companion until it surpasses a mass of $\sim1.4$ M$_\odot$ and explodes \citep{Whelan1973-SDModel,Nomoto1982-SDModel,Yoon2003-SDModel}. In the double-degenerate (DD) case, two WDs merge after a gravitational-wave inspiral \citep{Iben1984-IaBinary,Webbink1984-DDModel,Pakmor2012-WDMerger} or head-on collision \citep{Benz1989-CollisionalDD,Thompson2011-CollisionalDD}. Recent observations have placed tight constraints on the SD channel, heavily disfavoring it as the main pathway for producing ``normal'' SNe Ia \citep[e.g.,][]{Panagia2006-RadioEmission,Schaefer2012-ExCompanionSNR,Chomiuk2016-RadioEmission,Fausnaugh2019-EarlyIaLightCurves,Tucker2020-SNeIaSpectra,Do2021-Progenitor1972E,Tucker2023-SN2011fe}. Though it is now the preferred model, the DD channel faces issues of its own with matching observed SN Ia rates because not all WD mergers may lead to a thermonuclear explosion \citep[e.g.,][]{Shen2012-DDMergers}.
+The mechanism(s) for producing SNe Ia are not fully understood \citep[for reviews, see][]{Maoz2014-Review,Livio2018-ProgenitorReview,Ruiter2020-ProgenitorReview}. 
+Two general production channels have been proposed: in the single-degenerate (SD) case, the WD accretes mass from a close non-degenerate companion until it surpasses $\sim1.4$ M$_\odot$ and explodes \citep{Whelan1973-SDModel,Nomoto1982-SDModel,Yoon2003-SDModel}. In the double-degenerate (DD) case, two WDs merge after a gravitational-wave inspiral \citep{Iben1984-IaBinary,Webbink1984-DDModel,Pakmor2012-WDMerger} or head-on collision \citep{Benz1989-CollisionalDD,Thompson2011-CollisionalDD}. Searches for signs of interaction between the SN ejecta and a non-degenerate companion \citep[e.g.,][]{Panagia2006-RadioEmission,Chomiuk2016-RadioEmission,Fausnaugh2019-EarlyIaLightCurves,Tucker2020-SNeIaSpectra} or for a surviving non-degenerate companion \citep[e.g.,][]{Schaefer2012-ExCompanionSNR,Do2021-Progenitor1972E,Tucker2023-SN2011fe} have placed tight constraints on the SD channel, heavily disfavoring it as the main pathway for producing ``normal'' SNe Ia. The DD channel, now the preferred model, faces issues of its own with matching observed SN Ia rates because not all WD mergers may lead to a thermonuclear explosion \citep[e.g.,][]{NomotoIben1985-DDMergers,SaioNomoto1998-DDMergers,Shen2012-DDMergers}, and the progenitor systems are difficult to detect even within our own Galaxy \citep{RebassaMansergas2019-WhereAreDDProgenitors}.
 
-% [Analytical DTDs]
-Uncertainties in the progenitor channels of SNe Ia translate into uncertainties in the form of the DTD. \citet{Greggio2005-AnalyticalRates} formulated analytical DTDs for several progenitor models; she found that the SD channel tends to produce a steeper DTD function than the DD channel, and the median delay time can vary by a factor of 10 depending on the chosen progenitor scenario and its particular parameters.
+% [Theoretical DTDs]
+Uncertainties in the progenitor channels of SNe Ia translate into uncertainties in the shape of the DTD. 
+% By formulating analytical DTDs for several progenitor models, \citet{Greggio2005-AnalyticalRates} found that the SD channel tends to produce a steeper DTD function than the DD channel, and the median delay time (by which 50\% of SNe Ia have exploded) can vary by a factor of 10 depending on the chosen progenitor scenario and its particular parameters.
+For the DD channel, arguments about the distribution of post-common envelope separations and the rate of gravitational wave inspiral suggest a broad $\sim t^{-1}$ DTD at long delay times ($\gtrsim 1$ Gyr), but at short delays ($\lesssim 1$ Gyr) the rate is limited by the need to produce two WDs \citep[see Section 3.5 from][]{Maoz2014-Review}.
+Higher-order progenitor systems could also produce a $t^{-1}$ DTD \citep{Fang2018-QuadrupleSystems,Rajamuthukumar2023-TripleEvolution}.
+The DTD which would result from the SD channel depends greatly on the assumptions of binary population synthesis, but in general is expected to cover a narrower range of delay times and may feature a steep exponential cutoff at the long end \citep[e.g.,][]{Greggio2005-AnalyticalRates}.
+% More recently, \citet{Rajamuthukumar2023-TripleEvolution} computed a DTD from the evolution of triple system progenitors. [Expand, connect binary evolution to delay times, look for other theory papers]
 
-[Observational DTDs]
-\citet{Mannucci2005-SNRate} found that the SN Ia rate per unit mass has a strong dependence on host galaxy morphology and color. Using these results, \citet{Mannucci2006-TwoPopulations} obtained a best-fit model for the DTD which consists of both a prompt component ($<100$ Myr) and a long exponential tail. These studies all assume a particular form for the DTD and fit for the specific parameters. They do not quantitatively favor one form over another (e.g., power-law over exponential).
+% [Observational DTDs]
+Surveys of SNe Ia have provided the primary observational constraints on the DTD.  
+This can be done by comparing the observed rate of SNe Ia to their host galaxy parameters \citep[e.g.,][]{Mannucci2005-SNRate,Heringer2019-FieldGalaxyDTD} or inferred star formation histories \citep[SFHs; e.g.,][]{Maoz2012-SloanIIDTD}, measuring SN Ia rates in galaxy clusters \citep[e.g.,][]{Maoz2010-ClusterDTD}, or comparing the volumetric SN Ia rate to the cosmic SFH as a whole \citep[e.g.,][]{Graur2014-VolumetricSNIaRates,Strolger2020-ExponentialDTD}. 
+Early studies, which had limited sample sizes, produced unimodal \citep{Strolger2004-SNIaProgenitors} or bimodal \citep{Mannucci2006-TwoPopulations} DTDs where the majority of SNe Ia explode within a relatively narrow range of delay times.
+More recent studies have recovered broader DTD functions, with many converging on a declining power-law of $\sim t^{-1}$ \citep[e.g.,][]{Maoz2017-CosmicDTD,Castrillo2021-DTD,Wiseman2021-DESRates}, though there is some evidence for a steeper slope in galaxy clusters \citep{Maoz2017-CosmicDTD,FriedmannMaoz2018-ClusterDTD}.
+It is especially difficult to constrain the DTD for short delay times \citep{MaozMannucci2012-SNeIaReview} because of the need for SN Ia rates at long lookback times and uncertainties in the age estimates of stellar populations.
 
-% [Why radial migration is important for SNe Ia]
-A complicating factor in observing and modeling the effects of the DTD is the migration of stars throughout the disk. \citet{SellwoodBinney2002-RadialMixing} first demonstrated that a transient spiral perturbation (or other potential feature; see [citations]) can cause resonant interactions which adjust stars' guiding center radii without leading to kinematic heating of the disk. Core-collapse SNe explode on timescales of a few Myr, before the progenitor has a chance to migrate far from its birth location. On the other hand, SNe Ia have a broad distribution of delay times and their progenitors can migrate great distances between birth and explosion. The consequence is that SNe Ia can enrich regions of the Galaxy far removed from regions which have experienced a high rate of star formation. The first GCE model to incorporate radial mixing was developed by \citet{Schonrich2009-RadialMixing}, and subsequent studies have incorporated more comprehensive numerical treatments of radial migration and the effect of a central bar \citep[e.g.,][]{Minchev2013-ChemodynamicalEvolution}. In this paper, we follow the treatment by \citet{Johnson2021-Migration}, who [describe treatment].
+% Notes on observational DTDs:
+% \citet{Strolger2004-SNIaProgenitors} analyzed 42 SNe Ia with redshifts $0.2<z<1.6$ and favored a delayed ($\gtrsim2$ Gyr) narrow Gaussian DTD while disfavoring exponentially declining models with a large fraction of prompt SNe Ia.
+% \citet{Mannucci2005-SNRate} found that the SN Ia rate per unit mass has a strong dependence on host galaxy morphology and color. Using these results, \citet{Mannucci2006-TwoPopulations} obtained a best-fit model for the DTD which consists of both a prompt component ($<100$ Myr) and a long exponential tail. 
+% The Maoz studies all assume a particular form for the DTD and fit for the specific parameters. They do not quantitatively favor one form over another (e.g., power-law over exponential). 
+% \citet{Castrillo2021-DTD} find a best fit power law slope of $\alpha\approx-1.1$ with a minimum delay time of $\sim50$ Myr, they also find a fairly high correlation between SN Ia rate and H$\alpha$ (a proxy for young stars) which is surprising.
+% \citet{Stolger2020-ExponentialDTD} perform maximum likelihood estimations based on the cosmic star formation history and the star formation histories of individual galaxies. In both cases their best fit functions were approximately exponential, though they started with a skew-normal function so could not have ended up with a power law even if they wanted to. They don't actually report the timescale of this exponential, but based on the plots I'd say it's about 1.5 - 2 (1.7?) Gyr. Their best fit parameters make no sense to me as they don't report their units.
 
-[Summary of DTDs used in simulations and theoretical studies]. The Feedback In Realistic Environments \citep[FIRE;][]{Hopkins2014-FIRE-1} and FIRE-2 \citep{Hopkins2018-FIRE-2} simulations implement the DTD from \citet{Mannucci2006-TwoPopulations} (explain previously). Following \citet{Schonrich2009-RadialMixing}, \citet{Weinberg2017-ChemicalEquilibrium} assume an exponential DTD for the purposes of producing an analytical solution to the equations of chemical equilibrium, but they show that it can be extended to a double-exponential DTD which closely approximates a power-law. 
+The uncertainties in the SN Ia DTD propagate into GCE models. In principle, then, the observed chemical abundance patterns should contain information about the DTD, and therefore the progenitors, of SNe Ia.
+A few studies have compared different DTDs in one-zone chemical evolution models, but the scope of their conclusions is limited by the assumption of instantaneous mixing \citep[e.g.,][]{Andrews2017-ChemicalEvolution,Palicio2023-AnalyticDTD}. 
+\citet{Poulhazan2018-PrecisionPollution} compared six DTD models in a smoothed-particle hydrodynamics simulation in a cosmological context. They found that models with a prompt SN Ia component produced the highest abundance ratios and the narrowest \aFe distributions at late times, although their simulation was not tuned to reproduce the parameters of the Milky Way and they did not compare to observed chemical abundances. 
+% The current era of large spectroscopic surveys such as the Apache Point Observatory Galactic Evolution Experiment \citep[APOGEE;][]{Majewski2017-APOGEE}
 
-Studies of galactic chemical evolution typically assume a single form for the SN Ia DTD. This is the first comprehensive look at the DTD in a multi-zone chemical evolution model which includes the effects of radial migration.
+% Notes on GCE studies
+% \citet{Andrews2017-ChemicalEvolution} predict abundance tracks and distributions using one-zone models for four different DTD models; they find that most are consistent with their abundance data.
+% \citet{Palicio2023-AnalyticDTD} derive analytic solutions to one-zone chemical evolution equations for seven DTD models, but their comparisons to data are limited to the Solar neighborhood. 
+% \citet{Poulhazan2018-PrecisionPollution} investigate six different DTD models in a smoothed-particle hydrodynamics simulation, but they only present global results for the entire galaxy, they don't compare abundances throughout the disk, and they don't compare to observations.
 
-A few chemical evolution studies have compared DTDs with different functional forms. \citet{Palicio2023-AnalyticDTD} derive analytic solutions to one-zone chemical evolution equations for seven DTDs (three theoretical and four empirical), approximating the more complicated DTD functions as a linear combination of exponential, Gaussian, and power-law components. They predict observables such as abundance tracks and MDFs and compare to APOGEE, but comparisons are limited to the Solar neighborhood. \citet{Poulhazan2018-PrecisionPollution} investigate six different DTDs in a smoothed-particle hydrodynamics simulation, but they only present global results for the entire galaxy, they don't compare abundances throughout the disk, and they don't compare to observations.
-
-One curious chemical feature of the Milky Way disk is the existence of two populations separated by their \aFe abundance ratios at the same metallicity. First noted by \citet{Furhmann1998-NearbyStars}, expanded by \citet{Hayden2015-ChemicalCartography}, definitely others too. The ``high-$\alpha$'' population contains stars with low enrichment from SNe Ia, so their abundance ratios reflect that of pure CCSN enrichment; it is associated with the kinematically hot thick disk \citep{Bensby2003-AbundanceTrends}. The ``low-$\alpha$'' population is associated with the thin disk and contains stars with roughly solar $\alpha$-abundances.
-The origin of the \aFe bimodality is debated. \citet{Schonrich2009-RadialMixing} argue that it arises due to radial migration (churning) even with a smooth star formation rate. \citet{Johnson2021-Migration} use a smooth SFR and a prescription for radial migration but are unable to reproduce the bimodality. \citet{Spitoni2021-TwoInfall} (definitely earlier papers too) argue that two distinct infall episodes can explain the bimodality. What separates the two sequences is the ratio of CCSN to SN Ia enrichment, so the DTD ought to have some impact on the \aFe bimodality, perhaps even determining whether or not it exists.
-
-In this paper we comprehensively evaluate a selection of DTD models from the literature with multiple SFHs and a prescription for radial migration in the Versatile Integrator for Chemical Evolution \citep[VICE;][]{JohnsonWeinberg2020-Starbursts}. In Section \ref{sec:methods}, we present our models for the DTD and SFH, and we describe our chemical evolution simulations. In Section \ref{sec:onezone-results}, we present the results of our one-zone chemical evolution simulations. In Section \ref{sec:multizone-results}, we present the results of our multi-zone simulations and compare to observations. In Section \ref{sec:discussion}, we discuss the implications for the DTD and future surveys. In Section \ref{sec:conclusions}, we conclude.
+This paper presents the first comprehensive look at the DTD in a multi-zone GCE model that can qualitatively reproduce the abundance structure of the Milky Way disk. We evaluate a selection of DTD models from the literature with multiple SFHs and a prescription for radial stellar migration in the Versatile Integrator for Chemical Evolution \citep[VICE;][]{JohnsonWeinberg2020-Starbursts}. In Section \ref{sec:methods}, we present our models for the DTD and SFH, and we describe our chemical evolution models. In Section \ref{sec:onezone-results}, we present the results of our one-zone chemical evolution models. In Section \ref{sec:multizone-results}, we present the results of our multi-zone simulations and compare to observations. In Section \ref{sec:discussion}, we discuss the implications for the DTD and future surveys. In Section \ref{sec:conclusions}, we conclude.
 
 \section{Methods}
 \label{sec:methods}
 
-We make use of the multi-zone simulation tools in VICE developed by \citet{Johnson2021-Migration}. The basic setup of our models follows theirs: the simulated Galaxy is a disk with a radius of 20 kpc and is divided into concentric rings of width $\delta R_{\rm gal}=100$ pc. The gas in each ring is assumed to be instantaneously mixed, and no gas is exchanged between rings. We run our simulations with a time-step size of $\Delta t=10$ Myr up to a maximum time of $t_{\rm max}=13.2$ Gyr. Following \citet{Johnson2021-Migration}, we set VICE to form $n=8$ stellar populations per ring per time-step, and we set a maximum star-formation radius of $R_{\rm SF} = 15.5$ kpc, such that $\dot\Sigma_*=0$ for $R_{\rm gal}>R_{\rm SF}$.
+We make use of the multi-zone simulation tools in VICE developed by \citet{Johnson2021-Migration}. The basic setup of our models follows theirs: the simulated Galaxy is a disk with a radius of 20 kpc and is divided into concentric rings of width $\delta R_{\rm gal}=100$ pc. The gas in each ring is assumed to be instantaneously mixed; while star particles are allowed to migrate radially (see Appendix \ref{app:migration}), there is no exchange of gas between rings. We run our simulations with a time-step size of $\Delta t=10$ Myr up to a maximum time of $t_{\rm max}=13.2$ Gyr. Following \citet{Johnson2021-Migration}, we set VICE to form $n=8$ stellar populations per ring per time-step, and we set a maximum star-formation radius of $R_{\rm SF} = 15.5$ kpc, such that $\dot\Sigma_*=0$ for $R_{\rm gal}>R_{\rm SF}$.
 
 Table \ref{tab:multizone-parameters} summarizes many of the parameters in our multi-zone models.
 
@@ -131,18 +152,14 @@ Table \ref{tab:multizone-parameters} summarizes many of the parameters in our mu
 \subsection{Nucleosynthetic Yields}
 \label{sec:yields}
 
-CCSN enrichment:
+Like \citet{Johnson2021-Migration}, we focus our analysis on O and Fe, representing the $\alpha$ and Fe-peak elements, respectively. Both elements are produced by CCSNe. VICE adopts the instantaneous recycling approximation for CCSNe, so the equation which governs CCSN enrichment as a function of star formation for some element $x$ is simply
 \begin{equation}
     \dot M_x^{\rm CC} = y_x^{\rm CC} \dot M_*
     \label{eq:ccsn-enrichment}
 \end{equation}
-where $y_x^{\rm CC}$ is the CCSN yield of element $x$ per unit mass of star formation. Following \citet{Johnson2021-Migration}, who in turn adopt their yields from \citet{Weinberg2017-ChemicalEquilibrium}, we adopt $y_{\rm O}^{\rm CC}=0.015$ and $y_{\rm Fe}^{\rm CC}=0.0012$.
+where $y_x^{\rm CC}$ is the CCSN yield of element $x$ per unit mass of star formation, and $\dot M_*$ is the star formation rate. Following \citet{Johnson2021-Migration}, who in turn adopt their yields from \citet{Weinberg2017-ChemicalEquilibrium}, we adopt $y_{\rm O}^{\rm CC}=0.015$ and $y_{\rm Fe}^{\rm CC}=0.0012$. The primary effect of these yields is to set the ``plateau'' in [O/Fe] which represents pure CCSN enrichment. The chosen yields for this paper produce a plateau at [O/Fe]$=0.45$; see \citet{Weinberg2023-CCSNYield} for more discussion.
 
-We follow the formalism of \citet{Weinberg2017-ChemicalEquilibrium} when deriving the equations for Fe enrichment from SNe Ia.
-
-$R_{\rm Ia}(t)$ is the DTD in units of ${\rm M}_\odot^{-1}\,{\rm yr}^{-1}$. 
-
-The rate of Fe contribution to the ISM from SNe Ia is 
+Following the formalism of \citet{Weinberg2017-ChemicalEquilibrium}, the rate of Fe contribution to the ISM from SNe Ia is 
 \begin{equation}
     \dot M_{\rm Fe}^{\rm Ia} = y_{\rm Fe}^{\rm Ia} \langle \dot M_*\rangle_{\rm Ia} \\
 \end{equation}
@@ -151,19 +168,25 @@ where $\langle \dot M_*\rangle_{\rm Ia}$ is the time-averaged SFR weighted by th
     \langle \dot M_*\rangle_{\rm Ia} \equiv \frac{\int_0^t \dot M_*(t')R_{\rm Ia}(t-t')dt'}{\int_{t_D}^{t_{\rm max}} R_{\rm Ia}(t')dt'}
     \label{eq:weighted-sfr}
 \end{equation}
-where $\dot M_*(t)$ is the SFR at time $t$, $R_{\rm Ia}(t) dt$ is the number of SNe Ia which explode in the time interval $(t, t+dt)$ per unit mass of stars formed at $t=0$, $t_D$ is the minimum SN Ia delay time, and $t_{\rm max}$ is the maximum simulation time. The denominator of Equation \ref{eq:weighted-sfr} is therefore the total number of SNe Ia per M$_{\odot}$ of stars formed.
+where %$\dot M_*(t)$ is the SFR at time $t$, 
+%$R_{\rm Ia}(t) dt$ is the number of SNe Ia which explode in the time interval $(t, t+dt)$ per unit mass of stars formed at $t=0$, 
+$R_{\rm Ia}$ is the DTD in units of ${\rm M}_\odot^{-1}\,{\rm yr}^{-1}$,
+$t_D$ is the minimum SN Ia delay time, and $t_{\rm max}$ is the maximum simulation time. The denominator of Equation \ref{eq:weighted-sfr} is therefore the total number of SNe Ia per M$_{\odot}$ of stars formed.
 
 The yield $y_{\rm Fe}^{\rm Ia}$ measures the mass of Fe produced by SNe Ia per unit mass of star formation. It can be expressed in terms of the integral of the DTD:
 \begin{equation}
     y_{\rm Fe}^{\rm Ia} = m_{\rm Fe}^{\rm Ia} \int_{t_D}^{t_{\rm max}} R_{\rm Ia}(t')dt' = m_{\rm Fe}^{\rm Ia} \frac{N_{\rm Ia}}{M_*}
     \label{eq:dtd-integral}
 \end{equation}
-where $m_{\rm Fe}^{\rm Ia}$ is the average mass of Fe produced by a single SN Ia. We take the average number of SNe Ia per mass of stars formed to be $N_{\rm Ia}/M_*=2.2\times10^{-3}\,{\rm M}_\odot^{-1}$ following \citet{MaozMannucci2012-SNeIaReview}, which gives $R_{\rm Ia}$ units of ${\rm M}_\odot^{-1}\,{\rm yr}^{-1}$. Following \citet{Johnson2021-Migration}, we take $y_{\rm Fe}^{\rm Ia}=0.00214$. SNe Ia do not contribute O so $y_{\rm O}^{\rm Ia}=0$.
+where $m_{\rm Fe}^{\rm Ia}$ is the average mass of Fe produced by a single SN Ia. We take the average number of SNe Ia per mass of stars formed to be $N_{\rm Ia}/M_*=2.2\times10^{-3}\,{\rm M}_\odot^{-1}$ from \citet{MaozMannucci2012-SNeIaReview}.%, which gives $R_{\rm Ia}$ units of ${\rm M}_\odot^{-1}\,{\rm yr}^{-1}$. 
+Following \citet{Johnson2021-Migration}, we take $y_{\rm Fe}^{\rm Ia}=0.00214$. This yield was selected so that the inside-out SFH model produces stars with [O/Fe]$\approx 0.0$ by the end of the simulation. SNe Ia do not contribute O so $y_{\rm O}^{\rm Ia}=0$.
 
 \subsection{DTD Models}
 \label{sec:dtd-models}
 
 We explore five different functional forms for the SN Ia DTD: a power-law, a broken power-law with an initial flat plateau, an exponential, a two-population model, and a model based on triple-system dynamics, with a one or two variants of each. We present the unnormalized functional forms for $R_{\rm Ia}(t)$ below; VICE automatically normalizes and scales the DTD to produce the correct number of SNe Ia over the lifetime of the Galaxy. Figure \ref{fig:dtds} presents these DTDs as a function of time after star formation, and Table \ref{tab:dtds} summarizes the DTD models and their parameters.
+
+[Say something about DTD normalization?]
 
 \begin{figure}
     \centering
@@ -195,8 +218,6 @@ Two-population  & \ref{eq:prompt-dtd}   & $t_{\rm max}=0.05$ Gyr, $\sigma=0.015$
                 &                       & $\tau=3.0$ Gyr & \\
 \enddata
 \end{deluxetable*}
-
-% \citet{Stolger2020-ExponentialDTD} perform maximum likelihood estimations based on the cosmic star formation history and the star formation histories of individual galaxies. In both cases their best fit functions were approximately exponential, though they started with a skew-normal function so could not have ended up with a power law even if they wanted to. They don't actually report the timescale of this exponential, but based on the plots I'd say it's about 1.5 - 2 (1.7?) Gyr. Their best fit parameters make no sense to me as they don't report their units.
 
 \paragraph{Power-law} A simple power law with slope $\alpha$:
 \begin{equation}
@@ -236,14 +257,15 @@ We take $t_{\rm rise}=0.5$ Gyr, $W=0.5$ Gyr, $\alpha=-1.1$, and $\epsilon=0.05$ 
     R_{\rm Ia}(t) \propto \frac{1}{\tau} e^{-t/\tau}
     \label{eq:exponential-dtd}
 \end{equation}
-We investigate the case where $\tau=1.5$ Gyr, which has been used in previous chemical evolution studies \citep[e.g.,][]{Schonrich2009-RadialMixing,Weinberg2017-ChemicalEquilibrium} and is similar to the analytical single-degenerate DTD from \citet{Greggio2005-AnalyticalRates}. We also investigate a longer timescale of $\tau=3$ Gyr. \citet{Matteucci1986-SupernovaEnrichment}, \citet{Stolger2020-ExponentialDTD}
+We investigate the case where $\tau=1.5$ Gyr, which has been used in previous chemical evolution studies \citep[e.g.,][]{Schonrich2009-RadialMixing,Weinberg2017-ChemicalEquilibrium} and is similar to the analytical single-degenerate DTD from \citet{Greggio2005-AnalyticalRates}. We also investigate a longer timescale of $\tau=3$ Gyr. \citet{Matteucci1986-SupernovaEnrichment}, \citet{Strolger2020-ExponentialDTD}.
+\citet{Schonrich2009-RadialMixing} and \citet{Weinberg2017-ChemicalEquilibrium} assume for the DTD an declining exponential function with a timescale of 1.5 Gyr, which has the benefit of an analytic solution to the equations of chemical equilibrium.
 
 \paragraph{Two-population} A DTD in which 50\% of SNe Ia belong to a ``prompt'' Gaussian component at small $t$ and the other 50\% form an exponential tail at large $t$:
 \begin{equation}
     R_{\rm Ia}(t) \propto 0.5\Big[e^{-\frac{(t-t_p)^2}{2\sigma^2}} + e^{-t/\tau}\Big]
     \label{eq:prompt-dtd}
 \end{equation}
-Following the two-population model from \citet{Mannucci2006-TwoPopulations}, we take $t_p=50$ Myr, $\sigma=15$ Myr, and $\tau=3$ Gyr, which results in roughly 50\% of SNe Ia exploding within $t<100$ Myr. \citet{Poulhazan2018-PrecisionPollution} refer to this as the ``bimodal'' model.
+Following the two-population model from \citet{Mannucci2006-TwoPopulations}, we take $t_p=50$ Myr, $\sigma=15$ Myr, and $\tau=3$ Gyr, which results in roughly 50\% of SNe Ia exploding within $t<100$ Myr. \citet{Poulhazan2018-PrecisionPollution} refer to this as the ``bimodal'' model. This is the DTD which is adopted by the Feedback In Realistic Environments \citep[FIRE;][]{Hopkins2014-FIRE-1} and FIRE-2 \citep{Hopkins2018-FIRE-2} simulations.
 
 % Minimum SN Ia delay time
 The minimum SN Ia delay time $t_D$, i.e. the lifetime of the most massive progenitor system, is also a parameter of the DTD which can have an effect on chemical evolution. \citet{Andrews2017-ChemicalEvolution} found that a longer minimum delay time produces a sharper high-$\alpha$ ``knee'' and shifts it to higher [Fe/H], although they only explored this for an exponential DTD. They adopt a fiducial value of $t_D=150$ Myr, as do \citet{Johnson2021-Migration}. \citet{Poulhazan2018-PrecisionPollution} adopt a much smaller value of $t_D=29$ Myr as the lifetime of their most massive progenitors.
@@ -556,7 +578,7 @@ The inside-out and late-burst models produce similar results, the main differenc
     \script{ofe_feh_sfh.py}
 \end{figure}
 
-Figure \ref{fig:ofe-feh-dtd} compares [O/Fe]--[Fe/H] distributions for five simulations with the same SFH (inside-out) but different DTD models. We choose the inside-out SFH model for this figure because it produces a monotonically-decreasing abundance track, making comparisons between the different DTD models relatively straightforward. We note that in this model, both the low- and high-$\alpha$ sequences are composed of stars with a wide range of birth $R_{\rm gal}$. The simulation results are arranged by increasing median delay time from left to right. Results for the two-population and power-law ($\alpha$=-1.1) DTD models, with a large fraction of prompt SNe Ia, are presented in the first and second columns, respectively. For these models, the simulated stellar abundances are reasonably well-aligned with the APOGEE contours at low $|z|$ (bottom panels), but they entirely miss the observed high-$\alpha$ sequence at high $|z|$ (top panels). In the center column, the exponential ($\tau=1.5$ Gyr) DTD produces a distribution which aligns quite well with the APOGEE contours in all $|z|$-bins, and even produces a ``ridge'' which extends to large [O/Fe] at low- and mid-latitudes (bottom and center panels, respectively). While it does better at populating the high-$\alpha$ sequence than the previous DTD models, the bulk of the simulated populations at large $|z|$ still fall below the APOGEE 30\% contour (top panel). The two right-hand columns present simulation results for the plateau ($W=1$ Gyr) and triple-system DTD models, which have the longest median delay times. The high-$\alpha$ ``knee'' occurs at a much higher metallicity in these models and is visible in the gas abundance tracks in the upper-left corner of the panels. At high $|z|$, the simulated abundance align quite well with the APOGEE high-$\alpha$ sequence (top panels), but there is a significant ridge of high-$\alpha$ stars from the inner Galaxy at low $|z|$ (bottom panels).
+Figure \ref{fig:ofe-feh-dtd} compares [O/Fe]--[Fe/H] distributions for five simulations with the same SFH (inside-out) but different DTD models. We choose the inside-out SFH model for this figure because it produces a monotonically-decreasing abundance track, making comparisons between the different DTD models relatively straightforward. We note that in this model, both the low- and high-$\alpha$ sequences are composed of stars with a wide range of birth $R_{\rm gal}$. The simulation results are arranged by increasing median delay time from left to right. Results for the two-population and power-law ($\alpha=-1.1$) DTD models, with a large fraction of prompt SNe Ia, are presented in the first and second columns, respectively. For these models, the simulated stellar abundances are reasonably well-aligned with the APOGEE contours at low $|z|$ (bottom panels), but they entirely miss the observed high-$\alpha$ sequence at high $|z|$ (top panels). In the center column, the exponential ($\tau=1.5$ Gyr) DTD produces a distribution which aligns quite well with the APOGEE contours in all $|z|$-bins, and even produces a ``ridge'' which extends to large [O/Fe] at low- and mid-latitudes (bottom and center panels, respectively). While it does better at populating the high-$\alpha$ sequence than the previous DTD models, the bulk of the simulated populations at large $|z|$ still fall below the APOGEE 30\% contour (top panel). The two right-hand columns present simulation results for the plateau ($W=1$ Gyr) and triple-system DTD models, which have the longest median delay times. The high-$\alpha$ ``knee'' occurs at a much higher metallicity in these models and is visible in the gas abundance tracks in the upper-left corner of the panels. At high $|z|$, the simulated abundance align quite well with the APOGEE high-$\alpha$ sequence (top panels), but there is a significant ridge of high-$\alpha$ stars from the inner Galaxy at low $|z|$ (bottom panels).
 
 \begin{figure*}
     \centering
@@ -620,13 +642,28 @@ The results of these tests are presented in Table \ref{tab:results}. Instead of 
 
 \variable{output/summary_table.tex}
 
-Compare to previous studies: \citet{Poulhazan2018-PrecisionPollution,Palicio2023-AnalyticDTD}.
+[Compare to previous studies]
+Discuss \citet{Matteucci2006-BimodalDTDConsequences} findings of the \citet{Mannucci2006-TwoPopulations} DTD in the two-infall model.
 
 \citet{Poulhazan2018-PrecisionPollution} found that DTD models with a significant prompt component (power-law and two-population) produced the highest average stellar abundance of [O/Fe]. They also found that these models produced the narrowest [O/Fe] distributions and suppressed the long tail to low [O/Fe] ratios. Conversely, their models with essentially 0 prompt SNe Ia produced a lower average stellar [O/Fe] ratio at late times and a broader distribution of [O/Fe]. Their isolated galaxy simulations have an SFR which features an early ($<1$ Gyr) burst followed by a roughly exponential decline, qualitatively similar to our early-burst model but with the peak of star formation occuring $\sim3$ Gyr earlier. We note that their simulations were not designed to reproduce a Milky Way-like galaxy; as such, their [O/Fe] distributions peak around $\sim0.45$ which is higher than the APOGEE high-$\alpha$ sequence. Nevertheless, our study reproduces their finding that a DTD with more prompt SNe Ia will produce a narrower distribution of [O/Fe]. One exception to this is the exponential DTD, which has a marginally narrower distribution than the power-law DTD close to the midplane [numbers here] but a more prominent hith-$\alpha$ tail. This is likely a consequence of the fact that the exponential DTD has a much lower SN Ia rate at late times ($\sim10$ Gyr) than other models [expand on this].
 
 \citet{Palicio2023-AnalyticDTD} compare seven different DTDs, including the analytical SD, DD-WIDE, and DD-CLOSE, as well as the empirical two-population and $t^{-1}$ power-law DTDs, in a one-zone model with a two-infall SFH. [Note that they use some different parameters for the analytical models than we do). Critically for our purposes, and in contrast to previous studies of the two-infall model \citep[e.g.,][others]{Chiappini1997-TwoInfall,Spitoni2021-TwoInfall}, the authors include the effects of outflows, although they explore mass-loading values of $\eta=0.2-0.8$ which is significantly lower than in our simulations.
 
+[Metallicity dependent DTD]
+
+[Is the MW DTD the same as elsewhere?]
+\citet{Walcher2016-SelfSimilarity} argue that the similarity of the age--[$\alpha$/Fe] relation between Solar neighborhood stars and nearby elliptical galaxies is evidence for a universal DTD; between a bimodal, narrow Gaussian, and power-law DTD, they find the latter best explains their data.
+
 \subsection{Radial Migration \& Bimodality}
+
+% Taken from introduction
+The bimodal distribution of \aFe in stars with similar metallicities was first noted in the Solar neighborhood \citep[e.g.,][]{Furhmann1998-NearbyStars}, later extended to the whole of the Milky Way disk \citep{Nidever2014-ChemicalEvolutionAPOGEE,Hayden2015-ChemicalCartography}. The ``high-$\alpha$'' population contains stars with low enrichment from SNe Ia, so their abundance ratios reflect that of almost pure CCSN enrichment; it is associated with the kinematically hot thick disk \citep{Bensby2003-AbundanceTrends}. The ``low-$\alpha$'' population is associated with the thin disk and contains stars with roughly solar $\alpha$-abundances.
+Various explanations of the \aFe bimodality have been proposed, including radial stellar mixing \citep{Schonrich2009-RadialMixing} and a bursty gas infall history \citep[e.g.,][]{Spitoni2021-TwoInfall}.
+% The origin of the \aFe bimodality is debated. \citet{Schonrich2009-RadialMixing} argue that it arises due to radial migration (churning) even with a smooth star formation rate. \citet{Johnson2021-Migration} use a smooth SFR and a prescription for radial migration but are unable to reproduce the bimodality. \citet{Spitoni2021-TwoInfall} (definitely earlier papers too) argue that two distinct infall episodes can explain the bimodality. 
+What separates the two sequences is the ratio of CCSN to SN Ia enrichment, so the DTD ought to have some impact on the \aFe bimodality, perhaps even determining whether or not it exists.
+
+% Taken from introduction
+A complicating factor in observing and modeling the effects of the DTD is the migration of stars throughout the disk. \citet{SellwoodBinney2002-RadialMixing} first demonstrated that a transient spiral perturbation (or other potential feature; see [citations]) can cause resonant interactions which adjust stars' guiding center radii without leading to kinematic heating of the disk. Core-collapse SNe explode on timescales of a few Myr, before the progenitor has a chance to migrate far from its birth location. On the other hand, SNe Ia have a broad distribution of delay times and their progenitors can migrate great distances between birth and explosion. The consequence is that SNe Ia can enrich regions of the Galaxy far removed from regions which have experienced a high rate of star formation. Talk about \citet{Scannapieco2005-ChemicalEnrichment}. The first GCE model to incorporate radial mixing was developed by \citet{Schonrich2009-RadialMixing}, and subsequent studies have incorporated more comprehensive numerical treatments of radial migration and the effect of a central bar \citep[e.g.,][]{Minchev2013-ChemodynamicalEvolution}. In this paper, we follow the treatment by \citet{Johnson2021-Migration}, who [describe treatment]. Talk about \citet{Karapetyan2022-SNIaDistances}.
 
 Something about \citet{Johnson2021-Migration} and \citet{Schonrich2009-RadialMixing}.
 
