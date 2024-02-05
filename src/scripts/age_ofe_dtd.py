@@ -12,7 +12,7 @@ from scatter_plot_grid import setup_colorbar
 from _globals import ZONE_WIDTH, TWO_COLUMN_WIDTH, MAX_SF_RADIUS, ABSZ_BINS
 import paths
 
-SFH_MODEL = 'insideout'
+SFH_MODEL = 'earlyburst'
 DTD_LIST = ['prompt', 
             'powerlaw_slope11', 
             'exponential_timescale15', 
@@ -25,23 +25,26 @@ LABEL_LIST = ['Two-population',
               'Triple-system']
 AGE_SOURCE = 'L23'
 AGE_COL = 'LATENT_AGE'
-AGE_LABEL = 'Leung et al.\n(2023)'
+AGE_LABEL = 'L23'#'Leung et al.\n(2023)'
 AGE_LIM = (0.3, 20)
 OFE_LIM = (-0.15, 0.55)
 GALR_LIM = (7, 9)
-CMAP_NAME = 'winter'
+CMAP_NAME = 'viridis'
 
 def main(style='paper'):
     plt.style.use(paths.styles / f'{style}.mplstyle')
     width = TWO_COLUMN_WIDTH
     fig, axs = plt.subplots(3, 5, sharex=True, sharey=True,
                             figsize=(width, 3/5*width))
-    plt.subplots_adjust(top=0.92, right=0.98, left=0.06, bottom=0.08, 
+    plt.subplots_adjust(top=0.91, right=0.98, left=0.06, bottom=0.08, 
                         wspace=0., hspace=0.)
-    cbar = setup_colorbar(fig, cmap=CMAP_NAME, vmin=0, vmax=MAX_SF_RADIUS,
-                          label=r'Birth $R_{\rm{gal}}$ [kpc]')
-    cbar.ax.yaxis.set_major_locator(MultipleLocator(2))
-    cbar.ax.yaxis.set_minor_locator(MultipleLocator(0.5))
+    cbar = setup_colorbar(fig, cmap=CMAP_NAME, vmin=-1.3, vmax=0.3)
+    # align title to colorbar bounding box
+    bbox = cbar.ax.get_window_extent()
+    x, _ = cbar.ax.transAxes.inverted().transform([bbox.x0, bbox.y0])
+    cbar.ax.set_title('[Fe/H]', ha='left', x=x)
+    cbar.ax.yaxis.set_major_locator(MultipleLocator(0.5))
+    cbar.ax.yaxis.set_minor_locator(MultipleLocator(0.1))
     
     apogee_data = import_apogee()
     
@@ -56,7 +59,7 @@ def main(style='paper'):
             vice_subset = mzs.region(GALR_LIM, absz_lim)
             # Plot sample of star particle abundances
             vice_subset.scatter_plot(axs[i,j], 'age', '[o/fe]', 
-                                     color='galr_origin',
+                                     color='[fe/h]',
                                      cmap=CMAP_NAME, norm=cbar.norm)
             plot_astroNN_medians(axs[i,j], apogee_subset, age_col=AGE_COL, 
                                  label=AGE_LABEL, plot_low_count_bins=False)
@@ -86,8 +89,9 @@ def main(style='paper'):
         ax.set_title(LABEL_LIST[j])
         
     # Legend
-    axs[0,0].legend(loc='upper left', frameon=False, 
-                    bbox_to_anchor=(0.02, 0.89), handlelength=0.7)
+    # axs[0,0].legend(loc='upper left', frameon=False, 
+    #                 bbox_to_anchor=(0.02, 0.89), handlelength=0.7)
+    axs[0,-1].legend(loc='upper left', frameon=False, handlelength=0.7)
     
     fig.savefig(paths.figures / 'age_ofe_dtd')
     plt.close()
