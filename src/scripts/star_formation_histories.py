@@ -88,7 +88,7 @@ def setup_axes(tmax=END_TIME, width=TWO_COLUMN_WIDTH):
     # y-axis labels are diagnostics
     axs[0,0].set_ylabel(r'$\dot \Sigma_*$ [$M_{\odot}\,\rm{yr}^{-1}\,\rm{kpc}^{-2}$]')
     axs[1,0].set_ylabel(r'$\dot \Sigma_{\rm in}$ [$M_{\odot}\,\rm{yr}^{-1}\,\rm{kpc}^{-2}$]')
-    axs[2,0].set_ylabel(r'$\Sigma_{\rm gas}$ [$M_{\odot}\,\rm{kpc}^{-2}$]')
+    axs[2,0].set_ylabel(r'$\Sigma_g$ [$M_{\odot}\,\rm{kpc}^{-2}$]')
     axs[3,0].set_ylabel(r'$\tau_*$ [Gyr]')
     # One x-axis label for all panels
     bigax = fig.add_subplot(111, frameon=False)
