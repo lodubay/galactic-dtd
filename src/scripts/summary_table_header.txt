@@ -1,7 +1,7 @@
 \begin{deluxetable*}{ll|ccccc}
 \tablecaption{Summary of qualitative comparisons between the simulation output,
-abundance data from APOGEE DR17, and age data from \citet{Leung2023-Ages} for
-each multi-zone simulation.\label{tab:results}}
+APOGEE DR17 abundances, and \citetalias{Leung2023-Ages} ages for each multi-zone
+simulation.\label{tab:results}}
 \tablehead{
     \colhead{DTD} & \colhead{SFH} & \colhead{[Fe/H] DF} & \colhead{[O/Fe] DF} & 
     \colhead{[Fe/H]--[O/Fe]} & \colhead{Age--[O/Fe]} & \colhead{Bimodality}
