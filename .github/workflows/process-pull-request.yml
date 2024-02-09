@@ -12,3 +12,5 @@ jobs:
     steps:
       - name: Process pull request
         uses: showyourwork/showyourwork-action/process-pull-request@v1
+        with:
+            showyourwork-spec: git+https://github.com/showyourwork/showyourwork
