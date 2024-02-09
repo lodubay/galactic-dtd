@@ -75,7 +75,7 @@ The quantitative details of the relationship between \aFe and [Fe/H] are set by 
 The DTD remains poorly constrained, however, because it reflects the detailed evolution of the SNe Ia progenitor systems, so different models for the progenitors of SNe Ia will naturally predict different forms for the DTD.
 
 % [Introduction to SNe Ia]
-The mechanism(s) for producing SNe Ia are not fully understood \citep[for reviews, see][]{Maoz2014-Review,Livio2018-ProgenitorReview,Ruiter2020-ProgenitorReview}. Two general production channels have been proposed. In the single-degenerate (SD) case, the WD accretes mass from a close non-degenerate companion until it surpasses $\sim1.4$ M$_\odot$ and explodes \citep{Whelan1973-SDModel,Nomoto1982-SDModel,Yoon2003-SDModel}. In the double-degenerate (DD) case, two WDs merge after a gravitational-wave inspiral \citep{Iben1984-IaBinary,Webbink1984-DDModel,Pakmor2012-WDMerger} or head-on collision \citep{Benz1989-CollisionalDD,Thompson2011-CollisionalDD}. Searches for signs of interaction between the SN ejecta and a non-degenerate companion \citep[e.g.,][]{Panagia2006-RadioEmission,Chomiuk2016-RadioEmission,Fausnaugh2019-EarlyIaLightCurves,Tucker2020-SNeIaSpectra} or for a surviving non-degenerate companion \citep[e.g.,][]{Schaefer2012-ExCompanionSNR,Do2021-Progenitor1972E,Tucker2023-SN2011fe} have placed tight constraints on the SD channel, heavily disfavoring it as the main pathway for producing ``normal'' SNe Ia. The DD channel, now the preferred model, faces issues of its own with matching observed SN Ia rates because not all WD mergers may lead to a thermonuclear explosion \citep[e.g.,][]{NomotoIben1985-DDMergers,SaioNomoto1998-DDMergers,Shen2012-DDMergers}, and the progenitor systems are difficult to detect even within our own Galaxy \citep{RebassaMansergas2019-WhereAreDDProgenitors}.
+The mechanism(s) for producing SNe Ia are not fully understood \citep[for reviews, see][]{Maoz2014-Review,Livio2018-ProgenitorReview,Ruiter2020-ProgenitorReview}. Two general production channels have been proposed. In the single-degenerate (SD) case, the WD accretes mass from a close non-degenerate companion until it surpasses $\sim1.4$ M$_\odot$ and explodes \citep{Whelan1973-SDModel,Nomoto1982-SDModel,Yoon2003-SDModel}. In the double-degenerate (DD) case, two WDs merge after a gravitational-wave inspiral \citep{Iben1984-IaBinary,Webbink1984-DDModel,Pakmor2012-WDMerger} or head-on collision \citep{Benz1989-CollisionalDD,Thompson2011-CollisionalDD}. Searches for signs of interaction between the SN ejecta and a non-degenerate companion \citep[e.g.,][]{Panagia2006-RadioEmission,Chomiuk2016-RadioEmission,Fausnaugh2019-EarlyIaLightCurves,Tucker2020-SNeIaSpectra,Dubay2022-SNeIaCSM} or for a surviving companion \citep[e.g.,][]{Schaefer2012-ExCompanionSNR,Do2021-Progenitor1972E,Tucker2023-SN2011fe} have placed tight constraints on the SD channel, heavily disfavoring it as the main pathway for producing ``normal'' SNe Ia. The DD channel, now the preferred model, faces issues of its own with matching observed SN Ia rates because not all WD mergers may lead to a thermonuclear explosion \citep[e.g.,][]{NomotoIben1985-DDMergers,SaioNomoto1998-DDMergers,Shen2012-DDMergers}, and the progenitor systems are difficult to detect even within our own Galaxy \citep{RebassaMansergas2019-WhereAreDDProgenitors}.
 
 % [Theoretical DTDs]
 Uncertainties in the progenitor channels of SNe Ia translate into uncertainties in the shape of the DTD. 
@@ -148,8 +148,8 @@ Table \ref{tab:multizone-parameters} summarizes many of the parameters in our mu
         % Star formation histories
         f_{\rm IO}(t|R_{\rm gal})   & Equation \ref{eq:insideout-sfh}   & \ref{sec:sfh} & Time-dependence of the SFR in the inside-out model \\
         f_{\rm LB}(t|R_{\rm gal})   & Equation \ref{eq:lateburst-sfh}   & \ref{sec:sfh} & Time-dependence of the SFR in the late-burst model \\
+        \uptau_{\rm EB}(t)          & Equation \ref{eq:earlyburst-taustar}  & \ref{sec:sfh}   & Time-dependence of the SFE timescale in the early-burst model \\
         f_{\rm EB}(t|R_{\rm gal})   & Equation \ref{eq:earlyburst-ifr}  & \ref{sec:sfh} & Time-dependence of the IFR in the early-burst model \\
-        \uptau_{*,\rm EB}(t|R_{\rm gal})  & Equation \ref{eq:earlyburst-conroy22} & \ref{sec:sfh}   & Time-dependence of the SFE timescale in the early-burst model \\
         f_{\rm TI}(t|R_{\rm gal})   & Equation \ref{eq:twoinfall-ifr}   & \ref{sec:sfh} & Time-dependence of the IFR in the two-infall model \\
     \enddata
 \end{deluxetable*}
@@ -275,31 +275,31 @@ To approximate the DTD from \citet{Mannucci2006-TwoPopulations}, we take $t_p=50
 
 \subsubsection{The Minimum SN Ia Delay Time}
 
-In addition to the DTD shape, the minimum SN Ia delay time $t_D$ is another parameter which can have an effect on chemical evolution observables, such as the location of the high-$\alpha$ knee and the [O/Fe] DF \citep{Andrews2017-ChemicalEvolution}. The value of $t_D$ is set by the lifetime of the most massive SN Ia progenitor system. Previous GCE studies have adopted values ranging from $t_D\approx30$ Myr \citep[e.g.,][]{Poulhazan2018-PrecisionPollution} to $t_D=150$ Myr \citepalias[e.g.,][]{Johnson2021-Migration}. We take $t_D=40$ Myr to be our fiducial value as it is the approximate lifetime of an $8\,{\rm M}_\odot$ star. In Section \ref{sec:onezone-results} we find that adopting a longer $t_D$ has only a minor effect on the chemical evolution for most DTD models except the power-law, but in that case the effect of a longer $t_D$ can be approximated by adding an initial plateau of width $W=0.3$ Gyr to the DTD (see Figure \ref{fig:onezone-twopanel}).
+In addition to the DTD shape, the minimum SN Ia delay time $t_D$ is another parameter which can have an effect on chemical evolution observables, such as the location of the high-$\alpha$ knee and the [O/Fe] distribution function (DF) \citep{Andrews2017-ChemicalEvolution}. The value of $t_D$ is set by the lifetime of the most massive SN Ia progenitor system. Previous GCE studies have adopted values ranging from $t_D\approx30$ Myr \citep[e.g.,][]{Poulhazan2018-PrecisionPollution} to $t_D=150$ Myr \citepalias[e.g.,][]{Johnson2021-Migration}. We take $t_D=40$ Myr to be our fiducial value as it is the approximate lifetime of an $8\,{\rm M}_\odot$ star. In Section \ref{sec:onezone-results} we find that adopting a longer $t_D$ has only a minor effect on the chemical evolution for most DTD models except the power-law, but in that case the effect of a longer $t_D$ can be approximated by adding an initial plateau of width $W=0.3$ Gyr to the DTD (see Figure \ref{fig:onezone-twopanel}).
 
 \subsection{Star Formation Histories}
 \label{sec:sfh}
 
-We consider four models for the SFH: inside-out, late-burst, early-burst, and two-infall. The first two models are taken from \citetalias{Johnson2021-Migration} and are run in VICE's ``star formation mode,'' where the SFR surface density $\dot\Sigma_*$ is prescribed along with the star formation efficiency (SFE) timescale $\tau_*\equiv \Sigma_g/\dot\Sigma_*$. The remaining quantities, infall rate surface density $\dot\Sigma_{\rm in}$ and gas surface density $\Sigma_g$, are calculated from the specified quantities. The latter two models are run in ``infall mode,'' where we specify $\dot\Sigma_{\rm in}$ and $\tau_*$. All models have zero initial gas mass in all zones. We present an overview of these models in Figure \ref{fig:sfhs}.
+We consider four models for the SFH: inside-out, late-burst, early-burst, and two-infall. The first two models are taken from \citetalias{Johnson2021-Migration} and are run in VICE's ``star formation mode,'' where the SFR surface density $\dot\Sigma_*$ is prescribed along with the star formation efficiency (SFE) timescale $\uptau_*\equiv \Sigma_g/\dot\Sigma_*$. The remaining quantities, infall rate surface density $\dot\Sigma_{\rm in}$ and gas surface density $\Sigma_g$, are calculated from the specified quantities. The latter two models are run in ``infall mode,'' where we specify $\dot\Sigma_{\rm in}$ and $\uptau_*$. All models have zero initial gas mass in all zones. We present an overview of these models in Figure \ref{fig:sfhs}.
 
 \begin{figure*}
     \centering
     \includegraphics[width=\linewidth]{figures/star_formation_histories.pdf}
-    \caption{The surface densities of star formation $\dot \Sigma_*$ (first row), gas infall $\dot \Sigma_{\rm in}$ (second row), and gas mass $\Sigma_g$ (third row), and the SFE timescale $\tau_*$ (fourth row) as functions of simulation time for our four model SFHs: inside-out (first column; see Equation \ref{eq:insideout-sfh}), late-burst (second column; see Equation \ref{eq:lateburst-sfh}), early-burst (third column; see Equations \ref{eq:earlyburst-ifr} and \ref{eq:earlyburst-taustar}), and two-infall (fourth column; see Equation \ref{eq:twoinfall-ifr}). In each panel, we plot curves for the simulation zones which have inner radii at 4 kpc (yellow), 6 kpc (orange), 8 kpc (red), 10 kpc (violet), 12 kpc (indigo), and 14 kpc (blue).}
+    \caption{The surface densities of star formation $\dot \Sigma_*$ (first row), gas infall $\dot \Sigma_{\rm in}$ (second row), and gas mass $\Sigma_g$ (third row), and the SFE timescale $\uptau_*$ (fourth row) as functions of simulation time for our four model SFHs: inside-out (first column; see Equation \ref{eq:insideout-sfh}), late-burst (second column; see Equation \ref{eq:lateburst-sfh}), early-burst (third column; see Equations \ref{eq:earlyburst-ifr} and \ref{eq:earlyburst-taustar}), and two-infall (fourth column; see Equation \ref{eq:twoinfall-ifr}). In each panel, we plot curves for the simulation zones which have inner radii at 4 kpc (yellow), 6 kpc (orange), 8 kpc (red), 10 kpc (violet), 12 kpc (indigo), and 14 kpc (blue).}
     \label{fig:sfhs}
     \script{star_formation_histories.py}
 \end{figure*}
 
 \paragraph{Inside-out} As in \citetalias{Johnson2021-Migration}, this is our fiducial SFH. The dimensionless time-dependence of the SFR is given by
 \begin{equation}
-    f_{\rm IO}(t|R_{\rm gal}) = (1 - e^{-t/\tau_{\rm rise}}) e^{-t/\tau_{\rm sfh}}
+    f_{\rm IO}(t|R_{\rm gal}) = (1 - e^{-t/\tau_{\rm rise}}) e^{-t/\tau_{\rm sfh}},
     \label{eq:insideout-sfh}
 \end{equation}
 where we assume $\tau_{\rm rise}=2$ Gyr for all radii. The SFH timescale $\tau_{\rm sfh}$ varies with $R_{\rm gal}$, with $\tau_{\rm sfh}(R_{\rm gal}=8\,\rm{kpc})\approx15$ Gyr at the Solar annulus and longer timescales in the outer galaxy. The $\tau_{\rm sfh} - R_{\rm gal}$ relation is determined from the data of \citet{Sanchez2020-StarFormationTimescales}; see Section 2.5 of \citetalias{Johnson2021-Migration} for the details. For a detailed look at the normalization of the SFR with $R_{\rm gal}$, we refer the reader to Appendix B of \citetalias{Johnson2021-Migration}.
 
 \paragraph{Late-burst} A variation on the inside-out SFH with a Gaussian burst in the SFR at late times:
 \begin{equation}
-    f_{\rm LB}(t|R_{\rm gal}) = f_{\rm IO}(t|R_{\rm gal}) \Big(1 + A_b e^{-(t-t_b)^2/2\sigma_b^2} \Big)
+    f_{\rm LB}(t|R_{\rm gal}) = f_{\rm IO}(t|R_{\rm gal}) \Big(1 + A_b e^{-(t-t_b)^2/2\sigma_b^2} \Big),
     \label{eq:lateburst-sfh}
 \end{equation}
 where $A_b$ is the dimensionless amplitude of the starburst, $t_b$ is the time of the peak of the burst, and $\sigma_b$ is the width of the Gaussian. Following \citetalias{Johnson2021-Migration}, we adopt $A_b=1.5$, $t_b=11.2$ Gyr, and $\sigma_b=1$ Gyr. The determination of $\tau_{\rm sfh}$ 
@@ -308,7 +308,7 @@ is the same as in the inside-out case.
 
 \paragraph{Early-burst} An extension of the model proposed by \citet{Conroy2022-ThickDisk} to explain the non-monotonic behavior of the high-$\alpha$ sequence down to ${\rm [Fe/H]}\approx-2.5$. An abrupt factor $\sim20$ rise in the SFE at early times drives an increase in the [O/Fe] abundance and populates the high-$\alpha$ sequence. We adopt the formula for the time-dependence of the SFE timescale from \citet{Conroy2022-ThickDisk}:
 \begin{equation}
-    \frac{\tau_{\rm EB}}{1\,\rm{Gyr}} =
+    \frac{\uptau_{\rm EB}}{1\,\rm{Gyr}} =
     \begin{cases}
         50, & t < 2.5\,\rm{Gyr} \\
         \frac{50}{[1+3(t-2.5)]^2}, & 2.5\leq t \leq 3.7\,\rm{Gyr} \\
@@ -316,36 +316,38 @@ is the same as in the inside-out case.
     \end{cases}
     \label{eq:earlyburst-taustar}
 \end{equation}
-In contrast to the previous SFH models, we run the early-burst model in ``infall'' mode.
+In contrast to the previous SFH models, we run the early-burst model in VICE's ``infall'' mode.
 While \citet{Conroy2022-ThickDisk} use a constant infall rate in their one-zone model, we adopt a radially-dependent infall rate which declines exponentially with time:
 \begin{equation}
-    f_{\rm EB}(t|R_{\rm gal}) = e^{-t/\tau_{\rm sfh}}
+    f_{\rm EB}(t|R_{\rm gal}) = e^{-t/\tau_{\rm sfh}},
     \label{eq:earlyburst-ifr}
 \end{equation}
 where $\tau_{\rm sfh}$ is the same as in the inside-out case.
-To calculate $\dot \Sigma_*$ from the above quantities, we modify the fiducial star formation law adopted from \citetalias{Johnson2021-Migration}, substituting $\tau_{\rm EB}$ for the SFE timescale of molecular gas:
+To calculate $\dot \Sigma_*$ from the above quantities, we modify the fiducial star formation law adopted from \citetalias{Johnson2021-Migration}, substituting $\uptau_{\rm EB}$ for the SFE timescale of molecular gas:
 \begin{equation}
     \dot \Sigma_* = 
     \begin{cases}
-        \Sigma_g \tau_{\rm EB}^{-1}, & \Sigma_g \geq \Sigma_{g,2} \\
-        \Sigma_g \tau_{\rm EB}^{-1} \Big(\frac{\Sigma_g}{\Sigma_{g,2}}\Big)^{2.6}, & \Sigma_{g,1} \leq \Sigma_g \leq \Sigma_{g,2} \\
-        \Sigma_g \tau_{\rm EB}^{-1} \Big(\frac{\Sigma_{g,1}}{\Sigma_{g,2}}\Big)^{2.6} \Big(\frac{\Sigma_g}{\Sigma_{g,1}}\Big)^{0.7}, & \Sigma_g \leq \Sigma_{g,1},
+        \Sigma_g \uptau_{\rm EB}^{-1}, & \Sigma_g \geq \Sigma_{g,2} \\
+        \Sigma_g \uptau_{\rm EB}^{-1} \Big(\frac{\Sigma_g}{\Sigma_{g,2}}\Big)^{2.6}, & \Sigma_{g,1} \leq \Sigma_g \leq \Sigma_{g,2} \\
+        \Sigma_g \uptau_{\rm EB}^{-1} \Big(\frac{\Sigma_{g,1}}{\Sigma_{g,2}}\Big)^{2.6} \Big(\frac{\Sigma_g}{\Sigma_{g,1}}\Big)^{0.7}, & \Sigma_g \leq \Sigma_{g,1},
     \end{cases}
     \label{eq:earlyburst-sfr}
 \end{equation}
 with $\Sigma_{g,1}=5\times 10^6\,{\rm M}_\odot\,{\rm kpc}^{-2}$ and $\Sigma_{g,2}=2\times 10^7\,{\rm M}_\odot\,{\rm kpc}^{-2}$.
 
-\paragraph{Two-infall} [Expand]
-We parameterize the infall rate as two successive, exponentially declining bursts as in \citet{Chiappini2001-AbundanceGradients}:
+\paragraph{Two-infall} First proposed by \citet{Chiappini1997-TwoInfall}, this model parameterizes the infall rate as two successive, exponentially declining bursts to explain the origin of the thick and thin disks:
 \begin{equation}
     \label{eq:twoinfall-ifr}
-    f_{\rm TI}(t|R_{\rm gal}) = N_1(R_{\rm gal}) e^{-t/\tau_1} + N_2(R_{\rm gal}) e^{-(t-t_{\rm on})/\tau_2}
+    f_{\rm TI}(t|R_{\rm gal}) = N_1(R_{\rm gal}) e^{-t/\tau_1} + N_2(R_{\rm gal}) e^{-(t-t_{\rm on})/\tau_2},
 \end{equation}
-In this model, the first infall produces the thick disk and the second infall produces the thin disk. The normalization ratio $N_2/N_1$ is calculated so that the thick-to-thin-disk surface density ratio $f_\Sigma(R)=\Sigma_2(R)/\Sigma_1(R)$ is given by
+% In this model, the first infall produces the thick disk and the second infall produces the thin disk. 
+where $N_1$ and $N_2$ are the normalizations of the first and second infall, respectively, and $t_{\rm on}$ is the onset time of the second infall.
+The normalization ratio $N_2/N_1$ is calculated so that the thick-to-thin-disk surface density ratio $f_\Sigma(R)=\Sigma_2(R)/\Sigma_1(R)$ is given by
 \begin{equation}
     f_\Sigma(R) = f_\Sigma(0) e^{R(1/R_2 - 1/R_1)}.
 \end{equation}
 Following \citet{BlandHawthornGerhard2016-MilkyWayReview}, we adopt values for the thick disk scale radius $R_1=2.0$ kpc, thin disk scale radius $R_2=2.5$ kpc, and $f_\Sigma(0)=0.27$.
+We note that some previous studies which use the two-infall model \citep[e.g.,][]{Spitoni2021-TwoInfall} do not consider gas outflows, and instead adjust the nucleosynthetic yields to reproduce the Solar abundance. We adopt radially-dependent outflows as in \citetalias{Johnson2021-Migration} (see their Section 2.4 for details) for all our SFH models, including two-infall. We discuss the implications of this difference in Section \ref{sec:two-infall-discussion}.
 
 \subsection{Observational Sample}
 \label{sec:observational-sample}
@@ -353,7 +355,7 @@ Following \citet{BlandHawthornGerhard2016-MilkyWayReview}, we adopt values for t
 We compare our simulation results to abundance measurements from the final data release \citep[DR17;][]{Abdurro'uf2022-SDSSIV-DR17} of the Apache Point Observatory Galactic Evolution Experiment \citep[APOGEE;][]{Majewski2017-APOGEE}. APOGEE used infrared spectrographs \citep{Wilson2019-APOGEE-Spectrographs} mounted on two telescopes: the 2.5-meter Sloan Foundation Telescope \citep{Gunn2006-SloanTelescope} at Apache Point Observatory, United States in the Northern Hemisphere, and the Ir{\'e}n{\'e}e DuPont Telescope \citep{BowenVaughan1973-DuPontTelescope} at Las Campanas Observatory, Chile in the Southern Hemisphere. After the spectra were passed through the data reduction pipeline \citep{Nidever2015-APOGEE-DataReduction}, the APOGEE Stellar Parameter and Chemical Abundance Pipeline \citep[ASPCAP;][]{Holtzmann2015-ASPCAP,GarciaPerez2016-ASPCAP} extracted chemical abundances using the model grids and interpolation method described by \citet{Jonsson2020-APOGEE-DR16}.
 
 We restrict our sample to red giant branch and red clump stars with high-quality spectra. Table \ref{tab:sample-selection} lists our selection criteria, which largely follow from \citet{Hayden2015-ChemicalCartography}. This produces a final sample of \variable{output/sample_size.txt}stars. APOGEE stars are matched with their Bailer-Jones photo-geometric distance estimate from \textit{Gaia} Early Data Release 3 \citep{Gaia2016-Mission,Gaia2021-EDR3}, which we use to calculate galactocentric radius $R_{\rm gal}$ and midplane distance $z$.
-We use estimated ages from \citet{Leung2023-Ages} (hereafter \citetalias{Leung2023-Ages}), who use a variational encoder-decoder network to retrieve age estimates for APOGEE giants without contamination from age-abundance correlations. Importantly, the \citetalias{Leung2023-Ages} sample does not experience the $\sim10$ Gyr plateau that affects ages from astroNN \citep{Mackereth2019-astroNN-Ages}. We use an age uncertainty cut of 40\% per the recommendations of \citetalias{Leung2023-Ages}, which produces a total sample of \variable{output/age_sample_size.txt}APOGEE stars with age estimates. The median uncertainty in log-age space is $\sim 0.1$.
+We use estimated ages from \citet{Leung2023-Ages} (hereafter \citetalias{Leung2023-Ages}), who use a variational encoder-decoder network to retrieve age estimates for APOGEE giants without contamination from age-abundance correlations. Importantly, the \citetalias{Leung2023-Ages} sample does not experience the $\sim10$ Gyr plateau that affects ages from astroNN \citep{Mackereth2019-astroNN-Ages}. We use an age uncertainty cut of 40\% per the recommendations of \citetalias{Leung2023-Ages}, which produces a total sample of \variable{output/age_sample_size.txt}APOGEE stars with age estimates. Table \ref{tab:uncertainties} presents the median uncertainties in the data for [Fe/H], [O/Fe], and age.
 
 \begin{deluxetable*}{lll}
     \tablecaption{Sample selection parameters from APOGEE DR17\label{tab:sample-selection}}
@@ -370,14 +372,26 @@ We use estimated ages from \citet{Leung2023-Ages} (hereafter \citetalias{Leung20
     \enddata
 \end{deluxetable*}
 
+\begin{deluxetable}{lll}
+    \tablecaption{Median Parameter Uncertainties\label{tab:uncertainties}}
+    \tablehead{
+        \colhead{Parameter} & \colhead{Median Uncertainty} & \colhead{Source}
+    }
+    \startdata
+        ${\rm [Fe/H]}$ & $9.2\times10^{-3}$ & APOGEE DR17 \\
+        ${\rm [O/Fe]}$ & $1.8\times10^{-2}$ & APOGEE DR17 \\
+        log(Age/Gyr) & $0.10$ & \citetalias{Leung2023-Ages}
+        % Age/Gyr & 29\% & astroNN
+    \enddata
+\end{deluxetable}
 
 \section{Results from One-Zone Models}
 \label{sec:onezone-results}
 
 % [Intro paragraph, motivation for running one-zone models]
-Before running the full multi-zone simulations, it will be useful to observe the effects of the DTD in more idealized conditions. A one-zone model assumes the entire gas reservoir is instantaneously mixed, so there is no spatial dependence for the distribution of metal abundances. In this section 
+Before running the full multi-zone simulations, it will be useful to observe the effects of the DTD in more idealized conditions. A one-zone model assumes the entire gas reservoir is instantaneously mixed, so there is no spatial dependence for the distribution of metal abundances. This limits the ability to compare to observations across the disk, but it allows the models to be run in a fraction of the time and eliminates the complicating factor of stellar migration. In this section, we compare the results from one-zone models which examine various parameters of the DTD while keeping other parameters fixed.
 
-All models are run for a duration of $t_{\rm max}=13.2$ Gyr with a time-step of $\Delta t=0.01$ Gyr. We adopt the inside-out SFR (Equation \ref{eq:insideout-sfh}) evaluated at $R_{\rm gal}=8$ kpc (i.e., $\tau_{\rm rise}=2$ Gyr and $\tau_{\rm sfh}=15.1$ Gyr), an SFE timescale $\tau_*\equiv M_g/\dot M_*=2$ Gyr, and an initial gas mass $M_{g,0}=0$. We adopt a continuous recycling prescription \citep[see Equation 2 from][]{JohnsonWeinberg2020-Starbursts}. Unless otherwise specified, we adopt an outflow mass-loading factor $\eta\equiv \dot M_{\rm out}/\dot M_*=2.15$ \citepalias[see Equation 8 from][]{Johnson2021-Migration} and a minimum SN Ia delay time of 40 Myr. A summary of these one-zone fiducial parameters is presented in Table \ref{tab:onezone-parameters}.
+All models are run for a duration of $t_{\rm max}=13.2$ Gyr with a time-step of $\Delta t=0.01$ Gyr. We adopt the inside-out SFR (Equation \ref{eq:insideout-sfh}) evaluated at $R_{\rm gal}=8$ kpc (i.e., $\tau_{\rm rise}=2$ Gyr and $\tau_{\rm sfh}=15.1$ Gyr), an SFE timescale $\uptau_*\equiv M_g/\dot M_*=2$ Gyr, and an initial gas mass $M_{g,0}=0$. We adopt a continuous recycling prescription \citep[see Equation 2 from][]{JohnsonWeinberg2020-Starbursts}. Unless otherwise specified, we adopt an outflow mass-loading factor $\eta\equiv \dot M_{\rm out}/\dot M_*=2.15$ \citepalias[see Equation 8 from][]{Johnson2021-Migration} and a minimum SN Ia delay time of 40 Myr. A summary of these fiducial parameters is presented in Table \ref{tab:onezone-parameters}.
 \begin{deluxetable}{Ccl}
     \tablecaption{A summary of parameters and their fiducial values for our one-zone chemical evolution models.\label{tab:onezone-parameters}}
     \tablehead{
@@ -387,7 +401,7 @@ All models are run for a duration of $t_{\rm max}=13.2$ Gyr with a time-step of 
     \Delta t        & 10 Myr    & Time-step size \\
     t_{\rm max}     & 13.2 Gyr  & Maximum simulation time \\
     \eta            & 2.15      & Outflow mass-loading factor \\
-    \tau_*          & 2.0 Gyr   & SFE timescale \\
+    \uptau_*        & 2.0 Gyr   & SFE timescale \\
     \dot M_r        & continuous    & Recycling rate \\
     t_D             & 40 Myr    & Minimum SN Ia delay time \\
     M_{g,0}   & 0         & Initial gas mass \\
@@ -397,23 +411,25 @@ All models are run for a duration of $t_{\rm max}=13.2$ Gyr with a time-step of 
     \enddata
 \end{deluxetable}
 
-The left-hand panel of Figure \ref{fig:onezone-threepanel} compares the results of three one-zone models which are identical except for the slope of the power-law DTD. A steeper slope produces a sharper ``knee'' and a faster decline in [O/Fe], resulting in a narrower distribution of [O/Fe] around the low-$\alpha$ sequence and a dearth of high-$\alpha$ stars. Conversely, a shallower slope produces a gentler knee and slower decline in [O/Fe], resulting in a broader [O/Fe] distribution and a greater number of high-$\alpha$ stars. In all cases the [O/Fe] distribution is distinctly unimodal. The distribution of [Fe/H] is not as strongly affected by the power-law slope: a shallower slope results in only a modest increase in the width of the distribution.
+The left-hand panel of Figure \ref{fig:onezone-threepanel} compares the results of three one-zone models which are identical except for the slope of the power-law DTD. A steeper slope produces a sharper ``knee'' and a faster decline in [O/Fe], resulting in a narrower distribution of [O/Fe] around the low-$\alpha$ sequence and a dearth of high-$\alpha$ stars. Conversely, a shallower slope produces a gentler knee and slower decline in [O/Fe], resulting in a broader [O/Fe] DF and a greater number of high-$\alpha$ stars. In all cases the [O/Fe] DF is distinctly unimodal. The [Fe/H] DF is not as strongly affected by the power-law slope: a shallower slope results in only a modest increase in the width of the distribution.
+
+Similar trends can be seen when adjusting the timescale of the exponential DTD, as shown in the middle panel of Figure \ref{fig:onezone-threepanel}. Here, the knee is not a sharp feature associated with the onset of SNe Ia as in the power-law case, but rather a gentle curve in the abundance track around a simulation time of 1 Gyr. A short exponential timescale shifts this knee down to lower [O/Fe] values, while a longer timescale raises it. The effect on the [O/Fe] DF is similar to the power-law slope: a short timescale produces more low-$\alpha$ stars, while a long timescale produces more high-$\alpha$ stars (but still a unimodal distribution). The effect on the [Fe/H] DF is somewhat more pronounced, with longer timescales skewing to lower [Fe/H] values. A doubling of the timescale from 1.5 Gyr to 3 Gyr raises the [O/Fe] abundance ratio at $t=1$ Gyr by $\sim0.05$ dex and at $t=3$ Gyr by $\sim0.1$ dex, but the equilibrium abundance reached at $t=10$ Gyr remains unchanged. For all exponential models, the low-$\alpha$ peak sits approximately 0.02 dex lower than for the power-law models.
+
+Finally, the right-hand panel of Figure \ref{fig:onezone-threepanel} shows the effect of the plateau DTD model width on abundance tracks and distributions. The effect on the [O/Fe] DF is similar to the previous two models: a longer plateau raises the median delay time, resulting in a smaller low-$\alpha$ peak and a more prominent high-$\alpha$ tail. The abundance tracks from several different plateau widths fill the space in between the exponential ($\tau=3$ Gyr) and power-law ($\alpha=-1.1$ with no plateau) models, which are both included in the panel for reference. The abundance track from the plateau ($W=1$ Gyr) model is nearly identical to the exponential ($\tau=3$ Gyr), although the [O/Fe] DFs are somewhat more distinct, with the plateau model producing a peak closer to the power-law case.
 
 \begin{figure*}
     \centering
     \includegraphics[width=\linewidth]{figures/onezone_threepanel.pdf}
-    \caption{\textit{Left:} Abundance tracks in the [Fe/H]--[O/Fe] plane for one-zone chemical evolution models models which assume a power-law DTD. The dotted, dashed, and solid curves represent models with power-law slopes $\alpha=-0.8$, $-1.1$, and $-1.4$, respectively. For reference, the solid gray curve represents an exponential DTD with $\tau=3$ Gyr. In all cases a minimum SN Ia delay time of 40 Myr is assumed. The open symbols located along each curve mark logarithmic steps in simulation time. The marginal panels above and to the right of the central panel present the distributions of [Fe/H] and [O/Fe], respectively. For display purposes, these distributions are convolved with a Gaussian kernel with a standard deviation of 0.02 dex.
+    \caption{\textit{Left:} Abundance tracks in the [Fe/H]--[O/Fe] plane for one-zone chemical evolution models models which assume a power-law DTD. The dotted, dashed, and solid curves represent models with power-law slopes $\alpha=-0.8$, $-1.1$, and $-1.4$, respectively. For reference, the solid gray curve represents an exponential DTD with $\tau=3$ Gyr. In all cases a minimum SN Ia delay time of 40 Myr is assumed. The open symbols located along each curve mark logarithmic steps in simulation time. The marginal panels above and to the right of the central panel present the distribution functions (DFs) of [Fe/H] and [O/Fe], respectively. For display purposes, these distributions are convolved with a Gaussian kernel with a standard deviation of 0.02 dex.
     \textit{Middle:} Similar, comparing exponential DTDs with varying timescales. The solid, dashed, and dotted curves represent timescales $\tau=6$, 3, and 1.5 Gyr, respectively.
     \textit{Right:} Similar, comparing plateau DTDs with varying plateau widths. The solid, dashed, and dotted green curves represent widths $W=1$, 0.3, and 0.1 Gyr, respectively. All plateau DTD models assume a post-plateau power-law slope of $\alpha=-1.1$. For reference, the solid gray curve represents an exponential DTD with $\tau=3$ Gyr, and the dotted purple curve represents a power-law DTD with $\alpha=-1.1$ and no plateau.}
     \label{fig:onezone-threepanel}
     \script{onezone_threepanel.py}
 \end{figure*}
 
-Similar trends can be seen when adjusting the timescale of the exponential DTD, as shown in the middle panel of Figure \ref{fig:onezone-threepanel}. Here, the knee is not a sharp feature associated with the onset of SNe Ia as in the power-law case, but rather a gentle curve in the abundance track around a simulation time of 1 Gyr. A short exponential timescale shifts this knee down to lower [O/Fe] values, while a longer timescale raises it. The effect on the [O/Fe] distribution is similar to the power-law slope: a short timescale produces more low-$\alpha$ stars, while a long timescale produces more high-$\alpha$ stars (but still a unimodal distribution). The effect on the [Fe/H] distribution is somewhat more pronounced, with longer timescales skewing to lower [Fe/H] values. A doubling of the timescale from 1.5 Gyr to 3 Gyr raises the [O/Fe] abundance ratio at $t=1$ Gyr by $\sim0.05$ dex and at $t=3$ Gyr by $\sim0.1$ dex, but the equilibrium abundance reached at $t=10$ Gyr remains unchanged. For all exponential models, the low-$\alpha$ peak sits approximately 0.02 dex lower than for the power-law models.
+One parameter of the DTD which we hold fixed in the multi-zone models is the minimum SN Ia delay time $t_D$. Typical choices for $t_D$ in the literature range from $\sim 30$ Myr \citep[e.g.,][]{Poulhazan2018-PrecisionPollution} to 150 Myr \citepalias[e.g.,][]{Johnson2021-Migration}. The left-hand panel of Figure \ref{fig:onezone-twopanel} shows that $t_D$ has a much stronger effect on the abundance tracks and distributions of models which assume a power-law DTD than models which assume a plateau or exponential DTD. This is a consequence of the much higher number of prompt SNe Ia in the power-law models compared to the others (see Figure \ref{fig:dtds}). Moreover, a power-law DTD with a long $t_D$ may be observationally hard to distinguish from a plateau model. In Figure \ref{fig:onezone-twopanel}, the abundance track for the model with a power-law DTD and $t_D=150$ Myr (dashed purple line) is similar to that of the plateau DTD with $W=0.3$ Gyr and $t_D=40$ Myr (solid green line), and their [O/Fe] DFs are virtually identical. The difference between the two values of $t_D$ for the exponential ($\tau=3$ Gyr) DTD in both the abundance tracks and distributions is nearly indistinguishable. We do not consider the effect on the other DTD models because a 150 Myr minimum delay time is incompatible with the two-population model, which has $\sim 50$\% of SNe Ia explode in the first 100 Myr, and would have a negligible effect on the triple-system DTD due to its low SN Ia rate at short delay times.
 
-Finally, the right-hand panel of Figure \ref{fig:onezone-threepanel} shows the effect of the plateau DTD model width on abundance tracks and distributions. The effect on the [O/Fe] distribution is similar to the previous two models: a longer plateau raises the median delay time, resulting in a smaller low-$\alpha$ peak and a more prominent high-$\alpha$ tail. The abundance tracks from several different plateau widths fill the space in between the exponential ($\tau=3$ Gyr) and power-law ($\alpha=-1.1$ with no plateau) models, which are both included in the panel for reference. The abundance track from the plateau ($W=1$ Gyr) model is nearly identical to the exponential ($\tau=3$ Gyr), although the [O/Fe] distributions are somewhat more distinct.
-
-One parameter of the DTD which we hold fixed in the multi-zone models is the minimum SN Ia delay time $t_D$. Typical choices for $t_D$ in the literature range from $\sim 40$ Myr to 150 Myr. The left-hand panel of Figure \ref{fig:onezone-twopanel} shows that the minimum SN Ia delay time has a much stronger effect on the abundance track and MDFs of models which assume a power-law DTD than models which assume a plateau or exponential DTD, due to the much higher SN Ia rate in the power-law models at early times (see Figure \ref{fig:dtds}). Moreover, a power-law DTD with a long minimum delay may be observationally hard to distinguish from a plateau model. In Figure \ref{fig:onezone-twopanel}, the abundance track for the model with a power-law DTD and $t_D=150$ Myr (dashed purple line) is similar to that of the plateau DTD with $W=0.3$ Gyr and $t_D=40$ Myr (solid green line), and the [O/Fe] distributions are virtually identical. The difference between the two values of $t_D$ for the exponential ($\tau=3$ Gyr) DTD in both the abundance tracks and distributions is nearly indistinguishable. We do not consider the effect on the other DTD models because a 150 Myr minimum delay time is incompatible with the two-population model, which has $\sim 50$\% of SNe Ia explode in the first 100 Myr, and would have a negligible effect on the triple-system DTD due to its low SN Ia rate at short delay times.
+The right-hand panel of Figure \ref{fig:onezone-twopanel} compares the one-zone model outputs from the full range of DTD models we investigate in this work. As with the individual DTD parameters, the choice of DTD primarily affects the location of the high-$\alpha$ ``knee'' in the [Fe/H]--[O/Fe] abundance tracks. At one extreme is the triple-system model, which sees the CC SN plateau extend up to ${\rm [Fe/H]}\approx0.8$ followed by a sharp downward turn as the SN Ia rate suddenly increases at a delay time of 500 Myr. Star formation proceeds for such a long time before the knee that the [O/Fe] DF shows a slight second peak around the CC SN value; this model is the only one which produces any amount of bimodality in the one-zone simulations. At the other extreme are the two-population and power-law ($\alpha=-1.1$) models which peak immediately after the minimum delay time of 40 Myr, placing the knee at ${\rm [Fe/H]}\approx-1.8$. The two-population model has a unique second knee at ${\rm [Fe/H]}\approx-0.2$ and ${\rm [O/Fe]}\approx0.1$, which is a result of the delayed exponential component. The abundance tracks from the plateau ($W=1$ Gyr) and exponential ($\tau=1.5$ Gyr) models lie in the intermediate space between these extremes. On the other hand, the [O/Fe] DF from the exponential model has the strongest peak, while the plateau ($W=1$ Gyr) and triple-system models produce nearly identical distributions in the low-$\alpha$ regime. The power-law ($\alpha=-1.1$) and two-population DTDs produce similar [O/Fe] DFs despite notably different abundance tracks. The exponential ($\tau=3$ Gyr) and plateau ($W=0.3$ Gyr) models, while not shown, produce similar abundance tracks to the plateau ($W=1$ Gyr) and exponential ($\tau=1.5$ Gyr) models, respectively.
 
 \begin{figure*}
     \centering
@@ -424,39 +440,26 @@ One parameter of the DTD which we hold fixed in the multi-zone models is the min
     \script{onezone_twopanel.py}
 \end{figure*}
 
-The right-hand panel of Figure \ref{fig:onezone-twopanel} compares the one-zone model outputs from the full range of DTD models we investigate in this work. The choice of DTD primarily affects the location of the high-$\alpha$ ``knee'' in the [Fe/H]--[O/Fe] abundance tracks. At one extreme is the triple-system model, which sees the CC SN plateau extend up to ${\rm [Fe/H]}\approx0.8$ followed by a sharp downward turn as the SN Ia rate suddenly increases at a delay time of 500 Myr. Star formation proceeds for such a long time before the knee that the [O/Fe] distribution shows a slight second peak around the CC SN value; this model is the only one which produces any amount of bimodality in the one-zone simulations. At the other extreme are the two-population and power-law ($\alpha=-1.1$) models which peak immediately after the minimum delay time of 40 Myr, placing the knee at ${\rm [Fe/H]}\approx-1.8$. The two-population model has a unique second knee at ${\rm [Fe/H]}\approx-0.2$ and ${\rm [O/Fe]}\approx0.1$, which is a result of the delayed exponential component. The abundance tracks from the plateau ($W=1$ Gyr) and exponential ($\tau=1.5$ Gyr) models lie in the intermediate space between these extremes. On the other hand, the [O/Fe] distribution from the exponential model is the most strongly peaked at the Solar value, while the plateau ($W=1$ Gyr) and triple-system models produce nearly identical distributions in the low-$\alpha$ regime. The exponential ($\tau=3$ Gyr) and plateau ($W=0.3$ Gyr) models, while not shown, produce similar abundance tracks to the plateau ($W=1$ Gyr) and exponential ($\tau=1.5$ Gyr) models, respectively.
-
-[Summary and conclusions from one-zone models]
+% [Summary and conclusions from one-zone models]
+The results presented in this section indicate that the observables which should show the greatest effect from the choice of DTD are the [O/Fe]--[Fe/H] abundance tracks and the [O/Fe] DF. Degeneracies between models in one regime, such as the abundance tracks from the exponential ($\tau=3$ Gyr) and plateau ($W=1$ Gyr) DTDs, can be resolved in the other. Of course, both of these observables are also greatly affected by the parameters of the SFH. 
+We direct the reader to \citet{Palicio2023-AnalyticDTD} for a similar comparison of DTD models with a two-infall SFH.
 
 % \subsection{The Star Formation History}
 
-% Figure \ref{fig:onezone-delay-taustar} shows results from one-zone models with a power-law DTD which differ in their assumed minimum SN Ia delay time ($t_D$) or star formation efficiency timescale ($\tau_*$). In [Fe/H]-[O/Fe] space, doubling or halving the minimum delay time produces similar results to doubling or halving the SFE timescale. A shorter minimum delay time means SNe Ia will start to explode sooner after the star formation burst, giving less time for CCSNe to explode at the plateau of the abundance track. Similarly, a longer SFE timescale means fewer massive stars will be produced by the initial star formation burst, resulting in fewer CCSNe before the first SNe Ia explode. 
+% Figure \ref{fig:onezone-delay-taustar} shows results from one-zone models with a power-law DTD which differ in their assumed minimum SN Ia delay time ($t_D$) or star formation efficiency timescale ($\uptau_*$). In [Fe/H]-[O/Fe] space, doubling or halving the minimum delay time produces similar results to doubling or halving the SFE timescale. A shorter minimum delay time means SNe Ia will start to explode sooner after the star formation burst, giving less time for CCSNe to explode at the plateau of the abundance track. Similarly, a longer SFE timescale means fewer massive stars will be produced by the initial star formation burst, resulting in fewer CCSNe before the first SNe Ia explode. 
 
 % The minimum delay and SFE timescale have similar effects on the abundance tracks but very different effects on the MDFs. Altering the SFE timescale changes the stellar distribution of [Fe/H], especially at the low-metallicity end, as shown in the top panel of Figure \ref{fig:onezone-delay-taustar}. However, as a change in the SFE timescale affects both the number of high-mass and low-mass stars produced, it does not affect the distribution of [O/Fe], as shown in the right-hand panel of Figure \ref{fig:onezone-delay-taustar}. Meanwhile, a change in the minimum SN Ia delay time does not impact the total number of SNe which explode, so the distribution of [Fe/H] is largely unaffected, while it does result in a change in the number of high-$\alpha$ stars formed and therefore the distribution of [O/Fe].
 
 % \begin{figure}
 %     \centering
 %     \includegraphics{figures/onezone_delay_taustar.pdf}
-%     \caption{Similar to Figure \ref{fig:onezone-powerlaw-slope} but with varying minimum SN Ia delay time ($t_D$) and star formation efficiency timescale ($\tau_*$). Tracks with $\tau_*=2$ Gyr are represented in black, while a track with a shorter $\tau_*=1$ Gyr is shown in red and a track with a longer $\tau_*=4$ Gyr is in yellow. The dotted, solid, and dashed black curves represent a minimum delay time of 40 Myr, 80 Myr, and 160 Myr, respectively. A power-law DTD with $\alpha=-1.1$ is assumed in all models.}
+%     \caption{Similar to Figure \ref{fig:onezone-powerlaw-slope} but with varying minimum SN Ia delay time ($t_D$) and star formation efficiency timescale ($\uptau_*$). Tracks with $\uptau_*=2$ Gyr are represented in black, while a track with a shorter $\uptau_*=1$ Gyr is shown in red and a track with a longer $\uptau_*=4$ Gyr is in yellow. The dotted, solid, and dashed black curves represent a minimum delay time of 40 Myr, 80 Myr, and 160 Myr, respectively. A power-law DTD with $\alpha=-1.1$ is assumed in all models.}
 %     \label{fig:onezone-delay-taustar}
 %     \script{onezone_delay_taustar.py}
 % \end{figure}
 
 \section{Results from Multi-Zone Models}
 \label{sec:multizone-results}
-
-\begin{deluxetable}{lll}
-    \tablecaption{Median Parameter Uncertainties\label{tab:uncertainties}}
-    \tablehead{
-        \colhead{Parameter} & \colhead{Median Uncertainty} & \colhead{Source}
-    }
-    \startdata
-        [Fe/H] & $9.2\times10^{-3}$ & APOGEE DR17 \\
-        $\rm [O/Fe]$ & $1.8\times10^{-2}$ & APOGEE DR17 \\
-        log(Age/Gyr) & $0.10$ & \citetalias{Leung2023-Ages}
-        % Age/Gyr & 29\% & astroNN
-    \enddata
-\end{deluxetable}
 
 \subsection{The distribution of [Fe/H]}
 
@@ -627,6 +630,7 @@ The results of these tests are presented in Table \ref{tab:results}. Instead of 
 \variable{output/summary_table.tex}
 
 \subsection{The Two-Infall SFH Model}
+\label{sec:two-infall-discussion}
 
 [Compare to previous studies]
 Discuss \citet{Matteucci2006-BimodalDTDConsequences} findings of the \citet{Mannucci2006-TwoPopulations} DTD in the two-infall model.
@@ -782,7 +786,7 @@ Discuss \citet{Greggio2005-AnalyticalRates} vs our simple function approximation
 
 \citet{Greggio2005-AnalyticalRates} derives analytical DTDs for SD and DD progenitor systems from assumptions about binary stellar evolution and outcomes of mass exchange. They find that the parameters which have a large effect on the shape of the DTD are the distribution and range of stellar masses in progenitor systems; the efficiency of accretion in the SD scenario; and the distribution of separations at birth in the DD scenario. The left-hand panel of Figure \ref{fig:analytical-dtd} shows the analytical DTDs for SD progenitors and two different prescriptions for DD progenitors (``WIDE'' and ``CLOSE''). In the ``WIDE'' scheme, it is assumed that there is a wide distribution of ratios $A/A_0$ of the separation of the DD system to the initial separation of the binary, and that the distributions of $A$ and total mass of the system $m_{\rm DD}$ are independent, so one cannot necessarily predict the total merge time of a system based on its initial parameters. In the ``CLOSE'' scheme, there is assumed to be a narrow distribution of $A/A_0$ and a correlation between $A$ and $m_{\rm DD}$, so the most massive binaries tend to merge quickly and the least massive merge last.
 
-The right-hand panel of Figure \ref{fig:analytical-dtd} shows the results of one-zone chemical evolution models with the \citet{Greggio2005-AnalyticalRates} DTDs. We assume $\eta=2.5$, $\tau_*=2$ Gyr, an inside-out SFH evaluated at a radius of 8 kpc, a continuous recycling approximation, and a minimum SN Ia delay of 40 Myr. We compare the SD, DD WIDE, and DD CLOSE schemes to standard power-law, broken power-law, and exponential DTDs. The SD and DD CLOSE DTDs follow nearly identical tracks in [O/Fe] vs [Fe/H]; however, their distributions on [O/Fe] differ at the low end. The SD DTD follows an exponential with a 1.5 Gyr timescale, whereas the DD CLOSE DTD is well-approximated by a broken power-law with an initial plateau of 300 Myr and a subsequent declining slope of -1.1. The WIDE prescription is likewise best approximated by a broken power-law, but with a longer plateau width of 1 Gyr. In all cases, the difference between the analytical DTD and the nearest broken power-law or exponential is likely too small to be observationally detectable, so in our multi-zone models we implement the more generic functions in lieu of the analytical DTDs.
+The right-hand panel of Figure \ref{fig:analytical-dtd} shows the results of one-zone chemical evolution models with the \citet{Greggio2005-AnalyticalRates} DTDs. We assume $\eta=2.5$, $\uptau_*=2$ Gyr, an inside-out SFH evaluated at a radius of 8 kpc, a continuous recycling approximation, and a minimum SN Ia delay of 40 Myr. We compare the SD, DD WIDE, and DD CLOSE schemes to standard power-law, broken power-law, and exponential DTDs. The SD and DD CLOSE DTDs follow nearly identical tracks in [O/Fe] vs [Fe/H]; however, their distributions on [O/Fe] differ at the low end. The SD DTD follows an exponential with a 1.5 Gyr timescale, whereas the DD CLOSE DTD is well-approximated by a broken power-law with an initial plateau of 300 Myr and a subsequent declining slope of -1.1. The WIDE prescription is likewise best approximated by a broken power-law, but with a longer plateau width of 1 Gyr. In all cases, the difference between the analytical DTD and the nearest broken power-law or exponential is likely too small to be observationally detectable, so in our multi-zone models we implement the more generic functions in lieu of the analytical DTDs.
 
 A multi-zone with the \citet{Greggio2005-AnalyticalRates} SD DTD produced nearly identical results to an exponential DTD with a 1.5 Gyr timescale.
 
