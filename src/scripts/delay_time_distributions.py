@@ -15,6 +15,8 @@ from _globals import MIN_RIA_DELAY, ONE_COLUMN_WIDTH
 def main(style='paper'):
     plt.style.use(paths.styles / f'{style}.mplstyle')
     plt.rcParams['axes.prop_cycle'] = plt.cycler('color', paultol.bright.colors)
+    # get default line width
+    default_line_width = plt.rcParams['lines.linewidth']
     fig, ax = setup_axes()
     times = np.arange(0.04, 13.2, 0.001)
     distributions = [styles.prompt, styles.plaw, styles.exp, 
@@ -23,7 +25,8 @@ def main(style='paper'):
         func = dtd['func']
         yvals = np.array([func(t) for t in times])
         ax.plot(times, yvals / func(1.), 
-                label=dtd['label'], c=dtd['color'], ls=dtd['line'])
+                label=dtd['label'], c=dtd['color'], ls=dtd['line'], 
+                lw=default_line_width * dtd['lwmod'])
         # indicate median delay times
         cdf = np.cumsum(yvals / np.sum(yvals))
         med_idx = np.where(cdf >= 0.5)[0][0]
@@ -47,7 +50,7 @@ def main(style='paper'):
                 capthick=0.5, marker='s', markersize=2, 
                 label='Maoz et al. (2012)')
     
-    ax.legend(frameon=False, loc='upper right', handlelength=1.8)
+    ax.legend(frameon=False, loc='upper right', handlelength=2)
     fig.savefig(paths.figures / 'delay_time_distributions')
     plt.close()
 
@@ -59,30 +62,35 @@ class styles:
         'label': r'Power-law ($\alpha=-1.1$)',
         'color': paultol.bright.colors[5], # purple
         'line': '-',
+        'lwmod': 1.2,
     }
     plateau = {
         'func': dtds.plateau(width=0.3, slope=-1.1, tmin=MIN_RIA_DELAY),
         'label': r'Plateau ($W=0.3$ Gyr)',
         'color': paultol.bright.colors[2], # green
         'line': '--',
+        'lwmod': 1.2,
     }
     exp = {
         'func': dtds.exponential(timescale=1.5, tmin=MIN_RIA_DELAY),
         'label': r'Exponential ($\tau=1.5$ Gyr)',
         'color': paultol.bright.colors[0], # blue
         'line': (5, (10, 3)), # long dashed with offset
+        'lwmod': 1.2,
     }
     prompt = {
         'func': dtds.prompt(peak=0.05, stdev=0.015, timescale=3, tmin=MIN_RIA_DELAY),
         'label': 'Two-population',
         'color': paultol.bright.colors[1], # red
         'line': ':',
+        'lwmod': 1.8,
     }
     triple = {
         'func': dtds.triple(tmin=MIN_RIA_DELAY),
         'label': r'Triple-system',
         'color': paultol.bright.colors[3], # yellow
-        'line': '-.'
+        'line': '-.',
+        'lwmod': 1.2,
     }
     # Additional DTDs
     exp_long = {
@@ -90,18 +98,21 @@ class styles:
         'label': r'Exponential ($\tau=3$ Gyr)',
         'color': paultol.bright.colors[0], # blue
         'line': '--',
+        'lwmod': 1.2,
     }
     plateau_long = {
         'func': dtds.plateau(width=1., slope=-1.1, tmin=MIN_RIA_DELAY),
         'label': r'Plateau ($W=1$ Gyr)',
         'color': paultol.bright.colors[2], # green
         'line': '--',
+        'lwmod': 1.2,
     }
     plaw_steep = {
         'func': dtds.powerlaw(slope=-1.4, tmin=MIN_RIA_DELAY),
         'label': r'Power-law ($\alpha=-1.4$)',
         'color': paultol.bright.colors[5], # purple
         'line': '--',
+        'lwmod': 1.2,
     }
 
 
