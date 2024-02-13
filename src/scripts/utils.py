@@ -616,7 +616,7 @@ def axes_grid(rows, cols, width=8, xlim=None, ylim=None):
 
 def scatter_hist(ax, x, y, xlim=None, ylim=None, log_norm=True, cmap='gray',
                  cmin=10, vmin=None, vmax=None, nbins=50, color='k',
-                 rasterized=True):
+                 rasterized=True, scatter_size=0.5):
     """
     Generate a scatter plot and overlayed 2D histogram for dense data.
 
@@ -650,6 +650,8 @@ def scatter_hist(ax, x, y, xlim=None, ylim=None, log_norm=True, cmap='gray',
         Color of individual points. The default is 'k'.
     rasterized : bool, optional [default: True]
         Whether to rasterize the scattered points
+    scatter_size : float, optional
+        Size of scattered points. The default is 0.5.
     """
     # Set automatic plot bounds
     if not xlim:
@@ -669,7 +671,8 @@ def scatter_hist(ax, x, y, xlim=None, ylim=None, log_norm=True, cmap='gray',
     else:
         norm = Normalize(vmin=vmin, vmax=vmax)
     # Plot
-    ax.scatter(x, y, c=color, s=0.5, rasterized=rasterized, edgecolor='none')
+    ax.scatter(x, y, c=color, s=scatter_size, rasterized=rasterized, 
+               edgecolor='none')
     return ax.hist2d(x, y, bins=[xbins, ybins], cmap=cmap, norm=norm, cmin=cmin)
 
 

@@ -4,7 +4,7 @@ plots, e.g., showing [O/Fe] vs [Fe/H] over a range of Galactic regions.
 """
 
 import matplotlib.pyplot as plt
-from matplotlib.colors import Normalize
+from matplotlib.colors import Normalize, LogNorm
 from matplotlib.cm import ScalarMappable
 from utils import sample_dataframe
 from _globals import GALR_BINS, ABSZ_BINS, TWO_COLUMN_WIDTH
@@ -59,7 +59,7 @@ def plot_vice_sample(ax, stars, xcol, ycol, zcol='galr_origin',
 
 
 def setup_colorbar(fig, cmap=None, vmin=None, vmax=None, label='', 
-                   width=0.02, pad=0.01, labelpad=0):
+                   width=0.02, pad=0.01, labelpad=0, lognorm=False):
     """
     Configure a vertical colorbar with a specified colormap and normalization.
 
@@ -81,6 +81,9 @@ def setup_colorbar(fig, cmap=None, vmin=None, vmax=None, label='',
         figure size. The default is 0.02.
     labelpad : float, optional
         Padding between colorbar and label in points. The default is 0.
+    lognorm : bool, optional
+        If True, assigns a logarithmic normalization instead of linear.
+        The default is False.
 
     Returns
     -------
@@ -94,7 +97,10 @@ def setup_colorbar(fig, cmap=None, vmin=None, vmax=None, label='',
     cax = plt.axes([fig.subplotpars.right + pad, fig.subplotpars.bottom, 
                     width, height])
     # Add colorbar
-    norm = Normalize(vmin=vmin, vmax=vmax)
+    if lognorm:
+        norm = LogNorm(vmin=vmin, vmax=vmax)
+    else:
+        norm = Normalize(vmin=vmin, vmax=vmax)
     cbar = fig.colorbar(ScalarMappable(norm, cmap), cax)
     cbar.set_label(label, labelpad=labelpad)
     return cbar

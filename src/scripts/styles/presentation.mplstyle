@@ -1,13 +1,18 @@
 # Default figure size and resolution
-figure.figsize: 11, 4.5
+figure.figsize: 10, 6
 figure.dpi: 300
+# Default figure file extension
+savefig.format: png
 # Ticks on all axes pointing in
 xtick.direction: in
 ytick.direction: in
 xtick.top: True
 ytick.right: True
 # Font style
+# Note: for non-matplotlib fonts in WSL, copy the ttf file into 
+# ~/.local/share/fonts and delete the matplotlib font cache
 font.family: sans-serif
+font.sans-serif: Trebuchet MS, DejaVu Sans
 mathtext.fontset: dejavusans
 # Font size
 font.size: 16

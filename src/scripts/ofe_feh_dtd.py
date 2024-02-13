@@ -113,7 +113,8 @@ def main(style='paper'):
     plt.close()
 
 
-def apogee_contours(ax, apogee_data, galr_lim=(0, 20), absz_lim=(0, 3)):
+def apogee_contours(ax, apogee_data, galr_lim=(0, 20), absz_lim=(0, 3),
+                    linewidths=0.5, colors='r', linestyles=['--', '-']):
     xx, yy, logz = gen_kde(apogee_data, bandwidth=0.03,
                            galr_lim=GALR_LIM, absz_lim=absz_lim)
     # scale the linear density to the max value
@@ -121,8 +122,8 @@ def apogee_contours(ax, apogee_data, galr_lim=(0, 20), absz_lim=(0, 3)):
     # contour levels at 1 and 2 sigma
     levels = get_levels(scaled_density)
     # levels = np.exp(-0.5 * np.array([2, 1])**2)
-    cs = ax.contour(xx, yy, scaled_density, levels, colors='r',
-                    linewidths=0.5, linestyles=['--', '-'])
+    cs = ax.contour(xx, yy, scaled_density, levels, colors=colors,
+                    linewidths=linewidths, linestyles=linestyles)
 
 
 def get_levels(scaled_density, enclosed=[0.8, 0.3]):
