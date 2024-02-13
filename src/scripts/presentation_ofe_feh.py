@@ -69,7 +69,7 @@ def main(contours=False):
             # Plot APOGEE contours
             if contours:
                 apogee_contours(axs[i,j], apogee_data, GALR_LIM, absz_lim,
-                                linewidths=2, colors=contour_color)
+                                linewidths=1.5, colors=contour_color)
     
     # Set x-axis ticks
     axs[0,0].xaxis.set_major_locator(MultipleLocator(0.5))
