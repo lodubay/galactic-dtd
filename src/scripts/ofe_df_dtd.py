@@ -48,7 +48,7 @@ def main(style='paper'):
     # Set up plot
     fig, axs = dfs.setup_axes(ncols=len(dtd_list)+1, 
                               figure_width=figwidth, 
-                              cmap_name=CMAP, xlabel='[O/Fe]', xlim=OFE_LIM, 
+                              cmap=CMAP, xlabel='[O/Fe]', xlim=OFE_LIM, 
                               major_tick_spacing=0.2, major_minor_tick_ratio=4.,
                               cbar_width=cbar_width)
     fig.subplots_adjust(top=0.9, left=0.04, right=0.96, bottom=0.25)

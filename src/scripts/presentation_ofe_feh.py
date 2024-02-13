@@ -4,20 +4,16 @@ different delay time distributions. For use in a presentation.
 """
 
 import argparse
-from pathlib import Path
-import numpy as np
 import matplotlib.pyplot as plt
 from matplotlib.ticker import MultipleLocator
-from matplotlib.lines import Line2D
 from matplotlib.ticker import ScalarFormatter
-import vice
 from multizone_stars import MultizoneStars
 from scatter_plot_grid import setup_colorbar
-from apogee_tools import import_apogee, gen_kde
+from apogee_tools import import_apogee
 from ofe_feh_dtd import apogee_contours
 from utils import scatter_hist
 from colormaps import paultol
-from _globals import ZONE_WIDTH, TWO_COLUMN_WIDTH, MAX_SF_RADIUS, ABSZ_BINS
+from _globals import ABSZ_BINS
 import paths
 
 FEH_LIM = (-1.2, 0.6)
@@ -73,7 +69,7 @@ def main(contours=False):
             # Plot APOGEE contours
             if contours:
                 apogee_contours(axs[i,j], apogee_data, GALR_LIM, absz_lim,
-                                linewidths=1, colors=contour_color)
+                                linewidths=2, colors=contour_color)
     
     # Set x-axis ticks
     axs[0,0].xaxis.set_major_locator(MultipleLocator(0.5))
