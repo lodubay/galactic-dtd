@@ -28,3 +28,5 @@ xtick.major.width: 0.8
 xtick.minor.width: 0.5
 ytick.major.width: 0.8
 ytick.minor.width: 0.5
+# Lines
+lines.linewidth: 2
