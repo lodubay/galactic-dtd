@@ -6,7 +6,8 @@ binned by galactic radius and z-height.
 import matplotlib.pyplot as plt
 from matplotlib.ticker import MultipleLocator
 from matplotlib.cm import ScalarMappable
-from utils import get_bin_centers, discrete_colormap
+from matplotlib.colors import BoundaryNorm
+from utils import get_bin_centers
 from apogee_tools import apogee_region, apogee_mdf
 from _globals import ABSZ_BINS, GALR_BINS
 
@@ -91,7 +92,7 @@ def plot_apogee_mdfs(data, axs, col='FE_H', colors=[], label='APOGEE',
 
 def setup_axes(ncols=2, figure_width=3.25, xlabel='', xlim=None, 
                major_tick_spacing=1, galr_bins=GALR_BINS, absz_bins=ABSZ_BINS, 
-               cbar_width=0.6, cmap_name='plasma_r', panel_aspect_ratio=1.5,
+               cbar_width=0.6, cmap='plasma_r', panel_aspect_ratio=1.5,
                major_minor_tick_ratio=5.):
     """
     Set up matplotlib figure and axes for the distribution plot.
@@ -125,6 +126,9 @@ def setup_axes(ncols=2, figure_width=3.25, xlabel='', xlim=None,
     major_minor_tick_ratio : float, optional
         Ratio between major and minor tick spacing in data units. The default
         is 5.
+    cmap : str or matplotlib colormap, optional
+        Colormap for radial bins. If a string, it is assumed to be a standard
+        matplotlib colormap and will be imported with plt.get_cmap().
         
     Returns
     -------
@@ -173,7 +177,10 @@ def setup_axes(ncols=2, figure_width=3.25, xlabel='', xlim=None,
         axs[i,-1].yaxis.set_label_position('right')
         axs[i,-1].set_ylabel(r'$|z| = %s - %s$' % absz_lim)
     # Add colorbar on bottom
-    cmap, norm = discrete_colormap(cmap_name, galr_bins)
+    # cmap, norm = discrete_colormap(cmap_name, galr_bins)
+    if type(cmap) == str:
+        cmap = plt.get_cmap(cmap)
+    norm = BoundaryNorm(galr_bins, cmap.N)
     cax = plt.axes([0.5 - (cbar_width / 2), 0.1, cbar_width, 0.02])
     cbar = fig.colorbar(ScalarMappable(norm, cmap), cax,
                         orientation='horizontal')

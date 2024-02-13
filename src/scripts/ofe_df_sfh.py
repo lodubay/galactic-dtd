@@ -9,6 +9,7 @@ import distribution_functions as dfs
 from multizone_stars import MultizoneStars
 from apogee_tools import import_apogee
 from utils import get_color_list, highlight_panels
+from colormaps import paultol
 import paths
 import _globals
 
@@ -20,7 +21,8 @@ DTD = 'exponential_timescale15'
 NBINS = 100
 OFE_LIM = (-0.15, 0.55)
 SMOOTH_WIDTH = 0.05
-CMAP = 'plasma_r'
+CMAP = plt.get_cmap('plasma_r')
+# CMAP = paultol.ylorbr_short
 
 def main():
     plt.style.use(paths.styles / 'paper.mplstyle')
@@ -28,11 +30,11 @@ def main():
     # Set up plot
     fig, axs = dfs.setup_axes(ncols=len(SFH_LIST)+1, 
                               figure_width=_globals.TWO_COLUMN_WIDTH, 
-                              cmap_name=CMAP, xlabel='[O/Fe]', xlim=OFE_LIM, 
+                              cmap=CMAP, xlabel='[O/Fe]', xlim=OFE_LIM, 
                               major_tick_spacing=0.2, major_minor_tick_ratio=4.,
                               cbar_width=0.4)
     fig.subplots_adjust(top=0.92, left=0.04, right=0.96, bottom=0.23)
-    colors = get_color_list(plt.get_cmap(CMAP), _globals.GALR_BINS)
+    colors = get_color_list(CMAP, _globals.GALR_BINS)
     # plot
     mdf_kwargs = {'bins': NBINS, 'range': OFE_LIM, 'smoothing': SMOOTH_WIDTH}
     for i, sfh in enumerate(SFH_LIST):

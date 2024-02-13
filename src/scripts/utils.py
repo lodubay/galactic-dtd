@@ -691,7 +691,7 @@ def get_color_list(cmap, bins):
     list
         List of colors of length len(bins) - 1
     """
-    rmin, rmax = bins[0], bins[-2]
+    rmin, rmax = bins[0], bins[-1]
     colors = cmap([(r-rmin)/(rmax-rmin) for r in bins[:-1]])
     return colors
 
