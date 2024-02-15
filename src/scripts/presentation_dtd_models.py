@@ -49,7 +49,7 @@ def main():
                 color='k', linestyle='none', capsize=2, 
                 elinewidth=0.5 * default_line_width,
                 capthick=0.5 * default_line_width, marker='s', markersize=5, 
-                label='SN survey recovery')
+                label='SN survey recovery\n(Maoz et al. 2012)')
     
     ax.legend(frameon=False, loc='upper right', handlelength=1.2)
     fig.savefig(paths.figures / 'presentation' / 'dtd_models')

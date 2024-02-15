@@ -12,7 +12,8 @@ from _globals import ONE_COLUMN_WIDTH
 
 
 def plot_vice_onezone(output, fig=None, axs=[], label=None, color=None,
-                      marker_labels=False, mdf_smoothing=0.02, **kwargs):
+                      marker_labels=False, mdf_smoothing=0.02, 
+                      markersize=9, **kwargs):
     """
     Wrapper for plot_track_and_mdf given a VICE onezone output.
 
@@ -35,6 +36,8 @@ def plot_vice_onezone(output, fig=None, axs=[], label=None, color=None,
     mdf_smoothing : float, optional
         Width of Gaussian smoothing to apply to the marginal distributions
         in data units. The default is 0.02 dex.
+    markersize : float, optional
+        Size of time markers. The default is 9.
     **kwargs passed to matplotlib.plot
     style_kw : dict, optional
         Dict of style-related keyword arguments to pass to both
@@ -63,12 +66,13 @@ def plot_vice_onezone(output, fig=None, axs=[], label=None, color=None,
     # Time markers should have same z-order as lines
     zorder = axs[0].lines[-1].get_zorder()
     plot_time_markers(hist['time'], hist['[fe/h]'], hist['[o/fe]'], axs[0],
-                      color=color, show_labels=marker_labels, zorder=zorder)
+                      color=color, show_labels=marker_labels, zorder=zorder,
+                      markersize=markersize)
     return fig, axs
 
 
 def plot_time_markers(time, feh, ofe, ax, loc=[0.1, 0.3, 1, 3, 10],
-                      color=None, show_labels=False, zorder=10):
+                      color=None, show_labels=False, zorder=10, markersize=9):
     """
     Add temporal markers to the [O/Fe] vs [Fe/H] tracks.
 
@@ -90,12 +94,16 @@ def plot_time_markers(time, feh, ofe, ax, loc=[0.1, 0.3, 1, 3, 10],
         Whether to add marker labels. The default is False.
     zorder : int, optional
         Z-order of markers.
+    markersize : float, optional
+        Size of time markers. The default is 9.
     """
+    # Get default font size
+    default_font_size = plt.rcParams['font.size']
     markers = ['o', 's', '^', 'd', 'v', 'p', '*', 'X']
     time = np.array(time)
     for i, t in enumerate(loc):
         idx = np.argmin(np.abs(time - t))
-        ax.scatter(feh[idx], ofe[idx], s=9, marker=markers[i],
+        ax.scatter(feh[idx], ofe[idx], s=markersize, marker=markers[i],
                    edgecolors=color, facecolors='w', zorder=zorder)
         if show_labels:
             if t < 1:
@@ -108,7 +116,8 @@ def plot_time_markers(time, feh, ofe, ax, loc=[0.1, 0.3, 1, 3, 10],
             else:
                 xpad = 0.03
                 ypad = 0.008
-            ax.text(feh[idx] + xpad, ofe[idx] + ypad, label, fontsize=7,
+            ax.text(feh[idx] + xpad, ofe[idx] + ypad, label, 
+                    fontsize=default_font_size * 7/8,
                     ha='left', va='bottom', zorder=10,
                     # bbox={
                     #     'facecolor': 'w',
@@ -223,6 +232,9 @@ def setup_axes(fig, title='', xlim=(-2.1, 0.4), ylim=(-0.1, 0.52), ylabel=True):
     axs : list of matplotlib.axes.Axes
         Ordered [ax_main, ax_mdf, ax_odf]
     """
+    # Get default axis label size
+    default_label_size = plt.rcParams['axes.labelsize']
+    small_label_size = default_label_size * 0.7
     gs = fig.add_gridspec(2, 2, width_ratios=(4, 1), height_ratios=(1, 4),
                           wspace=0., hspace=0.)
     # Start with the center panel for [Fe/H] vs [O/Fe]
@@ -245,7 +257,7 @@ def setup_axes(fig, title='', xlim=(-2.1, 0.4), ylim=(-0.1, 0.52), ylabel=True):
     ax_mdf.tick_params(axis='y', which='both', left=False, right=False, 
                        labelleft=False)
     if ylabel:
-        ax_mdf.set_ylabel(r'$P($[Fe/H]$)$', size=7)
+        ax_mdf.set_ylabel(r'$P($[Fe/H]$)$', size=small_label_size)
     # Add plot title
     ax_mdf.set_title(title, loc='left', x=0.05, y=0.8, va='top', pad=0)
     # Add panel to the right for MDF in [O/Fe]
@@ -253,6 +265,6 @@ def setup_axes(fig, title='', xlim=(-2.1, 0.4), ylim=(-0.1, 0.52), ylabel=True):
     ax_odf.tick_params(axis='y', labelleft=False)
     ax_odf.tick_params(axis='x', which='both', bottom=False, top=False, 
                        labelbottom=False)
-    ax_odf.set_xlabel(r'$P($[O/Fe]$)$', size=7)
+    ax_odf.set_xlabel(r'$P($[O/Fe]$)$', size=small_label_size)
     axs = [ax_main, ax_mdf, ax_odf]
     return axs

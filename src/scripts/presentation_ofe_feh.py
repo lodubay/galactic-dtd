@@ -84,7 +84,7 @@ def main(contours=False):
     for ax in axs[-1]:
         ax.set_xlabel('[Fe/H]')
     for i, ax in enumerate(axs[:,0]):
-        ax.set_ylabel('[O/Fe]', labelpad=6)
+        ax.set_ylabel(r'[$\alpha$/Fe]', labelpad=6)
     # Label rows with z-height bounds
     for i, ax in enumerate(axs[:,1]):
         absz_lim = (ABSZ_BINS[-(i+2)], ABSZ_BINS[-(i+1)])
