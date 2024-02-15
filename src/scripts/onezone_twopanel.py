@@ -42,7 +42,7 @@ def minimum_delay(subfig, delays=[0.15, 0.04], line_styles=['--', '-']):
     prev_eta = 0.
     for delay, ls in zip(delays, line_styles):
         params['delay'] = delay
-        distributions = [styles.exp_long, styles.plateau, styles.plaw]
+        distributions = [styles.exp, styles.plateau, styles.plaw]
         for i, dtd in enumerate(distributions):
             if delay == delays[1]:
                 label = dtd['label']
