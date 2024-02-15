@@ -13,12 +13,14 @@ import vice
 from multizone_stars import MultizoneStars
 from scatter_plot_grid import setup_colorbar
 from apogee_tools import import_apogee, gen_kde
-from _globals import ZONE_WIDTH, TWO_COLUMN_WIDTH, MAX_SF_RADIUS, ABSZ_BINS
+from ofe_feh_dtd import apogee_contours
+from _globals import ZONE_WIDTH, TWO_COLUMN_WIDTH, MAX_SF_RADIUS
 import paths
 
 FEH_LIM = (-1.3, 0.6)
 OFE_LIM = (-0.1, 0.6)
-GALR_LIM = (7, 9)
+ABSZ_LIM = (0.5, 1)
+GALR_BINS = [(11, 13), (7, 9), (3, 5)]
 
 SFH_MODEL = 'insideout'
 DTD_LIST = ['prompt', 
@@ -57,21 +59,20 @@ def main(style='paper'):
         # Import multioutput stars data
         mzs = MultizoneStars.from_output(output_name)
         mzs.model_uncertainty(inplace=True)
-        for i in range(len(ABSZ_BINS) - 1):
-            absz_lim = (ABSZ_BINS[-(i+2)], ABSZ_BINS[-(i+1)])
-            vice_subset = mzs.region(GALR_LIM, absz_lim)
+        for i, galr_lim in enumerate(GALR_BINS):
+            vice_subset = mzs.region(galr_lim, ABSZ_LIM)
             # Plot sample of star particle abundances
             vice_subset.scatter_plot(axs[i,j], '[fe/h]', '[o/fe]', 
                                       color='galr_origin', markersize=0.1,
                                       cmap=CMAP_NAME, norm=cbar.norm)
             # Plot abundance tracks
-            zone = int(0.5 * (GALR_LIM[0] + GALR_LIM[1]) / ZONE_WIDTH)
+            zone = int(0.5 * (galr_lim[0] + galr_lim[1]) / ZONE_WIDTH)
             zone_path = str(mzs.fullpath / ('zone%d' % zone))
             hist = vice.history(zone_path)
             axs[i,j].plot(hist['[fe/h]'], hist['[o/fe]'], c=ism_track_color, 
                           ls='-', linewidth=ism_track_width)
             # Plot APOGEE contours
-            apogee_contours(axs[i,j], apogee_data, GALR_LIM, absz_lim)
+            apogee_contours(axs[i,j], apogee_data, galr_lim, ABSZ_LIM)
     
     # Set x-axis ticks
     axs[0,0].xaxis.set_major_locator(MultipleLocator(0.5))
@@ -88,8 +89,8 @@ def main(style='paper'):
     for i, ax in enumerate(axs[:,0]):
         ax.set_ylabel('[O/Fe]', labelpad=2)
     for i, ax in enumerate(axs[:,2]):
-        absz_lim = (ABSZ_BINS[-(i+2)], ABSZ_BINS[-(i+1)])
-        ax.text(0.5, 0.93, r'$%s\leq |z| < %s$ kpc' % absz_lim, 
+        galr_lim = GALR_BINS[i]
+        ax.text(0.5, 0.93, r'$%s\leq R_{\rm gal} < %s$ kpc' % galr_lim, 
                 va='top', ha='center', transform=ax.transAxes,
                 bbox={
                     'facecolor': 'w',
@@ -106,41 +107,11 @@ def main(style='paper'):
                     Line2D([0], [0], color='r', linestyle='-', linewidth=0.5),
                     Line2D([0], [0], color='r', linestyle='--', linewidth=0.5)]
     legend_labels = ['Gas abundance', 'APOGEE 30% cont.', 'APOGEE 80% cont.']
-    axs[2, 0].legend(custom_lines, legend_labels, frameon=False, 
+    axs[0, 0].legend(custom_lines, legend_labels, frameon=False, 
                      loc='upper left', handlelength=0.6, handletextpad=0.4)
     
-    plt.savefig(paths.figures / 'ofe_feh_dtd')
-    plt.close()
-
-
-def apogee_contours(ax, apogee_data, galr_lim=(0, 20), absz_lim=(0, 3),
-                    linewidths=0.5, colors='r', linestyles=['--', '-']):
-    xx, yy, logz = gen_kde(apogee_data, bandwidth=0.03,
-                           galr_lim=galr_lim, absz_lim=absz_lim)
-    # scale the linear density to the max value
-    scaled_density = np.exp(logz) / np.max(np.exp(logz))
-    # contour levels at 1 and 2 sigma
-    levels = get_levels(scaled_density)
-    # levels = np.exp(-0.5 * np.array([2, 1])**2)
-    cs = ax.contour(xx, yy, scaled_density, levels, colors=colors,
-                    linewidths=linewidths, linestyles=linestyles)
-
-
-def get_levels(scaled_density, enclosed=[0.8, 0.3]):
-    """
-    Calculate the contour levels which contain the given enclosed probabilities.
-    """
-    levels = []
-    l = 0.
-    i = 0
-    while l < 1 and i < len(enclosed):
-        frac_enclosed = np.sum(scaled_density[scaled_density > l]) / np.sum(scaled_density)
-        if frac_enclosed <= enclosed[i] + 0.01:
-            levels.append(l)
-            i += 1
-        l += 0.01
-    return levels
-    
+    plt.savefig(paths.figures / 'ofe_feh_dtd_Rgal')
+    plt.close()    
 
 
 if __name__ == '__main__':
