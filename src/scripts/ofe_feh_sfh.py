@@ -3,6 +3,7 @@ Compare [O/Fe]-[Fe/H] plots for the Solar annulus for VICE outputs with
 different star formation histories.
 """
 
+import argparse
 from pathlib import Path
 import matplotlib.pyplot as plt
 from matplotlib.ticker import MultipleLocator
@@ -26,8 +27,8 @@ DTD_MODEL = 'exponential_timescale15'
 
 CMAP_NAME = 'winter'
 
-def main():
-    plt.style.use(paths.styles / 'paper.mplstyle')
+def main(style='paper'):
+    plt.style.use(paths.styles / f'{style}.mplstyle')
     fig, axs = plt.subplots(2, 2, sharex=True, sharey=True,
                             figsize=(ONE_COLUMN_WIDTH, 0.9*ONE_COLUMN_WIDTH))
     plt.subplots_adjust(top=0.93, right=0.92, wspace=0., hspace=0., left=0.11)
@@ -86,9 +87,19 @@ def main():
                     columnspacing=1.0,
                     handler_map={tuple: HandlerTuple(ndivide=None)})
     
-    plt.savefig(paths.figures / 'ofe_feh_sfh.pdf', dpi=300)
+    plt.savefig(paths.figures / 'ofe_feh_sfh', dpi=300)
     plt.close()
 
 
 if __name__ == '__main__':
-    main()
+    parser = argparse.ArgumentParser(
+        prog='ofe_feh_sfh.py',
+        description='Compare [O/Fe]-[Fe/H] plots for the Solar annulus for ' +
+        'VICE outputs with different star formation histories.',
+        )
+    parser.add_argument('-s', '--style', 
+                        choices=['paper', 'poster'],
+                        default='paper', 
+                        help='Plot style to use (default: paper)')
+    args = parser.parse_args()
+    main(**vars(args))
