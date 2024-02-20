@@ -41,6 +41,7 @@ def main():
     plt.style.use(paths.styles / 'paper.mplstyle')
     figwidth = TWO_COLUMN_WIDTH
     title_size = plt.rcParams['figure.titlesize']
+    axes_label_size = plt.rcParams['axes.labelsize']
     # create subfigures for top and bottom rows
     # fig = plt.figure(layout='constrained', figsize=(figwidth, figwidth*0.4))
     # subfigs = fig.subfigures(2, 1, hspace=0.1)
@@ -49,7 +50,7 @@ def main():
     fig.subplots_adjust(left=0.04, top=0.83, right=0.98, bottom=0.12,
                         wspace=0.07, hspace=0.52)
     # Remove spines and y-axis labels
-    for ax in axs.flatten():
+    for i, ax in enumerate(axs.flatten()):
         ax.spines['right'].set_visible(False)
         ax.spines['left'].set_visible(False)
         ax.spines['top'].set_visible(False)
@@ -59,6 +60,9 @@ def main():
         ax.tick_params(top=False, which='both')
         # Set bottom ticks pointing out
         ax.tick_params(axis='x', which='both', direction='out')
+        # Label each panel (a), (b), etc.
+        ax.text(0, 1, f'({chr(97+i)})', transform=ax.transAxes, va='top',
+                size=axes_label_size)
     
     apogee_data = import_apogee()
     apogee_subset = apogee_region(apogee_data, galr_lim=GALR_LIM, 
@@ -72,7 +76,7 @@ def main():
         plot_bimodality(axs[0,i], output_name, apogee_subset, uncertainties=True)
     axs[0,0].set_ylabel('Normalized PDF')
     fig.text(0.51, 0.98, 'Late-burst SFH',
-             ha='center', va='top', size=title_size)
+              ha='center', va='top', size=title_size)
     # axs[0,0].set_ylabel('Late-burst SFH')
     
     print('Plotting SFHs...')
@@ -82,14 +86,14 @@ def main():
         plot_bimodality(axs[1,j], output_name, apogee_subset, uncertainties=True)
     axs[1,0].set_ylabel('Normalized PDF')
     fig.text(0.42, 0.5, 'Exponential DTD ($\\tau=1.5$ Gyr)',
-             ha='center', va='top', size=title_size)
+              ha='center', va='top', size=title_size)
     # axs[1,0].set_ylabel('Exponential DTD\n($\\tau=1.5$ Gyr)')
         
     # Plot APOGEE
     print('Plotting APOGEE...')
     for i, feh_bin in enumerate(FEH_BINS):
         subset_slice = apogee_subset[(apogee_subset['FE_H'] >= feh_bin[0]) &
-                                     (apogee_subset['FE_H'] < feh_bin[1])]
+                                      (apogee_subset['FE_H'] < feh_bin[1])]
         mdf, bin_edges = apogee_mdf(subset_slice, col='O_FE', 
                                     smoothing=SMOOTH_WIDTH, 
                                     bins=np.arange(-0.15, 0.56, 0.01))
@@ -106,8 +110,8 @@ def main():
     axs[0,0].set_xlim(OFE_LIM)
     axs[0,0].set_ylim((0, 1.1))
     axs[1,0].set_ylim((0, 1.1))
-    axs[0,0].legend(loc='upper left', frameon=False, bbox_to_anchor=(0.65, 1.),
-                    title='[Fe/H] bin')
+    axs[0,0].legend(loc='upper left', frameon=False, bbox_to_anchor=(0.65, 0.8),
+                    title='[Fe/H] bin', title_fontsize=axes_label_size)
     
     # Add gray box underneath APOGEE subpanel for visual separation
     highlight_panels(fig, axs, (1,-1))
