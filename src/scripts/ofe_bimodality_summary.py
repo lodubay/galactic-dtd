@@ -61,7 +61,7 @@ def main():
         # Set bottom ticks pointing out
         ax.tick_params(axis='x', which='both', direction='out')
         # Label each panel (a), (b), etc.
-        ax.text(0, 1, f'({chr(97+i)})', transform=ax.transAxes, va='top',
+        ax.text(0, 1, f'({chr(97+i)})', transform=ax.transAxes, va='bottom',
                 size=axes_label_size)
     
     apogee_data = import_apogee()
@@ -110,7 +110,7 @@ def main():
     axs[0,0].set_xlim(OFE_LIM)
     axs[0,0].set_ylim((0, 1.1))
     axs[1,0].set_ylim((0, 1.1))
-    axs[0,0].legend(loc='upper left', frameon=False, bbox_to_anchor=(0.65, 0.8),
+    axs[0,0].legend(loc='upper left', frameon=False, bbox_to_anchor=(0.65, 1.),
                     title='[Fe/H] bin', title_fontsize=axes_label_size)
     
     # Add gray box underneath APOGEE subpanel for visual separation
