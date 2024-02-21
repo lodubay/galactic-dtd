@@ -8,8 +8,8 @@ from tqdm import tqdm
 import numpy as np
 import matplotlib.pyplot as plt
 from matplotlib.ticker import MultipleLocator
-from multizone_stars import MultizoneStars
 import paths
+from ofe_bimodality import plot_bimodality
 from utils import get_bin_centers, highlight_panels
 from apogee_tools import import_apogee, apogee_region, apogee_mdf
 from colormaps import paultol
@@ -42,9 +42,6 @@ def main():
     figwidth = TWO_COLUMN_WIDTH
     title_size = plt.rcParams['figure.titlesize']
     axes_label_size = plt.rcParams['axes.labelsize']
-    # create subfigures for top and bottom rows
-    # fig = plt.figure(layout='constrained', figsize=(figwidth, figwidth*0.4))
-    # subfigs = fig.subfigures(2, 1, hspace=0.1)
     fig, axs = plt.subplots(2, 5, figsize=(figwidth, figwidth*0.45), 
                             sharex=True, sharey='row')
     fig.subplots_adjust(left=0.04, top=0.83, right=0.98, bottom=0.12,
@@ -65,15 +62,14 @@ def main():
                 size=axes_label_size)
     
     apogee_data = import_apogee()
-    apogee_subset = apogee_region(apogee_data, galr_lim=GALR_LIM, 
-                                  absz_lim=ABSZ_LIM)
     
     print('Plotting DTDs...')
     for i, RIa in enumerate(tqdm(DTD_LIST)):
         axs[0,i].set_title(DTD_LABELS[i], va='top', pad=18)
         # Import VICE multi-zone output data
         output_name = '/'.join(['gaussian', 'lateburst', RIa, 'diskmodel'])
-        plot_bimodality(axs[0,i], output_name, apogee_subset, uncertainties=True)
+        plot_bimodality(axs[0,i], output_name, apogee_data=apogee_data, 
+                        uncertainties=True, resample=True, show_peaks=False)
     axs[0,0].set_ylabel('Normalized PDF')
     fig.text(0.51, 0.98, 'Late-burst SFH',
               ha='center', va='top', size=title_size)
@@ -83,7 +79,8 @@ def main():
     for j, evolution in enumerate(tqdm(SFH_LIST)):
         axs[1,j].set_title(SFH_LABELS[j], pad=-8)
         output_name = '/'.join(['gaussian', evolution, 'exponential_timescale15', 'diskmodel'])
-        plot_bimodality(axs[1,j], output_name, apogee_subset, uncertainties=True)
+        plot_bimodality(axs[1,j], output_name, apogee_data=apogee_data,
+                        uncertainties=True, resample=True, show_peaks=False)
     axs[1,0].set_ylabel('Normalized PDF')
     fig.text(0.42, 0.5, 'Exponential DTD ($\\tau=1.5$ Gyr)',
               ha='center', va='top', size=title_size)
@@ -91,15 +88,19 @@ def main():
         
     # Plot APOGEE
     print('Plotting APOGEE...')
+    apogee_subset = apogee_region(apogee_data, galr_lim=GALR_LIM, 
+                                  absz_lim=ABSZ_LIM)
     for i, feh_bin in enumerate(FEH_BINS):
         subset_slice = apogee_subset[(apogee_subset['FE_H'] >= feh_bin[0]) &
                                       (apogee_subset['FE_H'] < feh_bin[1])]
         mdf, bin_edges = apogee_mdf(subset_slice, col='O_FE', 
                                     smoothing=SMOOTH_WIDTH, 
-                                    bins=np.arange(-0.15, 0.56, 0.01))
+                                    bins=np.arange(OFE_LIM[0], 
+                                                   OFE_LIM[1]+0.01, 0.01))
         mdf /= mdf.max()
         bin_centers = get_bin_centers(bin_edges)
-        axs[1,-1].plot(bin_centers, mdf, ls=LINESTYLES[i], label=feh_bin, c=COLORS[i])
+        axs[1,-1].plot(bin_centers, mdf, ls=LINESTYLES[i], label=feh_bin, 
+                       c=COLORS[i])
     axs[1,-1].set_title('APOGEE', pad=8, size=title_size)
     
     for ax in axs[-1]:
@@ -120,22 +121,6 @@ def main():
     plt.savefig(paths.figures / 'ofe_bimodality_summary.pdf', dpi=300)
     plt.close()
     print('Done!')
-    
-
-def plot_bimodality(ax, output_name, apogee_data, smoothing=SMOOTH_WIDTH, 
-                    uncertainties=True):
-    mzs = MultizoneStars.from_output(output_name)
-    if uncertainties:
-        mzs.model_uncertainty(inplace=True, apogee_data=apogee_data)
-    subset = mzs.region(galr_lim=GALR_LIM, absz_lim=ABSZ_LIM)
-    subset.resample_zheight(20000, apogee_data, inplace=True)
-    for i, feh_bin in enumerate(FEH_BINS):
-        subset_slice = subset.filter({'[fe/h]': feh_bin})
-        mdf, bin_edges = subset_slice.mdf('[o/fe]', smoothing=smoothing,
-                                          bins=np.arange(-0.15, 0.56, 0.01))
-        mdf /= mdf.max()
-        bin_centers = get_bin_centers(bin_edges)
-        ax.plot(bin_centers, mdf, ls=LINESTYLES[i], label=feh_bin, c=COLORS[i])
 
 
 if __name__ == '__main__':

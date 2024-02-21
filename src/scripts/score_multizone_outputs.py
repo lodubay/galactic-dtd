@@ -76,7 +76,7 @@ def main():
                 weighted_sums['age_ofe'] = np.average(scores['age_ofe'], 
                                                       weights=age_weights)
                 # Separate bimodality test (binary output)
-                weighted_sums['bimodality'] = test_bimodality(mzs)
+                weighted_sums['bimodality'] = test_bimodality(mzs, apogee_data)
                 summary_table.loc[dtd, sfh] = weighted_sums
                 t.update()
     
@@ -204,8 +204,9 @@ def score_age_ofe(mzs, apogee_data, age_col='LATENT_AGE',
     return np.sqrt(np.average(median_diffs**2, weights=apogee_counts[notna]))
 
 
-def test_bimodality(mzs, prominence=0.1, feh_bins=[(-0.6, -0.4), (-0.4, -0.2)],
-                    galr_lim=(7, 9), absz_lim=(0, 2), smoothing=0.05):
+def test_bimodality(mzs, apogee_data, prominence=0.1, smoothing=0.05, 
+                    feh_bins=[(-0.6, -0.4), (-0.4, -0.2)], ofe_lim=(-0.15, 0.55),
+                    galr_lim=(7, 9), absz_lim=(0, 2), nsamples=20000):
     """
     Determine whether the distribution of stars in [O/Fe] is bimodal.
     
@@ -213,6 +214,8 @@ def test_bimodality(mzs, prominence=0.1, feh_bins=[(-0.6, -0.4), (-0.4, -0.2)],
     ----------
     mzs : MultizoneStars object
         Star particle output from a VICE multizone run.
+    apogee_data : pandas.DataFrame
+        APOGEE data with ages, typically a subset of a galactic region.
     prominence : float, optional
         Prominence threshold for peak-finding algorithm. The default is 0.1.
     feh_bins : list of tuples, optional
@@ -225,17 +228,24 @@ def test_bimodality(mzs, prominence=0.1, feh_bins=[(-0.6, -0.4), (-0.4, -0.2)],
         Limits on absolute galactic z-height in kpc. The default is (0, 2).
     smoothing : float, optional
         Boxcar smoothing width for the [O/Fe] distribution. The default is 0.05.
+    nsamples : int, optional
+        Number of populations to sample from the resampled |z| distribution.
+    ofe_lim : tuple, optional
+        Lower and upper bounds on the [O/Fe] distribution.
     
     Returns
     -------
     bool
         Whether or not the distribution of stars in [O/Fe] is bimodal.
     """
+    apogee_subset = apogee_region(apogee_data, galr_lim, absz_lim)
     subset = mzs.region(galr_lim=galr_lim, absz_lim=absz_lim)
+    subset.resample_zheight(nsamples, apogee_subset, inplace=True)
     for feh_bin in feh_bins:
         subset_slice = subset.filter({'[fe/h]': feh_bin})
         mdf, bin_edges = subset_slice.mdf('[o/fe]', smoothing=smoothing,
-                                          bins=np.arange(-0.15, 0.56, 0.01))
+                                          bins=np.arange(ofe_lim[0], 
+                                                         ofe_lim[1]+0.01, 0.01))
         peaks, _ = find_peaks(mdf/mdf.max(), prominence=prominence)
         is_bimodal = (len(peaks) > 1)
         if is_bimodal:
