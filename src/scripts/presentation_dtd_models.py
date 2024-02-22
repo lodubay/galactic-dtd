@@ -51,6 +51,8 @@ def main():
                 capthick=0.5 * default_line_width, marker='s', markersize=5, 
                 label='SN survey recovery\n(Maoz et al. 2012)')
     
+    # Replace y-axis label
+    ax.set_ylabel('Relative supernova rate', labelpad=-6)
     ax.legend(frameon=False, loc='upper right', handlelength=1.2)
     fig.savefig(paths.figures / 'presentation' / 'dtd_models')
     plt.close()
@@ -66,13 +68,13 @@ class styles:
     }
     exp = {
         'func': dtds.exponential(timescale=1.5, tmin=MIN_RIA_DELAY),
-        'label': 'Theoretical SD',
+        'label': 'Theoretical WD+star',
         'color': paultol.bright.colors[0], # blue
         'line': '--',
     }
     plateau_long = {
         'func': dtds.plateau(width=1., slope=-1.1, tmin=MIN_RIA_DELAY),
-        'label': 'Theoretical DD',
+        'label': 'Theoretical WD+WD',
         'color': paultol.bright.colors[2], # green
         'line': '-.',
     }
