@@ -94,7 +94,7 @@ def main(contours=False):
         # absz_lim = (ABSZ_BINS[-(i+2)], ABSZ_BINS[-(i+1)])
         # ax.text(0.5, 0.93, r'$%s\leq |z| < %s$ kpc' % absz_lim, size=14,
         #         va='top', ha='center', transform=ax.transAxes)
-        ax.text(0.5, 0.93, ROW_LABELS[i], size=14,
+        ax.text(0.5, 0.93, ROW_LABELS[i],
                 va='top', ha='center', transform=ax.transAxes)
     # Axis column titles
     for j, ax in enumerate(axs[0]):
