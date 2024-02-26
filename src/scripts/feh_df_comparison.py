@@ -16,10 +16,12 @@ import _globals
 SFH_LIST = ['insideout', 'twoinfall']
 SFH_LABELS = ['Inside-out SFH', 'Two-infall SFH']
 DTD_MODEL = 'exponential_timescale15' # hold constant while varying SFH
-DTD_LIST = ['powerlaw_slope14',
-            'exponential_timescale30']
-DTD_LABELS = ['Power-law DTD\n($\\alpha=-1.4$)',
-              'Exponential DTD\n($\\tau=3$ Gyr)']
+# DTD_LIST = ['powerlaw_slope14',
+#             'exponential_timescale30']
+# DTD_LABELS = ['Power-law DTD\n($\\alpha=-1.4$)',
+#               'Exponential DTD\n($\\tau=3$ Gyr)']
+DTD_LIST = ['prompt', 'triple']
+DTD_LABELS = ['Two-population', 'Triple-system']
 SFH_MODEL = 'insideout' # hold constant while varying DTD
 # Plot settings
 NBINS = 100
@@ -35,7 +37,7 @@ def main():
                               figure_width=_globals.TWO_COLUMN_WIDTH, 
                               cmap=CMAP, xlabel='[Fe/H]', xlim=FEH_LIM, 
                               major_tick_spacing=0.5, cbar_width=0.4)
-    fig.subplots_adjust(top=0.9, left=0.04, right=0.96)
+    fig.subplots_adjust(top=0.95, left=0.04, right=0.96)
     colors = get_color_list(plt.get_cmap(CMAP), _globals.GALR_BINS)
     # plot varying SFH, constant DTD
     mdf_kwargs = {'bins': NBINS, 'range': FEH_LIM, 'smoothing': SMOOTH_WIDTH}
@@ -43,16 +45,17 @@ def main():
         output_name = '/'.join(['gaussian', sfh, DTD_MODEL, 'diskmodel'])
         mzs = MultizoneStars.from_output(output_name)
         mzs.model_uncertainty(apogee_data, inplace=True)
-        dfs.plot_multizone_mdfs(mzs, axs[:,i], '[fe/h]', colors, 
+        dfs.plot_multizone_mdfs(mzs, axs[:,i], '[fe/h]', colors, titlepad=0,
                                 label=SFH_LABELS[i], **mdf_kwargs)
     # center column APOGEE for comparison
-    dfs.plot_apogee_mdfs(apogee_data, axs[:,2], 'FE_H', colors, **mdf_kwargs)
+    dfs.plot_apogee_mdfs(apogee_data, axs[:,2], 'FE_H', colors, titlepad=0,
+                         **mdf_kwargs)
     # plot varying DTD, constant SFH
     for i, dtd in enumerate(DTD_LIST):
         output_name = '/'.join(['gaussian', SFH_MODEL, dtd, 'diskmodel'])
         mzs = MultizoneStars.from_output(output_name)
         mzs.model_uncertainty(apogee_data, inplace=True)
-        dfs.plot_multizone_mdfs(mzs, axs[:,3+i], '[fe/h]', colors, 
+        dfs.plot_multizone_mdfs(mzs, axs[:,3+i], '[fe/h]', colors, titlepad=0,
                                 label=DTD_LABELS[i], **mdf_kwargs)
     # Add vertical lines for visual separation
     # for x in get_subplot_edges(fig, axs)[1:-1]:
