@@ -142,6 +142,7 @@ dependencies:
         - src/data/multizone/gaussian/twoinfall/triple/
         - src/data/APOGEE/sample.csv
     src/scripts/summary_table.py:
+        - src/scripts/score_multizone_outputs.py
         - src/data/multizone/scores.csv
     src/scripts/sample_size.py:
         - src/data/APOGEE/sample.csv
