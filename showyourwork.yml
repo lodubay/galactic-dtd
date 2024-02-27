@@ -144,6 +144,7 @@ dependencies:
     src/scripts/summary_table.py:
         - src/scripts/score_multizone_outputs.py
         - src/data/multizone/scores.csv
+        - src/scripts/summary_table_header.txt
     src/scripts/sample_size.py:
         - src/data/APOGEE/sample.csv
     src/scripts/age_sample_size.py:

@@ -785,7 +785,8 @@ rule age_ofe_dtd:
 # Tables
 rule summary_table:
     input:
-        "src/data/multizone/scores.csv"
+        "src/data/multizone/scores.csv",
+        "src/scripts/summary_table_header.txt"
     output:
         "src/tex/output/summary_table.tex"
     script:
