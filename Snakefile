@@ -759,6 +759,15 @@ rule ofe_feh_dtd:
     script:
         "src/scripts/ofe_feh_dtd.py"
 
+rule ofe_feh_twoinfall:
+    input:
+        "src/data/multizone/gaussian/twoinfall/plateau_width03",
+        "src/data/APOGEE/sample.csv"
+    output:
+        "src/tex/figures/ofe_feh_twoinfall.pdf"
+    script:
+        "src/scripts/ofe_feh_twoinfall.py"
+
 rule age_ofe_sfh:
     input:
         expand("src/data/multizone/gaussian/{evolution}/exponential_timescale15",
