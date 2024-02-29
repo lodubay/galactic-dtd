@@ -99,7 +99,7 @@ def main(cmap_name='winter', style='paper'):
                     Line2D([0], [0], color='r', linestyle='-', linewidth=0.5),
                     Line2D([0], [0], color='r', linestyle='--', linewidth=0.5)]
     legend_labels = ['Gas abundance', 'APOGEE 30% cont.', 'APOGEE 80% cont.']
-    axs[2,1].legend(custom_lines, legend_labels, frameon=True, edgecolor='w',
+    axs[2,1].legend(custom_lines, legend_labels, frameon=False, edgecolor='w',
                     loc='upper right', handlelength=0.6, handletextpad=0.4,
                     borderpad=0.1, labelspacing=0.4, borderaxespad=0.5,
                     framealpha=1.,)
