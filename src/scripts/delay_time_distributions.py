@@ -32,6 +32,8 @@ def main(style='paper'):
         med_idx = np.where(cdf >= 0.5)[0][0]
         med = times[med_idx]
         ax.scatter(med, 5e-3, c=dtd['color'], s=10, marker='o')
+    # Label median delay times
+    ax.text(1, 8e-3, 'Median delay times', ha='center')
     ax.set_ylim((3e-3, 3e2))
     # Plot the SDSS-II DTD recovered by Maoz et al. (2012), MNRAS 426, 3282
     # (see their Table 2)
