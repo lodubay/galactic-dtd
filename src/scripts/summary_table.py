@@ -30,13 +30,13 @@ def main():
                                              ~df['bimodality'].astype('bool'),
                                         other='\\no')
     # Fancy row labels
-    dtd_labels = ['Power-law', '($\\alpha=-1.1$)', '', '',
+    dtd_labels = ['Two-population', '($t_{\\rm max}=0.05$ Gyr)', '', '',
                   'Power-law', '($\\alpha=-1.4$)', '', '',
+                  'Power-law', '($\\alpha=-1.1$)', '', '',
                   'Exponential', '($\\tau=1.5$ Gyr)', '', '',
                   'Exponential', '($\\tau=3.0$ Gyr)', '', '',
                   'Plateau', '($W=0.3$ Gyr)', '', '',
                   'Plateau', '($W=1.0$ Gyr)', '', '',
-                  'Two-population', '($t_{\\rm max}=0.05$ Gyr)', '', '',
                   'Triple-system', '($t_{\\rm rise}=0.5$ Gyr)', '', '']
     sfh_labels = ['Inside-out', 'Late-burst', 'Early-burst', 'Two-infall']
     df.reset_index(drop=False, inplace=True)

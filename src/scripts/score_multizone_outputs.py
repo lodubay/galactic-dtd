@@ -17,13 +17,13 @@ from _globals import ABSZ_BINS, GALR_BINS
 
 MIGRATION = 'gaussian'
 SFH_LIST = ['insideout', 'lateburst', 'earlyburst', 'twoinfall']
-DTD_LIST = ['powerlaw_slope11', 
+DTD_LIST = ['prompt',
             'powerlaw_slope14', 
+            'powerlaw_slope11', 
             'exponential_timescale15',
             'exponential_timescale30',
             'plateau_width03',
             'plateau_width10',
-            'prompt',
             'triple']
 AGE_SOURCE = 'L23' # Use Leung et al (2023) "latent-space" ages
 

@@ -1,5 +1,5 @@
 \begin{deluxetable*}{ll|ccccc}
-\tablecaption{Summary of qualitative comparisons between the simulation output,
+\tablecaption{Summary of quantitative comparisons between the model output,
 APOGEE DR17 abundances, and \citetalias{Leung2023-Ages} ages for each multi-zone
 simulation.\label{tab:results}}
 \tablehead{
