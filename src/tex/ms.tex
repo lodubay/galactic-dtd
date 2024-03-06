@@ -121,7 +121,7 @@ This paper presents the first comprehensive look at the DTD in a multi-zone GCE 
 \subsection{Nucleosynthetic Yields}
 \label{sec:yields}
 
-Like \citetalias{Johnson2021-Migration}, we focus our analysis on O and Fe, representing the $\alpha$ and Fe-peak elements, respectively. Both elements are produced by CCSNe. \vice adopts the instantaneous recycling approximation for CCSNe, so the equation which governs CCSN enrichment as a function of star formation for some element $x$ is simply
+For simplicity and easier comparison to the results of \citet{Johnson2021-Migration} (hereafter \citetalias{Johnson2021-Migration}), we focus our analysis on O and Fe, representing the $\alpha$ and Fe-peak elements, respectively. Both elements are produced by CCSNe. \vice adopts the instantaneous recycling approximation for CCSNe, so the equation which governs CCSN enrichment as a function of star formation for some element $x$ is simply
 \begin{equation}
     \dot M_x^{\rm CC} = y_x^{\rm CC} \dot M_*
     \label{eq:ccsn-enrichment}
@@ -470,7 +470,7 @@ The results presented in this section indicate that the observables which should
     \enddata
 \end{deluxetable*}
 
-We make use of the multi-zone simulation tools in \vice developed by \citet{Johnson2021-Migration} (hereafter \citetalias{Johnson2021-Migration}). The basic setup of our models follows theirs: the simulated Galaxy is a disk with a radius of 20 kpc and is divided into concentric rings of width $\delta R_{\rm gal}=100$ pc. The gas in each ring is assumed to be instantaneously mixed; while star particles are allowed to migrate radially (see Appendix \ref{app:migration}), there is no exchange of gas between rings. We run our simulations with a time-step size of $\Delta t=10$ Myr up to a maximum time of $t_{\rm max}=13.2$ Gyr. Following \citetalias{Johnson2021-Migration}, we set \vice to form $n=8$ stellar populations per ring per time-step, and we set a maximum star-formation radius of $R_{\rm SF} = 15.5$ kpc, such that $\dot\Sigma_*=0$ for $R_{\rm gal}>R_{\rm SF}$ (stars are allowed to migrate past $R_{\rm SF}$, they are just not born there). We summarize the parameters for our multi-zone models in Table \ref{tab:multizone-parameters}.
+We make use of the multi-zone GCE model tools in \vice developed by \citetalias{Johnson2021-Migration}. The basic setup of our models follows theirs: the model Galaxy is a disk with a radius of 20 kpc and is divided into concentric rings of width $\delta R_{\rm gal}=100$ pc. The gas in each ring is assumed to be instantaneously mixed; while star particles are allowed to migrate radially (see Appendix \ref{app:migration}), there is no exchange of gas between rings. We run our simulations with a time-step size of $\Delta t=10$ Myr up to a maximum time of $t_{\rm max}=13.2$ Gyr. Following \citetalias{Johnson2021-Migration}, we set \vice to form $n=8$ stellar populations per ring per time-step, and we set a maximum star-formation radius of $R_{\rm SF} = 15.5$ kpc, such that $\dot\Sigma_*=0$ for $R_{\rm gal}>R_{\rm SF}$ (stars are allowed to migrate past $R_{\rm SF}$, they are just not born there). We summarize the parameters for our multi-zone models in Table \ref{tab:multizone-parameters}.
 
 \subsection{The distribution of [Fe/H]}
 \label{sec:feh-df}
@@ -505,23 +505,7 @@ for distributions $P$ and $Q$ with probability density functions $p(x)$ and $q(x
     \label{eq:feh-df-score}
 \end{equation}
 
-The model combination with the best (lowest) score for the [Fe/H] DF is the two-infall SFH with the exponential ($\tau=3$ Gyr) DTD. The choice of SFH has a larger effect on the overall score than the DTD, and the best-performing SFH is the two-infall model, followed closely by the early-burst. However, the difference between the best-scoring model and the worst (late-burst SFH with triple-evolution DTD) is fairly small. The quantitative agreement between the predicted and observed [Fe/H] DFs is primarily affected by the assumption of chemical equilibrium, the abundance gradient, and radial migration. For further discussion, wee Section 3.2 of \citetalias{Johnson2021-Migration}.
-
-% \begin{figure}
-%     \centering
-%     \includegraphics{figures/feh_df_dtd.pdf}
-%     \caption{Distributions of [Fe/H] from multi-zone simulations with different DTDs: a power-law with slope $\alpha=-1.4$ (\textit{left}), and an exponential with timescale $\tau=3$ Gyr (\textit{right}). Each row presents distributions of stars within a range of absolute midplane distance: $1\leq|z|<2$ kpc (\textit{top}), $0.5\leq|z|<1$ kpc (\textit{middle}), and $0\leq|z|<0.5$ kpc (\textit{bottom}). Within each panel, curves of different color represent the distributions of stars binned by Galactocentric radius $R_{\rm gal}$, from $3\leq R_{\rm gal}<5$ kpc (yellow) to $13\leq R_{\rm gal}<15$ kpc (blue). Each distribution is normalized so the area under the curve is 1, and the vertical scale is consistent across each row. All distributions are convolved with observational uncertainties in APOGEE DR17 (see Table \ref{tab:uncertainties}) and smoothed with a box-car width of 0.2 dex. In both cases an inside-out SFH is assumed.}
-%     \label{fig:feh-df-dtd}
-%     \script{feh_df_dtd.py}
-% \end{figure}
-
-% \begin{figure*}
-%     \centering
-%     \includegraphics[width=\linewidth]{figures/feh_df_sfh.pdf}
-%     \caption{Distributions of [Fe/H] from multi-zone simulations with different SFHs. The plot format is similar to Figure \ref{fig:feh-df-dtd}. In all cases an exponential DTD with timescale $\tau=1.5$ Gyr is assumed. Distributions from APOGEE DR17, binned and smoothed similarly, are presented in the right-most column for reference.}
-%     \label{fig:feh-df-sfh}
-%     \script{feh_df_sfh.py}
-% \end{figure*}
+The model combination with the best (lowest) score for the [Fe/H] DF is the two-infall SFH with the exponential ($\tau=3$ Gyr) DTD. The choice of SFH has a larger effect on the overall score than the DTD, and the best-performing SFH is the two-infall model, followed closely by the early-burst. However, the difference between the best-scoring model and the worst (late-burst SFH with triple-evolution DTD) is fairly small. The quantitative agreement between the predicted and observed [Fe/H] DFs is primarily affected by the assumption of chemical equilibrium, the abundance gradient, and radial migration. For further discussion, see Section 3.2 of \citetalias{Johnson2021-Migration}.
 
 \subsection{The distribution of [O/Fe]}
 \label{sec:ofe-df}
@@ -551,7 +535,7 @@ The two-infall SFH model produces \textit{three} distinct modes at ${\rm [O/Fe]}
     \script{ofe_df_dtd.py}
 \end{figure*}
 
-Figure \ref{fig:ofe-df-dtd} shows [O/Fe] distributions produced by simulations with the same SFH but a range of different DTDs. We choose the early-burst SFH because it produces distinct high- and low-$\alpha$ sequences, which makes the effect of the DTD on the former more apparent. The most obvious effect of the DTD is to shift the mode of the high-$\alpha$ sequence. The two-population DTD, which has the most prompt SNe Ia of any model in this paper, places the high-$\alpha$ sequence at ${\rm [O/Fe]}\approx 0.2$, while the triple-system DTD, which has the fewest prompt SNe Ia, places it $\sim0.2$ dex higher at ${\rm [O/Fe]}\approx0.4$. This metric alone would seem to favor the exponential ($\tau=1.5$ Gyr) or plateau ($W=0.3$ Gyr; not shown) models; however, 
+Figure \ref{fig:ofe-df-dtd} shows [O/Fe] distributions produced by simulations with the same SFH but a range of different DTDs. We choose the early-burst SFH because it produces distinct high- and low-$\alpha$ sequences, which makes the effect of the DTD on the former more apparent. The most obvious effect of the DTD is to shift the mode of the high-$\alpha$ sequence. The two-population DTD, which has the most prompt SNe Ia of any model in this paper, places the high-$\alpha$ sequence at ${\rm [O/Fe]}\approx 0.2$, while the triple-system DTD, which has the fewest prompt SNe Ia, places it $\sim0.2$ dex higher at ${\rm [O/Fe]}\approx0.4$. 
 
 [Talk about scores]
 
@@ -666,7 +650,9 @@ To avoid drawing strong conclusions from small numerical differences in scores,
 % Instead of reporting the numerical scores for each simulation output, 
 in the column corresponding to a particular diagnostic we simply write \yes, \meh, or \no, which corresponds to a score in the top, middle, or bottom tirtile out of all of our simulations, respectively. A \yes indicates that particular combination of model SFH and DTD performed better than most when compared to the APOGEE sample for that diagnostic.
 
-Table \ref{tab:results} indicates combinations of SFH and DTD which are more or less favorable in certain regimes. However, we emphasize that we do not use these scores to fit the models to the data. Much of the variation between models can be explained by the choice of SFH: in general, the two-infall models rank the highest across all diagnostics, while the late-burst models generally compare poorly to the rest.
+Table \ref{tab:results} indicates combinations of SFH and DTD which are more or less favorable in certain regimes. However, we emphasize that we do not use these scores to fit the models to the data. Much of the variation between models can be explained by the choice of SFH: in general, the two-infall models rank the highest across all diagnostics, while the late-burst models generally compare poorly to the rest. This is different for the bimodality test, where the early-burst SFH is able to produce a bimodal [O/Fe] distribution for all DTDs, as discussed in Section \ref{sec:bimodality}. The choice of DTD has a clear effect on the model scores, and this effect is similar across the diagnostics. The models which perform the best (most \yes's and fewest \no's) are those with the exponential and plateau DTDs. It is interesting that the best-performing model overall in our scoring system, the exponential DTD with $\tau=1.5$ Gyr, is intermediate among all our DTDs in terms of the number of prompt SNe Ia and median delay time, but has the {\it lowest} rate at very long delay times ($\sim10$ Gyr). Models with a large fraction of prompt SNe Ia, such as the power-law and two-population DTDs, fare quite poorly, with the steepest power-law ($\alpha=-1.4$) ending up in the bottom tirtile across the board for most of our SFHs.
+
+[Discuss \citet{Palicio2024-CosmicSNIaRate}]
 
 Extra-galactic observations of the DTD are more sensitive to the late-time DTD; GCE comparisons with the high-alpha sequence are more sensitive to the early-time DTD. 
 [Later on, make suggestions]
