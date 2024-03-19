@@ -124,7 +124,54 @@ This paper presents the first comprehensive look at the DTD in a multi-zone GCE 
 \section{Methods}
 \label{sec:methods}
 
-We use \vice to run chemical evolution models which closely follow those of \citet{JohnsonWeinberg2020-Starbursts} and \citet[][hereafter \citetalias{Johnson2021-Migration}]{Johnson2021-Migration}. We refer the interested reader to the former for details about the \vice package and to the latter for details about the model Milky Way disk, including the star formation law, radial density gradient, and outflows. Similar to \citetalias{Johnson2021-Migration}, we adopt a prescription for radial migration based on the {\tt h277} hydrodynamical simulation \citep{Christensen2012-h277}. Appendix \ref{app:migration} describes our method for determining the migration distance $\Delta R_{\rm gal}$ for each model stellar population, which produces smoother distributions in chemical abundance space than the simulation-based approach.
+We use \vice to run chemical evolution models which closely follow those of \citet{JohnsonWeinberg2020-Starbursts} and \citet[][hereafter \citetalias{Johnson2021-Migration}]{Johnson2021-Migration}. We refer the interested reader to the former for details about the \vice package and to the latter for details about the model Milky Way disk, including the star formation law, radial density gradient, and outflows. Similar to \citetalias{Johnson2021-Migration}, we adopt a prescription for radial migration based on the {\tt h277} hydrodynamical simulation \citep{Christensen2012-h277}. Appendix \ref{app:migration} describes our method for determining the migration distance $\Delta R_{\rm gal}$ for each model stellar population, which produces smoother distributions in chemical abundance space than the simulation-based approach. Table \ref{tab:multizone-parameters} summarizes our model parameters and the sub-sections in which we discuss them in detail.
+
+\begin{deluxetable*}{Cccl}
+    \tablecaption{A summary of parameters and their fiducial values for our chemical evolution models. We omit some parameters that are unchanged from \citetalias{Johnson2021-Migration}; see their Table 1 for details.\label{tab:multizone-parameters}}
+    \tablehead{
+        \colhead{Quantity} & \colhead{Fiducial Value(s)} & \colhead{Section} & \colhead{Description}
+    }
+    \startdata
+        % Multi-zone model parameters
+        R_{\rm gal}     & [0, 20] kpc   & \ref{sec:multizone-results} & Galactocentric radius \\
+        \delta R_{\rm gal}  & 100 pc    & \ref{sec:multizone-results} & Width of each concentric ring \\
+        \Delta R_{\rm gal}  & N/A       & \ref{app:migration} & Change in orbital radius due to stellar migration \\
+        p(\Delta R_{\rm gal}|\tau,R_{\rm form}) & Equation \ref{eq:radial-migration}    & \ref{app:migration} & Probability density function of radial migration distance \\
+        z                   & [-3, 3] kpc                & \ref{app:migration} & Distance from Galactic midplane at present day \\
+        p(z|\tau,R_{\rm final}) & Equation \ref{eq:sech-pdf}            & \ref{app:migration} & Probability density function of Galactic midplane distance\\
+        \Delta t        & 10 Myr    & \ref{sec:multizone-results} & Time-step size \\
+        t_{\rm max}     & 13.2 Gyr  & \ref{sec:multizone-results} & Maximum simulation time \\
+        n               & 8         & \ref{sec:multizone-results} & Number of stellar populations formed per ring per time-step \\
+        R_{\rm SF}      & 15.5 kpc  & \ref{sec:multizone-results} & Maximum radius of star formation \\
+        M_{g,0}   & 0         & \ref{sec:sfh}     & Initial gas mass \\
+        \dot M_r    & continuous    & \ref{sec:multizone-results} & Recycling rate \citep[][Equation 2]{JohnsonWeinberg2020-Starbursts} \\
+        \hline
+        % DTD
+        R_{\rm Ia}(t)   & Equation \ref{eq:dtd-function}    & \ref{sec:dtd-models}  & Delay time distribution of Type Ia supernovae \\
+        t_D             & 40 Myr    & \ref{sec:dtd-models}  & Minimum SN Ia delay time \\
+        N_{\rm Ia}/M_\star  & $2.2\times10^{-3}$ M$_\odot^{-1}$ & \ref{sec:yields}  & SNe Ia per unit mass of stars formed \citep{MaozMannucci2012-SNeIaReview} \\
+        \hline
+        % Nucleosynthetic yields
+        y_{\rm O}^{\rm CC}  & 0.015     & \ref{sec:yields}  & CCSN yield of O    \\
+        y_{\rm Fe}^{\rm CC} & 0.0012    & \ref{sec:yields}  & CCSN yield of Fe   \\
+        y_{\rm O}^{\rm Ia}  & 0         & \ref{sec:yields}  & SN Ia yield of O       \\
+        y_{\rm Fe}^{\rm Ia} & 0.00214   & \ref{sec:yields}  & SN Ia yield of Fe \\
+        \hline
+        % Star formation histories
+        f_{\rm IO}(t|R_{\rm gal})   & Equation \ref{eq:insideout-sfh}   & \ref{sec:sfh} & Time-dependence of the inside-out SFR \\
+        f_{\rm LB}(t|R_{\rm gal})   & Equation \ref{eq:lateburst-sfh}   & \ref{sec:sfh} & Time-dependence of the late-burst SFR \\
+        \tau_{\rm rise}             & 2 Gyr     & \ref{sec:sfh} & SFR rise timescale for inside-out and early-burst models \\
+        \uptau_{\rm EB}(t)          & Equation \ref{eq:earlyburst-taustar}  & \ref{sec:sfh}   & Time-dependence of the early-burst SFE timescale \\
+        f_{\rm EB}(t|R_{\rm gal})   & Equation \ref{eq:earlyburst-ifr}  & \ref{sec:sfh} & Time-dependence of the early-burst IFR \\
+        f_{\rm TI}(t|R_{\rm gal})   & Equation \ref{eq:twoinfall-ifr}   & \ref{sec:sfh} & Time-dependence of the two-infall IFR \\
+        \hline
+        % One-zone parameters
+        \uptau_\star                    & 2 Gyr & \ref{sec:onezone-results} & SFE timescale in one-zone models \\
+        \eta(R_{\rm gal}=8\,{\rm kpc})  & 2.15  & \ref{sec:onezone-results} & Outflow mass-loading factor at the solar annulus \\
+        \tau_{\rm sfh}(R_{\rm gal}=8\,{\rm kpc})    & 15.1 Gyr  & \ref{sec:sfh} & SFH timescale at the solar annulus \\
+    \enddata
+\end{deluxetable*}
+\vspace{-24pt}
 
 \subsection{Nucleosynthetic Yields}
 \label{sec:yields}
@@ -196,10 +243,11 @@ In the remainder of this subsection, we discuss each form of $f_{\rm Ia}$ indivi
 % \startdata
 \begin{table*}
     \centering
-    \caption{Summary of SN Ia delay time distributions (DTDs) explored in this paper.\label{tab:dtds}}
+    \caption{Summary of SN Ia delay time distributions (DTDs) explored in this paper.}
+    \label{tab:dtds}
     \begin{tabular}{lcll}
         \hline\hline
-        Model & Eq. & Parameters & Similar to \\
+        \multicolumn{1}{c}{Model} & Eq. & \multicolumn{1}{c}{Parameters} & \multicolumn{1}{c}{Similar to} \\
         \hline
         Two-population  & \ref{eq:prompt-dtd}   & $t_{\rm max}=0.05$ Gyr, $\sigma=0.015$ Gyr, & \citet{Mannucci2006-TwoPopulations} \\
                         &                       & $\tau=3.0$ Gyr & \\
@@ -226,7 +274,7 @@ In the remainder of this subsection, we discuss each form of $f_{\rm Ia}$ indivi
     f_{\rm Ia}^{\rm twopop}(t) = 0.5\Big[e^{-\frac{(t-t_p)^2}{2\sigma^2}} + e^{-t/\tau}\Big]
     \label{eq:prompt-dtd}
 \end{equation}
-To approximate the DTD from \citet{Mannucci2006-TwoPopulations}, we take $t_p=50$ Myr, $\sigma=15$ Myr, and $\tau=3$ Gyr, which results in $\sim 50\%$ of SNe Ia exploding within $t<100$ Myr. As Figure \ref{fig:dtds} illustrates, the two-population DTD has a shorter median delay time than most other models (except the power-law with $\alpha=-1.4$, not shown).
+To approximate the DTD from \citet{Mannucci2006-TwoPopulations}, we take $t_p=50$ Myr, $\sigma=15$ Myr, and $\tau=3$ Gyr, which results in $\sim 50\%$ of SNe Ia exploding within $t<100$ Myr. As we illustrate in Figure \ref{fig:dtds}, the two-population DTD has a shorter median delay time than most other models (except the power-law with $\alpha=-1.4$, not shown).
 This formulation is slightly different than the approximation used in other GCE studies \citep[e.g.,][]{Matteucci2006-BimodalDTDConsequences,Poulhazan2018-PrecisionPollution}, where it has a more distinctly bimodal shape. We have compared the two approximations to this DTD in a one-zone model and found that they produce very similar abundance tracks and MDFs. This DTD is adopted by the Feedback In Realistic Environments \citep[FIRE;][]{Hopkins2014-FIRE-1} and FIRE-2 \citep{Hopkins2018-FIRE-2} simulations.
 
 \paragraph{Power-law} A single power law with slope $\alpha$:
@@ -362,60 +410,6 @@ The normalization ratio $N_2/N_1$ is calculated so that the thick-to-thin-disk s
 Following \citet{BlandHawthornGerhard2016-MilkyWayReview}, we adopt values for the thick disk scale radius $R_1=2.0$ kpc, thin disk scale radius $R_2=2.5$ kpc, and $f_\Sigma(0)=0.27$.
 We note that most previous studies which use the two-infall model \citep[e.g.,][]{Spitoni2021-TwoInfall} do not consider gas outflows and instead adjust the nucleosynthetic yields to reproduce the solar abundance. We adopt radially-dependent outflows as in \citetalias{Johnson2021-Migration} (see their Section 2.4 for details) for all our SFHs, including two-infall. We discuss the implications of this difference in Section \ref{sec:two-infall-discussion}.
 
-\subsection{The Multi-Zone Disk Model}
-\label{sec:multizone-methods}
-
-\begin{deluxetable*}{Cccl}
-    \tablecaption{A summary of parameters and their fiducial values for our chemical evolution models. We omit some parameters that are unchanged from \citetalias{Johnson2021-Migration}; see their Table 1 for details.\label{tab:multizone-parameters}}
-    \tablehead{
-        \colhead{Quantity} & \colhead{Fiducial Value(s)} & \colhead{Section} & \colhead{Description}
-    }
-    \startdata
-        % Multi-zone model parameters
-        R_{\rm gal}     & [0, 20] kpc   & \ref{sec:multizone-methods} & Galactocentric radius \\
-        \delta R_{\rm gal}  & 100 pc    & \ref{sec:multizone-methods} & Width of each concentric ring \\
-        \Delta R_{\rm gal}  & N/A       & \ref{app:migration} & Change in orbital radius due to stellar migration \\
-        p(\Delta R_{\rm gal}|\tau,R_{\rm form}) & Equation \ref{eq:radial-migration}    & \ref{app:migration} & Probability density function of radial migration distance \\
-        z                   & [-3, 3] kpc                & \ref{app:migration} & Distance from Galactic midplane at present day \\
-        p(z|\tau,R_{\rm final}) & Equation \ref{eq:sech-pdf}            & \ref{app:migration} & Probability density function of Galactic midplane distance\\
-        \Delta t        & 10 Myr    & \ref{sec:multizone-methods} & Time-step size \\
-        t_{\rm max}     & 13.2 Gyr  & \ref{sec:multizone-methods} & Maximum simulation time \\
-        n               & 8         & \ref{sec:multizone-methods} & Number of stellar populations formed per ring per time-step \\
-        R_{\rm SF}      & 15.5 kpc  & \ref{sec:multizone-methods} & Maximum radius of star formation \\
-        M_{g,0}   & 0         & \ref{sec:sfh}     & Initial gas mass \\
-        \dot M_r    & continuous    & \ref{sec:multizone-methods} & Recycling rate \citep[][Equation 2]{JohnsonWeinberg2020-Starbursts} \\
-        \hline
-        % DTD
-        R_{\rm Ia}(t)   & Equation \ref{eq:dtd-function}    & \ref{sec:dtd-models}  & Delay time distribution of Type Ia supernovae \\
-        t_D             & 40 Myr    & \ref{sec:dtd-models}  & Minimum SN Ia delay time \\
-        N_{\rm Ia}/M_\star  & $2.2\times10^{-3}$ M$_\odot^{-1}$ & \ref{sec:yields}  & SNe Ia per unit mass of stars formed \citep{MaozMannucci2012-SNeIaReview} \\
-        \hline
-        % Nucleosynthetic yields
-        y_{\rm O}^{\rm CC}  & 0.015     & \ref{sec:yields}  & CCSN yield of O    \\
-        y_{\rm Fe}^{\rm CC} & 0.0012    & \ref{sec:yields}  & CCSN yield of Fe   \\
-        y_{\rm O}^{\rm Ia}  & 0         & \ref{sec:yields}  & SN Ia yield of O       \\
-        y_{\rm Fe}^{\rm Ia} & 0.00214   & \ref{sec:yields}  & SN Ia yield of Fe \\
-        \hline
-        % Star formation histories
-        f_{\rm IO}(t|R_{\rm gal})   & Equation \ref{eq:insideout-sfh}   & \ref{sec:sfh} & Time-dependence of the inside-out SFR \\
-        f_{\rm LB}(t|R_{\rm gal})   & Equation \ref{eq:lateburst-sfh}   & \ref{sec:sfh} & Time-dependence of the late-burst SFR \\
-        \tau_{\rm rise}             & 2 Gyr     & \ref{sec:sfh} & SFR rise timescale for inside-out and early-burst models \\
-        \uptau_{\rm EB}(t)          & Equation \ref{eq:earlyburst-taustar}  & \ref{sec:sfh}   & Time-dependence of the early-burst SFE timescale \\
-        f_{\rm EB}(t|R_{\rm gal})   & Equation \ref{eq:earlyburst-ifr}  & \ref{sec:sfh} & Time-dependence of the early-burst IFR \\
-        f_{\rm TI}(t|R_{\rm gal})   & Equation \ref{eq:twoinfall-ifr}   & \ref{sec:sfh} & Time-dependence of the two-infall IFR \\
-        \hline
-        % One-zone parameters
-        \uptau_\star                    & 2 Gyr & \ref{sec:onezone-results} & SFE timescale in one-zone models \\
-        \eta(R_{\rm gal}=8\,{\rm kpc})  & 2.15  & \ref{sec:onezone-results} & Outflow mass-loading factor at the solar annulus \\
-        \tau_{\rm sfh}(R_{\rm gal}=8\,{\rm kpc})    & 15.1 Gyr  & \ref{sec:sfh} & SFH timescale at the solar annulus \\
-    \enddata
-\end{deluxetable*}
-\vspace{-24pt}
-
-We use the multi-zone GCE model tools in \vice developed by \citetalias{Johnson2021-Migration}. The basic setup of our models follows theirs. The disk is divided into concentric rings of width $\delta R_{\rm gal}=100$ pc. Stellar populations migrate radially under the prescription we describe in Appendix \ref{app:migration}, but each ring is otherwise described by a conventional one-zone GCE model with instantaneous mixing (see discussion in Section \ref{sec:onezone-results}). Following \citetalias{Johnson2021-Migration}, we do not implement radial gas flows \citep[e.g.,][]{LaceyFall1985-RadialGasFlows,BilitewskiSchonrich2012-RadialFlows}.
-
-We run our models with a time-step size of $\Delta t=10$ Myr up to a maximum time of $t_{\rm max}=13.2$ Gyr. Following \citetalias{Johnson2021-Migration}, we set \vice to form $n=8$ stellar populations per ring per time-step, and we set a maximum star-formation radius of $R_{\rm SF} = 15.5$ kpc, such that $\dot\Sigma_\star=0$ for $R_{\rm gal}>R_{\rm SF}$. The model has a full radial extent of 20 kpc, allowing a purely migrated population to arise in the outer 4.5 kpc. We adopt continuous recycling, which accounts for the time-dependent return of mass from all previous generations of stars \citep[see Equation 2 from][]{JohnsonWeinberg2020-Starbursts}. We summarize these parameters, as well as those discussed in previous sub-sections, in Table \ref{tab:multizone-parameters}.
-
 \subsection{Observational Sample}
 \label{sec:observational-sample}
 
@@ -540,6 +534,10 @@ The results presented in this section indicate that the observables most sensiti
 \section{Multi-Zone Models}
 \label{sec:multizone-results}
 
+We use the multi-zone GCE model tools in \vice developed by \citetalias{Johnson2021-Migration}. The basic setup of our models follows theirs. The disk is divided into concentric rings of width $\delta R_{\rm gal}=100$ pc. Stellar populations migrate radially under the prescription we describe in Appendix \ref{app:migration}, but each ring is otherwise described by a conventional one-zone GCE model with instantaneous mixing (see discussion in Section \ref{sec:onezone-results}). Following \citetalias{Johnson2021-Migration}, we do not implement radial gas flows \citep[e.g.,][]{LaceyFall1985-RadialGasFlows,BilitewskiSchonrich2012-RadialFlows}.
+
+We run our models with a time-step size of $\Delta t=10$ Myr up to a maximum time of $t_{\rm max}=13.2$ Gyr. Following \citetalias{Johnson2021-Migration}, we set \vice to form $n=8$ stellar populations per ring per time-step, and we set a maximum star-formation radius of $R_{\rm SF} = 15.5$ kpc, such that $\dot\Sigma_\star=0$ for $R_{\rm gal}>R_{\rm SF}$. The model has a full radial extent of 20 kpc, allowing a purely migrated population to arise in the outer 4.5 kpc. We adopt continuous recycling, which accounts for the time-dependent return of mass from all previous generations of stars \citep[see Equation 2 from][]{JohnsonWeinberg2020-Starbursts}. We summarize these parameters in Table \ref{tab:multizone-parameters}.
+
 \subsection{The distribution of [Fe/H]}
 \label{sec:feh-df}
 
@@ -637,7 +635,7 @@ In general, DTDs with fewer prompt SNe Ia produce a high-$\alpha$ peak which is 
 
 Panels (f)--(i) in the bottom row of Figure \ref{fig:ofe-bimodality} illustrate the effect of the SFH on the [O/Fe] bimodality with the exponential ($\tau=1.5$ Gyr) DTD. The inside-out SFH does not produce a bimodal distribution for any of our DTDs. On the other hand, the early-burst SFH {\it always} produces a bimodal distribution in the $-0.4\leq{\rm [Fe/H]}<-0.2$ bin regardless of the assumed DTD, although the lower-metallicity bin does not (the lower peak falls short of our prominence threshold of 0.1). 
 
-For models with the late-burst and two-infall SFHs, bimodality is variable depending on the DTD: those with longer median delay times (e.g., exponential, plateau, or triple-system) generally produce a bimodal distribution in the $-0.6\leq{\rm [Fe/H]}<-0.4$ bin, while the power-law DTDs do not. None of our SFH+DTD combinations can produce an [O/Fe] distribution which is bimodal in {\it both} bins of [Fe/H], as we observe in APOGEE (j).
+For models with the late-burst and two-infall SFHs, bimodality is variable depending on the DTD: those with longer median delay times (e.g., exponential, plateau, or triple-system) generally produce a bimodal distribution in the $-0.6\leq{\rm [Fe/H]}<-0.4$ bin, while the power-law DTDs do not. None of our SFH+DTD combinations can produce an [O/Fe] distribution which is bimodal in {\it both} bins of [Fe/H] shown in Figure \ref{fig:ofe-bimodality}, as observed in APOGEE (panel j).
 
 \subsection{The [O/Fe]--[Fe/H] Plane}
 \label{sec:ofe-feh}
@@ -728,9 +726,9 @@ where $\Delta\tau_k=\rm{med}(\tau_{\rm \vice})-\rm{med}(\tau_{\rm L23})$ is the 
 
 The results presented in Section \ref{sec:multizone-results} represent a fraction of the 32 total multi-zone model outputs (four SFHs and eight DTDs) and focus on the even smaller fraction of outputs which lie in the solar annulus. 
 % While we focused our attention on results in the solar annulus (for which we still have the best data), we have model outputs which span the entire disk out to 20 kpc. In order to identify trends among our many models, it will be useful to have some semi-quantitative way to compare their outputs to APOGEE data across the disk.
-In this Section, we compare all our model outputs to APOGEE across five diagnostics: the MDF, [O/Fe] DF, [Fe/H]--[O/Fe] plane, age--[O/Fe] plane, and [O/Fe] bimodality. We perform statistical tests between APOGEE and the model outputs in each region of the Galaxy (as described in corresponding subsections of Section \ref{sec:multizone-results}), then compute the average weighted by the size of the APOGEE sample in each region to obtain a single numerical score.
+In this section, we compare all of our model outputs to APOGEE across five diagnostics: the MDF, [O/Fe] DF, [Fe/H]--[O/Fe] plane, age--[O/Fe] plane, and [O/Fe] bimodality. We perform statistical tests between APOGEE and the model outputs in each region of the Galaxy (as described in corresponding subsections of Section \ref{sec:multizone-results}), then compute the average weighted by the size of the APOGEE sample in each region to obtain a single numerical score.
 
-The diagnostic scores for each model are presented in Table \ref{tab:results}. These scores are useful to indicate combinations of SFH and DTD which are favorable or disfavorable in certain regimes, but we emphasize that we do not use these scores to fit the models to the data.
+The diagnostic scores for each model are presented in Table \ref{tab:results}. We use these scores to indicate combinations of SFH and DTD which are favorable or unfavorable in certain regimes, but we do {\it not} fit our models to the data.
 To avoid drawing strong conclusions from small numerical differences in scores, 
 % Instead of reporting the numerical scores for each model output, 
 in the column corresponding to a particular diagnostic we simply write \yes, \meh, or \no, which corresponds to a score in the top, middle, or bottom tirtile out of all of our models, respectively. A \yes indicates that particular combination of model SFH and DTD performed better than most when compared to the APOGEE sample for that diagnostic.
