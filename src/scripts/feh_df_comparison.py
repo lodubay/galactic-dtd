@@ -21,7 +21,7 @@ DTD_MODEL = 'exponential_timescale15' # hold constant while varying SFH
 # DTD_LABELS = ['Power-law DTD\n($\\alpha=-1.4$)',
 #               'Exponential DTD\n($\\tau=3$ Gyr)']
 DTD_LIST = ['prompt', 'triple']
-DTD_LABELS = ['Two-population', 'Triple-system']
+DTD_LABELS = ['Two-population DTD', 'Triple-system DTD']
 SFH_MODEL = 'insideout' # hold constant while varying DTD
 # Plot settings
 NBINS = 100
@@ -39,29 +39,28 @@ def main():
                               major_tick_spacing=0.5, cbar_width=0.4)
     fig.subplots_adjust(top=0.95, left=0.04, right=0.96)
     colors = get_color_list(plt.get_cmap(CMAP), _globals.GALR_BINS)
-    # plot varying SFH, constant DTD
     mdf_kwargs = {'bins': NBINS, 'range': FEH_LIM, 'smoothing': SMOOTH_WIDTH}
+    # plot varying SFH, constant DTD
+    # title_size = plt.rcParams['axes.titlesize']
+    # fig.text(0.22, 0.92, r'(Exponential DTD, $\tau_{\rm Ia}=1.5$ Gyr)',
+    #          ha='center', va='bottom')
     for i, sfh in enumerate(SFH_LIST):
         output_name = '/'.join(['gaussian', sfh, DTD_MODEL, 'diskmodel'])
         mzs = MultizoneStars.from_output(output_name)
         mzs.model_uncertainty(apogee_data, inplace=True)
-        dfs.plot_multizone_mdfs(mzs, axs[:,i], '[fe/h]', colors, titlepad=0,
+        dfs.plot_multizone_mdfs(mzs, axs[:,i], '[fe/h]', colors, titlepad=-18,
                                 label=SFH_LABELS[i], **mdf_kwargs)
     # center column APOGEE for comparison
     dfs.plot_apogee_mdfs(apogee_data, axs[:,2], 'FE_H', colors, titlepad=0,
-                         **mdf_kwargs)
+                          **mdf_kwargs)
     # plot varying DTD, constant SFH
+    # fig.text(0.78, 0.92, '(Inside-out SFH)', ha='center', va='bottom')
     for i, dtd in enumerate(DTD_LIST):
         output_name = '/'.join(['gaussian', SFH_MODEL, dtd, 'diskmodel'])
         mzs = MultizoneStars.from_output(output_name)
         mzs.model_uncertainty(apogee_data, inplace=True)
-        dfs.plot_multizone_mdfs(mzs, axs[:,3+i], '[fe/h]', colors, titlepad=0,
+        dfs.plot_multizone_mdfs(mzs, axs[:,3+i], '[fe/h]', colors, titlepad=-12,
                                 label=DTD_LABELS[i], **mdf_kwargs)
-    # Add vertical lines for visual separation
-    # for x in get_subplot_edges(fig, axs)[1:-1]:
-    #     line = plt.Line2D([x,x], [0.13,0.98], transform=fig.transFigure, 
-    #                       color='k', linewidth=0.5)
-    #     fig.add_artist(line)
     highlight_panels(fig, axs, [(0,2),(1,2),(2,2)])
     
     for ax in axs[:,0]:
