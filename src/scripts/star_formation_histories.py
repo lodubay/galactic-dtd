@@ -86,10 +86,10 @@ def setup_axes(tmax=END_TIME, width=TWO_COLUMN_WIDTH):
     axs[0,2].set_title('Early-Burst')
     axs[0,3].set_title('Two-Infall')
     # y-axis labels are diagnostics
-    axs[0,0].set_ylabel(r'$\dot \Sigma_*$ [$M_{\odot}\,\rm{yr}^{-1}\,\rm{kpc}^{-2}$]')
+    axs[0,0].set_ylabel(r'$\dot \Sigma_\star$ [$M_{\odot}\,\rm{yr}^{-1}\,\rm{kpc}^{-2}$]')
     axs[1,0].set_ylabel(r'$\dot \Sigma_{\rm in}$ [$M_{\odot}\,\rm{yr}^{-1}\,\rm{kpc}^{-2}$]')
     axs[2,0].set_ylabel(r'$\Sigma_g$ [$M_{\odot}\,\rm{kpc}^{-2}$]')
-    axs[3,0].set_ylabel(r'$\tau_*$ [Gyr]')
+    axs[3,0].set_ylabel(r'$\uptau_\star$ [Gyr]')
     # One x-axis label for all panels
     bigax = fig.add_subplot(111, frameon=False)
     bigax.tick_params(labelcolor='none', which='both', top=False, bottom=False, 
