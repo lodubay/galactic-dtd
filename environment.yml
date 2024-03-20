@@ -12,6 +12,6 @@ dependencies:
   - scikit-learn>=1.2.0
   - pip:
       - matplotlib>=3.7.0
+      - cython>=3.0.2
       - vice>=1.3.1
       - scipy>=1.10.0
-      - cython>=3.0.2
