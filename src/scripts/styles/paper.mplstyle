@@ -15,8 +15,8 @@ ytick.minor.width: 0.3
 # Font style
 font.family: STIXgeneral
 mathtext.fontset: cm
-text.usetex: True
-text.latex.preamble: \usepackage{upgreek}
+#text.usetex: True
+#text.latex.preamble: \usepackage{upgreek}
 # Font size
 font.size: 8
 legend.fontsize: 8
