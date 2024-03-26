@@ -1,6 +1,7 @@
 % Define document class
 % \documentclass[modern,linenumbers]{aastex631}
-\documentclass[twocolumn,twocolappendix,linenumbers,trackchanges]{aastex631}
+% \documentclass[twocolumn,twocolappendix,linenumbers,trackchanges]{aastex631}
+\documentclass[twocolumn,twocolappendix,linenumbers]{aastex631}
 
 \usepackage{showyourwork}
 \usepackage{amsmath}
@@ -49,6 +50,9 @@
 \affiliation{\osuaffil}
 \affiliation{\ccappaffil}
 % \author[0000-0001-7775-7261]{David H. Weinberg}
+
+\correspondingauthor{Liam O. Dubay}
+\email{dubay.11@osu.edu}
 
 % Abstract from AAS 241
 \begin{abstract}
@@ -107,11 +111,12 @@ It is especially difficult to constrain the DTD for short delay times \citep{Mao
 % \citet{Castrillo2021-DTD} find a best fit power law slope of $\alpha\approx-1.1$ with a minimum delay time of $\sim50$ Myr, they also find a fairly high correlation between SN Ia rate and H$\alpha$ (a proxy for young stars) which is surprising.
 % \citet{Stolger2020-ExponentialDTD} perform maximum likelihood estimations based on the cosmic star formation history and the star formation histories of individual galaxies. In both cases their best fit functions were approximately exponential, though they started with a skew-normal function so could not have ended up with a power law even if they wanted to. They don't actually report the timescale of this exponential, but based on the plots I'd say it's about 1.5 - 2 (1.7?) Gyr. Their best fit parameters make no sense to me as they don't report their units.
 
-The uncertainties in the SN Ia DTD propagate into GCE models. In principle, the observed chemical abundance patterns should therefore contain information about the SN Ia DTD, and by extension their progenitors. A striking feature of the [O/Fe] distribution in the Milky Way is the distinct separation into two components, the high- and low-$\alpha$ sequences [references]. [Introduce other MW disk features].
+The uncertainties in the SN Ia DTD propagate into GCE models. In principle, the observed chemical abundance patterns should therefore contain information about the DTD, and by extension the progenitors of SNe Ia. The metallicity distribution function (MDF) and distribution of [O/Fe] record the history of SN Ia enrichment as a function of stellar age and location in the Galaxy. A striking feature of the \aFe distribution in the Milky Way disk is the distinct separation into two components, the high- and low-$\alpha$ sequences, at similar metallicity \citep[e.g.,][]{Bensby2014-solarNeighborhoodAbundances}. Since the \aFe abundance reflects the ratio of CC SN to SN Ia enrichment, the DTD should have an effect on the \aFe bimodality.
+% [Introduce other MW disk features?]
 
-A few studies have compared different DTDs in one-zone chemical evolution models, but their comparisons to abundance data are limited to the local solar neighborhood \citep[e.g.,][]{Andrews2017-ChemicalEvolution,Palicio2023-AnalyticDTD}. 
-[Talk about \citet{Matteucci2009-DTDModels} multi-zone models].
-\citet{Poulhazan2018-PrecisionPollution} compared six DTDs in a cosmological smoothed-particle hydrodynamics simulation. They found that models with a prompt SN Ia component produced the highest abundance ratios and the narrowest \aFe distributions at late times, although their simulation was not tuned to reproduce the parameters of the Milky Way, and they did not compare to observed chemical abundances. 
+A few studies have compared different DTDs in one-zone chemical evolution models, but their comparisons to abundance data are limited to the local solar neighborhood \citep[e.g.,][]{Andrews2017-ChemicalEvolution,Palicio2023-AnalyticDTD}. =
+\citet{Poulhazan2018-PrecisionPollution} compared six DTDs in a cosmological smoothed-particle hydrodynamics simulation. They found that models with a prompt SN Ia component produced the highest abundance ratios and the narrowest \aFe distributions at late times, although their simulation was not tuned to reproduce the parameters of the Milky Way.%, and they did not compare to observed chemical abundances. 
+\citet{Matteucci2009-DTDModels} compared multiple DTDs in a multi-zone GCE model with a two-infall SFH, but were limited by the available data for the solar neighborhood.
 The current era of large spectroscopic surveys such as the Apache Point Observatory Galactic Evolution Experiment \citep[APOGEE;][]{Majewski2017-APOGEE} and the forthcoming Milky Way Mapper \citep{Kollmeier2017-SDSS-V} has made abundances across the Milky Way disk available for comparison to more sophisticated GCE models.
 
 % Notes on GCE studies
@@ -614,27 +619,31 @@ We again compute the KL divergence (Equation \ref{eq:kl-divergence}) to quantify
 \begin{figure*}
     \centering
     \includegraphics[width=\linewidth]{figures/ofe_bimodality_summary.pdf}
-    \caption{The distributions of [O/Fe] along two different slices of [Fe/H]. 
-    % $-0.6\leq$[Fe/H]$<-0.4$ (blue dashed) and $-0.4\leq$[Fe/H]$<-0.2$ (red solid). 
+    \caption{The distributions of [O/Fe] along two different slices of [Fe/H]: $-0.6\leq$[Fe/H]$<-0.4$ (blue dashed) and $-0.4\leq$[Fe/H]$<-0.2$ (red solid). 
     All panels contain stars within the Galactic region defined by $7\leq R_{\rm gal}<9$ kpc and $0\leq|z|<2$ kpc. The $|z|$-distributions of the model stellar populations are re-sampled to match the vertical distribution of the APOGEE sample, and \num{20000} stellar populations are drawn from the adjusted distribution in each panel. The maximum of each distribution is normalized to 1 and the vertical scale is consistent across all panels.
     \textit{Top row:} results from five multi-zone models which assume the late-bust SFH but different DTDs. \textit{Bottom row}: the first four panels compare the four SFHs, all assuming an exponential DTD with $\tau=1.5$ Gyr. The bottom-right panel (highlighted) plots data from APOGEE DR17 for reference.}
     \label{fig:ofe-bimodality}
     \script{ofe_bimodality_summary.py}
 \end{figure*}
 
-[Intro, connect to previous paragraph]. The relative prominence of the two peaks varies with $R_{\rm gal}$ and $|z|$, as shown by the right-hand panels of Figures \ref{fig:ofe-df-sfh} and \ref{fig:ofe-df-dtd}. A crucial feature of this bimodality, which is not apparent in the previous figures, is the presence of both sequences at the same [Fe/H]. Figure \ref{fig:ofe-bimodality} compares the [O/Fe] distributions in the solar annulus ($7\leq R_{\rm gal}<9$ kpc and $0\leq|z|<2$ kpc) in two bins of [Fe/H] for select model outputs and APOGEE data. The APOGEE distributions in the bottom-right panel (j) show that the high-$\alpha$ mode is more prominent at lower [Fe/H] and vice versa, but the distributions in both bins are clearly bimodal. Moreover, the ``trough'' at ${\rm [O/Fe]}\approx0.2$ is consistent in each bin.
+% [Intro, connect to previous section]. 
+The [O/Fe] distributions from APOGEE in Section \ref{sec:ofe-df}
+% (right-hand panels of Figures \ref{fig:ofe-df-sfh} and \ref{fig:ofe-df-dtd}) 
+show two distinct peaks whose relative prominence varies with $R_{\rm gal}$ and $|z|$. A crucial feature of this bimodality, which is not apparent in the analysis of the previous section, is the presence of both sequences {\it at the same [Fe/H]}. \citet{Vincenzo2021-AlphaDistribution} demonstrate that, although the APOGEE sample over-represents stars with $|z|\ge1$ which are more likely to be high-$\alpha$, the $\alpha$-bimodality is a real feature of the solar neighborhood population. A successful model for the evolution of the Milky Way must be able to reproduce this bimodality.
 
-[Reference \citet{Vincenzo2021-AlphaDistribution} for how the bimodality is made stronger by the selection function, but it's not just due to selection effects. Describe the re-sampling we do to correct for this.]
-% \citet{Vincenzo2021-AlphaDistribution} demonstrate that the APOGEE selection function makes the observed $\alpha$ bimodality {\it weaker} in that the high-$\alpha$ sequence is undersampled relative to low-$\alpha$ stars.
-For most of our models, the low-$\alpha$ peak is the more prominent of the two, so by performing this resampling we enhance strength of the bimodality. However, for some models the high-$\alpha$ peak is the strongest, and the re-sampling process de-emphasizes the low-$\alpha$ peak below the prominence threshold (e.g., panel f of Figure \ref{fig:ofe-bimodality}). [Explain why this is ok]
+Figure \ref{fig:ofe-bimodality} compares the [O/Fe] distributions in the solar annulus ($7\leq R_{\rm gal}<9$ kpc and $0\leq|z|<2$ kpc) in two bins of [Fe/H] ($-0.6<{\rm [Fe/H]}<-0.4$ and $-0.4<{\rm [Fe/H]}<-0.2$) for select model outputs and APOGEE data. The APOGEE distributions in the bottom-right panel (j) show that the high-$\alpha$ mode is more prominent at lower [Fe/H] and vice versa, but the distributions in both bins are clearly bimodal. Moreover, the ``trough'' at ${\rm [O/Fe]}\approx0.2$ is consistent in each bin.
 
-The top row of panels (a--e) in Figure \ref{fig:ofe-bimodality} shows the [O/Fe] bimodality (or lack thereof) across five different DTDs, all of which assume the late-burst SFH. To quantify the bimodality, we use the peak-finding algorithm {\tt scipy.signal.find\_peaks} \citep{2020SciPy-NMeth}. We calculate the prominence, or vertical distance between a peak and its highest neighboring trough, and adopt an arbitrary threshold of 0.1. Five of the eight DTDs (four of the five shown, plus the exponential form with $\tau=3$ Gyr) exceed this prominence threshold, while both power-law DTDs and the plateau ($W=0.3$ Gyr) model do not. Panel (b) shows that the power-law ($\alpha=-1.1$) DTD produces a marginal high-$\alpha$ peak, although it doesn't meet the prominence threshold because it is too close to the low-$\alpha$ peak. 
+To quantify the strength of the $\alpha$-bimodality, we use the peak-finding algorithm {\tt scipy.signal.find\_peaks} \citep{2020SciPy-NMeth}. For each peak, we calculate the prominence, or the vertical distance between a peak and its highest neighboring trough. We consider a distribution bimodal if both peaks exceed an arbitrary threshold of 0.1. The APOGEE distributions exceed this threshold in both [Fe/H] bins.
 
-In general, DTDs with fewer prompt SNe Ia produce a high-$\alpha$ peak which is more prominent and at a higher [O/Fe], as was the case with the [O/Fe] distributions in Section \ref{sec:ofe-df}. One major discrepancy is that the APOGEE data show bimodality in both bins of [Fe/H], while the models run with the late-burst SFH only show a clear high-$\alpha$ peak at the low-metallicity ($-0.6<{\rm [Fe/H]}<-0.4$) bin. [Talk about why / if this matters]
+The top row of panels (a--e) in Figure \ref{fig:ofe-bimodality} shows the [O/Fe] bimodality (or lack thereof) across five different DTDs, all of which assume the late-burst SFH. To better approximate the APOGEE selection function, we re-sample our model stellar populations so the $|z|$ distribution closely matches that of APOGEE in the solar neighborhood. 
+% For most of our models, the low-$\alpha$ peak is the more prominent of the two, so by performing this resampling we enhance strength of the bimodality. However, for some models the high-$\alpha$ peak is the strongest, and the re-sampling process de-emphasizes the low-$\alpha$ peak below the prominence threshold (e.g., panel f of Figure \ref{fig:ofe-bimodality}). [Explain why this is ok]
+Five of the eight DTDs (four of the five shown, plus the exponential form with $\tau=3$ Gyr) exceed our prominence threshold in the low-[Fe/H] bin, while both power-law DTDs and the plateau ($W=0.3$ Gyr) model do not. Panel (b) shows that the power-law ($\alpha=-1.1$) DTD produces a marginal high-$\alpha$ peak, although it doesn't meet the prominence threshold because it is too close to the low-$\alpha$ peak. In general, DTDs with fewer prompt SNe Ia produce a high-$\alpha$ peak which is more prominent and at a higher [O/Fe], as was the case with the [O/Fe] distributions in Section \ref{sec:ofe-df}. 
 
-Panels (f)--(i) in the bottom row of Figure \ref{fig:ofe-bimodality} illustrate the effect of the SFH on the [O/Fe] bimodality with the exponential ($\tau=1.5$ Gyr) DTD. The inside-out SFH does not produce a bimodal distribution for any of our DTDs. On the other hand, the early-burst SFH {\it always} produces a bimodal distribution in the $-0.4\leq{\rm [Fe/H]}<-0.2$ bin regardless of the assumed DTD, although the lower-metallicity bin does not (the lower peak falls short of our prominence threshold of 0.1). 
+Panels (f)--(i) in the bottom row of Figure \ref{fig:ofe-bimodality} illustrate the effect of the SFH on the [O/Fe] bimodality. The inside-out SFH does not produce a bimodal distribution for any of our DTDs. On the other hand, the early-burst SFH {\it always} produces a bimodal distribution in the high-[Fe/H] bin regardless of the assumed DTD, but not in the low-[Fe/H] bin (the small low-$\alpha$ peak falls below our prominence threshold). For models with the late-burst and two-infall SFHs, the bimodality is variable depending on the DTD: those with longer median delay times (e.g., exponential, plateau, or triple-system) generally produce a bimodal distribution in the low-[Fe/H] bin, while the power-law DTDs do not. 
 
-For models with the late-burst and two-infall SFHs, bimodality is variable depending on the DTD: those with longer median delay times (e.g., exponential, plateau, or triple-system) generally produce a bimodal distribution in the $-0.6\leq{\rm [Fe/H]}<-0.4$ bin, while the power-law DTDs do not. None of our SFH+DTD combinations can produce an [O/Fe] distribution which is bimodal in {\it both} bins of [Fe/H] shown in Figure \ref{fig:ofe-bimodality}, as observed in APOGEE (panel j).
+One major discrepancy in all of our models the breadth of the $\alpha$-bimodality across [Fe/H] space. 
+% In APOGEE, both bins in [Fe/H] show a clearly bimodal distribution of [O/Fe]. 
+Even our most successful models can produce a bimodal [O/Fe] distribution in only one bin: the high-[Fe/H] bin for the early-burst SFH, and the low-[Fe/H] bin for the late-burst and two-infall SFHs. In APOGEE, the two sequences are co-extant between ${\rm [Fe/H]}\approx-0.6$, below which the high-$\alpha$ sequence dominates, and ${\rm [Fe/H]}\approx+0.2$, at which point they join. The failure of our models to fully reproduce the bimodality across the whole range of [Fe/H] indicates that our picture of the formation of the $\alpha$-bimodality is still incomplete.
 
 \subsection{The [O/Fe]--[Fe/H] Plane}
 \label{sec:ofe-feh}
@@ -715,6 +724,8 @@ We use a different scoring system from previous sub-sections due to the much lar
 \end{equation}
 where $\Delta\tau_k=\rm{med}(\tau_{\rm \vice})-\rm{med}(\tau_{\rm L23})$ is the difference between the mass-weighted median star particle age in \vice and the median stellar age from \citetalias{Leung2023-Ages} in bin $k$, $n_{{\rm L23},k}$ is the number of stars from the \citetalias{Leung2023-Ages} age sample in bin $k$, and $n_{\rm L23,tot}$ is the total number of stars in the sample in that Galactic region. As before, the score for the model as a whole is the average of $\Delta \tau_{\rm RMS}$ across all regions, weighted by the number of stars in the age sample in each region.
 
+[Age at the knee, given our age uncertainties, is not a great diagnostic]
+
 % The best, lowest-scoring model in the age--[O/Fe] plane 
 
 \section{Discussion}
@@ -753,8 +764,10 @@ Measurements of the cosmic SN Ia rate become much more uncertain above $z\approx
 % In both isolated and cosmological simulations, \citet{Poulhazan2018-PrecisionPollution} found that DTDs with a significant prompt component (power-law and two-population) produced the highest average [O/Fe] and the narrowest [O/Fe] distributions. Conversely, their models with essentially 0 prompt SNe Ia produced a lower average stellar [O/Fe] ratio at late times and a broader distribution of [O/Fe]. Their simulations have an SFR which features an early ($<1$ Gyr) burst followed by a roughly exponential decline, qualitatively similar to our early-burst model but with the peak of star formation occuring $\sim3$ Gyr earlier. We note that their simulations were not designed to reproduce a Milky Way-like galaxy; as such, their [O/Fe] distributions peak around $\sim0.45$ which is higher than the APOGEE high-$\alpha$ sequence. Nevertheless, our study reproduces their finding that a DTD with more prompt SNe Ia will produce a narrower distribution of [O/Fe]. One exception to this is the exponential DTD, which has a marginally narrower distribution than the power-law DTD close to the midplane [numbers here] but a more prominent high-$\alpha$ tail. This is likely a consequence of the fact that the exponential DTD has a much lower SN Ia rate at late times ($\sim10$ Gyr) than other models [expand on this].
 Our findings are also in qualitative agreement with the isolated and cosmological simulations of \citet{Poulhazan2018-PrecisionPollution}, namely that DTDs with a significant prompt component produce narrower [O/Fe] distributions and a higher average [O/Fe].
 
-[Is the MW DTD the same as elsewhere?]
-\citet{Walcher2016-SelfSimilarity} argue that the similarity of the age--[$\alpha$/Fe] relation between solar neighborhood stars and nearby elliptical galaxies is evidence for a universal DTD; between a bimodal, narrow Gaussian, and power-law DTD, they find the latter best explains their data.
+% [Is the MW DTD the same as elsewhere?]
+Our finding that the $t^{-1}$ power-law DTD poorly reproduces observed abundances could signal that the Milky Way and other galaxies obey different DTDs. This would not be too far beyond the findings of \citet{Maoz2017-CosmicDTD} that field galaxies and galaxy clusters have a different DTD slope. On the other hand, \citet{Walcher2016-SelfSimilarity} argue that the similarity of the age--\aFe relation between solar neighborhood stars and nearby elliptical galaxies is evidence for a universal DTD. A physical mechanism would be needed to produce different DTDs in different environments, such as a metallicity dependence in the fraction of close binaries \citep[e.g.,][]{Moe2019-CloseBinaryFraction}.
+
+[Discuss yield effects]
 
 \subsection{The Two-Infall SFH}
 \label{sec:two-infall-discussion}
@@ -768,11 +781,13 @@ Discuss \citet{Matteucci2006-BimodalDTDConsequences} findings of the \citet{Mann
 
 \citet{Palicio2023-AnalyticDTD} compare seven different DTDs, including the analytical SD, DD-WIDE, and DD-CLOSE, as well as the empirical two-population and $t^{-1}$ power-law DTDs, in a one-zone model with a two-infall SFH. [Note that they use some different parameters for the analytical models than we do). Critically for our purposes, and in contrast to previous studies of the two-infall model \citep[e.g.,][others]{Chiappini1997-TwoInfall,Spitoni2021-TwoInfall}, the authors include the effects of outflows, although they explore mass-loading values of $\eta=0.2-0.8$ which is significantly lower than in our models.
 
+[More discussion of \citet{Matteucci2009-DTDModels}, which is multi-zone but only compares to the solar neighborhood, and no radial migration.]
+
 To our knowledge, this paper is the first exploration of a two-infall SFH which incorporates both mass-loading and radial migration. A detailed examination of the two-infall SFH in our GCE models is beyond the scope of this paper, but will be the subject of future work.
 
 \subsection{Radial Migration \& Bimodality}
 
-One curious chemical feature of the Milky Way disk is the existence of two populations separated by their \aFe abundance ratios at similar metallicity \citep[e.g.,][]{Bensby2014-solarNeighborhoodAbundances}. 
+% One curious chemical feature of the Milky Way disk is the existence of two populations separated by their \aFe abundance ratios at similar metallicity \citep[e.g.,][]{Bensby2014-solarNeighborhoodAbundances}. 
 
 % Taken from introduction
 The bimodal distribution of \aFe in stars with similar metallicities was first noted in the solar neighborhood \citep[e.g.,][]{Furhmann1998-NearbyStars}, later extended to the whole of the Milky Way disk \citep{Nidever2014-ChemicalEvolutionAPOGEE,Hayden2015-ChemicalCartography}. The ``high-$\alpha$'' population contains stars with low enrichment from SNe Ia, so their abundance ratios reflect that of almost pure CCSN enrichment; it is associated with the kinematically hot thick disk \citep{Bensby2003-AbundanceTrends}. The ``low-$\alpha$'' population is associated with the thin disk and contains stars with roughly solar $\alpha$-abundances.
@@ -809,84 +824,86 @@ Recent studies have shown that the high specific SN Ia rates observed in low-mas
 
 Our results indicate that the range of parameter space in the DTD is still too broad to be completely constrained by GCE models. Future constraints on the DTD may come from the Legacy Survey of Space and Time (LSST) at the Vera Rubin Observatory [cite], which is expected to observe 10 million [?] SNe during its X-year run. On the other hand, better constraints on the Galactic SFH provided by SDSS-V [cite] will enable future GCE studies to constrain the DTD at a higher confidence.
 
-\begin{acknowledgments}
-    We thank Prof.\ David H.\ Weinberg and attendees of OSU's Galaxy Hour for many useful discussions over the course of this project.
-    [Personal acknowledgements]
+% \begin{acknowledgments}
+\section*{Acknowledgements}
 
-    LOD and JAJ acknowledge support from National Science Foundation grant no.\ AST-2307621. JAJ and JWJ acknowledge support from National Science Foundation grant no.\ AST-1909841.
-    LOD acknowledges financial support from an Ohio State University Fellowship.
-    JWJ acknowledges financial support from an Ohio State University Presidential Fellowship and a Carnegie Theoretical Astrophysics Center postdoctoral fellowship.
-    
-    Funding for the Sloan Digital Sky 
-    Survey IV has been provided by the 
-    Alfred P.\ Sloan Foundation, the U.S.\ 
-    Department of Energy Office of 
-    Science, and the Participating 
-    Institutions. 
-    
-    SDSS-IV acknowledges support and 
-    resources from the Center for High 
-    Performance Computing  at the 
-    University of Utah. The SDSS 
-    website is \url{www.sdss4.org}.
-    
-    SDSS-IV is managed by the 
-    Astrophysical Research Consortium 
-    for the Participating Institutions 
-    of the SDSS Collaboration including 
-    the Brazilian Participation Group, 
-    the Carnegie Institution for Science, 
-    Carnegie Mellon University, Center for 
-    Astrophysics | Harvard \& 
-    Smithsonian, the Chilean Participation 
-    Group, the French Participation Group, 
-    Instituto de Astrof\'isica de 
-    Canarias, The Johns Hopkins 
-    University, Kavli Institute for the 
-    Physics and Mathematics of the 
-    Universe (IPMU) / University of 
-    Tokyo, the Korean Participation Group, 
-    Lawrence Berkeley National Laboratory, 
-    Leibniz Institut f\"ur Astrophysik 
-    Potsdam (AIP),  Max-Planck-Institut 
-    f\"ur Astronomie (MPIA Heidelberg), 
-    Max-Planck-Institut f\"ur 
-    Astrophysik (MPA Garching), 
-    Max-Planck-Institut f\"ur 
-    Extraterrestrische Physik (MPE), 
-    National Astronomical Observatories of 
-    China, New Mexico State University, 
-    New York University, University of 
-    Notre Dame, Observat\'ario 
-    Nacional / MCTI, The Ohio State 
-    University, Pennsylvania State 
-    University, Shanghai 
-    Astronomical Observatory, United 
-    Kingdom Participation Group, 
-    Universidad Nacional Aut\'onoma 
-    de M\'exico, University of Arizona, 
-    University of Colorado Boulder, 
-    University of Oxford, University of 
-    Portsmouth, University of Utah, 
-    University of Virginia, University 
-    of Washington, University of 
-    Wisconsin, Vanderbilt University, 
-    and Yale University.
-    
-    This work has made use of data from the European Space Agency (ESA) mission
-    {\it Gaia} (\url{https://www.cosmos.esa.int/gaia}), processed by the {\it Gaia}
-    Data Processing and Analysis Consortium (DPAC,
-    \url{https://www.cosmos.esa.int/web/gaia/dpac/consortium}). Funding for the DPAC
-    has been provided by national institutions, in particular the institutions
-    participating in the {\it Gaia} Multilateral Agreement.
+We thank Prof.\ David H.\ Weinberg and attendees of OSU's Galaxy Hour for many useful discussions over the course of this project.
+[Personal acknowledgements]
 
-    % From the Center for Belonging and Social Change, https://cbsc.osu.edu/about-us/land-acknowledgement
-    We would like to acknowledge the land that The Ohio State University occupies is the ancestral and contemporary territory of the Shawnee, Potawatomi, Delaware, Miami, Peoria, Seneca, Wyandotte, Ojibwe and many other Indigenous peoples. Specifically, the university resides on land ceded in the 1795 Treaty of Greeneville and the forced removal of tribes through the Indian Removal Act of 1830. As a land grant institution, we want to honor the resiliency of these tribal nations and recognize the historical contexts that has and continues to affect the Indigenous peoples of this land.
+LOD and JAJ acknowledge support from National Science Foundation grant no.\ AST-2307621. JAJ and JWJ acknowledge support from National Science Foundation grant no.\ AST-1909841.
+LOD acknowledges financial support from an Ohio State University Fellowship.
+JWJ acknowledges financial support from an Ohio State University Presidential Fellowship and a Carnegie Theoretical Astrophysics Center postdoctoral fellowship.
 
-    [Carnegie land acknowledgement]
-    % Software acknowledgements if not a AAS journal
-    % This work made use of Astropy:\footnote{http://www.astropy.org} a community-developed core Python package and an ecosystem of tools and resources for astronomy \citep{astropy:2013, astropy:2018, astropy:2022}. 
-\end{acknowledgments}
+Funding for the Sloan Digital Sky 
+Survey IV has been provided by the 
+Alfred P.\ Sloan Foundation, the U.S.\ 
+Department of Energy Office of 
+Science, and the Participating 
+Institutions. 
+
+SDSS-IV acknowledges support and 
+resources from the Center for High 
+Performance Computing  at the 
+University of Utah. The SDSS 
+website is \url{www.sdss4.org}.
+
+SDSS-IV is managed by the 
+Astrophysical Research Consortium 
+for the Participating Institutions 
+of the SDSS Collaboration including 
+the Brazilian Participation Group, 
+the Carnegie Institution for Science, 
+Carnegie Mellon University, Center for 
+Astrophysics | Harvard \& 
+Smithsonian, the Chilean Participation 
+Group, the French Participation Group, 
+Instituto de Astrof\'isica de 
+Canarias, The Johns Hopkins 
+University, Kavli Institute for the 
+Physics and Mathematics of the 
+Universe (IPMU) / University of 
+Tokyo, the Korean Participation Group, 
+Lawrence Berkeley National Laboratory, 
+Leibniz Institut f\"ur Astrophysik 
+Potsdam (AIP),  Max-Planck-Institut 
+f\"ur Astronomie (MPIA Heidelberg), 
+Max-Planck-Institut f\"ur 
+Astrophysik (MPA Garching), 
+Max-Planck-Institut f\"ur 
+Extraterrestrische Physik (MPE), 
+National Astronomical Observatories of 
+China, New Mexico State University, 
+New York University, University of 
+Notre Dame, Observat\'ario 
+Nacional / MCTI, The Ohio State 
+University, Pennsylvania State 
+University, Shanghai 
+Astronomical Observatory, United 
+Kingdom Participation Group, 
+Universidad Nacional Aut\'onoma 
+de M\'exico, University of Arizona, 
+University of Colorado Boulder, 
+University of Oxford, University of 
+Portsmouth, University of Utah, 
+University of Virginia, University 
+of Washington, University of 
+Wisconsin, Vanderbilt University, 
+and Yale University.
+
+This work has made use of data from the European Space Agency (ESA) mission
+{\it Gaia} (\url{https://www.cosmos.esa.int/gaia}), processed by the {\it Gaia}
+Data Processing and Analysis Consortium (DPAC,
+\url{https://www.cosmos.esa.int/web/gaia/dpac/consortium}). Funding for the DPAC
+has been provided by national institutions, in particular the institutions
+participating in the {\it Gaia} Multilateral Agreement.
+
+% From the Center for Belonging and Social Change, https://cbsc.osu.edu/about-us/land-acknowledgement
+We would like to acknowledge the land that The Ohio State University occupies is the ancestral and contemporary territory of the Shawnee, Potawatomi, Delaware, Miami, Peoria, Seneca, Wyandotte, Ojibwe and many other Indigenous peoples. Specifically, the university resides on land ceded in the 1795 Treaty of Greeneville and the forced removal of tribes through the Indian Removal Act of 1830. As a land grant institution, we want to honor the resiliency of these tribal nations and recognize the historical contexts that has and continues to affect the Indigenous peoples of this land.
+
+[Carnegie land acknowledgement]
+% Software acknowledgements if not a AAS journal
+% This work made use of Astropy:\footnote{http://www.astropy.org} a community-developed core Python package and an ecosystem of tools and resources for astronomy \citep{astropy:2013, astropy:2018, astropy:2022}. 
+% \end{acknowledgments}
 
 \software{\vice \citep{JohnsonWeinberg2020-Starbursts}, Astropy \citep{astropy2013,astropy2018,astropy2022}, scikit-learn \citep{Pedregosa2011-ScikitLearn}, SciPy \citep{2020SciPy-NMeth}, Matplotlib \citep{Hunter2007-Matplotlib}}
 
@@ -911,14 +928,6 @@ manuscript. The datasets are stored at [URL].
 \section{Analytical DTDs}
 \label{app:analytical-dtds}
 
-Discuss \citet{Greggio2005-AnalyticalRates} vs our simple function approximations here?
-
-\citet{Greggio2005-AnalyticalRates} derives analytical DTDs for SD and DD progenitor systems from assumptions about binary stellar evolution and outcomes of mass exchange. They find that the parameters which have a large effect on the shape of the DTD are the distribution and range of stellar masses in progenitor systems; the efficiency of accretion in the SD scenario; and the distribution of separations at birth in the DD scenario. The left-hand panel of Figure \ref{fig:analytical-dtd} shows the analytical DTDs for SD progenitors and two different prescriptions for DD progenitors (``WIDE'' and ``CLOSE''). In the ``WIDE'' scheme, it is assumed that there is a wide distribution of ratios $A/A_0$ of the separation of the DD system to the initial separation of the binary, and that the distributions of $A$ and total mass of the system $m_{\rm DD}$ are independent, so one cannot necessarily predict the total merge time of a system based on its initial parameters. In the ``CLOSE'' scheme, there is assumed to be a narrow distribution of $A/A_0$ and a correlation between $A$ and $m_{\rm DD}$, so the most massive binaries tend to merge quickly and the least massive merge last.
-
-The right-hand panel of Figure \ref{fig:analytical-dtd} shows the results of one-zone chemical evolution models with the \citet{Greggio2005-AnalyticalRates} DTDs. We assume $\eta=2.5$, $\tau_\star=2$ Gyr, an inside-out SFH evaluated at a radius of 8 kpc, a continuous recycling approximation, and a minimum SN Ia delay of 40 Myr. We compare the SD, DD WIDE, and DD CLOSE schemes to standard power-law, broken power-law, and exponential DTDs. The SD and DD CLOSE DTDs follow nearly identical tracks in [O/Fe] vs [Fe/H]; however, their distributions on [O/Fe] differ at the low end. The SD DTD follows an exponential with a 1.5 Gyr timescale, whereas the DD CLOSE DTD is well-approximated by a broken power-law with an initial plateau of 300 Myr and a subsequent declining slope of -1.1. The WIDE prescription is likewise best approximated by a broken power-law, but with a longer plateau width of 1 Gyr. In all cases, the difference between the analytical DTD and the nearest broken power-law or exponential is likely too small to be observationally detectable, so in our multi-zone models we implement the more generic functions in lieu of the analytical DTDs.
-
-A multi-zone with the \citet{Greggio2005-AnalyticalRates} SD DTD produced nearly identical results to an exponential DTD with a 1.5 Gyr timescale.
-
 \begin{figure*}
     \centering
     \includegraphics[width=0.49\linewidth]{figures/dtd_analytical.pdf}
@@ -928,8 +937,32 @@ A multi-zone with the \citet{Greggio2005-AnalyticalRates} SD DTD produced nearly
     \script{analytical_dtd_twopanel.py}
 \end{figure*}
 
+Discuss \citet{Greggio2005-AnalyticalRates} vs our simple function approximations here?
+
+\citet{Greggio2005-AnalyticalRates} derives analytical DTDs for SD and DD progenitor systems from assumptions about binary stellar evolution and outcomes of mass exchange. They find that the parameters which have a large effect on the shape of the DTD are the distribution and range of stellar masses in progenitor systems; the efficiency of accretion in the SD scenario; and the distribution of separations at birth in the DD scenario. The left-hand panel of Figure \ref{fig:analytical-dtd} shows the analytical DTDs for SD progenitors and two different prescriptions for DD progenitors (``WIDE'' and ``CLOSE''). In the ``WIDE'' scheme, it is assumed that there is a wide distribution of ratios $A/A_0$ of the separation of the DD system to the initial separation of the binary, and that the distributions of $A$ and total mass of the system $m_{\rm DD}$ are independent, so one cannot necessarily predict the total merge time of a system based on its initial parameters. In the ``CLOSE'' scheme, there is assumed to be a narrow distribution of $A/A_0$ and a correlation between $A$ and $m_{\rm DD}$, so the most massive binaries tend to merge quickly and the least massive merge last.
+
+The right-hand panel of Figure \ref{fig:analytical-dtd} shows the results of one-zone chemical evolution models with the \citet{Greggio2005-AnalyticalRates} DTDs. We assume $\eta=2.5$, $\tau_\star=2$ Gyr, an inside-out SFH evaluated at a radius of 8 kpc, a continuous recycling approximation, and a minimum SN Ia delay of 40 Myr. We compare the SD, DD WIDE, and DD CLOSE schemes to standard power-law, broken power-law, and exponential DTDs. The SD and DD CLOSE DTDs follow nearly identical tracks in [O/Fe] vs [Fe/H]; however, their distributions on [O/Fe] differ at the low end. The SD DTD follows an exponential with a 1.5 Gyr timescale, whereas the DD CLOSE DTD is well-approximated by a broken power-law with an initial plateau of 300 Myr and a subsequent declining slope of -1.1. The WIDE prescription is likewise best approximated by a broken power-law, but with a longer plateau width of 1 Gyr. In all cases, the difference between the analytical DTD and the nearest broken power-law or exponential is likely too small to be observationally detectable, so in our multi-zone models we implement the more generic functions in lieu of the analytical DTDs.
+
+A multi-zone with the \citet{Greggio2005-AnalyticalRates} SD DTD produced nearly identical results to an exponential DTD with a 1.5 Gyr timescale.
+
 \section{Stellar Migration}
 \label{app:migration}
+
+\begin{figure*}
+    \centering
+    \includegraphics[width=\linewidth]{figures/radial_migration.pdf}
+    \caption{The distribution of final radius $R_{\rm final}$ as a function of formation radius $R_{\rm form}$ and age for the h277 analogue (top row) and Gaussian sampling scheme (bottom row). From left to right, star particles are binned by formation annulus, from the inner disk (far left column) to the solar annulus (center column) to the outer disk (far right column). Within each panel, colored curves represent the different age bins, ranging from the youngest stars (dark blue) to the oldest (dark red). In the top row, we exclude age bins with fewer than 100 unique analogue IDs for clarity. All distributions are normalized so that the area under the curve is 1, and have been smoothed by a boxcar function with a width of 0.5 kpc. The vertical dotted black lines indicate the bounds of each bin in $R_{\rm form}$; stars within that region of the distribution have not migrated outside their birth annulus over their lifetime.}
+    \label{fig:radial-migration}
+    \script{radial_migration.py}
+\end{figure*}
+
+\begin{figure*}
+    \centering
+    \includegraphics[width=\linewidth]{figures/midplane_distance.pdf}
+    \caption{Similar to Figure \ref{fig:radial-migration} but for the distribution of final midplane distance $z_{\rm final}$ as a function of final radius and age. From left to right, star particles are binned by \textit{final} annulus. In the top row, we exclude age bins with fewer than 500 unique analogue IDs for clarity. All distributions have been smoothed by a boxcar function with a width of 0.1 kpc.}
+    \label{fig:midplane-distance}
+    \script{midplane_distance.py}
+\end{figure*}
 
 For each star particle in \vice, \citetalias{Johnson2021-Migration} randomly assign an analogue star particle from \texttt{h277} and adopt its radial migration distance $\Delta R$ and final midplane distance $z$. This allows \vice to adopt a realistic pattern of radial migration without needing to implement its own hydrodynamical simulation. However, in regions where the number of h277 star particles is relatively low, such as at large $R_{\rm gal}$ and small $t$, a single h277 star particle can be assigned as an analogue to multiple \vice stellar populations. These populations will have similar formation and migration histories and consequently similar abundances, which produces unphysical ``clumps'' of stars in the abundance distributions at high latitudes and large radii. 
 
@@ -963,22 +996,6 @@ When a star particle is created by \vice at initial radius $R_{\rm form}$, we sa
 \citet{Okalidis2022-AurigaMigration} studied the stellar migration in the Auriga simulations and found that the migration strength had both a dependence on age and formation radius. They also found that in strongly-barred galaxies, the migration is stronger overall but has a slower timestep evolution than diffusion ($\Delta t^{0.5}$).
 
 Figure \ref{fig:radial-migration} compares the distributions of $R_{\rm final}$ in bins of $R_{\rm form}$ and age between the analogue and Gaussian migration schema. 
-
-\begin{figure*}
-    \centering
-    \includegraphics[width=\linewidth]{figures/radial_migration.pdf}
-    \caption{The distribution of final radius $R_{\rm final}$ as a function of formation radius $R_{\rm form}$ and age for the h277 analogue (top row) and Gaussian sampling scheme (bottom row). From left to right, star particles are binned by formation annulus, from the inner disk (far left column) to the solar annulus (center column) to the outer disk (far right column). Within each panel, colored curves represent the different age bins, ranging from the youngest stars (dark blue) to the oldest (dark red). In the top row, we exclude age bins with fewer than 100 unique analogue IDs for clarity. All distributions are normalized so that the area under the curve is 1, and have been smoothed by a boxcar function with a width of 0.5 kpc. The vertical dotted black lines indicate the bounds of each bin in $R_{\rm form}$; stars within that region of the distribution have not migrated outside their birth annulus over their lifetime.}
-    \label{fig:radial-migration}
-    \script{radial_migration.py}
-\end{figure*}
-
-\begin{figure*}
-    \centering
-    \includegraphics[width=\linewidth]{figures/midplane_distance.pdf}
-    \caption{Similar to Figure \ref{fig:radial-migration} but for the distribution of final midplane distance $z_{\rm final}$ as a function of final radius and age. From left to right, star particles are binned by \textit{final} annulus. In the top row, we exclude age bins with fewer than 500 unique analogue IDs for clarity. All distributions have been smoothed by a boxcar function with a width of 0.1 kpc.}
-    \label{fig:midplane-distance}
-    \script{midplane_distance.py}
-\end{figure*}
 
 \bibliography{bib}
 
