@@ -17,8 +17,8 @@ from _globals import ONE_COLUMN_WIDTH
 OFE_LIM = (-0.15, 0.55)
 PROMINENCE = 0.1
 FEH_BINS = [(-0.6, -0.4), (-0.4, -0.2)]
-LINESTYLES = ['--', '-']
-COLORS = [paultol.highcontrast.colors[0], paultol.highcontrast.colors[2]]
+LINESTYLES = ['-', '--']
+COLORS = [paultol.highcontrast.colors[2], paultol.highcontrast.colors[0]]
 GALR_LIM = (7, 9)
 ABSZ_LIM = (0, 2)
 SMOOTH_WIDTH = 0.05
