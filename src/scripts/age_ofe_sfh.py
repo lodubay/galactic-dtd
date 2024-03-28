@@ -3,10 +3,11 @@ Compare [O/Fe]-Age plots for the Solar annulus for VICE outputs with
 different star formation histories.
 """
 
+import numpy as np
 from apogee_tools import import_apogee, apogee_region
 import matplotlib.pyplot as plt
 from matplotlib.ticker import MultipleLocator, FormatStrFormatter
-from matplotlib.colors import Normalize
+from matplotlib.colors import BoundaryNorm
 from matplotlib.cm import ScalarMappable
 from multizone_stars import MultizoneStars
 from age_ofe import plot_vice_medians, plot_astroNN_medians
@@ -38,7 +39,10 @@ def main():
     cax = plt.axes([fig.subplotpars.right + 0.02, fig.subplotpars.bottom, 
                     0.04, height])
     # Add colorbar
-    norm = Normalize(vmin=-1.3, vmax=0.3)
+    # norm = Normalize(vmin=-1.3, vmax=0.3)
+    bounds = np.arange(-1.3, 0.5, 0.2)
+    cmap = plt.get_cmap(CMAP_NAME)
+    norm = BoundaryNorm(bounds, cmap.N, extend='both')
     cbar = fig.colorbar(ScalarMappable(norm, CMAP_NAME), cax)
     # align title to colorbar bounding box
     bbox = cbar.ax.get_window_extent()

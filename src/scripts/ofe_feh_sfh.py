@@ -9,6 +9,7 @@ import matplotlib.pyplot as plt
 from matplotlib.ticker import MultipleLocator
 from matplotlib.lines import Line2D
 from matplotlib.legend_handler import HandlerTuple
+from matplotlib.colors import BoundaryNorm
 import vice
 from multizone_stars import MultizoneStars
 from scatter_plot_grid import setup_colorbar
@@ -25,16 +26,17 @@ ABSZ_LIM = (0, 0.5)
 SFH_LABELS = ['Inside-out', 'Late-burst', 'Early-burst', 'Two-infall']
 DTD_MODEL = 'exponential_timescale15'
 
-CMAP_NAME = 'winter'
+CMAP_NAME = 'winter_r'
 
 def main(style='paper'):
     plt.style.use(paths.styles / f'{style}.mplstyle')
     fig, axs = plt.subplots(2, 2, sharex=True, sharey=True,
                             figsize=(ONE_COLUMN_WIDTH, 0.9*ONE_COLUMN_WIDTH))
     plt.subplots_adjust(top=0.93, right=0.92, wspace=0., hspace=0., left=0.11)
-    cbar = setup_colorbar(fig, cmap=CMAP_NAME, vmin=0, vmax=MAX_SF_RADIUS,
-                          label=r'Birth $R_{\rm{gal}}$ [kpc]', pad=0.02,
-                          labelpad=2, width=0.04)
+    birth_galr_bounds = [2, 4, 6, 8, 10, 12, 14, 15.5]
+    cbar = setup_colorbar(fig, cmap=CMAP_NAME, bounds=birth_galr_bounds, 
+                          label=r'Birth $R_{\rm{gal}}$ [kpc]', 
+                          pad=0.02, labelpad=2, width=0.04)
     cbar.ax.yaxis.set_major_locator(MultipleLocator(2))
     cbar.ax.yaxis.set_minor_locator(MultipleLocator(0.5))
     
@@ -47,7 +49,7 @@ def main(style='paper'):
         mzs = MultizoneStars.from_output(output_name)
         mzs.model_uncertainty(apogee_data=apogee_data, inplace=True)
         mzs.region(GALR_LIM, ABSZ_LIM, inplace=True)
-        print(mzs('galr_origin').min(), mzs('galr_origin').max())
+        # print(mzs('galr_origin').min(), mzs('galr_origin').max())
         # Plot sample of star particle abundances
         mzs.scatter_plot(ax, '[fe/h]', '[o/fe]', color='galr_origin',
                           cmap=CMAP_NAME, norm=cbar.norm, markersize=0.1)

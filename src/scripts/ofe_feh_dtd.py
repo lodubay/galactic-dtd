@@ -9,6 +9,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 from matplotlib.ticker import MultipleLocator
 from matplotlib.lines import Line2D
+from matplotlib.colors import BoundaryNorm
 import vice
 from multizone_stars import MultizoneStars
 from scatter_plot_grid import setup_colorbar
@@ -32,7 +33,7 @@ DTD_LABELS = ['Two-population',
               'Plateau\n($W=1$ Gyr)',
               'Triple-system']
 
-CMAP_NAME = 'winter'
+CMAP_NAME = 'winter_r'
 
 def main(style='paper'):
     # Set up the figure
@@ -42,8 +43,9 @@ def main(style='paper'):
                             figsize=(width, 3/5*width))
     plt.subplots_adjust(top=0.91, right=0.98, left=0.06, bottom=0.08, 
                         wspace=0., hspace=0.)
-    cbar = setup_colorbar(fig, cmap=CMAP_NAME, vmin=0, vmax=MAX_SF_RADIUS,
-                          label=r'Birth $R_{\rm{gal}}$ [kpc]')
+    birth_galr_bounds = [2, 4, 6, 8, 10, 12, 14, 15.5]
+    cbar = setup_colorbar(fig, cmap=CMAP_NAME, bounds=birth_galr_bounds,
+                          label=r'Birth $R_{\rm{gal}}$ [kpc]', labelpad=2)
     cbar.ax.yaxis.set_major_locator(MultipleLocator(2))
     cbar.ax.yaxis.set_minor_locator(MultipleLocator(0.5))
     
@@ -60,7 +62,7 @@ def main(style='paper'):
         for i in range(len(ABSZ_BINS) - 1):
             absz_lim = (ABSZ_BINS[-(i+2)], ABSZ_BINS[-(i+1)])
             vice_subset = mzs.region(GALR_LIM, absz_lim)
-            print(vice_subset('galr_origin').min(), vice_subset('galr_origin').max())
+            # print(vice_subset('galr_origin').min(), vice_subset('galr_origin').max())
             # Plot sample of star particle abundances
             vice_subset.scatter_plot(axs[i,j], '[fe/h]', '[o/fe]', 
                                       color='galr_origin', markersize=0.1,

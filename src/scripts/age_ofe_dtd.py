@@ -2,6 +2,7 @@
 Compare plots of [O/Fe] vs age in a single Galactic region for various DTDs.
 """
 
+import numpy as np
 import argparse
 from apogee_tools import import_apogee, apogee_region
 import matplotlib.pyplot as plt
@@ -38,7 +39,8 @@ def main(style='paper'):
                             figsize=(width, 3/5*width))
     plt.subplots_adjust(top=0.91, right=0.98, left=0.06, bottom=0.08, 
                         wspace=0., hspace=0.)
-    cbar = setup_colorbar(fig, cmap=CMAP_NAME, vmin=-1.3, vmax=0.3)
+    bounds = np.arange(-1.3, 0.5, 0.2)
+    cbar = setup_colorbar(fig, cmap=CMAP_NAME, bounds=bounds, extend='both')#vmin=-1.3, vmax=0.3)
     # align title to colorbar bounding box
     bbox = cbar.ax.get_window_extent()
     x, _ = cbar.ax.transAxes.inverted().transform([bbox.x0, bbox.y0])

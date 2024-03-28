@@ -4,7 +4,7 @@ plots, e.g., showing [O/Fe] vs [Fe/H] over a range of Galactic regions.
 """
 
 import matplotlib.pyplot as plt
-from matplotlib.colors import Normalize, LogNorm
+from matplotlib.colors import Normalize, LogNorm, BoundaryNorm
 from matplotlib.cm import ScalarMappable
 from utils import sample_dataframe
 from _globals import GALR_BINS, ABSZ_BINS, TWO_COLUMN_WIDTH
@@ -59,7 +59,8 @@ def plot_vice_sample(ax, stars, xcol, ycol, zcol='galr_origin',
 
 
 def setup_colorbar(fig, cmap=None, vmin=None, vmax=None, label='', 
-                   width=0.02, pad=0.01, labelpad=0, lognorm=False):
+                   width=0.02, pad=0.01, labelpad=0, lognorm=False, 
+                   bounds=[], extend='neither'):
     """
     Configure a vertical colorbar with a specified colormap and normalization.
 
@@ -84,20 +85,27 @@ def setup_colorbar(fig, cmap=None, vmin=None, vmax=None, label='',
     lognorm : bool, optional
         If True, assigns a logarithmic normalization instead of linear.
         The default is False.
+    bounds : list, optional
+        If provided, a discrete colorbar will be created using BoundaryNorm.
+        The default is [].
 
     Returns
     -------
     cbar : matplotlib.colorbar.Colorbar
         Colorbar object
     """
+    if type(cmap) == str:
+        cmap = plt.get_cmap(cmap)
     # Adjust subplots
     plt.subplots_adjust(right=fig.subplotpars.right - (width + pad + 0.03))
     # Define colorbar axis
     height = fig.subplotpars.top - fig.subplotpars.bottom
     cax = plt.axes([fig.subplotpars.right + pad, fig.subplotpars.bottom, 
                     width, height])
-    # Add colorbar
-    if lognorm:
+    # Set normalization
+    if len(bounds) > 0:
+        norm = BoundaryNorm(bounds, cmap.N, extend=extend)
+    elif lognorm:
         norm = LogNorm(vmin=vmin, vmax=vmax)
     else:
         norm = Normalize(vmin=vmin, vmax=vmax)

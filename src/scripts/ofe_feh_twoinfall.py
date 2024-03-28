@@ -8,6 +8,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 from matplotlib.ticker import MultipleLocator
 from matplotlib.lines import Line2D
+from matplotlib.colors import BoundaryNorm
 import vice
 from multizone_stars import MultizoneStars
 from scatter_plot_grid import setup_colorbar
@@ -23,7 +24,7 @@ GALR_BINS = [(3, 5), (11, 13)]
 SFH_MODEL = 'twoinfall'
 DTD_MODEL = 'plateau_width03'
 
-def main(cmap_name='winter', style='paper'):
+def main(cmap_name='winter_r', style='paper'):
     # Set up the figure
     plt.style.use(paths.styles / f'{style}.mplstyle')
     width = ONE_COLUMN_WIDTH
@@ -32,9 +33,10 @@ def main(cmap_name='winter', style='paper'):
     plt.subplots_adjust(top=0.94, right=0.93, left=0.12, bottom=0.08, 
                         wspace=0., hspace=0.)
     # Add colorbar
-    cbar = setup_colorbar(fig, cmap=cmap_name, vmin=0, vmax=MAX_SF_RADIUS,
+    birth_galr_bounds = [2, 4, 6, 8, 10, 12, 14, 15.5]
+    cbar = setup_colorbar(fig, cmap=cmap_name, bounds=birth_galr_bounds,
                           label=r'Birth $R_{\rm{gal}}$ [kpc]',
-                          width=0.04, pad=0.02)
+                          width=0.04, pad=0.02, labelpad=2)
     cbar.ax.yaxis.set_major_locator(MultipleLocator(2))
     cbar.ax.yaxis.set_minor_locator(MultipleLocator(0.5))
     
