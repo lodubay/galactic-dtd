@@ -47,6 +47,7 @@ def main(style='paper'):
         mzs = MultizoneStars.from_output(output_name)
         mzs.model_uncertainty(apogee_data=apogee_data, inplace=True)
         mzs.region(GALR_LIM, ABSZ_LIM, inplace=True)
+        print(mzs('galr_origin').min(), mzs('galr_origin').max())
         # Plot sample of star particle abundances
         mzs.scatter_plot(ax, '[fe/h]', '[o/fe]', color='galr_origin',
                           cmap=CMAP_NAME, norm=cbar.norm, markersize=0.1)

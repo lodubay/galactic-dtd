@@ -60,6 +60,7 @@ def main(style='paper'):
         for i in range(len(ABSZ_BINS) - 1):
             absz_lim = (ABSZ_BINS[-(i+2)], ABSZ_BINS[-(i+1)])
             vice_subset = mzs.region(GALR_LIM, absz_lim)
+            print(vice_subset('galr_origin').min(), vice_subset('galr_origin').max())
             # Plot sample of star particle abundances
             vice_subset.scatter_plot(axs[i,j], '[fe/h]', '[o/fe]', 
                                       color='galr_origin', markersize=0.1,

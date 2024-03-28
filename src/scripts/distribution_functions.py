@@ -181,7 +181,7 @@ def setup_axes(ncols=2, figure_width=3.25, xlabel='', xlim=None,
     if type(cmap) == str:
         cmap = plt.get_cmap(cmap)
     norm = BoundaryNorm(galr_bins, cmap.N)
-    cax = plt.axes([0.5 - (cbar_width / 2), 0.1, cbar_width, 0.02])
+    cax = plt.axes([0.5 - (cbar_width / 2), 0.09, cbar_width, 0.02])
     cbar = fig.colorbar(ScalarMappable(norm, cmap), cax,
                         orientation='horizontal')
     cbar.set_label('Galactocentric radius [kpc]')
