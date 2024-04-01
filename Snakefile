@@ -12,7 +12,7 @@ rule simulation_insideout_powerlaw_slope11:
         RIa="powerlaw",
         RIa_params={"slope": -1.1},
         minimum_delay=0.04,
-        yields="JW20"
+        yields="J21"
     script:
         "src/scripts/snakesim.py"
 
@@ -29,7 +29,7 @@ rule simulation_lateburst_powerlaw_slope11:
         RIa="powerlaw",
         RIa_params={"slope": -1.1},
         minimum_delay=0.04,
-        yields="JW20"
+        yields="J21"
     script:
         "src/scripts/snakesim.py"
 
@@ -46,7 +46,7 @@ rule simulation_earlyburst_powerlaw_slope11:
         RIa="powerlaw",
         RIa_params={"slope": -1.1},
         minimum_delay=0.04,
-        yields="JW20"
+        yields="J21"
     script:
         "src/scripts/snakesim.py"
 
@@ -63,7 +63,7 @@ rule simulation_twoinfall_powerlaw_slope11:
         RIa="powerlaw",
         RIa_params={"slope": -1.1},
         minimum_delay=0.04,
-        yields="JW20"
+        yields="J21"
     script:
         "src/scripts/snakesim.py"
 
@@ -80,7 +80,7 @@ rule simulation_insideout_powerlaw_slope14:
         RIa="powerlaw",
         RIa_params={"slope": -1.4},
         minimum_delay=0.04,
-        yields="JW20"
+        yields="J21"
     script:
         "src/scripts/snakesim.py"
 
@@ -97,7 +97,7 @@ rule simulation_lateburst_powerlaw_slope14:
         RIa="powerlaw",
         RIa_params={"slope": -1.4},
         minimum_delay=0.04,
-        yields="JW20"
+        yields="J21"
     script:
         "src/scripts/snakesim.py"
 
@@ -114,7 +114,7 @@ rule simulation_earlyburst_powerlaw_slope14:
         RIa="powerlaw",
         RIa_params={"slope": -1.4},
         minimum_delay=0.04,
-        yields="JW20"
+        yields="J21"
     script:
         "src/scripts/snakesim.py"
 
@@ -131,7 +131,7 @@ rule simulation_twoinfall_powerlaw_slope14:
         RIa="powerlaw",
         RIa_params={"slope": -1.4},
         minimum_delay=0.04,
-        yields="JW20"
+        yields="J21"
     script:
         "src/scripts/snakesim.py"
 
@@ -148,7 +148,7 @@ rule simulation_insideout_exponential_timescale15:
         RIa="exponential",
         RIa_params={"timescale": 1.5},
         minimum_delay=0.04,
-        yields="JW20"
+        yields="J21"
     script:
         "src/scripts/snakesim.py"
 
@@ -165,7 +165,7 @@ rule simulation_lateburst_exponential_timescale15:
         RIa="exponential",
         RIa_params={"timescale": 1.5},
         minimum_delay=0.04,
-        yields="JW20"
+        yields="J21"
     script:
         "src/scripts/snakesim.py"
 
@@ -182,7 +182,7 @@ rule simulation_earlyburst_exponential_timescale15:
         RIa="exponential",
         RIa_params={"timescale": 1.5},
         minimum_delay=0.04,
-        yields="JW20"
+        yields="J21"
     script:
         "src/scripts/snakesim.py"
 
@@ -199,7 +199,7 @@ rule simulation_twoinfall_exponential_timescale15:
         RIa="exponential",
         RIa_params={"timescale": 1.5},
         minimum_delay=0.04,
-        yields="JW20"
+        yields="J21"
     script:
         "src/scripts/snakesim.py"
 
@@ -216,7 +216,7 @@ rule simulation_insideout_exponential_timescale30:
         RIa="exponential",
         RIa_params={"timescale": 3.0},
         minimum_delay=0.04,
-        yields="JW20"
+        yields="J21"
     script:
         "src/scripts/snakesim.py"
 
@@ -233,7 +233,7 @@ rule simulation_lateburst_exponential_timescale30:
         RIa="exponential",
         RIa_params={"timescale": 3.0},
         minimum_delay=0.04,
-        yields="JW20"
+        yields="J21"
     script:
         "src/scripts/snakesim.py"
 
@@ -250,7 +250,7 @@ rule simulation_earlyburst_exponential_timescale30:
         RIa="exponential",
         RIa_params={"timescale": 3.0},
         minimum_delay=0.04,
-        yields="JW20"
+        yields="J21"
     script:
         "src/scripts/snakesim.py"
 
@@ -267,7 +267,7 @@ rule simulation_twoinfall_exponential_timescale30:
         RIa="exponential",
         RIa_params={"timescale": 3.0},
         minimum_delay=0.04,
-        yields="JW20"
+        yields="J21"
     script:
         "src/scripts/snakesim.py"
 
@@ -284,7 +284,7 @@ rule simulation_insideout_plateau_width03:
         RIa="plateau",
         RIa_params={"width": 0.3, "slope": -1.1},
         minimum_delay=0.04,
-        yields="JW20"
+        yields="J21"
     script:
         "src/scripts/snakesim.py"
 
@@ -301,7 +301,7 @@ rule simulation_lateburst_plateau_width03:
         RIa="plateau",
         RIa_params={"width": 0.3, "slope": -1.1},
         minimum_delay=0.04,
-        yields="JW20"
+        yields="J21"
     script:
         "src/scripts/snakesim.py"
 
@@ -318,7 +318,7 @@ rule simulation_earlyburst_plateau_width03:
         RIa="plateau",
         RIa_params={"width": 0.3, "slope": -1.1},
         minimum_delay=0.04,
-        yields="JW20"
+        yields="J21"
     script:
         "src/scripts/snakesim.py"
 
@@ -335,7 +335,7 @@ rule simulation_twoinfall_plateau_width03:
         RIa="plateau",
         RIa_params={"width": 0.3, "slope": -1.1},
         minimum_delay=0.04,
-        yields="JW20"
+        yields="J21"
     script:
         "src/scripts/snakesim.py"
 
@@ -352,7 +352,7 @@ rule simulation_insideout_plateau_width10:
         RIa="plateau",
         RIa_params={"width": 1.0, "slope": -1.1},
         minimum_delay=0.04,
-        yields="JW20"
+        yields="J21"
     script:
         "src/scripts/snakesim.py"
 
@@ -369,7 +369,7 @@ rule simulation_lateburst_plateau_width10:
         RIa="plateau",
         RIa_params={"width": 1.0, "slope": -1.1},
         minimum_delay=0.04,
-        yields="JW20"
+        yields="J21"
     script:
         "src/scripts/snakesim.py"
 
@@ -386,7 +386,7 @@ rule simulation_earlyburst_plateau_width10:
         RIa="plateau",
         RIa_params={"width": 1.0, "slope": -1.1},
         minimum_delay=0.04,
-        yields="JW20"
+        yields="J21"
     script:
         "src/scripts/snakesim.py"
 
@@ -403,7 +403,7 @@ rule simulation_twoinfall_plateau_width10:
         RIa="plateau",
         RIa_params={"width": 1.0, "slope": -1.1},
         minimum_delay=0.04,
-        yields="JW20"
+        yields="J21"
     script:
         "src/scripts/snakesim.py"
 
@@ -420,7 +420,7 @@ rule simulation_insideout_prompt:
         RIa="prompt",
         RIa_params={"peak": 0.05, "stdev": 0.015, "timescale": 3.0},
         minimum_delay=0.04,
-        yields="JW20"
+        yields="J21"
     script:
         "src/scripts/snakesim.py"
 
@@ -437,7 +437,7 @@ rule simulation_lateburst_prompt:
         RIa="prompt",
         RIa_params={"peak": 0.05, "stdev": 0.015, "timescale": 3.0},
         minimum_delay=0.04,
-        yields="JW20"
+        yields="J21"
     script:
         "src/scripts/snakesim.py"
 
@@ -454,7 +454,7 @@ rule simulation_earlyburst_prompt:
         RIa="prompt",
         RIa_params={"peak": 0.05, "stdev": 0.015, "timescale": 3.0},
         minimum_delay=0.04,
-        yields="JW20"
+        yields="J21"
     script:
         "src/scripts/snakesim.py"
 
@@ -471,7 +471,7 @@ rule simulation_twoinfall_prompt:
         RIa="prompt",
         RIa_params={"peak": 0.05, "stdev": 0.015, "timescale": 3.0},
         minimum_delay=0.04,
-        yields="JW20"
+        yields="J21"
     script:
         "src/scripts/snakesim.py"
 
@@ -488,7 +488,7 @@ rule simulation_insideout_triple:
         RIa="triple",
         RIa_params={"early_rate": 0.05, "rise_time": 0.5, "width": 0.5, "slope": -1.1},
         minimum_delay=0.04,
-        yields="JW20"
+        yields="J21"
     script:
         "src/scripts/snakesim.py"
 
@@ -505,7 +505,7 @@ rule simulation_lateburst_triple:
         RIa="triple",
         RIa_params={"early_rate": 0.05, "rise_time": 0.5, "width": 0.5, "slope": -1.1},
         minimum_delay=0.04,
-        yields="JW20"
+        yields="J21"
     script:
         "src/scripts/snakesim.py"
 
@@ -522,7 +522,7 @@ rule simulation_earlyburst_triple:
         RIa="triple",
         RIa_params={"early_rate": 0.05, "rise_time": 0.5, "width": 0.5, "slope": -1.1},
         minimum_delay=0.04,
-        yields="JW20"
+        yields="J21"
     script:
         "src/scripts/snakesim.py"
 
@@ -539,7 +539,7 @@ rule simulation_twoinfall_triple:
         RIa="triple",
         RIa_params={"early_rate": 0.05, "rise_time": 0.5, "width": 0.5, "slope": -1.1},
         minimum_delay=0.04,
-        yields="JW20"
+        yields="J21"
     script:
         "src/scripts/snakesim.py"
 
@@ -556,7 +556,7 @@ rule simulation_insideout_greggio05_single:
         RIa="greggio05_single",
         RIa_params={},
         minimum_delay=0.04,
-        yields="JW20"
+        yields="J21"
     script:
         "src/scripts/snakesim.py"
 
@@ -573,7 +573,7 @@ rule simulation_fiducial_diffusion:
         RIa="powerlaw",
         RIa_params={"slope": -1.1},
         minimum_delay=0.04,
-        yields="JW20"
+        yields="J21"
     script:
         "src/scripts/snakesim.py"
 
@@ -590,7 +590,7 @@ rule simulation_fiducial_delay150:
         RIa="powerlaw",
         RIa_params={"slope": -1.1},
         minimum_delay=0.15,
-        yields="JW20"
+        yields="J21"
     script:
         "src/scripts/snakesim.py"
 
