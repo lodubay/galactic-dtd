@@ -93,7 +93,7 @@ def plot_apogee_mdfs(data, axs, col='FE_H', colors=[], label='APOGEE',
 def setup_axes(ncols=2, figure_width=3.25, xlabel='', xlim=None, 
                major_tick_spacing=1, galr_bins=GALR_BINS, absz_bins=ABSZ_BINS, 
                cbar_width=0.6, cmap='plasma_r', panel_aspect_ratio=1.5,
-               major_minor_tick_ratio=5.):
+               major_minor_tick_ratio=5., include_yaxis=False):
     """
     Set up matplotlib figure and axes for the distribution plot.
     
@@ -152,16 +152,17 @@ def setup_axes(ncols=2, figure_width=3.25, xlabel='', xlim=None,
     for ax in axs[-1]:
         ax.set_xlabel(xlabel)
     # Remove spines and y-axis labels
-    for ax in axs.flatten():
-        ax.spines['right'].set_visible(False)
-        ax.spines['left'].set_visible(False)
-        ax.spines['top'].set_visible(False)
-        ax.yaxis.set_ticks_position('none')
-        ax.yaxis.set_ticklabels([])
-        ax.patch.set_alpha(0)
-        ax.tick_params(top=False, which='both')
-        # Set bottom ticks pointing out
-        ax.tick_params(axis='x', which='both', direction='out')
+    if not include_yaxis:
+        for ax in axs.flatten():
+            ax.spines['right'].set_visible(False)
+            ax.spines['left'].set_visible(False)
+            ax.spines['top'].set_visible(False)
+            ax.yaxis.set_ticks_position('none')
+            ax.yaxis.set_ticklabels([])
+            ax.patch.set_alpha(0)
+            ax.tick_params(top=False, which='both')
+            # Set bottom ticks pointing out
+            ax.tick_params(axis='x', which='both', direction='out')
     # Add common y-axis label
     axs[1,0].set_ylabel('Normalized PDF')
     # fig.text(0.01, 0.58, #r'Distance from Galactic midplane $|z|$',
