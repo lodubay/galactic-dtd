@@ -25,7 +25,7 @@ DTD_LABELS = ['Power-law DTD\n($\\alpha=-1.4$)',
 SFH_MODEL = 'insideout' # hold constant while varying DTD
 # Plot settings
 NBINS = 100
-FEH_LIM = (-1.2, 0.6)
+FEH_LIM = (-1.2, 0.7)
 SMOOTH_WIDTH = 0.2
 CMAP = 'plasma_r'
 
