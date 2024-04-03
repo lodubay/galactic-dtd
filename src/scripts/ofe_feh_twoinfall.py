@@ -9,6 +9,7 @@ import matplotlib.pyplot as plt
 from matplotlib.ticker import MultipleLocator
 from matplotlib.lines import Line2D
 from matplotlib.colors import BoundaryNorm
+from matplotlib.legend_handler import HandlerTuple
 import vice
 from multizone_stars import MultizoneStars
 from scatter_plot_grid import setup_colorbar
@@ -17,12 +18,12 @@ from ofe_feh_dtd import apogee_contours
 from _globals import ZONE_WIDTH, ONE_COLUMN_WIDTH, MAX_SF_RADIUS, ABSZ_BINS
 import paths
 
-FEH_LIM = (-1.3, 0.6)
-OFE_LIM = (-0.1, 0.7)
+FEH_LIM = (-1.4, 0.7)
+OFE_LIM = (-0.15, 0.7)
 GALR_BINS = [(3, 5), (11, 13)]
 
 SFH_MODEL = 'twoinfall'
-DTD_MODEL = 'plateau_width03'
+DTD_MODEL = 'plateau_width10'
 
 def main(cmap_name='winter_r', style='paper'):
     # Set up the figure
@@ -33,7 +34,7 @@ def main(cmap_name='winter_r', style='paper'):
     plt.subplots_adjust(top=0.94, right=0.93, left=0.12, bottom=0.08, 
                         wspace=0., hspace=0.)
     # Add colorbar
-    birth_galr_bounds = [2, 4, 6, 8, 10, 12, 14, 15.5]
+    birth_galr_bounds = [0, 2, 4, 6, 8, 10, 12, 14, 15.5]
     cbar = setup_colorbar(fig, cmap=cmap_name, bounds=birth_galr_bounds,
                           label=r'Birth $R_{\rm{gal}}$ [kpc]',
                           width=0.04, pad=0.02, labelpad=2)
@@ -84,7 +85,7 @@ def main(cmap_name='winter_r', style='paper'):
         ax.set_ylabel('[O/Fe]', labelpad=2)
     for i, ax in enumerate(axs[:,0]):
         absz_lim = (ABSZ_BINS[-(i+2)], ABSZ_BINS[-(i+1)])
-        ax.text(0.1, 0.9, r'$%s\leq |z| < %s$ kpc' % absz_lim, 
+        ax.text(0.07, 0.93, r'$%s\leq |z| < %s$ kpc' % absz_lim, 
                 va='top', ha='left', transform=ax.transAxes,
                 bbox={
                     'facecolor': 'w',
@@ -98,13 +99,15 @@ def main(cmap_name='winter_r', style='paper'):
     # Custom legend
     custom_lines = [Line2D([0], [0], color=ism_track_color, linestyle='-', 
                            linewidth=ism_track_width),
-                    Line2D([0], [0], color='r', linestyle='-', linewidth=0.5),
-                    Line2D([0], [0], color='r', linestyle='--', linewidth=0.5)]
-    legend_labels = ['Gas abundance', 'APOGEE 30% cont.', 'APOGEE 80% cont.']
-    axs[2,1].legend(custom_lines, legend_labels, frameon=False, edgecolor='w',
-                    loc='upper right', handlelength=0.6, handletextpad=0.4,
+                    (Line2D([0], [0], color='r', linestyle='-', linewidth=0.5),
+                    Line2D([0], [0], color='r', linestyle='--', linewidth=0.5))]
+    # legend_labels = ['Gas abundance', 'APOGEE 30% cont.', 'APOGEE 80% cont.']
+    legend_labels = ['Gas abundance', 'APOGEE contours']
+    axs[0,1].legend(custom_lines, legend_labels, frameon=False, edgecolor='w',
+                    loc='upper right', handlelength=1.2, handletextpad=0.4,
                     borderpad=0.1, labelspacing=0.4, borderaxespad=0.5,
-                    framealpha=1.,)
+                    framealpha=1., 
+                    handler_map={tuple: HandlerTuple(ndivide=None)})
     
     plt.savefig(paths.figures / 'ofe_feh_twoinfall')
     plt.close()    

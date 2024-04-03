@@ -34,7 +34,7 @@ def main(cmap_name='winter_r', style='paper'):
     plt.subplots_adjust(top=0.94, right=0.93, left=0.12, bottom=0.08, 
                         wspace=0., hspace=0.)
     # Add colorbar
-    birth_galr_bounds = [2, 4, 6, 8, 10, 12, 14, 15.5]
+    birth_galr_bounds = [0, 2, 4, 6, 8, 10, 12, 14, 15.5]
     cbar = setup_colorbar(fig, cmap=cmap_name, bounds=birth_galr_bounds,
                           label=r'Birth $R_{\rm{gal}}$ [kpc]',
                           width=0.04, pad=0.02, labelpad=2)
@@ -56,6 +56,7 @@ def main(cmap_name='winter_r', style='paper'):
         for i in range(len(ABSZ_BINS) - 1):
             absz_lim = (ABSZ_BINS[-(i+2)], ABSZ_BINS[-(i+1)])
             vice_subset = mzs.region(galr_lim, absz_lim)
+            # print(vice_subset('galr_origin').min(), vice_subset('galr_origin').max())
             # Plot sample of star particle abundances
             vice_subset.scatter_plot(axs[i,j], '[fe/h]', '[o/fe]', 
                                       color='galr_origin', markersize=0.1,
