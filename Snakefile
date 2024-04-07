@@ -761,7 +761,7 @@ rule ofe_feh_dtd:
 
 rule ofe_feh_twoinfall:
     input:
-        "src/data/multizone/gaussian/twoinfall/plateau_width03",
+        "src/data/multizone/gaussian/twoinfall/plateau_width10",
         "src/data/APOGEE/sample.csv"
     output:
         "src/tex/figures/ofe_feh_twoinfall.pdf"

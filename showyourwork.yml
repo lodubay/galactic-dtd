@@ -93,7 +93,7 @@ dependencies:
     src/scripts/ofe_feh_twoinfall.py:
         - src/scripts/multizone_stars.py
         - src/data/APOGEE/sample.csv
-        - src/data/multizone/gaussian/twoinfall/plateau_width03/
+        - src/data/multizone/gaussian/twoinfall/plateau_width10/
     src/scripts/age_ofe_sfh.py:
         - src/scripts/multizone_stars.py
         - src/scripts/age_ofe.py
