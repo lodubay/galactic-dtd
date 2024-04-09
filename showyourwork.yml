@@ -14,40 +14,8 @@ datasets:
     10.5072/zenodo.42842:
         contents:
             destination: src/data
-            simulation_insideout_prompt:                    src/data/multizone/gaussian/insideout/prompt
-            simulation_insideout_powerlaw_slope14:          src/data/multizone/gaussian/insideout/powerlaw_slope14
-            simulation_insideout_powerlaw_slope11:          src/data/multizone/gaussian/insideout/powerlaw_slope11
-            simulation_insideout_exponential_timescale15:   src/data/multizone/gaussian/insideout/exponential_timescale15
-            simulation_insideout_exponential_timescale30:   src/data/multizone/gaussian/insideout/exponential_timescale30
-            simulation_insideout_plateau_width03:           src/data/multizone/gaussian/insideout/plateau_width03
-            simulation_insideout_plateau_width10:           src/data/multizone/gaussian/insideout/plateau_width10
-            simulation_insideout_triple:                    src/data/multizone/gaussian/insideout/triple
-            simulation_lateburst_prompt:                    src/data/multizone/gaussian/lateburst/prompt
-            simulation_lateburst_powerlaw_slope14:          src/data/multizone/gaussian/lateburst/powerlaw_slope14
-            simulation_lateburst_powerlaw_slope11:          src/data/multizone/gaussian/lateburst/powerlaw_slope11
-            simulation_lateburst_exponential_timescale15:   src/data/multizone/gaussian/lateburst/exponential_timescale15
-            simulation_lateburst_exponential_timescale30:   src/data/multizone/gaussian/lateburst/exponential_timescale30
-            simulation_lateburst_plateau_width03:           src/data/multizone/gaussian/lateburst/plateau_width03
-            simulation_lateburst_plateau_width10:           src/data/multizone/gaussian/lateburst/plateau_width10
-            simulation_lateburst_triple:                    src/data/multizone/gaussian/lateburst/triple
-            simulation_earlyburst_prompt:                   src/data/multizone/gaussian/earlyburst/prompt
-            simulation_earlyburst_powerlaw_slope14:         src/data/multizone/gaussian/earlyburst/powerlaw_slope14
-            simulation_earlyburst_powerlaw_slope11:         src/data/multizone/gaussian/earlyburst/powerlaw_slope11
-            simulation_earlyburst_exponential_timescale15:  src/data/multizone/gaussian/earlyburst/exponential_timescale15
-            simulation_earlyburst_exponential_timescale30:  src/data/multizone/gaussian/earlyburst/exponential_timescale30
-            simulation_earlyburst_plateau_width03:          src/data/multizone/gaussian/earlyburst/plateau_width03
-            simulation_earlyburst_plateau_width10:          src/data/multizone/gaussian/earlyburst/plateau_width10
-            simulation_earlyburst_triple:                   src/data/multizone/gaussian/earlyburst/triple
-            simulation_twoinfall_prompt:                    src/data/multizone/gaussian/twoinfall/prompt
-            simulation_twoinfall_powerlaw_slope14:          src/data/multizone/gaussian/twoinfall/powerlaw_slope14
-            simulation_twoinfall_powerlaw_slope11:          src/data/multizone/gaussian/twoinfall/powerlaw_slope11
-            simulation_twoinfall_exponential_timescale15:   src/data/multizone/gaussian/twoinfall/exponential_timescale15
-            simulation_twoinfall_exponential_timescale30:   src/data/multizone/gaussian/twoinfall/exponential_timescale30
-            simulation_twoinfall_plateau_width03:           src/data/multizone/gaussian/twoinfall/plateau_width03
-            simulation_twoinfall_plateau_width10:           src/data/multizone/gaussian/twoinfall/plateau_width10
-            simulation_twoinfall_triple:                    src/data/multizone/gaussian/twoinfall/triple
-            simulation_fiducial_diffusion:                  src/data/multizone/diffusion/insideout/powerlaw_slope11
-            apogee_sample:                                  src/data/APOGEE/sample.csv
+            multizone.tar.gz:
+            apogee_sample: src/data/APOGEE/sample.csv
 
 dependencies:
     src/scripts/radial_migration.py:
