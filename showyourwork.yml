@@ -11,61 +11,31 @@ overleaf:
         - src/tex/bib.bib
 
 datasets:
-    10.5072/zenodo.45071:
+    10.5072/zenodo.45057:
+        destination: src/data
         contents:
-            multizone_insideout_prompt.tar.gz:                     src/data/multizone/gaussian/insideout/prompt/
-            multizone_insideout_powerlaw_slope14.tar.gz:           src/data/multizone/gaussian/insideout/powerlaw_slope14/
-            multizone_insideout_powerlaw_slope11.tar.gz:
-                diskmodel.vice: src/data/multizone/gaussian/insideout/powerlaw_slope11/diskmodel.vice/
-                diskmodel_analogdata.out: src/data/multizone/gaussian/insideout/powerlaw_slope11/diskmodel_analogdata.out
-            multizone_insideout_exponential_timescale15.tar.gz:    src/data/multizone/gaussian/insideout/exponential_timescale15/
-            multizone_insideout_exponential_timescale30.tar.gz:    src/data/multizone/gaussian/insideout/exponential_timescale30/
-            multizone_insideout_plateau_width03.tar.gz:            src/data/multizone/gaussian/insideout/plateau_width03/
-            multizone_insideout_plateau_width10.tar.gz:            src/data/multizone/gaussian/insideout/plateau_width10/
-            multizone_insideout_triple.tar.gz:                     src/data/multizone/gaussian/insideout/triple/
-            multizone_lateburst_prompt.tar.gz:                     src/data/multizone/gaussian/lateburst/prompt/
-            multizone_lateburst_powerlaw_slope14.tar.gz:           src/data/multizone/gaussian/lateburst/powerlaw_slope14/
-            multizone_lateburst_powerlaw_slope11.tar.gz:           src/data/multizone/gaussian/lateburst/powerlaw_slope11/
-            multizone_lateburst_exponential_timescale15.tar.gz:    src/data/multizone/gaussian/lateburst/exponential_timescale15/
-            multizone_lateburst_exponential_timescale30.tar.gz:    src/data/multizone/gaussian/lateburst/exponential_timescale30/
-            multizone_lateburst_plateau_width03.tar.gz:            src/data/multizone/gaussian/lateburst/plateau_width03/
-            multizone_lateburst_plateau_width10.tar.gz:            src/data/multizone/gaussian/lateburst/plateau_width10/
-            multizone_lateburst_triple.tar.gz:                     src/data/multizone/gaussian/lateburst/triple/
-            multizone_earlyburst_prompt.tar.gz:                    src/data/multizone/gaussian/earlyburst/prompt/
-            multizone_earlyburst_powerlaw_slope14.tar.gz:          src/data/multizone/gaussian/earlyburst/powerlaw_slope14/
-            multizone_earlyburst_powerlaw_slope11.tar.gz:          src/data/multizone/gaussian/earlyburst/powerlaw_slope11/
-            multizone_earlyburst_exponential_timescale15.tar.gz:   src/data/multizone/gaussian/earlyburst/exponential_timescale15/
-            multizone_earlyburst_exponential_timescale30.tar.gz:   src/data/multizone/gaussian/earlyburst/exponential_timescale30/
-            multizone_earlyburst_plateau_width03.tar.gz:           src/data/multizone/gaussian/earlyburst/plateau_width03/
-            multizone_earlyburst_plateau_width10.tar.gz:           src/data/multizone/gaussian/earlyburst/plateau_width10/
-            multizone_earlyburst_triple.tar.gz:                    src/data/multizone/gaussian/earlyburst/triple/
-            multizone_twoinfall_prompt.tar.gz:                     src/data/multizone/gaussian/twoinfall/prompt/
-            multizone_twoinfall_powerlaw_slope14.tar.gz:           src/data/multizone/gaussian/twoinfall/powerlaw_slope14/
-            multizone_twoinfall_powerlaw_slope11.tar.gz:           src/data/multizone/gaussian/twoinfall/powerlaw_slope11/
-            multizone_twoinfall_exponential_timescale15.tar.gz:    src/data/multizone/gaussian/twoinfall/exponential_timescale15/
-            multizone_twoinfall_exponential_timescale30.tar.gz:    src/data/multizone/gaussian/twoinfall/exponential_timescale30/
-            multizone_twoinfall_plateau_width03.tar.gz:            src/data/multizone/gaussian/twoinfall/plateau_width03/
-            multizone_twoinfall_plateau_width10.tar.gz:            src/data/multizone/gaussian/twoinfall/plateau_width10/
-            multizone_twoinfall_triple.tar.gz:                     src/data/multizone/gaussian/twoinfall/triple/
-            multizone_fiducial_diffusion.tar.gz:
-                diskmodel.vice: src/data/multizone/diffusion/insideout/powerlaw_slope11/diskmodel.vice/
-                diskmodel_analogdata.out: src/data/multizone/diffusion/insideout/powerlaw_slope11/diskmodel_analogdata.out
-            sample.csv:                                            src/data/APOGEE/sample.csv
+            multizone.tar.gz: 
+            sample.csv: src/data/APOGEE/sample.csv
 
 dependencies:
+    src/scripts/extract_multizone_output.py:
+        - src/data/multizone.tar.gz
     src/scripts/radial_migration.py:
         - src/scripts/multizone_stars.py
         - src/data/multizone/diffusion/insideout/powerlaw_slope11/
         - src/data/multizone/gaussian/insideout/powerlaw_slope11/
+        - src/data/multizone.tar.gz
     src/scripts/midplane_distance.py:
         - src/scripts/multizone_stars.py
         - src/data/multizone/diffusion/insideout/powerlaw_slope11/
         - src/data/multizone/gaussian/insideout/powerlaw_slope11/
+        - src/data/multizone.tar.gz
     src/scripts/star_formation_histories.py:
         - src/data/multizone/gaussian/insideout/powerlaw_slope11/
         - src/data/multizone/gaussian/lateburst/powerlaw_slope11/
         - src/data/multizone/gaussian/earlyburst/powerlaw_slope11/
         - src/data/multizone/gaussian/twoinfall/powerlaw_slope11/
+        - src/data/multizone.tar.gz
     src/scripts/feh_df_sfh.py:
         - src/scripts/multizone_stars.py
         - src/scripts/distribution_functions.py
@@ -74,11 +44,13 @@ dependencies:
         - src/data/multizone/gaussian/lateburst/exponential_timescale15/
         - src/data/multizone/gaussian/earlyburst/exponential_timescale15/
         - src/data/multizone/gaussian/twoinfall/exponential_timescale15/
+        - src/data/multizone.tar.gz
     src/scripts/feh_df_dtd.py:
         - src/scripts/multizone_stars.py
         - src/scripts/distribution_functions.py
         - src/data/multizone/gaussian/insideout/powerlaw_slope14/
         - src/data/multizone/gaussian/insideout/exponential_timescale30/
+        - src/data/multizone.tar.gz
     src/scripts/feh_df_comparison.py:
         - src/scripts/multizone_stars.py
         - src/scripts/distribution_functions.py
@@ -87,6 +59,7 @@ dependencies:
         - src/data/multizone/gaussian/twoinfall/exponential_timescale15/
         - src/data/multizone/gaussian/insideout/powerlaw_slope14/
         - src/data/multizone/gaussian/insideout/exponential_timescale30/
+        - src/data/multizone.tar.gz
     src/scripts/ofe_df_sfh.py:
         - src/scripts/multizone_stars.py
         - src/scripts/distribution_functions.py
@@ -95,6 +68,7 @@ dependencies:
         - src/data/multizone/gaussian/lateburst/exponential_timescale15/
         - src/data/multizone/gaussian/earlyburst/exponential_timescale15/
         - src/data/multizone/gaussian/twoinfall/exponential_timescale15/
+        - src/data/multizone.tar.gz
     src/scripts/ofe_df_dtd.py:
         - src/scripts/multizone_stars.py
         - src/scripts/distribution_functions.py
@@ -104,6 +78,7 @@ dependencies:
         - src/data/multizone/gaussian/earlyburst/exponential_timescale15/
         - src/data/multizone/gaussian/earlyburst/plateau_width10/
         - src/data/multizone/gaussian/earlyburst/triple/
+        - src/data/multizone.tar.gz
     src/scripts/ofe_bimodality_summary.py:
         - src/scripts/multizone_stars.py
         - src/scripts/distribution_functions.py
@@ -117,6 +92,7 @@ dependencies:
         - src/data/multizone/gaussian/earlyburst/exponential_timescale15/
         - src/data/multizone/gaussian/earlyburst/plateau_width10/
         - src/data/multizone/gaussian/earlyburst/triple/
+        - src/data/multizone.tar.gz
     src/scripts/ofe_feh_sfh.py:
         - src/scripts/multizone_stars.py
         - src/data/APOGEE/sample.csv
@@ -124,6 +100,7 @@ dependencies:
         - src/data/multizone/gaussian/lateburst/exponential_timescale15/
         - src/data/multizone/gaussian/earlyburst/exponential_timescale15/
         - src/data/multizone/gaussian/twoinfall/exponential_timescale15/
+        - src/data/multizone.tar.gz
     src/scripts/ofe_feh_dtd.py:
         - src/scripts/multizone_stars.py
         - src/data/APOGEE/sample.csv
@@ -132,10 +109,12 @@ dependencies:
         - src/data/multizone/gaussian/insideout/exponential_timescale15/
         - src/data/multizone/gaussian/insideout/plateau_width10/
         - src/data/multizone/gaussian/insideout/triple/
+        - src/data/multizone.tar.gz
     src/scripts/ofe_feh_twoinfall.py:
         - src/scripts/multizone_stars.py
         - src/data/APOGEE/sample.csv
         - src/data/multizone/gaussian/twoinfall/plateau_width10/
+        - src/data/multizone.tar.gz
     src/scripts/age_ofe_sfh.py:
         - src/scripts/multizone_stars.py
         - src/scripts/age_ofe.py
@@ -144,6 +123,7 @@ dependencies:
         - src/data/multizone/gaussian/lateburst/exponential_timescale15/
         - src/data/multizone/gaussian/earlyburst/exponential_timescale15/
         - src/data/multizone/gaussian/twoinfall/exponential_timescale15/
+        - src/data/multizone.tar.gz
     src/scripts/age_ofe_dtd.py:
         - src/scripts/multizone_stars.py
         - src/scripts/age_ofe.py
@@ -153,6 +133,7 @@ dependencies:
         - src/data/multizone/gaussian/earlyburst/exponential_timescale15/
         - src/data/multizone/gaussian/earlyburst/plateau_width10/
         - src/data/multizone/gaussian/earlyburst/triple/
+        - src/data/multizone.tar.gz
     src/scripts/score_multizone_outputs.py:
         - src/data/multizone/gaussian/insideout/powerlaw_slope11/
         - src/data/multizone/gaussian/insideout/powerlaw_slope14/
@@ -187,6 +168,7 @@ dependencies:
         - src/data/multizone/gaussian/twoinfall/prompt/
         - src/data/multizone/gaussian/twoinfall/triple/
         - src/data/APOGEE/sample.csv
+        - src/data/multizone.tar.gz
     src/scripts/summary_table.py:
         - src/scripts/score_multizone_outputs.py
         - src/tex/output/scores.csv

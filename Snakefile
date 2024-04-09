@@ -1,3 +1,12 @@
+# Multi-zone outputs
+rule multizone_output:
+    input:
+        "src/data/multizone.tar.gz"
+    output:
+        directory("src/data/multizone/")
+    script:
+        "src/scripts/extract_multizone_output.py"
+
 # Figures
 rule star_formation_histories:
     input:
