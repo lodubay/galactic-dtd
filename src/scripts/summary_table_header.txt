@@ -1,10 +1,13 @@
 \begin{deluxetable*}{ll|ccccc}
 \tablecaption{Summary of quantitative comparisons between the model output,
 APOGEE DR17 abundances, and \citetalias{Leung2023-Ages} ages for each multi-zone
-model.\label{tab:results}}
+model. See discussion in Section \ref{sec:feh-df} for the [Fe/H] DF, 
+Section \ref{sec:ofe-df} for the [O/Fe] DF, Section \ref{sec:bimodality} for
+the [O/Fe] bimodality, Section \ref{sec:ofe-feh} for the [O/Fe]--[Fe/H] plane,
+and Section \ref{sec:age-ofe} for the age--[O/Fe] plane.\label{tab:results}}
 \tablehead{
     \colhead{DTD} & \colhead{SFH} & \colhead{[Fe/H] DF} & \colhead{[O/Fe] DF} & 
-    \colhead{[Fe/H]--[O/Fe]} & \colhead{Age--[O/Fe]} & \colhead{Bimodality}
+    \colhead{[O/Fe] Bimodality} & \colhead{[Fe/H]--[O/Fe]} & \colhead{Age--[O/Fe]}
 }
 \startdata
 ===

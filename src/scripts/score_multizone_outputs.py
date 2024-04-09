@@ -34,7 +34,7 @@ def main():
         index=pd.MultiIndex.from_product([DTD_LIST, SFH_LIST], 
                                          names=['DTD', 'SFH']),
         # temporary column names
-        columns=['feh_df', 'ofe_df', 'ofe_feh', 'age_ofe', 'bimodality'],
+        columns=['feh_df', 'ofe_df', 'bimodality', 'ofe_feh', 'age_ofe'],
     )
     
     age_col = {'L23': 'LATENT_AGE', 'M19': 'ASTRONN_AGE'}[AGE_SOURCE]
@@ -46,7 +46,8 @@ def main():
                 mzs = MultizoneStars.from_output(output_name)
                 mzs.model_uncertainty(apogee_data, inplace=True)
                 # Set up lists to track scores by region
-                scores = {col: [] for col in summary_table.columns[:-1]}
+                scores = {col: [] for col in ['feh_df', 'ofe_df', 'ofe_feh', 
+                                              'age_ofe']}
                 weights = []
                 age_weights = []
                 for i in range(len(ABSZ_BINS) - 1):
@@ -72,7 +73,7 @@ def main():
                             subset=age_col).shape[0])
                 # Append weighted mean scores
                 weighted_sums = {col: np.average(scores[col], weights=weights) 
-                                 for col in summary_table.columns[:-2]}
+                                 for col in ['feh_df', 'ofe_df', 'ofe_feh']}
                 weighted_sums['age_ofe'] = np.average(scores['age_ofe'], 
                                                       weights=age_weights)
                 # Separate bimodality test (binary output)

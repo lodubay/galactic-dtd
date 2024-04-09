@@ -16,14 +16,15 @@ def main():
     df = pd.read_csv(csv_file, index_col=[0, 1])
     # Convert to LaTeX format and write to output file
     # Mask numerical scores with no / meh / yes marks
-    for col in df.columns[:-1]:
-        df[col] = df[col].mask(df[col] < df[col].quantile(0.33), 
-                           other='\yes').mask(
-                               (df[col] >= df[col].quantile(0.33)) & 
-                               (df[col] < df[col].quantile(0.67)), 
-                           other='\meh').mask(
-                               df[col] >= df[col].quantile(0.67),
-                           other='\\no')
+    for col in df.columns:
+        if col != 'bimodality':
+            df[col] = df[col].mask(df[col] < df[col].quantile(0.33), 
+                               other='\yes').mask(
+                                   (df[col] >= df[col].quantile(0.33)) & 
+                                   (df[col] < df[col].quantile(0.67)), 
+                               other='\meh').mask(
+                                   df[col] >= df[col].quantile(0.67),
+                               other='\\no')
     # Mask bimodality booleans with no / yes marks
     df['bimodality'] = df['bimodality'].mask(df['bimodality'].astype('bool'), 
                                         other='\yes').mask(
