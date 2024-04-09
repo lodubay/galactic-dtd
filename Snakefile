@@ -174,8 +174,6 @@ rule multizone_scores:
         "src/data/APOGEE/sample.csv"
     output:
         "src/tex/output/scores.csv"
-    cache:
-        True
     script:
         "src/scripts/score_multizone_outputs.py"
 
