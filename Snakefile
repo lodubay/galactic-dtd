@@ -173,7 +173,7 @@ rule multizone_scores:
         ),
         "src/data/APOGEE/sample.csv"
     output:
-        "src/data/multizone/scores.csv"
+        "src/tex/output/scores.csv"
     cache:
         True
     script:
@@ -181,7 +181,7 @@ rule multizone_scores:
 
 rule summary_table:
     input:
-        "src/data/multizone/scores.csv",
+        "src/tex/output/scores.csv",
         "src/scripts/summary_table_header.txt"
     output:
         "src/tex/output/summary_table.tex"
