@@ -15,6 +15,46 @@ datasets:
         contents:
             destination: src/data
             multizone.tar.gz:
+                diffusion:
+                    insideout:
+                        powerlaw_slope11: src/data/multizone/diffusion/insideout/powerlaw_slope11
+                gaussian:
+                    insideout:
+                        prompt:                     src/data/multizone/gaussian/insideout/prompt
+                        powerlaw_slope14:           src/data/multizone/gaussian/insideout/powerlaw_slope14
+                        powerlaw_slope11:           src/data/multizone/gaussian/insideout/powerlaw_slope11
+                        exponential_timescale15:    src/data/multizone/gaussian/insideout/exponential_timescale15
+                        exponential_timescale30:    src/data/multizone/gaussian/insideout/exponential_timescale30
+                        plateau_width03:            src/data/multizone/gaussian/insideout/plateau_width03
+                        plateau_width10:            src/data/multizone/gaussian/insideout/plateau_width10
+                        triple:                     src/data/multizone/gaussian/insideout/triple
+                    lateburst:
+                        prompt:                     src/data/multizone/gaussian/lateburst/prompt
+                        powerlaw_slope14:           src/data/multizone/gaussian/lateburst/powerlaw_slope14
+                        powerlaw_slope11:           src/data/multizone/gaussian/lateburst/powerlaw_slope11
+                        exponential_timescale15:    src/data/multizone/gaussian/lateburst/exponential_timescale15
+                        exponential_timescale30:    src/data/multizone/gaussian/lateburst/exponential_timescale30
+                        plateau_width03:            src/data/multizone/gaussian/lateburst/plateau_width03
+                        plateau_width10:            src/data/multizone/gaussian/lateburst/plateau_width10
+                        triple:                     src/data/multizone/gaussian/lateburst/triple
+                    earlyburst:
+                        prompt:                     src/data/multizone/gaussian/earlyburst/prompt
+                        powerlaw_slope14:           src/data/multizone/gaussian/earlyburst/powerlaw_slope14
+                        powerlaw_slope11:           src/data/multizone/gaussian/earlyburst/powerlaw_slope11
+                        exponential_timescale15:    src/data/multizone/gaussian/earlyburst/exponential_timescale15
+                        exponential_timescale30:    src/data/multizone/gaussian/earlyburst/exponential_timescale30
+                        plateau_width03:            src/data/multizone/gaussian/earlyburst/plateau_width03
+                        plateau_width10:            src/data/multizone/gaussian/earlyburst/plateau_width10
+                        triple:                     src/data/multizone/gaussian/earlyburst/triple
+                    twoinfall:
+                        prompt:                     src/data/multizone/gaussian/twoinfall/prompt
+                        powerlaw_slope14:           src/data/multizone/gaussian/twoinfall/powerlaw_slope14
+                        powerlaw_slope11:           src/data/multizone/gaussian/twoinfall/powerlaw_slope11
+                        exponential_timescale15:    src/data/multizone/gaussian/twoinfall/exponential_timescale15
+                        exponential_timescale30:    src/data/multizone/gaussian/twoinfall/exponential_timescale30
+                        plateau_width03:            src/data/multizone/gaussian/twoinfall/plateau_width03
+                        plateau_width10:            src/data/multizone/gaussian/twoinfall/plateau_width10
+                        triple:                     src/data/multizone/gaussian/twoinfall/triple
             apogee_sample: src/data/APOGEE/sample.csv
 
 dependencies:
