@@ -16,6 +16,8 @@ datasets:
             multizone_insideout_prompt.tar.gz:                     src/data/multizone/gaussian/insideout/prompt/
             multizone_insideout_powerlaw_slope14.tar.gz:           src/data/multizone/gaussian/insideout/powerlaw_slope14/
             multizone_insideout_powerlaw_slope11.tar.gz:           src/data/multizone/gaussian/insideout/powerlaw_slope11/
+                diskmodel.vice:
+                diskmodel_analogdata.out:
             multizone_insideout_exponential_timescale15.tar.gz:    src/data/multizone/gaussian/insideout/exponential_timescale15/
             multizone_insideout_exponential_timescale30.tar.gz:    src/data/multizone/gaussian/insideout/exponential_timescale30/
             multizone_insideout_plateau_width03.tar.gz:            src/data/multizone/gaussian/insideout/plateau_width03/
@@ -46,6 +48,8 @@ datasets:
             multizone_twoinfall_plateau_width10.tar.gz:            src/data/multizone/gaussian/twoinfall/plateau_width10/
             multizone_twoinfall_triple.tar.gz:                     src/data/multizone/gaussian/twoinfall/triple/
             multizone_fiducial_diffusion.tar.gz:                   src/data/multizone/diffusion/insideout/powerlaw_slope11/
+                diskmodel.vice:
+                diskmodel_analogdata.out:
             sample.csv:                                            src/data/APOGEE/sample.csv
 
 dependencies:
