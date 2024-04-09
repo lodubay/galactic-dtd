@@ -55,7 +55,7 @@ datasets:
                         plateau_width03:            src/data/multizone/gaussian/twoinfall/plateau_width03
                         plateau_width10:            src/data/multizone/gaussian/twoinfall/plateau_width10
                         triple:                     src/data/multizone/gaussian/twoinfall/triple
-            apogee_sample: src/data/APOGEE/sample.csv
+            sample.csv: src/data/APOGEE/sample.csv
 
 dependencies:
     src/scripts/radial_migration.py:
