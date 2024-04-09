@@ -81,7 +81,7 @@ def main():
                 summary_table.loc[dtd, sfh] = weighted_sums
                 t.update()
     
-    summary_table.to_csv(paths.data / 'multizone' / 'scores.csv')
+    summary_table.to_csv(paths.output / 'scores.csv')
     
 
 def score_feh_df(mzs, apogee_data, data_range=(-3., 1.), bin_width=0.01):

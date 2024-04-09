@@ -10,7 +10,7 @@ from score_multizone_outputs import DTD_LIST
 
 def main():
     # Import numerical scores of multi-zone outputs, or generate if missing
-    csv_file = paths.data / 'multizone' / 'scores.csv'
+    csv_file = paths.output / 'scores.csv'
     if not csv_file.exists():
         gen_scores()
     df = pd.read_csv(csv_file, index_col=[0, 1])
