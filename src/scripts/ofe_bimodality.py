@@ -63,7 +63,7 @@ def main(output_name, smoothing=SMOOTH_WIDTH, uncertainties=True, resample=True)
 
 def plot_bimodality(ax, output_name, feh_bins=FEH_BINS, smoothing=SMOOTH_WIDTH, 
                     uncertainties=True, resample=True,  apogee_data=None, 
-                    nsamples=20000, ofe_lim=OFE_LIM, galr_lim=GALR_LIM,
+                    nsamples=100000, ofe_lim=OFE_LIM, galr_lim=GALR_LIM,
                     absz_lim=ABSZ_LIM, linestyles=LINESTYLES, colors=COLORS,
                     show_peaks=True, prominence=0.1, **kwargs):
     """

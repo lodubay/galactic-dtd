@@ -207,7 +207,7 @@ def score_age_ofe(mzs, apogee_data, age_col='LATENT_AGE',
 
 def test_bimodality(mzs, apogee_data, prominence=0.1, smoothing=0.05, 
                     feh_bins=[(-0.6, -0.4), (-0.4, -0.2)], ofe_lim=(-0.15, 0.55),
-                    galr_lim=(7, 9), absz_lim=(0, 2), nsamples=20000):
+                    galr_lim=(7, 9), absz_lim=(0, 2), nsamples=100000):
     """
     Determine whether the distribution of stars in [O/Fe] is bimodal.
     

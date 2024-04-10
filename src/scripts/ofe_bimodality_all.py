@@ -22,7 +22,7 @@ DTD_LIST = [
     'triple'
 ]
 
-with tqdm(total=len(SFH_LIST) * len(DTD_LIST) + 1) as t:
+with tqdm(total=len(SFH_LIST) * len(DTD_LIST)) as t:
     for evolution in SFH_LIST:
         for RIa in DTD_LIST:
             # Import VICE multi-zone output data

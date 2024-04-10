@@ -31,7 +31,7 @@ def main():
                                              ~df['bimodality'].astype('bool'),
                                         other='\\no')
     # Fancy row labels
-    dtd_labels = ['Two-population', '($t_{\\rm max}=0.05$ Gyr)', '', '',
+    dtd_labels = ['Two-population', '($t_p=0.05$ Gyr)', '', '',
                   'Power-law', '($\\alpha=-1.4$)', '', '',
                   'Power-law', '($\\alpha=-1.1$)', '', '',
                   'Exponential', '($\\tau=1.5$ Gyr)', '', '',
