@@ -13,7 +13,7 @@ import distribution_functions as dfs
 from _globals import ONE_COLUMN_WIDTH, GALR_BINS, ABSZ_BINS
 
 NBINS = 100
-FEH_LIM = (-1.1, 0.6)
+FEH_LIM = (-1.2, 0.7)
 SMOOTH_WIDTH = 0.2
 
 def main(output_name, uncertainties=True, nbins=NBINS, xlim=FEH_LIM, 
@@ -25,7 +25,7 @@ def main(output_name, uncertainties=True, nbins=NBINS, xlim=FEH_LIM,
         mzs.model_uncertainty(apogee_data, inplace=True)
     # Set up plot
     fig, axs = dfs.setup_axes(ncols=2, figure_width=ONE_COLUMN_WIDTH, 
-                              cmap_name=cmap, xlabel='[Fe/H]', xlim=xlim, 
+                              cmap=cmap, xlabel='[Fe/H]', xlim=xlim, 
                               major_tick_spacing=0.5)
     colors = get_color_list(plt.get_cmap(cmap), GALR_BINS)
     # plot
@@ -34,6 +34,8 @@ def main(output_name, uncertainties=True, nbins=NBINS, xlim=FEH_LIM,
     dfs.plot_apogee_mdfs(apogee_data, axs[:,1], 'FE_H', colors, **mdf_kwargs)
     for ax in axs[:,0]:
         ax.set_ylim((0, None))
+    fig.suptitle(output_name)
+    plt.subplots_adjust(top=0.85)
     # Save
     fname = output_name.replace('diskmodel', 'feh_df.png')
     fullpath = paths.figures / 'supplementary' / fname

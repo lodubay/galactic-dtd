@@ -25,7 +25,7 @@ def main(output_name, uncertainties=True, nbins=NBINS, xlim=OFE_LIM,
         mzs.model_uncertainty(apogee_data, inplace=True)
     # Set up plot
     fig, axs = dfs.setup_axes(ncols=2, figure_width=ONE_COLUMN_WIDTH, 
-                              cmap_name=cmap, xlabel='[O/Fe]', xlim=OFE_LIM, 
+                              cmap=cmap, xlabel='[O/Fe]', xlim=OFE_LIM, 
                               major_tick_spacing=0.2, major_minor_tick_ratio=4.)
     colors = get_color_list(plt.get_cmap(cmap), GALR_BINS)
     # plot
@@ -34,6 +34,8 @@ def main(output_name, uncertainties=True, nbins=NBINS, xlim=OFE_LIM,
     dfs.plot_apogee_mdfs(apogee_data, axs[:,1], 'O_FE', colors, **mdf_kwargs)
     for ax in axs[:,0]:
         ax.set_ylim((0, None))
+    fig.suptitle(output_name)
+    plt.subplots_adjust(top=0.85)
     # Save
     fname = output_name.replace('diskmodel', 'ofe_df.png')
     fullpath = paths.figures / 'supplementary' / fname
