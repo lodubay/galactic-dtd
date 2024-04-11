@@ -11,7 +11,7 @@ overleaf:
         - src/tex/bib.bib
 
 datasets:
-    10.5072/zenodo.45159:
+    10.5281/zenodo.10961091:
         destination: src/data
         contents:
             multizone.tar.gz: 
