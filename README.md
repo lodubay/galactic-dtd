@@ -18,16 +18,24 @@
 </a>
 </p>
 
-Welcome to the repository for **Dubay et al. (in prep), "Galactic Chemical 
-Evolution Models Favor an Extended Type Ia Supernova Delay-Time Distribution"**.
+Welcome to the repository for **Dubay et al. (2024), "Galactic Chemical 
+Evolution Models Favor an Extended Type Ia Supernova Delay-Time Distribution"**,
+[arXiv:2404.08059](https://arxiv.org/abs/2404.08059).
 
 To re-build the article yourself, simply run the following from the repository
 directory:
 ```
 $ showyourwork build
 ```
-The data and model outputs will automatically be downloaded from Zenodo: 
-[Zenodo DOI]
+The data and model outputs will automatically be downloaded from the 
+[Zenodo deposit](https://doi.org/10.5281/zenodo.10961091).
+
+To re-create the APOGEE sample with Leung et al. (2023) age estimates,
+run the following:
+```
+$ python generate_sample.py
+```
+This will replace everything in the `src/data/APOGEE` directory.
 
 To re-run all models yourself, run the following:
 ```
@@ -36,9 +44,12 @@ $ python run_all_models.py
 This will replace everything in the `src/data/multizone` directory, including
 the output files from Zenodo.
 
-To re-create the APOGEE sample with Leung et al. (2023) age estimates,
-run the following:
+Source code for the models is located within the [src/scripts/multizone/](/src/scripts/multizone/) directory.
+To run a single multi-zone model with custom parameters, run the following:
 ```
-$ python generate_sample.py
+$ cd src/scripts
+$ python -m multizone [OPTIONS...]
 ```
-This will replace everything in the `src/data/APOGEE` directory.
+In particular, code for the stellar migration prescription is contained within the `gaussian_migration` class
+located at
+[src/scripts/multizone/src/migration.py](/src/scripts/multizone/src/migration.py).
