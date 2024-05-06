@@ -4,6 +4,7 @@ It takes the [O/Fe] distribution within a narrow slice of [Fe/H]
 for each VICE multi-zone output, and runs a peak-finding algorithm to determine
 whether the output exhibits alpha-element bimodality.
 """
+import argparse
 from tqdm import tqdm
 import numpy as np
 import matplotlib.pyplot as plt
@@ -37,8 +38,8 @@ DTD_LABELS = ['Two-population',
               'Plateau\n($W=1.0$ Gyr)', 
               'Triple-system']
 
-def main():
-    plt.style.use(paths.styles / 'paper.mplstyle')
+def main(style='paper'):
+    plt.style.use(paths.styles / f'{style}.mplstyle')
     figwidth = TWO_COLUMN_WIDTH
     title_size = plt.rcParams['figure.titlesize']
     axes_label_size = plt.rcParams['axes.labelsize']
@@ -118,11 +119,20 @@ def main():
     highlight_panels(fig, axs, (1,-1))
     
     # Save
-    plt.savefig(paths.figures / 'ofe_bimodality_summary.pdf', dpi=300)
+    plt.savefig(paths.figures / 'ofe_bimodality_summary', dpi=300)
     plt.close()
     print('Done!')
 
 
 if __name__ == '__main__':
-    main()
+    parser = argparse.ArgumentParser(
+        prog='ofe_bimodality_summary.py',
+        description='Plot [O/Fe] distributions in bins of [Fe/H] from VICE ' +
+                    'multi-zone models with different DTDs and SFHs.')
+    parser.add_argument('-s', '--style', 
+                        choices=['paper', 'poster'],
+                        default='paper', 
+                        help='Plot style to use (default: paper)')
+    args = parser.parse_args()
+    main(**vars(args))
     

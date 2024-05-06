@@ -3,6 +3,7 @@ This script plots abundance tracks from one-zone models with varying Type Ia
 delay time distribution (DTD).
 """
 
+import argparse
 import numpy as np
 import matplotlib.pyplot as plt
 import vice
@@ -14,8 +15,8 @@ from colormaps import paultol
 from track_and_mdf import setup_figure, plot_vice_onezone
 from delay_time_distributions import styles
 
-def main():
-    plt.style.use(paths.styles / 'paper.mplstyle')
+def main(style='paper'):
+    plt.style.use(paths.styles / f'{style}.mplstyle')
     
     output_dir = paths.data / 'onezone' / 'dtd'
     if not output_dir.exists():
@@ -50,9 +51,17 @@ def main():
     axs[2].set_xlim(left=0)
 
     axs[0].legend(frameon=False, loc='lower left', handlelength=1.8)
-    fig.savefig(paths.figures / 'onezone_dtd.pdf', dpi=300)
+    fig.savefig(paths.figures / 'onezone_dtd', dpi=300)
     plt.close()
 
 
 if __name__ == '__main__':
-    main()
+    parser = argparse.ArgumentParser(
+        prog='onezone_dtd.py',
+        description='Plot abundance tracks from one-zone models with varying DTD')
+    parser.add_argument('-s', '--style', 
+                        choices=['paper', 'poster'],
+                        default='paper', 
+                        help='Plot style to use (default: paper)')
+    args = parser.parse_args()
+    main(**vars(args))

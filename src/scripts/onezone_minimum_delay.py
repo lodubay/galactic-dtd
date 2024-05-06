@@ -3,6 +3,7 @@ This script plots abundance tracks from one-zone models with varying Type Ia
 delay time distribution (DTD) and minimum delay time.
 """
 
+import argparse
 from pathlib import Path
 import numpy as np
 import matplotlib.pyplot as plt
@@ -19,8 +20,8 @@ from delay_time_distributions import styles
 DELAYS = [0.15, 0.04]
 LINE_STYLES = ['--', '-']
 
-def main(overwrite=False):
-    plt.style.use(paths.styles / 'paper.mplstyle')
+def main(style='paper'):
+    plt.style.use(paths.styles / f'{style}.mplstyle')
     
     output_dir = paths.data / 'onezone' / 'minimum_delay'
     if not output_dir.exists():
@@ -72,9 +73,17 @@ def main(overwrite=False):
     labels += [f'{int(1000*delay)} Myr minimum delay' for delay in DELAYS]
     axs[0].legend(handles, labels, frameon=False, loc='lower left',
                   handlelength=1.2)
-    fig.savefig(paths.figures / 'onezone_minimum_delay.pdf', dpi=300)
+    fig.savefig(paths.figures / 'onezone_minimum_delay', dpi=300)
     plt.close()
 
 
 if __name__ == '__main__':
-    main()
+    parser = argparse.ArgumentParser(
+        prog='onezone_minimum_delay.py',
+        description='Plot one-zone model outputs with varying minimum SN Ia delay time')
+    parser.add_argument('-s', '--style', 
+                        choices=['paper', 'poster'],
+                        default='paper', 
+                        help='Plot style to use (default: paper)')
+    args = parser.parse_args()
+    main(**vars(args))

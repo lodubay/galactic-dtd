@@ -3,6 +3,7 @@ This script plots [O/Fe] distribution functions from VICE runs with the same
 DTD but different SFHs.
 """
 
+import argparse
 from pathlib import Path
 import matplotlib.pyplot as plt
 import distribution_functions as dfs
@@ -24,8 +25,8 @@ SMOOTH_WIDTH = 0.05
 CMAP = plt.get_cmap('plasma_r')
 # CMAP = paultol.ylorbr_short
 
-def main():
-    plt.style.use(paths.styles / 'paper.mplstyle')
+def main(style='poster'):
+    plt.style.use(paths.styles / f'{style}.mplstyle')
     apogee_data = import_apogee()
     # Set up plot
     fig, axs = dfs.setup_axes(ncols=len(SFH_LIST)+1, 
@@ -47,9 +48,19 @@ def main():
     highlight_panels(fig, axs, [(0,-1),(1,-1),(2,-1)])
     for ax in axs[:,0]:
         ax.set_ylim((0, None))
-    plt.savefig(paths.figures / 'ofe_df_sfh.pdf', dpi=300)
+    plt.savefig(paths.figures / 'ofe_df_sfh', dpi=300)
     plt.close()
 
 
 if __name__ == '__main__':
-    main()
+    parser = argparse.ArgumentParser(
+        prog='ofe_df_sfh.py',
+        description='Compare distribution functions of [O/Fe] from many ' +
+        'Galactic regions for VICE outputs with different SFHs.',
+        )
+    parser.add_argument('-s', '--style', 
+                        choices=['paper', 'poster'],
+                        default='paper', 
+                        help='Plot style to use (default: paper)')
+    args = parser.parse_args()
+    main(**vars(args))

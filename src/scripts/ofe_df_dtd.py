@@ -1,6 +1,6 @@
 """
 This script plots [O/Fe] distribution functions from VICE runs with the same
-SFH but different DTDs.
+SFH_DEFAULT but different DTDs.
 """
 
 import argparse
@@ -14,7 +14,7 @@ import paths
 import _globals
 
 # Multizone outputs
-SFH = 'earlyburst'
+SFH_DEFAULT = 'earlyburst'
 DTD_LIST = ['prompt', 
             'powerlaw_slope11', 
             'exponential_timescale15', 
@@ -31,7 +31,7 @@ OFE_LIM = (-0.15, 0.55)
 SMOOTH_WIDTH = 0.05
 CMAP = 'plasma_r'
 
-def main(style='paper'):
+def main(style='paper', sfh=SFH_DEFAULT):
     plt.style.use(paths.styles / f'{style}.mplstyle')
     apogee_data = import_apogee()
     # Limit size of plot in poster format
@@ -56,7 +56,7 @@ def main(style='paper'):
     # plot
     mdf_kwargs = {'bins': NBINS, 'range': OFE_LIM, 'smoothing': SMOOTH_WIDTH}
     for i, dtd in enumerate(dtd_list):
-        output_name = '/'.join(['gaussian', SFH, dtd, 'diskmodel'])
+        output_name = '/'.join(['gaussian', sfh, dtd, 'diskmodel'])
         mzs = MultizoneStars.from_output(output_name)
         mzs.model_uncertainty(apogee_data, inplace=True)
         dfs.plot_multizone_mdfs(mzs, axs[:,i], '[o/fe]', colors, 
@@ -65,7 +65,10 @@ def main(style='paper'):
     highlight_panels(fig, axs, [(0,-1),(1,-1),(2,-1)])
     for ax in axs[:,0]:
         ax.set_ylim((0, None))
-    plt.savefig(paths.figures / 'ofe_df_dtd')
+    fname = 'ofe_df_dtd'
+    if sfh != SFH_DEFAULT:
+        fname += f'_{sfh}'
+    plt.savefig(paths.figures / fname)
     plt.close()
 
 
@@ -80,5 +83,9 @@ if __name__ == '__main__':
                         choices=['paper', 'poster'],
                         default='paper', 
                         help='Plot style to use (default: paper)')
+    parser.add_argument('--sfh', 
+                        choices=['insideout', 'lateburst', 'earlyburst', 'twoinfall'],
+                        default=SFH_DEFAULT,
+                        help='Which SFH model to plot for all panels.')
     args = parser.parse_args()
     main(**vars(args))

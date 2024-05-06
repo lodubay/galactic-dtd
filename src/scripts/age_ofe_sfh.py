@@ -3,6 +3,7 @@ Compare [O/Fe]-Age plots for the Solar annulus for VICE outputs with
 different star formation histories.
 """
 
+import argparse
 import numpy as np
 from apogee_tools import import_apogee, apogee_region
 import matplotlib.pyplot as plt
@@ -26,8 +27,8 @@ CMAP_NAME = 'viridis'
 GALR_LIM = (7, 9)
 ABSZ_LIM = (0, 0.5)
 
-def main():
-    plt.style.use(paths.styles / 'paper.mplstyle')
+def main(style='paper'):
+    plt.style.use(paths.styles / f'{style}.mplstyle')
     apogee_data = import_apogee()
     apogee_subset = apogee_region(apogee_data, GALR_LIM, ABSZ_LIM)
     
@@ -94,4 +95,14 @@ def main():
 
 
 if __name__ == '__main__':
-    main()
+    parser = argparse.ArgumentParser(
+        prog='age_feh_sfh.py',
+        description='Compare Age-[O/Fe] plots for the Solar annulus for ' +
+        'VICE outputs with different star formation histories.',
+        )
+    parser.add_argument('-s', '--style', 
+                        choices=['paper', 'poster'],
+                        default='paper', 
+                        help='Plot style to use (default: paper)')
+    args = parser.parse_args()
+    main(**vars(args))

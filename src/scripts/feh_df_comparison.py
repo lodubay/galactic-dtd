@@ -3,6 +3,7 @@ This script plots [Fe/H] distribution functions from VICE runs with the same
 DTD but different SFHs.
 """
 
+import argparse
 import numpy as np
 import matplotlib.pyplot as plt
 import distribution_functions as dfs
@@ -20,8 +21,6 @@ DTD_LIST = ['powerlaw_slope14',
             'exponential_timescale30']
 DTD_LABELS = ['Power-law DTD\n($\\alpha=-1.4$)',
               'Exponential DTD\n($\\tau=3$ Gyr)']
-# DTD_LIST = ['prompt', 'triple']
-# DTD_LABELS = ['Two-population DTD', 'Triple-system DTD']
 SFH_MODEL = 'insideout' # hold constant while varying DTD
 # Plot settings
 NBINS = 100
@@ -29,8 +28,8 @@ FEH_LIM = (-1.2, 0.7)
 SMOOTH_WIDTH = 0.2
 CMAP = 'plasma_r'
 
-def main():
-    plt.style.use(paths.styles / 'paper.mplstyle')
+def main(style='paper'):
+    plt.style.use(paths.styles / f'{style}.mplstyle')
     apogee_data = import_apogee()
     # Set up plot
     fig, axs = dfs.setup_axes(ncols=len(SFH_LIST)+len(DTD_LIST)+1, 
@@ -65,7 +64,7 @@ def main():
     
     for ax in axs[:,0]:
         ax.set_ylim((0, None))
-    plt.savefig(paths.figures / 'feh_df_comparison.pdf', dpi=300)
+    plt.savefig(paths.figures / 'feh_df_comparison', dpi=300)
     plt.close()
 
 
@@ -83,4 +82,12 @@ def get_subplot_edges(fig, axs):
 
 
 if __name__ == '__main__':
-    main()
+    parser = argparse.ArgumentParser(
+        prog='feh_df_comparison.py',
+        description='Plot MDFs from VICE multi-zone models with different DTDs and SFHs.')
+    parser.add_argument('-s', '--style', 
+                        choices=['paper', 'poster'],
+                        default='paper', 
+                        help='Plot style to use (default: paper)')
+    args = parser.parse_args()
+    main(**vars(args))

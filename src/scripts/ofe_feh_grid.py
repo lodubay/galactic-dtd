@@ -60,9 +60,9 @@ def main(output_name, cmap='winter', uncertainties=True, tracks=True,
                 # scale the linear density to the max value
                 scaled_density = np.exp(logz) / np.max(np.exp(logz))
                 # contour levels at 1, 2, and 3 sigma
-                levels = np.exp(-0.5 * np.array([3, 2, 1])**2)
-                ax.contour(xx, yy, scaled_density, levels, colors='k',
-                           linewidths=0.5, linestyles=[':', '--', '-'])
+                levels = np.exp(-0.5 * np.array([2, 1])**2)
+                ax.contour(xx, yy, scaled_density, levels, colors='r',
+                           linewidths=0.5, linestyles=['--', '-'])
     
     # Set x-axis ticks
     axs[0,0].xaxis.set_major_locator(MultipleLocator(0.5))
