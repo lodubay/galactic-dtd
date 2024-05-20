@@ -7,3 +7,8 @@
 *.tiff
 *.gif
 *.svg
+
+# Python stuff
+.ipynb_checkpoints
+__pycache__
+
