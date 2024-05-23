@@ -13,6 +13,7 @@ import numpy as np
 import vice
 from multizone_stars import MultizoneStars
 from apogee_tools import import_apogee, gen_kde
+from mwm_tools import import_mwm
 from scatter_plot_grid import setup_axes, setup_colorbar
 # from utils import kde2D
 from _globals import ABSZ_BINS, ZONE_WIDTH, MAX_SF_RADIUS
@@ -23,13 +24,16 @@ OFE_LIM = (-0.15, 0.55)
 GALR_BINS = [3, 5, 7, 9, 11, 13]
 
 def main(output_name, cmap='winter', uncertainties=True, tracks=True, 
-         contours=True):
+         apogee_contours=True, mwm_contours=False):
     plt.style.use(paths.styles / 'paper.mplstyle')
     # Import multioutput stars data
     mzs = MultizoneStars.from_output(output_name)
     # Import APOGEE data
-    if contours:
+    if apogee_contours:
         apogee_data = import_apogee()
+    # Import MWM data
+    if mwm_contours:
+        mwm_data = import_mwm()
     # Model observational uncertainties
     if uncertainties:
         mzs.model_uncertainty(inplace=True)
@@ -54,7 +58,7 @@ def main(output_name, cmap='winter', uncertainties=True, tracks=True,
                 hist = vice.history(zone_path)
                 ax.plot(hist['[fe/h]'], hist['[o/fe]'], c='k', ls='-', 
                         linewidth=0.5)
-            if contours:
+            if apogee_contours:
                 xx, yy, logz = gen_kde(apogee_data, bandwidth=0.02,
                                        galr_lim=galr_lim, absz_lim=absz_lim)
                 # scale the linear density to the max value
@@ -62,6 +66,16 @@ def main(output_name, cmap='winter', uncertainties=True, tracks=True,
                 # contour levels at 1, 2, and 3 sigma
                 levels = np.exp(-0.5 * np.array([2, 1])**2)
                 ax.contour(xx, yy, scaled_density, levels, colors='r',
+                           linewidths=0.5, linestyles=['--', '-'])
+            if mwm_contours:
+                xx, yy, logz = gen_kde(mwm_data, bandwidth=0.02,
+                                       galr_lim=galr_lim, absz_lim=absz_lim,
+                                       savedir=paths.data/'MWM/kde/ofe_feh/')
+                # scale the linear density to the max value
+                scaled_density = np.exp(logz) / np.max(np.exp(logz))
+                # contour levels at 1, 2, and 3 sigma
+                levels = np.exp(-0.5 * np.array([2, 1])**2)
+                ax.contour(xx, yy, scaled_density, levels, colors='purple',
                            linewidths=0.5, linestyles=['--', '-'])
     
     # Set x-axis ticks
@@ -92,8 +106,10 @@ if __name__ == '__main__':
                         help='Model APOGEE uncertainties in VICE output')
     parser.add_argument('-t', '--tracks', action='store_true',
                         help='Plot ISM tracks in addition to stellar abundances')
-    parser.add_argument('-c', '--contours', action='store_true',
+    parser.add_argument('-a', '--apogee-contours', action='store_true',
                         help='Plot contour lines from APOGEE data')
+    parser.add_argument('-m', '--mwm-contours', action='store_true',
+                        help='Plot contour lines from MWM data')
     parser.add_argument('--cmap', metavar='COLORMAP', type=str,
                         default='winter',
                         help='Name of colormap for color-coding VICE ' + \

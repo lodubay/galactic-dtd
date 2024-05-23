@@ -26,7 +26,7 @@ def main():
 
 
 def gen_kde(data, bandwidth=0.03, absz_lim=(0, 5), galr_lim=(0, 20), 
-            overwrite=False):
+            overwrite=False, savedir=paths.data/'APOGEE/kde/ofe_feh/'):
     """
     Generate kernel density estimate (KDE) of APOGEE data, or import previously
     saved KDE if it already exists.
@@ -51,7 +51,7 @@ def gen_kde(data, bandwidth=0.03, absz_lim=(0, 5), galr_lim=(0, 20),
         Outputs of kde2D()
     """    
     # Path to save 2D KDE for faster plot times
-    path = kde_path(galr_lim, absz_lim, savedir=paths.data/'APOGEE/kde/ofe_feh/')
+    path = kde_path(galr_lim, absz_lim, savedir=savedir)
     if path.exists() and not overwrite:
         xx, yy, logz = read_kde(path)
     else:
