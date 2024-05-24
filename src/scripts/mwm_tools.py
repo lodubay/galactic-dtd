@@ -78,7 +78,7 @@ def gen_mwm_sample(parent_dir=paths.data/'MWM', verbose=False):
         parent_dir.mkdir(parents=True)
     mwm_catalog_path = parent_dir / ALLSTAR_FNAME
     if verbose: print('Importing allStar file...')
-    mwm_catalog = fits_to_pandas(mwm_catalog_path, hdu=3)
+    mwm_catalog = fits_to_pandas(mwm_catalog_path, hdu=2)
     if verbose: print('Implementing quality cuts...')
     sample = mwm_quality_cuts(mwm_catalog)
     # Calculate [O/Fe] ratio and errors
@@ -116,6 +116,7 @@ def mwm_quality_cuts(df):
     # Weed out bad flags
     # fatal_flags = (2**23) # STAR_BAD
     # df = df[df['ASPCAPFLAG'] & fatal_flags == 0]
+    df = df[~df['flag_bad']]
     # Cut low-S/N targets
     df = df[df['snr'] > 80]
     # Limit to giants
@@ -123,8 +124,10 @@ def mwm_quality_cuts(df):
             (df['teff'] > 3500) & (df['teff'] < 5500)]
     # Replace NaN stand-in values with NaN
     # df.replace(99.999, np.nan, inplace=True)
-    # Limit to stars with measurements of both [Fe/H] and [O/Fe]
-    df.dropna(subset=['fe_h', 'o_fe'], inplace=True)
+    # Limit to stars with measurements of both [Fe/H] and [O/H]
+    df.dropna(subset=['fe_h', 'o_h'], inplace=True)
+    # Remove stars with large negative abundances
+    df = df[(df['fe_h'] > -999) & (df['o_h'] > -999)]
     df.reset_index(inplace=True, drop=True)
     return df
     
