@@ -136,6 +136,14 @@ rule summary_table:
     script:
         "src/scripts/summary_table.py"
 
+rule apogee_regions_table:
+    input:
+        "src/data/APOGEE/sample.csv"
+    output:
+        "src/tex/output/apogee_regions_table.txt"
+    script:
+        "src/scripts/apogee_regions_table.py"
+
 # Variables
 rule sample_size:
     input:

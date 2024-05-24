@@ -107,6 +107,8 @@ dependencies:
         - src/data/APOGEE/sample.csv
     src/scripts/age_sample_size.py:
         - src/data/APOGEE/sample.csv
+    src/scripts/apogee_regions_table.py:
+        - src/data/APOGEE/sample.csv
 
 # Disable showyourwork stamp
 stamp:
