@@ -140,7 +140,7 @@ rule apogee_regions_table:
     input:
         "src/data/APOGEE/sample.csv"
     output:
-        "src/tex/output/apogee_regions_table.txt"
+        "src/tex/output/apogee_regions_table.tex"
     script:
         "src/scripts/apogee_regions_table.py"
 

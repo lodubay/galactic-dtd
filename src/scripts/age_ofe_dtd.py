@@ -3,6 +3,7 @@ Compare plots of [O/Fe] vs age in a single Galactic region for various DTDs.
 """
 
 import numpy as np
+import pandas as pd
 import argparse
 from apogee_tools import import_apogee, apogee_region
 import matplotlib.pyplot as plt
@@ -66,6 +67,11 @@ def main(style='paper'):
                                      cmap=CMAP_NAME, norm=cbar.norm)
             plot_astroNN_medians(axs[i,j], apogee_subset, age_col=AGE_COL, 
                                  label=AGE_LABEL, plot_low_count_bins=False)
+            # Add number of stars with ages to plot
+            if j == 0:
+                nstars = apogee_subset[pd.notna(apogee_subset[AGE_COL])].shape[0]
+                axs[i,j].text(0.07, 0.93, f'$N={nstars}$', color='r',
+                              va='top', transform=axs[i,j].transAxes)
             plot_vice_medians(axs[i,j], vice_subset.stars, label='Model',
                               plot_low_mass_bins=False)
     
