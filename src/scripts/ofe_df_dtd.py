@@ -15,6 +15,7 @@ import _globals
 
 # Multizone outputs
 SFH_DEFAULT = 'earlyburst'
+SFH_LABEL = 'Early-burst SFH'
 DTD_LIST = ['prompt', 
             'powerlaw_slope11', 
             'exponential_timescale15', 
@@ -50,8 +51,8 @@ def main(style='paper', sfh=SFH_DEFAULT):
                               figure_width=figwidth, 
                               cmap=CMAP, xlabel='[O/Fe]', xlim=OFE_LIM, 
                               major_tick_spacing=0.2, major_minor_tick_ratio=4.,
-                              cbar_width=cbar_width)
-    fig.subplots_adjust(top=0.9, left=0.04, right=0.96, bottom=0.25)
+                              cbar_width=cbar_width, panel_aspect_ratio=1.3)
+    fig.subplots_adjust(top=0.85, left=0.04, right=0.96, bottom=0.23)
     colors = get_color_list(plt.get_cmap(CMAP), _globals.GALR_BINS)
     # plot
     mdf_kwargs = {'bins': NBINS, 'range': OFE_LIM, 'smoothing': SMOOTH_WIDTH}
@@ -63,6 +64,8 @@ def main(style='paper', sfh=SFH_DEFAULT):
                                 label=dtd_labels[i], **mdf_kwargs)
     dfs.plot_apogee_mdfs(apogee_data, axs[:,-1], 'O_FE', colors, **mdf_kwargs)
     highlight_panels(fig, axs, [(0,-1),(1,-1),(2,-1)])
+    # Figure title indicating SFH model used
+    fig.suptitle(SFH_LABEL)
     for ax in axs[:,0]:
         ax.set_ylim((0, None))
     fname = 'ofe_df_dtd'

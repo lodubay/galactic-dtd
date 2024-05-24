@@ -22,6 +22,7 @@ OFE_LIM = (-0.1, 0.6)
 GALR_LIM = (7, 9)
 
 SFH_MODEL = 'insideout'
+SFH_LABEL = 'Inside-out SFH'
 DTD_LIST = ['prompt', 
             'powerlaw_slope11', 
             'exponential_timescale15', 
@@ -40,8 +41,8 @@ def main(style='paper'):
     plt.style.use(paths.styles / f'{style}.mplstyle')
     width = TWO_COLUMN_WIDTH
     fig, axs = plt.subplots(3, 5, sharex=True, sharey=True,
-                            figsize=(width, 3/5*width))
-    plt.subplots_adjust(top=0.91, right=0.98, left=0.06, bottom=0.08, 
+                            figsize=(width, 3.3/5*width))
+    plt.subplots_adjust(top=0.86, right=0.98, left=0.06, bottom=0.08, 
                         wspace=0., hspace=0.)
     birth_galr_bounds = [2, 4, 6, 8, 10, 12, 14, 15.5]
     cbar = setup_colorbar(fig, cmap=CMAP_NAME, bounds=birth_galr_bounds,
@@ -111,6 +112,8 @@ def main(style='paper'):
     legend_labels = ['Gas abundance', 'APOGEE 30% cont.', 'APOGEE 80% cont.']
     axs[2, 0].legend(custom_lines, legend_labels, frameon=False, 
                      loc='upper left', handlelength=0.6, handletextpad=0.4)
+    # Figure title indicating SFH model used
+    fig.suptitle(SFH_LABEL)
     
     plt.savefig(paths.figures / 'ofe_feh_dtd')
     plt.close()

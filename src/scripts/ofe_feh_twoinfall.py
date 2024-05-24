@@ -30,8 +30,8 @@ def main(cmap_name='winter_r', style='paper'):
     plt.style.use(paths.styles / f'{style}.mplstyle')
     width = ONE_COLUMN_WIDTH
     fig, axs = plt.subplots(3, 2, sharex=True, sharey=True,
-                            figsize=(width, (3/2.5)*width))
-    plt.subplots_adjust(top=0.94, right=0.93, left=0.12, bottom=0.08, 
+                            figsize=(width, (3.5/2.5)*width))
+    plt.subplots_adjust(top=0.86, right=0.92, left=0.12, bottom=0.08, 
                         wspace=0., hspace=0.)
     # Add colorbar
     birth_galr_bounds = [0, 2, 4, 6, 8, 10, 12, 14, 15.5]
@@ -94,8 +94,6 @@ def main(cmap_name='winter_r', style='paper'):
                     'pad': 0.15,
                     'alpha': 1.,
                 })
-    # for j, ax in enumerate(axs[0]):
-    #     ax.set_title(DTD_LABELS[j])
     # Custom legend
     custom_lines = [Line2D([0], [0], color=ism_track_color, linestyle='-', 
                            linewidth=ism_track_width),
@@ -108,6 +106,8 @@ def main(cmap_name='winter_r', style='paper'):
                     borderpad=0.1, labelspacing=0.4, borderaxespad=0.5,
                     framealpha=1., 
                     handler_map={tuple: HandlerTuple(ndivide=None)})
+    # Figure title with SFH and DTD models used
+    fig.suptitle('Two-infall SFH + \nPlateau ($W=1$ Gyr) DTD')
     
     plt.savefig(paths.figures / 'ofe_feh_twoinfall')
     plt.close()    

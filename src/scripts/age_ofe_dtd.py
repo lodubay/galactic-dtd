@@ -14,6 +14,7 @@ from _globals import ZONE_WIDTH, TWO_COLUMN_WIDTH, MAX_SF_RADIUS, ABSZ_BINS
 import paths
 
 SFH_MODEL = 'earlyburst'
+SFH_LABEL = 'Early-burst SFH'
 DTD_LIST = ['prompt', 
             'powerlaw_slope11', 
             'exponential_timescale15', 
@@ -36,8 +37,8 @@ def main(style='paper'):
     plt.style.use(paths.styles / f'{style}.mplstyle')
     width = TWO_COLUMN_WIDTH
     fig, axs = plt.subplots(3, 5, sharex=True, sharey=True,
-                            figsize=(width, 3/5*width))
-    plt.subplots_adjust(top=0.91, right=0.98, left=0.06, bottom=0.08, 
+                            figsize=(width, 3.3/5*width))
+    plt.subplots_adjust(top=0.86, right=0.98, left=0.06, bottom=0.08, 
                         wspace=0., hspace=0.)
     bounds = np.arange(-1.3, 0.5, 0.2)
     cbar = setup_colorbar(fig, cmap=CMAP_NAME, bounds=bounds, extend='both')#vmin=-1.3, vmax=0.3)
@@ -94,6 +95,9 @@ def main(style='paper'):
     # axs[0,0].legend(loc='upper left', frameon=False, 
     #                 bbox_to_anchor=(0.02, 0.89), handlelength=0.7)
     axs[0,-1].legend(loc='upper left', frameon=False, handlelength=0.7)
+    
+    # Figure title indicating SFH model used
+    fig.suptitle(SFH_LABEL)
     
     fig.savefig(paths.figures / 'age_ofe_dtd')
     plt.close()

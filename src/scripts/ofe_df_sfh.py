@@ -18,6 +18,7 @@ import _globals
 SFH_LIST = ['insideout', 'lateburst', 'earlyburst', 'twoinfall']
 SFH_LABELS = ['Inside-out', 'Late-burst', 'Early-burst', 'Two-infall']
 DTD = 'exponential_timescale15'
+DTD_LABEL = 'Exponential DTD ($\\tau=1.5$ Gyr)'
 # Plot settings
 NBINS = 100
 OFE_LIM = (-0.15, 0.55)
@@ -33,8 +34,8 @@ def main(style='poster'):
                               figure_width=_globals.TWO_COLUMN_WIDTH, 
                               cmap=CMAP, xlabel='[O/Fe]', xlim=OFE_LIM, 
                               major_tick_spacing=0.2, major_minor_tick_ratio=4.,
-                              cbar_width=0.4)
-    fig.subplots_adjust(top=0.92, left=0.04, right=0.96, bottom=0.23)
+                              cbar_width=0.4, panel_aspect_ratio=1.4)
+    fig.subplots_adjust(top=0.86, left=0.04, right=0.96, bottom=0.23)
     colors = get_color_list(CMAP, _globals.GALR_BINS)
     # plot
     mdf_kwargs = {'bins': NBINS, 'range': OFE_LIM, 'smoothing': SMOOTH_WIDTH}
@@ -48,6 +49,7 @@ def main(style='poster'):
     highlight_panels(fig, axs, [(0,-1),(1,-1),(2,-1)])
     for ax in axs[:,0]:
         ax.set_ylim((0, None))
+    fig.suptitle(DTD_LABEL)
     plt.savefig(paths.figures / 'ofe_df_sfh', dpi=300)
     plt.close()
 

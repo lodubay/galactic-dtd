@@ -25,14 +25,16 @@ ABSZ_LIM = (0, 0.5)
 
 SFH_LABELS = ['Inside-out', 'Late-burst', 'Early-burst', 'Two-infall']
 DTD_MODEL = 'exponential_timescale15'
+DTD_LABEL = 'Exponential ($\\tau=1.5$ Gyr) DTD'
 
 CMAP_NAME = 'winter_r'
 
 def main(style='paper'):
     plt.style.use(paths.styles / f'{style}.mplstyle')
     fig, axs = plt.subplots(2, 2, sharex=True, sharey=True,
-                            figsize=(ONE_COLUMN_WIDTH, 0.9*ONE_COLUMN_WIDTH))
-    plt.subplots_adjust(top=0.93, right=0.92, wspace=0., hspace=0., left=0.11)
+                            figsize=(ONE_COLUMN_WIDTH, ONE_COLUMN_WIDTH))
+    plt.subplots_adjust(top=0.88, right=0.92, wspace=0., hspace=0., left=0.11,
+                        bottom=0.1)
     birth_galr_bounds = [2, 4, 6, 8, 10, 12, 14, 15.5]
     cbar = setup_colorbar(fig, cmap=CMAP_NAME, bounds=birth_galr_bounds, 
                           label=r'Birth $R_{\rm{gal}}$ [kpc]', 
@@ -49,7 +51,6 @@ def main(style='paper'):
         mzs = MultizoneStars.from_output(output_name)
         mzs.model_uncertainty(apogee_data=apogee_data, inplace=True)
         mzs.region(GALR_LIM, ABSZ_LIM, inplace=True)
-        # print(mzs('galr_origin').min(), mzs('galr_origin').max())
         # Plot sample of star particle abundances
         mzs.scatter_plot(ax, '[fe/h]', '[o/fe]', color='galr_origin',
                           cmap=CMAP_NAME, norm=cbar.norm, markersize=0.1)
@@ -89,6 +90,8 @@ def main(style='paper'):
                     ncols=3, borderaxespad=0., handlelength=1.5, 
                     columnspacing=1.0,
                     handler_map={tuple: HandlerTuple(ndivide=None)})
+    # Figure title with DTD model used
+    fig.suptitle(DTD_LABEL)
     
     plt.savefig(paths.figures / 'ofe_feh_sfh', dpi=300)
     plt.close()

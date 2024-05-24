@@ -83,7 +83,7 @@ def main(style='paper'):
         plot_bimodality(axs[1,j], output_name, apogee_data=apogee_data,
                         uncertainties=True, resample=True, show_peaks=False)
     axs[1,0].set_ylabel('Normalized PDF')
-    fig.text(0.42, 0.5, 'Exponential DTD ($\\tau=1.5$ Gyr)',
+    fig.text(0.42, 0.5, 'Exponential ($\\tau=1.5$ Gyr) DTD',
               ha='center', va='top', size=title_size)
     # axs[1,0].set_ylabel('Exponential DTD\n($\\tau=1.5$ Gyr)')
         

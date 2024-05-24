@@ -17,6 +17,7 @@ import paths
 
 SFH_LIST = ['insideout', 'lateburst', 'earlyburst', 'twoinfall']
 DTD_MODEL = 'exponential_timescale15'
+DTD_LABEL = 'Exponential ($\\tau=1.5$ Gyr) DTD'
 LABEL_LIST = ['Inside-out', 'Late-burst', 'Early-burst', 'Two-infall']
 AGE_SOURCE = 'L23'
 AGE_COL = 'LATENT_AGE'
@@ -33,8 +34,8 @@ def main(style='paper'):
     apogee_subset = apogee_region(apogee_data, GALR_LIM, ABSZ_LIM)
     
     fig, axs = plt.subplots(2, 2, sharex=True, sharey=True,
-                            figsize=(ONE_COLUMN_WIDTH, 0.85*ONE_COLUMN_WIDTH))
-    plt.subplots_adjust(top=0.98, right=0.85, wspace=0., hspace=0.)
+                            figsize=(ONE_COLUMN_WIDTH, 0.92*ONE_COLUMN_WIDTH))
+    plt.subplots_adjust(top=0.92, right=0.85, wspace=0., hspace=0., bottom=0.11)
     # Define colorbar axis
     height = fig.subplotpars.top - fig.subplotpars.bottom - 0.06
     cax = plt.axes([fig.subplotpars.right + 0.02, fig.subplotpars.bottom, 
@@ -89,6 +90,9 @@ def main(style='paper'):
     # Legend
     axs[0,0].legend(loc='upper left', frameon=False, 
                     bbox_to_anchor=(0.02, 0.89), handlelength=0.7)
+    
+    # Figure title
+    fig.suptitle(DTD_LABEL)
     
     fig.savefig(paths.figures / 'age_ofe_sfh', dpi=300)
     plt.close()
