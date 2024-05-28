@@ -25,8 +25,9 @@ def main():
     print(apogee_data)
 
 
-def gen_kde(data, bandwidth=0.03, absz_lim=(0, 5), galr_lim=(0, 20), 
-            overwrite=False, savedir=paths.data/'APOGEE/kde/ofe_feh/'):
+def gen_kde(data, bandwidth=0.02, absz_lim=(0, 5), galr_lim=(0, 20), 
+            overwrite=False, savedir=paths.data/'APOGEE/kde/ofe_feh/',
+            xcol='FE_H', ycol='O_FE'):
     """
     Generate kernel density estimate (KDE) of APOGEE data, or import previously
     saved KDE if it already exists.
@@ -34,22 +35,29 @@ def gen_kde(data, bandwidth=0.03, absz_lim=(0, 5), galr_lim=(0, 20),
     Parameters
     ----------
     data : pandas.DataFrame
-        APOGEE data containing columns 'FE_H' and 'O_FE'.
-    bandwidth : float
+        APOGEE or MWM data.
+    bandwidth : float, optional
         Kernel density estimate bandwidth. A larger number will produce
         smoother contour lines. The default is 0.02.
-    absz_lim : tuple
+    absz_lim : tuple, optional
         Limits on absolute Galactic z-height in kpc. The default is (0, 5).
-    galr_lim : tuple
+    galr_lim : tuple, optional
         Limits on Galactocentric radius in kpc. The default is (0, 20).
-    overwrite : bool
+    overwrite : bool, optional
         If True, force re-generate the 2D KDE and save the output.
+    savedir : path, optional
+        Directory to save the KDE outputs. The default is 
+        src/data/APOGEE/kde/ofe_feh/.
+    xcol : str, optional
+        Name of column with x-axis data. The default is 'FE_H'.
+    ycol : str, optional
+        Name of column with y-axis data. The default is 'O_FE'.
     
     Returns
     -------
     xx, yy, logz: tuple of numpy.array
         Outputs of kde2D()
-    """    
+    """
     # Path to save 2D KDE for faster plot times
     path = kde_path(galr_lim, absz_lim, savedir=savedir)
     if path.exists() and not overwrite:
@@ -57,8 +65,8 @@ def gen_kde(data, bandwidth=0.03, absz_lim=(0, 5), galr_lim=(0, 20),
     else:
         # Limit to specified Galactic region
         subset = apogee_region(data, galr_lim, absz_lim)
-        subset = subset.copy().dropna(axis=0, subset=['FE_H', 'O_FE'])
-        xx, yy, logz = kde2D(subset['FE_H'], subset['O_FE'], bandwidth)
+        subset = subset.copy().dropna(axis=0, subset=[xcol, ycol])
+        xx, yy, logz = kde2D(subset[xcol], subset[ycol], bandwidth)
         save_kde(xx, yy, logz, path)
     return xx, yy, logz
 

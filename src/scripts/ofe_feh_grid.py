@@ -70,7 +70,8 @@ def main(output_name, cmap='winter', uncertainties=True, tracks=True,
             if mwm_contours:
                 xx, yy, logz = gen_kde(mwm_data, bandwidth=0.02,
                                        galr_lim=galr_lim, absz_lim=absz_lim,
-                                       savedir=paths.data/'MWM/kde/ofe_feh/')
+                                       savedir=paths.data/'MWM/kde/ofe_feh/',
+                                       xcol='FE_H_CORR', ycol='O_FE_CORR')
                 # scale the linear density to the max value
                 scaled_density = np.exp(logz) / np.max(np.exp(logz))
                 # contour levels at 1, 2, and 3 sigma

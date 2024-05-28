@@ -9,13 +9,14 @@ import numpy as np
 import pandas as pd
 import paths
 from utils import fits_to_pandas, quad_add
+from apogee_tools import import_apogee
 
 # Data file names
 ALLSTAR_FNAME = 'astraAllStarASPCAP-0.5.0.fits.gz'
 
 def main():
-    apogee_data = import_mwm(overwrite=True, verbose=True)
-    print(apogee_data)
+    mwm_data = import_mwm(overwrite=True, verbose=True)
+    print(mwm_data)
 
 
 def import_mwm(name='sample.csv', parent_dir=paths.data/'MWM', 
@@ -57,7 +58,8 @@ def import_mwm(name='sample.csv', parent_dir=paths.data/'MWM',
     return df
 
 
-def gen_mwm_sample(parent_dir=paths.data/'MWM', verbose=False):
+def gen_mwm_sample(parent_dir=paths.data/'MWM', verbose=False, 
+                   correct_zero_point=True):
     """
     Make selection cuts to MWM sample.
     
@@ -68,6 +70,9 @@ def gen_mwm_sample(parent_dir=paths.data/'MWM', verbose=False):
         '../data/MWM/'.
     verbose : bool, optional
         Whether to print verbose output to terminal. The default is False.
+    correct_zero_point : bool, optional
+        Whether to correct for the zero-point offset in [O/H] between MWM
+        and APOGEE. The default is True.
     
     Returns
     -------
@@ -79,23 +84,59 @@ def gen_mwm_sample(parent_dir=paths.data/'MWM', verbose=False):
     mwm_catalog_path = parent_dir / ALLSTAR_FNAME
     if verbose: print('Importing allStar file...')
     mwm_catalog = fits_to_pandas(mwm_catalog_path, hdu=2)
+    # Make column names consistent with APOGEE
+    newcols = []
+    for c in mwm_catalog.columns:
+        if c[:2] == 'e_':
+            newcols.append(c[2:].upper() + '_ERR')
+        elif c[:6] == 'raw_e_':
+            newcols.append('RAW_' + c[6:] + '_ERR')
+        else:
+            newcols.append(c.upper())
+    mwm_catalog.columns = newcols
     if verbose: print('Implementing quality cuts...')
     sample = mwm_quality_cuts(mwm_catalog)
     # Calculate [O/Fe] ratio and errors
-    sample['O_FE'] = sample['o_h'] - sample['fe_h']
-    sample['O_FE_ERR'] = quad_add(sample['e_o_h'], sample['e_fe_h'])
-    # add duplicate columns with consistent names from APOGEE
-    sample['FE_H'] = sample['fe_h'].copy()
-    sample['FE_H_ERR'] = sample['e_fe_h'].copy()
+    sample['O_FE'] = sample['O_H'] - sample['FE_H']
+    sample['O_FE_ERR'] = quad_add(sample['O_H_ERR'], sample['FE_H_ERR'])
+    if correct_zero_point:
+        if verbose: print('Correcting zero-point abundance offsets from APOGEE...')
+        sample = correct_apogee_offset(sample)
     # Calculate galactocentric coordinates based on galactic l, b and Gaia dist
     galr, galphi, galz = sky_to_galactocentric(
-        sample['ra'], sample['dec'], sample['r_med_photogeo']/1000
+        sample['RA'], sample['DEC'], sample['R_MED_PHOTOGEO']/1000
     )
     sample['GALR'] = galr # kpc
     sample['GALPHI'] = galphi # deg
     sample['GALZ'] = galz # kpc
     # Drop unneeded columns
     return sample.copy()
+
+
+def correct_apogee_offset(mwm_data):
+    """
+    Correct MWM abundances for systematic offset from APOGEE DR17
+    
+    Parameters
+    ----------
+    mwm_data : pandas.DataFrame
+        MWM data
+    
+    Returns
+    -------
+    pandas.DataFrame
+        MWM data with new column(s) for corrected abundances
+    """
+    # Join MWM and APOGEE on stars which are targets in both
+    apogee_data = import_apogee()
+    apogee_data.set_index('APOGEE_ID', inplace=True, drop=True)
+    joined_data = mwm_data.join(apogee_data, on='SDSS4_APOGEE_ID', 
+                                rsuffix='_APOGEE', how='inner')
+    joined_data['O_H_APOGEE'] = joined_data['O_FE_APOGEE'] + joined_data['FE_H_APOGEE']
+    mwm_data['FE_H_CORR'] = mwm_data['FE_H'] + np.median(joined_data['FE_H_APOGEE'] - joined_data['FE_H'])
+    mwm_data['O_H_CORR'] = mwm_data['O_H'] + np.median(joined_data['O_H_APOGEE'] - joined_data['O_H'])
+    mwm_data['O_FE_CORR'] = mwm_data['O_FE'] + np.median(joined_data['O_FE_APOGEE'] - joined_data['O_FE'])
+    return mwm_data
 
 
 def mwm_quality_cuts(df):
@@ -116,18 +157,18 @@ def mwm_quality_cuts(df):
     # Weed out bad flags
     # fatal_flags = (2**23) # STAR_BAD
     # df = df[df['ASPCAPFLAG'] & fatal_flags == 0]
-    df = df[~df['flag_bad']]
+    df = df[~df['FLAG_BAD']]
     # Cut low-S/N targets
-    df = df[df['snr'] > 80]
+    df = df[df['SNR'] > 80]
     # Limit to giants
-    df = df[(df['logg'] > 1) & (df['logg'] < 3.8) & 
-            (df['teff'] > 3500) & (df['teff'] < 5500)]
+    df = df[(df['LOGG'] > 1) & (df['LOGG'] < 3.8) & 
+            (df['TEFF'] > 3500) & (df['TEFF'] < 5500)]
     # Replace NaN stand-in values with NaN
     # df.replace(99.999, np.nan, inplace=True)
     # Limit to stars with measurements of both [Fe/H] and [O/H]
-    df.dropna(subset=['fe_h', 'o_h'], inplace=True)
+    df.dropna(subset=['FE_H', 'O_H'], inplace=True)
     # Remove stars with large negative abundances
-    df = df[(df['fe_h'] > -999) & (df['o_h'] > -999)]
+    df = df[(df['FE_H'] > -999) & (df['O_H'] > -999)]
     df.reset_index(inplace=True, drop=True)
     return df
     
