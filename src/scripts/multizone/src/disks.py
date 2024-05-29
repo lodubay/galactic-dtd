@@ -264,6 +264,7 @@ class delay_time_distribution:
             "greggio05_single": dtds.greggio05_single,
             "greggio05_double": dtds.greggio05_double,
             "triple":           dtds.triple,
+            "strolger05":       dtds.strolger05,
         }[dist.lower()](tmin=tmin, tmax=tmax, **kwargs)
 
     def __call__(self, time):

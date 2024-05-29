@@ -26,25 +26,36 @@ SMOOTH_WIDTH = 0.05
 CMAP = plt.get_cmap('plasma_r')
 # CMAP = paultol.ylorbr_short
 
-def main(style='poster'):
+def main(style='paper'):
     plt.style.use(paths.styles / f'{style}.mplstyle')
     apogee_data = import_apogee()
+    # Limit size of plot in poster format
+    if style == 'poster':
+        sfh_list = ['insideout', 'earlyburst']
+        sfh_labels = ['Inside-out', 'Early-burst']
+        figwidth = _globals.ONE_COLUMN_WIDTH * 1.5
+        cbar_width = 0.6
+    else:
+        sfh_list = SFH_LIST
+        sfh_labels = SFH_LABELS
+        figwidth = _globals.TWO_COLUMN_WIDTH
+        cbar_width = 0.4
     # Set up plot
-    fig, axs = dfs.setup_axes(ncols=len(SFH_LIST)+1, 
-                              figure_width=_globals.TWO_COLUMN_WIDTH, 
+    fig, axs = dfs.setup_axes(ncols=len(sfh_list)+1, 
+                              figure_width=figwidth, 
                               cmap=CMAP, xlabel='[O/Fe]', xlim=OFE_LIM, 
                               major_tick_spacing=0.2, major_minor_tick_ratio=4.,
-                              cbar_width=0.4, panel_aspect_ratio=1.4)
-    fig.subplots_adjust(top=0.86, left=0.04, right=0.96, bottom=0.23)
+                              cbar_width=cbar_width, panel_aspect_ratio=1.4)
+    fig.subplots_adjust(top=0.86, left=0.05, right=0.96, bottom=0.23)
     colors = get_color_list(CMAP, _globals.GALR_BINS)
     # plot
     mdf_kwargs = {'bins': NBINS, 'range': OFE_LIM, 'smoothing': SMOOTH_WIDTH}
-    for i, sfh in enumerate(SFH_LIST):
+    for i, sfh in enumerate(sfh_list):
         output_name = '/'.join(['gaussian', sfh, DTD, 'diskmodel'])
         mzs = MultizoneStars.from_output(output_name)
         mzs.model_uncertainty(apogee_data, inplace=True)
         dfs.plot_multizone_mdfs(mzs, axs[:,i], '[o/fe]', colors, 
-                                label=SFH_LABELS[i], **mdf_kwargs)
+                                label=sfh_labels[i], **mdf_kwargs)
     dfs.plot_apogee_mdfs(apogee_data, axs[:,-1], 'O_FE', colors, **mdf_kwargs)
     highlight_panels(fig, axs, [(0,-1),(1,-1),(2,-1)])
     for ax in axs[:,0]:

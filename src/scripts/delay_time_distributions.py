@@ -116,6 +116,20 @@ class styles:
         'line': '--',
         'lwmod': 1.2,
     }
+    gauss_narrow = {
+        'func': dtds.strolger05(case='narrow'),
+        'label': 'S05 (narrow)',
+        'color': 'r',
+        'line': '-',
+        'lwmod': 1.5,
+    }
+    gauss_wide = {
+        'func': dtds.strolger05(case='wide'),
+        'label': 'S05 (wide)',
+        'color': 'b',
+        'line': '-',
+        'lwmod': 1.5,
+    }
 
 
 def setup_axes(width=ONE_COLUMN_WIDTH):
