@@ -18,7 +18,8 @@ LEUNG23_FNAME = 'nn_latent_age_dr17.csv'
 SAMPLE_COLS = ['APOGEE_ID', 'RA', 'DEC', 'GALR', 'GALPHI', 'GALZ', 'SNREV',
                'TEFF', 'TEFF_ERR', 'LOGG', 'LOGG_ERR', 'FE_H', 'FE_H_ERR',
                'O_FE', 'O_FE_ERR', 'LATENT_AGE', 'LATENT_AGE_ERR', 
-               'LOG_LATENT_AGE', 'LOG_LATENT_AGE_ERR']
+               'LOG_LATENT_AGE', 'LOG_LATENT_AGE_ERR',
+               'GAIAEDR3_R_LO_PHOTOGEO', 'GAIAEDR3_R_MED_PHOTOGEO', 'GAIAEDR3_R_HI_PHOTOGEO']
 
 def main():
     apogee_data = import_apogee(overwrite=True, verbose=True)
