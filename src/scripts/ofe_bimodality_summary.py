@@ -70,7 +70,7 @@ def main(style='paper'):
         # Import VICE multi-zone output data
         output_name = '/'.join(['gaussian', 'lateburst', RIa, 'diskmodel'])
         plot_bimodality(axs[0,i], output_name, apogee_data=apogee_data, 
-                        uncertainties=True, resample=True, show_peaks=False)
+                        uncertainties=False, resample=True, show_peaks=False)
     axs[0,0].set_ylabel('Normalized PDF')
     fig.text(0.51, 0.98, 'Late-burst SFH',
               ha='center', va='top', size=title_size)
@@ -81,7 +81,7 @@ def main(style='paper'):
         axs[1,j].set_title(SFH_LABELS[j], pad=-8)
         output_name = '/'.join(['gaussian', evolution, 'exponential_timescale15', 'diskmodel'])
         plot_bimodality(axs[1,j], output_name, apogee_data=apogee_data,
-                        uncertainties=True, resample=True, show_peaks=False)
+                        uncertainties=False, resample=True, show_peaks=False)
     axs[1,0].set_ylabel('Normalized PDF')
     fig.text(0.42, 0.5, 'Exponential ($\\tau=1.5$ Gyr) DTD',
               ha='center', va='top', size=title_size)

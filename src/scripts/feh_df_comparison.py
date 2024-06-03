@@ -51,7 +51,7 @@ def main(style='paper'):
     for i, sfh in enumerate(SFH_LIST):
         output_name = '/'.join(['gaussian', sfh, DTD_MODEL, 'diskmodel'])
         mzs = MultizoneStars.from_output(output_name)
-        mzs.model_uncertainty(apogee_data, inplace=True)
+        # mzs.model_uncertainty(apogee_data, inplace=True)
         dfs.plot_multizone_mdfs(mzs, axs[:,i], '[fe/h]', colors, #titlepad=-18,
                                 label=SFH_LABELS[i], **mdf_kwargs)
     # center column APOGEE for comparison
@@ -65,7 +65,7 @@ def main(style='paper'):
     for i, dtd in enumerate(DTD_LIST):
         output_name = '/'.join(['gaussian', SFH_MODEL, dtd, 'diskmodel'])
         mzs = MultizoneStars.from_output(output_name)
-        mzs.model_uncertainty(apogee_data, inplace=True)
+        # mzs.model_uncertainty(apogee_data, inplace=True)
         dfs.plot_multizone_mdfs(mzs, axs[:,3+i], '[fe/h]', colors, #titlepad=-12,
                                 label=DTD_LABELS[i], **mdf_kwargs)
     highlight_panels(fig, axs, [(0,2),(1,2),(2,2)])
