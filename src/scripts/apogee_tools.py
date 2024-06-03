@@ -142,7 +142,7 @@ def apogee_mdf(data, col='FE_H', bins=100, range=None, smoothing=0.):
     return mdf, bin_edges
 
 
-def apogee_region(data, galr_lim=(0, 20), absz_lim=(0, 5)):
+def apogee_region(data, galr_lim=(3, 15), absz_lim=(0, 2)):
     """
     Slice APOGEE data within a given Galactic region of radius and z-height.
 
@@ -257,6 +257,10 @@ def gen_apogee_sample(parent_dir=paths.data/'APOGEE', verbose=False):
     sample['GALR'] = galr # kpc
     sample['GALPHI'] = galphi # deg
     sample['GALZ'] = galz # kpc
+    # Limit by galactocentric radius and z-height
+    sample = sample[(sample['GALR'] >= 3) & (sample['GALR'] < 15) &
+                    (sample['GALZ'].abs() <= 2)]
+    sample.reset_index(inplace=True, drop=True)
     # Drop unneeded columns
     return sample[SAMPLE_COLS].copy()
 
