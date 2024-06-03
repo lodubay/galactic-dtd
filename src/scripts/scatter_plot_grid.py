@@ -160,7 +160,7 @@ def setup_axes(galr_bins=GALR_BINS[:-1], absz_bins=ABSZ_BINS,
     # Figure title
     if len(title) > 0:
         fig.suptitle(title)
-        plt.subplots_adjust(top=0.9)
+        fig.subplots_adjust(top=0.88)
     # Axis limits
     axs[0,0].set_xlim(xlim)
     axs[0,0].set_ylim(ylim)

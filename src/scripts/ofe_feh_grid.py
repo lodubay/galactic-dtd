@@ -7,6 +7,7 @@ import argparse
 from pathlib import Path
 import matplotlib.pyplot as plt
 from matplotlib.ticker import MultipleLocator
+from matplotlib.lines import Line2D
 # from matplotlib.colors import Normalize
 # from matplotlib.cm import ScalarMappable
 import numpy as np
@@ -20,12 +21,12 @@ from _globals import ABSZ_BINS, ZONE_WIDTH, MAX_SF_RADIUS
 import paths
 
 FEH_LIM = (-1.3, 0.7)
-OFE_LIM = (-0.15, 0.55)
+OFE_LIM = (-0.15, 0.65)
 GALR_BINS = [3, 5, 7, 9, 11, 13]
 
-def main(output_name, cmap='winter', uncertainties=True, tracks=True, 
-         apogee_contours=True, mwm_contours=False):
-    plt.style.use(paths.styles / 'paper.mplstyle')
+def main(output_name, cmap='winter_r', uncertainties=True, tracks=True, 
+         apogee_contours=True, mwm_contours=False, style='paper'):
+    plt.style.use(paths.styles / f'{style}.mplstyle')
     # Import multioutput stars data
     mzs = MultizoneStars.from_output(output_name)
     # Import APOGEE data
@@ -38,12 +39,15 @@ def main(output_name, cmap='winter', uncertainties=True, tracks=True,
     if uncertainties:
         mzs.model_uncertainty(inplace=True)
     fig, axs = setup_axes(xlim=FEH_LIM, ylim=OFE_LIM, xlabel='[Fe/H]', 
-                          ylabel='[O/Fe]', row_label_pos=(0.33, 0.88),
+                          ylabel='[O/Fe]', row_label_pos=(0.07, 0.85),
                           title=output_name)
     cbar = setup_colorbar(fig, cmap=cmap, vmin=0, vmax=MAX_SF_RADIUS, 
                           label=r'Birth $R_{\rm{Gal}}$ [kpc]')
     cbar.ax.yaxis.set_major_locator(MultipleLocator(2))
     cbar.ax.yaxis.set_minor_locator(MultipleLocator(0.5))
+    
+    ism_track_color = 'k'
+    ism_track_width = 0.5
         
     for i, row in enumerate(axs):
         absz_lim = (ABSZ_BINS[-(i+2)], ABSZ_BINS[-(i+1)])
@@ -56,8 +60,8 @@ def main(output_name, cmap='winter', uncertainties=True, tracks=True,
                 zone = int(0.5 * (galr_lim[0] + galr_lim[1]) / ZONE_WIDTH)
                 zone_path = str(mzs.fullpath / ('zone%d' % zone))
                 hist = vice.history(zone_path)
-                ax.plot(hist['[fe/h]'], hist['[o/fe]'], c='k', ls='-', 
-                        linewidth=0.5)
+                ax.plot(hist['[fe/h]'], hist['[o/fe]'], c=ism_track_color, ls='-', 
+                        linewidth=ism_track_width)
             if apogee_contours:
                 xx, yy, logz = gen_kde(apogee_data, bandwidth=0.02,
                                        galr_lim=galr_lim, absz_lim=absz_lim)
@@ -85,6 +89,14 @@ def main(output_name, cmap='winter', uncertainties=True, tracks=True,
     # Set y-axis ticks
     axs[0,0].yaxis.set_major_locator(MultipleLocator(0.2))
     axs[0,0].yaxis.set_minor_locator(MultipleLocator(0.05))
+    # Custom legend
+    custom_lines = [Line2D([0], [0], color=ism_track_color, linestyle='-', 
+                           linewidth=ism_track_width),
+                    Line2D([0], [0], color='r', linestyle='-', linewidth=0.5),
+                    Line2D([0], [0], color='r', linestyle='--', linewidth=0.5)]
+    legend_labels = ['Gas abundance', 'APOGEE 30% cont.', 'APOGEE 80% cont.']
+    axs[2, 4].legend(custom_lines, legend_labels, frameon=False, 
+                     loc='upper right', handlelength=0.6, handletextpad=0.4)
     
     # Save
     fname = output_name.replace('diskmodel', 'ofe_feh_grid.png')
@@ -112,8 +124,12 @@ if __name__ == '__main__':
     parser.add_argument('-m', '--mwm-contours', action='store_true',
                         help='Plot contour lines from MWM data')
     parser.add_argument('--cmap', metavar='COLORMAP', type=str,
-                        default='winter',
+                        default='winter_r',
                         help='Name of colormap for color-coding VICE ' + \
-                             'output (default: winter)')
+                             'output (default: winter_r)')
+    parser.add_argument('-s', '--style', 
+                        choices=['paper', 'poster'],
+                        default='paper', 
+                        help='Plot style to use (default: paper)')
     args = parser.parse_args()
     main(**vars(args))
