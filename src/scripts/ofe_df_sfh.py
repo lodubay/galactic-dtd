@@ -53,7 +53,7 @@ def main(style='paper'):
     for i, sfh in enumerate(sfh_list):
         output_name = '/'.join(['gaussian', sfh, DTD, 'diskmodel'])
         mzs = MultizoneStars.from_output(output_name)
-        # mzs.model_uncertainty(apogee_data, inplace=True)
+        mzs.model_uncertainty(apogee_data, inplace=True)
         dfs.plot_multizone_mdfs(mzs, axs[:,i], '[o/fe]', colors, 
                                 label=sfh_labels[i], **mdf_kwargs)
     dfs.plot_apogee_mdfs(apogee_data, axs[:,-1], 'O_FE', colors, **mdf_kwargs)
