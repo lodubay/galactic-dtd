@@ -295,6 +295,7 @@ def plot_vice_medians(ax, stars, ofe_lim=OFE_LIM, ofe_bin_width=OFE_BIN_WIDTH,
                     capthick=0.25, marker=small_marker, markersize=markersize, 
                     markeredgewidth=0.5, label=small_label
         )
+    return age_median, age_lower, age_upper, ofe_bins
 
 
 def plot_astroNN_medians(ax, data, ofe_lim=OFE_LIM, ofe_bin_width=OFE_BIN_WIDTH,
@@ -366,6 +367,7 @@ def plot_astroNN_medians(ax, data, ofe_lim=OFE_LIM, ofe_bin_width=OFE_BIN_WIDTH,
                     capthick=0.25, marker=small_marker, markersize=markersize, 
                     markeredgewidth=0.5, label=small_label,
         )
+    return age_median, age_lower, age_upper, ofe_bins
         
 
 def plot_feuillet2019(ax, galr_lim, absz_lim, **kwargs):
