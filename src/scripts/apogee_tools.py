@@ -258,8 +258,8 @@ def gen_apogee_sample(parent_dir=paths.data/'APOGEE', verbose=False):
     sample['GALPHI'] = galphi # deg
     sample['GALZ'] = galz # kpc
     # Limit by galactocentric radius and z-height
-    sample = sample[(sample['GALR'] >= 3) & (sample['GALR'] < 15) &
-                    (sample['GALZ'].abs() <= 2)]
+    sample = sample[(sample['GALR'] > 3) & (sample['GALR'] < 15) &
+                    (sample['GALZ'].abs() < 2)]
     sample.reset_index(inplace=True, drop=True)
     # Drop unneeded columns
     return sample[SAMPLE_COLS].copy()
