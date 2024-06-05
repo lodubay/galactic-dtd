@@ -1,5 +1,5 @@
 \begin{deluxetable*}{ll|ccccc}
-\tablecaption{Summary of quantitative comparisons between the model output,
+\tablecaption{Qualitative summary of comparisons between the model output,
 APOGEE DR17 abundances, and \citetalias{Leung2023-Ages} ages for each multi-zone
 model. See discussion in Section \ref{sec:feh-df} for the [Fe/H] DF, 
 Section \ref{sec:ofe-df} for the [O/Fe] DF, Section \ref{sec:bimodality} for
