@@ -136,6 +136,15 @@ rule summary_table:
     script:
         "src/scripts/summary_table.py"
 
+rule scores_table:
+    input:
+        "src/tex/output/scores.csv",
+        "src/scripts/scores_table_header.txt"
+    output:
+        "src/tex/output/scores_table.tex"
+    script:
+        "src/scripts/scores_table.py"
+
 rule apogee_regions_table:
     input:
         "src/data/APOGEE/sample.csv"

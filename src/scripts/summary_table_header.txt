@@ -4,7 +4,8 @@ APOGEE DR17 abundances, and \citetalias{Leung2023-Ages} ages for each multi-zone
 model. See discussion in Section \ref{sec:feh-df} for the [Fe/H] DF, 
 Section \ref{sec:ofe-df} for the [O/Fe] DF, Section \ref{sec:bimodality} for
 the [O/Fe] bimodality, Section \ref{sec:ofe-feh} for the [O/Fe]--[Fe/H] plane,
-and Section \ref{sec:age-ofe} for the age--[O/Fe] plane.\label{tab:results}}
+and Section \ref{sec:age-ofe} for the age--[O/Fe] plane. Table \ref{tab:scores}
+presents the quantitative scores used to make these comparisons.\label{tab:results}}
 \tablehead{
     \colhead{DTD} & \colhead{SFH} & \colhead{[Fe/H] DF} & \colhead{[O/Fe] DF} & 
     \colhead{[O/Fe] Bimodality} & \colhead{[Fe/H]--[O/Fe]} & \colhead{Age--[O/Fe]}
