@@ -157,7 +157,8 @@ def score_ofe_feh(mzs, apogee_data):
         between the distributions.
     """
     # 2D KL divergence between APOGEE (true) and VICE (approximate)
-    return kl_div_2D(apogee_data[['FE_H', 'O_FE']], mzs(['[fe/h]', '[o/fe]']))
+    return kl_div_2D(apogee_data[['FE_H', 'O_FE']].copy(), 
+                     mzs(['[fe/h]', '[o/fe]']).copy())
 
 
 def score_age_ofe(mzs, apogee_data, age_col='LATENT_AGE', 
