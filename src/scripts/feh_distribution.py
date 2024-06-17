@@ -16,13 +16,17 @@ NBINS = 100
 FEH_LIM = (-1.2, 0.7)
 SMOOTH_WIDTH = 0.2
 
-def main(output_name, uncertainties=True, nbins=NBINS, xlim=FEH_LIM, 
-         smoothing=SMOOTH_WIDTH, cmap='plasma_r'):
-    plt.style.use(paths.styles / 'paper.mplstyle')
+def main(output_name, uncertainties=True, **kwargs):
     apogee_data = import_apogee()
     mzs = MultizoneStars.from_output(output_name)
     if uncertainties:
         mzs.model_uncertainty(apogee_data, inplace=True)
+    plot_feh_distribution(mzs, apogee_data, **kwargs)
+    
+    
+def plot_feh_distribution(mzs, apogee_data, nbins=NBINS, xlim=FEH_LIM,
+                          smoothing=SMOOTH_WIDTH, cmap='plasma_r', style='paper'):
+    plt.style.use(paths.styles / f'{style}.mplstyle')
     # Set up plot
     fig, axs = dfs.setup_axes(ncols=2, figure_width=ONE_COLUMN_WIDTH, 
                               cmap=cmap, xlabel='[Fe/H]', xlim=xlim, 
@@ -34,10 +38,10 @@ def main(output_name, uncertainties=True, nbins=NBINS, xlim=FEH_LIM,
     dfs.plot_apogee_mdfs(apogee_data, axs[:,1], 'FE_H', colors, **mdf_kwargs)
     for ax in axs[:,0]:
         ax.set_ylim((0, None))
-    fig.suptitle(output_name)
+    fig.suptitle(mzs.name)
     plt.subplots_adjust(top=0.85)
     # Save
-    fname = output_name.replace('diskmodel', 'feh_df.png')
+    fname = mzs.name.replace('diskmodel', 'feh_df.png')
     fullpath = paths.figures / 'supplementary' / fname
     if not fullpath.parents[0].exists():
         fullpath.parents[0].mkdir(parents=True)

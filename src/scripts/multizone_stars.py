@@ -281,8 +281,7 @@ class MultizoneStars:
                                   galr_lim=galr_lim, absz_lim=absz_lim, 
                                   noisy=self.noisy)
     
-    def model_uncertainty(self, apogee_data=None, age_source='L23',
-                          inplace=False, seed=RANDOM_SEED):
+    def model_uncertainty(self, apogee_data=None, inplace=False, seed=RANDOM_SEED):
         """
         Forward-model observational uncertainties from median data errors.
         Star particle data are modified in-place, so only run this once!
@@ -292,13 +291,11 @@ class MultizoneStars:
         apogee_data : pandas.DataFrame or NoneType, optional
             Full APOGEE data. If None, will be imported from ``sample.csv``.
             The default is None.
-        age_source : str, optional
-            Source for age uncertainty. Options are 'F19' (Feuillet+ 2019),
-            'M19' (Mackereth+ 2019, e.g. astroNN), or 'L23' (Leung+ 2023, e.g.
-            latent ages). The default is 'L23'.
         inplace : bool, optional
             If True, update the current class instance. If False, returns a 
             new class instance with the noisy outputs. The default is False.
+        seed : int, optional
+            Random seed for sampling. The default is taken from _globals.py.
             
         Returns
         -------
@@ -308,25 +305,11 @@ class MultizoneStars:
         if apogee_data is None:
             apogee_data = pd.read_csv(paths.data/'APOGEE/sample.csv')
         rng = np.random.default_rng(seed)
-        # age uncertainty depends on the age source
-        if age_source == 'F19':
-            log_age_err = 0.15 # Feuillet et al. (2016), ApJ, 817, 40
-            log_age_noise = rng.normal(scale=log_age_err, 
-                                       size=noisy_stars.shape[0])
-            noisy_stars['age'] *= 10 ** log_age_noise
-        elif age_source == 'M19':
-            frac_age_err = (apogee_data['ASTRONN_AGE_ERR'] / 
-                            apogee_data['ASTRONN_AGE']).median()
-            frac_age_noise = rng.normal(scale=frac_age_err, 
-                                        size=noisy_stars.shape[0])
-            noisy_stars['age'] *= (1 + frac_age_noise)
-        elif age_source == 'L23': # L23
-            log_age_err = apogee_data['LOG_LATENT_AGE_ERR'].median()
-            log_age_noise = rng.normal(scale=log_age_err, 
-                                       size=noisy_stars.shape[0])
-            noisy_stars['age'] *= 10 ** log_age_noise
-        else:
-            raise ValueError('Invalid value for "age_source".')
+        # Age uncertainty (Leung et al. 2023)
+        log_age_err = apogee_data['LOG_LATENT_AGE_ERR'].median()
+        log_age_noise = rng.normal(scale=log_age_err, 
+                                   size=noisy_stars.shape[0])
+        noisy_stars['age'] *= 10 ** log_age_noise
         # [Fe/H] uncertainty
         feh_med_err = apogee_data['FE_H_ERR'].median()
         feh_noise = rng.normal(scale=feh_med_err, size=noisy_stars.shape[0])
@@ -353,6 +336,8 @@ class MultizoneStars:
         ----------
         N : int
             Number of samples to draw without replacement.
+        seed : int, optional
+            Random seed for sampling. The default is taken from _globals.py.
         
         Returns
         -------

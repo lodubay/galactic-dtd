@@ -19,44 +19,39 @@ from apogee_tools import import_apogee, apogee_region
 from _globals import GALR_BINS, ABSZ_BINS
 import paths
 
-GALR_BINS = GALR_BINS[:-1]
+# GALR_BINS = GALR_BINS[:-1]
 AGE_LIM_LINEAR = (-1, 15)
 AGE_LIM_LOG = (0.3, 20)
 OFE_LIM = (-0.15, 0.55)
 OFE_BIN_WIDTH = 0.05
-AGE_SOURCES = ['F19', # Feuillet et al. 2019, solar neighborhood only
-               'M19', # Mackereth et al. 2019, astroNN
-               'L23'] # Leung et al. 2023, variational encoder-decoder
-AGE_LABELS = {'F19': 'Feuillet et al. (2019)',
-              'M19': 'Mackereth et al. (2019)',
-              'L23': 'Leung et al. (2023)'}
+AGE_LABEL = 'L23'
 
-def main(evolution, RIa, migration='gaussian', verbose=False, **kwargs):
-    # Import VICE multi-zone output data
-    output_name = '/'.join([migration, evolution, RIa, 'diskmodel'])
+def main(output_name, verbose=False, uncertainties=False, **kwargs):
     # Import APOGEE and astroNN data
     apogee_data = import_apogee(verbose=verbose)
+    # Import VICE multizone outputs
+    vice_stars = MultizoneStars.from_output(output_name, verbose=verbose)
+    # Model uncertainties
+    if uncertainties:
+        vice_stars.model_uncertainty(apogee_data, inplace=True)
     # Main plot function
-    plot_age_ofe(output_name, apogee_data, verbose=verbose, **kwargs)
+    plot_age_ofe(vice_stars, apogee_data, verbose=verbose, **kwargs)
 
 
-def plot_age_ofe(output_name, apogee_data, fname='age_ofe.png', ages='L23', 
-                 cmap='winter', log=True, score=False, uncertainties=True, 
-                 verbose=False):
+def plot_age_ofe(vice_stars, apogee_data, fname='age_ofe.png', style='paper',
+                 cmap='winter_r', log=True, score=False, verbose=False):
     """
     Plot a grid of [O/Fe] vs age across multiple Galactic regions.
     
     Parameters
     ----------
-    output_name : str
-        Name of multizone output within the data_dir directory.
+    vice_stars : MultizoneStars object
+        Instance containing VICE multi-zone stellar output.
     apogee_data : pandas.DataFrame
+        APOGEE sample
     fname : str, optional
         File name (excluding parent directory) of plot output. The default is
         'age_ofe.png'.
-    ages : str, optional
-        Source for age data. Must be one of ('F19', 'M19', 'L23'). The default
-        is 'L23'.
     cmap : str, optional
         Name of colormap for scatterplot. The default is 'winter'.
     log : bool, optional
@@ -64,9 +59,6 @@ def plot_age_ofe(output_name, apogee_data, fname='age_ofe.png', ages='L23',
     score : bool, optional
         If True, calculate a numerical score for how well the VICE output
         matches the age data. The default is False.
-    uncertainties : bool, optional
-        If True, convolve VICE output data with observational uncertainties
-        from APOGEE and age data. The default is False.
     verbose : bool, optional
         If True, print verbose output to the terminal. The default is False.
     savedir : str or pathlib.Path, optional
@@ -79,28 +71,7 @@ def plot_age_ofe(output_name, apogee_data, fname='age_ofe.png', ages='L23',
         score represents the difference between the median ages from VICE
         and APOGEE. A lower score represents a better fit.
     """
-    # Error handling
-    if ages not in AGE_SOURCES:
-        raise ValueError('Parameter "ages" must be in %s.' % AGE_SOURCES)
-    # Import VICE multizone outputs
-    vice_stars = MultizoneStars.from_output(output_name, verbose=verbose)
-    # Model uncertainties
-    if uncertainties:
-        vice_stars.model_uncertainty(apogee_data, age_source=ages, inplace=True)
-    # Age data source
-    if ages == 'L23':
-        age_col = 'LATENT_AGE'
-    else:
-        age_col = 'ASTRONN_AGE'
-    
-    # Feuillet+ 2019 ages require specific regions
-    if ages == 'F19':
-        local_galr_bins = [5, 7, 9, 11, 13]
-        local_absz_bins = [0, 0.5, 1, 2]
-    else:
-        local_galr_bins = GALR_BINS
-        local_absz_bins = ABSZ_BINS
-    
+    age_col = 'LATENT_AGE'
     # Set x-axis limits
     if log:
         age_lim = AGE_LIM_LOG
@@ -108,14 +79,16 @@ def plot_age_ofe(output_name, apogee_data, fname='age_ofe.png', ages='L23',
         age_lim = AGE_LIM_LINEAR
     
     # Set up figure
-    plt.style.use(paths.styles / 'paper.mplstyle')
+    plt.style.use(paths.styles / f'{style}.mplstyle')
     fig, axs = setup_axes(xlim=age_lim, ylim=OFE_LIM, 
                           xlabel='Age [Gyr]', ylabel='[O/Fe]',
                           xlabelpad=2, ylabelpad=4,
-                          galr_bins=local_galr_bins, absz_bins=local_absz_bins)
+                          galr_bins=GALR_BINS, absz_bins=ABSZ_BINS,
+                          title=vice_stars.name, width=8)
     cbar = setup_colorbar(fig, cmap=cmap, vmin=0, vmax=15.5, 
                           label=r'Birth $R_{\rm{Gal}}$ [kpc]', pad=0.02)
     cbar.ax.yaxis.set_minor_locator(MultipleLocator(0.5))
+    fig.subplots_adjust(bottom=0.1)
     
     scores = []
     weights = []
@@ -124,26 +97,21 @@ def plot_age_ofe(output_name, apogee_data, fname='age_ofe.png', ages='L23',
     if verbose: 
         print('Plotting [O/Fe] vs age in galactic regions...')
     for i, row in enumerate(axs):
-        absz_lim = (local_absz_bins[-(i+2)], local_absz_bins[-(i+1)])
+        absz_lim = (ABSZ_BINS[-(i+2)], ABSZ_BINS[-(i+1)])
         for j, ax in enumerate(row):
-            galr_lim = (local_galr_bins[j], local_galr_bins[j+1])
+            galr_lim = (GALR_BINS[j], GALR_BINS[j+1])
             if verbose:
                 print('\tRGal=%s kpc, |z|=%s kpc' \
                       % (str(galr_lim), str(absz_lim)))
             vice_subset = vice_stars.region(galr_lim, absz_lim)
             vice_subset.scatter_plot(ax, 'age', '[o/fe]', color='galr_origin',
                                      cmap=cmap, norm=cbar.norm)
-            # Plot Feuillet+ 2019 ages
-            if ages == 'F19':
-                plot_feuillet2019(ax, galr_lim, absz_lim)
-            else:
-                apogee_subset = apogee_region(apogee_data, galr_lim, absz_lim)
-                plot_astroNN_medians(ax, apogee_subset, 
-                                     age_col=age_col, label=AGE_LABELS[ages])
+            apogee_subset = apogee_region(apogee_data, galr_lim, absz_lim)
+            plot_astroNN_medians(ax, apogee_subset, label=AGE_LABEL)
             plot_vice_medians(ax, vice_subset.stars, label='Model')
             # Score how well the distributions align based on the RMS of the
             # difference in medians in each [O/Fe] bin
-            if score and (ages in ('M19', 'L23')):
+            if score:
                 d_rms = rms_median_diff(vice_subset.stars, apogee_subset, 
                                         age_col=age_col)
                 ax.text(0.07, 0.67, r'$\Delta_{\rm{RMS}}=%.02f$' % d_rms, 
@@ -168,11 +136,7 @@ def plot_age_ofe(output_name, apogee_data, fname='age_ofe.png', ages='L23',
     axs[0,0].yaxis.set_minor_locator(MultipleLocator(0.05))
     
     # Output figure
-    if uncertainties:
-        fname = 'age_ofe_%s_errors.png' % ages
-    else:
-        fname = 'age_ofe_%s.png' % ages
-    save_dir = paths.figures / 'supplementary' / output_name.split('/diskmodel')[0]
+    save_dir = paths.figures / 'supplementary' / vice_stars.name.split('/diskmodel')[0]
     if not save_dir.exists():
         save_dir.mkdir(parents=True)
     fig.savefig(save_dir / fname, dpi=300)
@@ -301,7 +265,7 @@ def plot_vice_medians(ax, stars, ofe_lim=OFE_LIM, ofe_bin_width=OFE_BIN_WIDTH,
 def plot_astroNN_medians(ax, data, ofe_lim=OFE_LIM, ofe_bin_width=OFE_BIN_WIDTH,
                          plot_low_count_bins=True, low_count_cutoff=0.01,
                          marker='^', small_marker='2', label=None, 
-                         small_label=None, markersize=2, age_col='ASTRONN_AGE'):
+                         small_label=None, markersize=2, age_col='LATENT_AGE'):
     """
     Plot median stellar ages binned by [O/Fe] from astroNN data.
     
@@ -407,7 +371,7 @@ def plot_feuillet2019(ax, galr_lim, absz_lim, **kwargs):
     ax.errorbar(age, ofe, xerr=age_disp, yerr=ofe_disp,
                 color='r', linestyle='none', capsize=1, elinewidth=0.5,
                 capthick=0.5, marker='^', markersize=2, 
-                label=AGE_LABELS['F19'], **kwargs)
+                label='F19', **kwargs)
     
 
 if __name__ == '__main__':
@@ -416,23 +380,23 @@ if __name__ == '__main__':
         description='Generate a grid of [O/Fe] vs age plots comparing the' + \
             ' output of a VICE multizone run to APOGEE and astroNN data.'
     )
-    parser.add_argument('evolution', metavar='EVOL',
-                        help='Name of star formation history model')
-    parser.add_argument('RIa', metavar='DTD',
-                        help='Name of delay time distribution model')
-    parser.add_argument('--migration', '-m', metavar='MIGR', 
-                        choices=['diffusion', 'post-process', 'gaussian'], 
-                        default='gaussian',
-                        help='Name of migration prescription')
+    # parser.add_argument('evolution', metavar='EVOL',
+    #                     help='Name of star formation history model')
+    # parser.add_argument('RIa', metavar='DTD',
+    #                     help='Name of delay time distribution model')
+    # parser.add_argument('--migration', '-m', metavar='MIGR', 
+    #                     choices=['diffusion', 'post-process', 'gaussian'], 
+    #                     default='gaussian',
+    #                     help='Name of migration prescription')
+    parser.add_argument('output_name', metavar='NAME',
+                        help='Name of VICE multizone output')
     parser.add_argument('-v', '--verbose', action='store_true')
     parser.add_argument('-c', '--cmap', metavar='COLORMAP', type=str,
-                        default='winter',
+                        default='winter_r',
                         help='Name of colormap for color-coding VICE ' + \
-                             'output (default: winter)')
+                             'output (default: winter_r)')
     parser.add_argument('-l', '--log', action='store_true',
                         help='Plot age on a log scale')
-    parser.add_argument('-a', '--ages', choices=AGE_SOURCES, default='L23',
-                        help='Source for age data (options: F19, M19, L23)')
     parser.add_argument('-u', '--uncertainties', action='store_true',
                         help='Model APOGEE uncertainties in VICE output')
     parser.add_argument('-s', '--score', action='store_true',

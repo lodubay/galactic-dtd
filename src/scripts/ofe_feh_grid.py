@@ -14,33 +14,32 @@ import numpy as np
 import vice
 from multizone_stars import MultizoneStars
 from apogee_tools import import_apogee, gen_kde
-from mwm_tools import import_mwm
+# from mwm_tools import import_mwm
 from scatter_plot_grid import setup_axes, setup_colorbar
 # from utils import kde2D
-from _globals import ABSZ_BINS, ZONE_WIDTH, MAX_SF_RADIUS
+from _globals import GALR_BINS, ABSZ_BINS, ZONE_WIDTH, MAX_SF_RADIUS
 import paths
 
 FEH_LIM = (-1.3, 0.7)
 OFE_LIM = (-0.15, 0.65)
-GALR_BINS = [3, 5, 7, 9, 11, 13]
 
-def main(output_name, cmap='winter_r', uncertainties=True, tracks=True, 
-         apogee_contours=True, mwm_contours=False, style='paper'):
-    plt.style.use(paths.styles / f'{style}.mplstyle')
+def main(output_name, uncertainties=True, **kwargs):
+    # Import APOGEE data
+    apogee_data = import_apogee()
     # Import multioutput stars data
     mzs = MultizoneStars.from_output(output_name)
-    # Import APOGEE data
-    if apogee_contours:
-        apogee_data = import_apogee()
-    # Import MWM data
-    if mwm_contours:
-        mwm_data = import_mwm()
     # Model observational uncertainties
     if uncertainties:
         mzs.model_uncertainty(inplace=True)
+    plot_ofe_feh_grid(mzs, apogee_data, **kwargs)
+
+
+def plot_ofe_feh_grid(mzs, apogee_data, tracks=True, apogee_contours=True,
+                      style='paper', cmap='winter_r'):
+    plt.style.use(paths.styles / f'{style}.mplstyle')
     fig, axs = setup_axes(xlim=FEH_LIM, ylim=OFE_LIM, xlabel='[Fe/H]', 
                           ylabel='[O/Fe]', row_label_pos=(0.07, 0.85),
-                          title=output_name)
+                          title=mzs.name, width=8, galr_bins=GALR_BINS)
     cbar = setup_colorbar(fig, cmap=cmap, vmin=0, vmax=MAX_SF_RADIUS, 
                           label=r'Birth $R_{\rm{Gal}}$ [kpc]')
     cbar.ax.yaxis.set_major_locator(MultipleLocator(2))
@@ -71,17 +70,6 @@ def main(output_name, cmap='winter_r', uncertainties=True, tracks=True,
                 levels = np.exp(-0.5 * np.array([2, 1])**2)
                 ax.contour(xx, yy, scaled_density, levels, colors='r',
                            linewidths=0.5, linestyles=['--', '-'])
-            if mwm_contours:
-                xx, yy, logz = gen_kde(mwm_data, bandwidth=0.02,
-                                       galr_lim=galr_lim, absz_lim=absz_lim,
-                                       savedir=paths.data/'MWM/kde/ofe_feh/',
-                                       xcol='FE_H_CORR', ycol='O_FE_CORR')
-                # scale the linear density to the max value
-                scaled_density = np.exp(logz) / np.max(np.exp(logz))
-                # contour levels at 1, 2, and 3 sigma
-                levels = np.exp(-0.5 * np.array([2, 1])**2)
-                ax.contour(xx, yy, scaled_density, levels, colors='purple',
-                           linewidths=0.5, linestyles=['--', '-'])
     
     # Set x-axis ticks
     axs[0,0].xaxis.set_major_locator(MultipleLocator(0.5))
@@ -95,11 +83,11 @@ def main(output_name, cmap='winter_r', uncertainties=True, tracks=True,
                     Line2D([0], [0], color='r', linestyle='-', linewidth=0.5),
                     Line2D([0], [0], color='r', linestyle='--', linewidth=0.5)]
     legend_labels = ['Gas abundance', 'APOGEE 30% cont.', 'APOGEE 80% cont.']
-    axs[2, 4].legend(custom_lines, legend_labels, frameon=False, 
+    axs[2,-1].legend(custom_lines, legend_labels, frameon=False, 
                      loc='upper right', handlelength=0.6, handletextpad=0.4)
     
     # Save
-    fname = output_name.replace('diskmodel', 'ofe_feh_grid.png')
+    fname = mzs.name.replace('diskmodel', 'ofe_feh_grid.png')
     fullpath = paths.figures / 'supplementary' / fname
     if not fullpath.parents[0].exists():
         fullpath.parents[0].mkdir(parents=True)
@@ -121,8 +109,6 @@ if __name__ == '__main__':
                         help='Plot ISM tracks in addition to stellar abundances')
     parser.add_argument('-a', '--apogee-contours', action='store_true',
                         help='Plot contour lines from APOGEE data')
-    parser.add_argument('-m', '--mwm-contours', action='store_true',
-                        help='Plot contour lines from MWM data')
     parser.add_argument('--cmap', metavar='COLORMAP', type=str,
                         default='winter_r',
                         help='Name of colormap for color-coding VICE ' + \

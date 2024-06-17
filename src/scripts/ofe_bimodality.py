@@ -10,9 +10,9 @@ from scipy.signal import find_peaks
 from multizone_stars import MultizoneStars
 import paths
 from utils import get_bin_centers
-from apogee_tools import import_apogee, apogee_region
+from apogee_tools import import_apogee, apogee_region, apogee_mdf
 from colormaps import paultol
-from _globals import ONE_COLUMN_WIDTH
+from _globals import TWO_COLUMN_WIDTH, ONE_COLUMN_WIDTH
 
 OFE_LIM = (-0.15, 0.55)
 PROMINENCE = 0.1
@@ -23,37 +23,54 @@ GALR_LIM = (7, 9)
 ABSZ_LIM = (0, 2)
 SMOOTH_WIDTH = 0.05
 
-def main(output_name, smoothing=SMOOTH_WIDTH, uncertainties=True, resample=True):
-    plt.style.use(paths.styles / 'paper.mplstyle')
-    fig, ax = plt.subplots(figsize=(ONE_COLUMN_WIDTH, ONE_COLUMN_WIDTH), 
-                           tight_layout=True)
-    
+def main(output_name, smoothing=SMOOTH_WIDTH, uncertainties=True, **kwargs):
     apogee_data = import_apogee()
-    plot_bimodality(ax, output_name, apogee_data=apogee_data,
-                    uncertainties=uncertainties, resample=resample, 
-                    smoothing=smoothing)
-    # mzs = MultizoneStars.from_output(output_name)
-    # if uncertainties:
-    #     mzs.model_uncertainty(inplace=True)
-    # subset = mzs.region(galr_lim=GALR_LIM, absz_lim=ABSZ_LIM)
-    # for i, feh_bin in enumerate(FEH_BINS):
-    #     subset_slice = subset.filter({'[fe/h]': feh_bin})
-    #     mdf, bin_edges = subset_slice.mdf('[o/fe]', smoothing=smoothing,
-    #                                       bins=np.arange(-0.15, 0.56, 0.01))
-    #     mdf /= mdf.max()
-    #     bin_centers = get_bin_centers(bin_edges)
-    #     peaks, _ = find_peaks(mdf, prominence=PROMINENCE)
-    #     ax.plot(bin_centers, mdf, ls=LINESTYLES[i], label=feh_bin)
-    #     ax.plot(bin_centers[peaks], mdf[peaks], 'rx')
+    mzs = MultizoneStars.from_output(output_name)
+    if uncertainties:
+        mzs.model_uncertainty(inplace=True, apogee_data=apogee_data)
+    plot_bimodality_comparison(mzs, apogee_data, **kwargs)
     
-    ax.set_xlabel('[O/Fe]')
-    ax.set_ylabel('Normalized PDF')
-    ax.set_title(output_name)
-    ax.set_xlim(OFE_LIM)
-    ax.set_ylim((0, None))
-    ax.legend(loc='upper left', frameon=False, title='[Fe/H] bin')
+    
+def plot_bimodality_comparison(mzs, apogee_data, style='paper', **kwargs):
+    """
+    Plot the [O/Fe] bimodality from a VICE output and from APOGEE.
+    
+    Parameters
+    ----------
+    mzs : MultizoneStars object
+    apogee_data : pandas DataFrame
+    style : str, optional
+        Plotting style to use. The default is 'paper'.
+    **kwargs passed to plot_bimodality()
+    """
+    plt.style.use(paths.styles / f'{style}.mplstyle')
+    fig, axs = plt.subplots(1, 2, figsize=(TWO_COLUMN_WIDTH, ONE_COLUMN_WIDTH), 
+                            tight_layout=True, sharex=True, sharey=True)
+    # Plot VICE bimodality
+    plot_bimodality(axs[0], mzs, apogee_data=apogee_data, **kwargs)
+    # Plot APOGEE bimodality
+    subset = apogee_region(apogee_data, galr_lim=GALR_LIM, absz_lim=ABSZ_LIM)
+    for i, feh_bin in enumerate(FEH_BINS):
+        subset_slice = subset[(subset['FE_H'] >= feh_bin[0]) & (subset['FE_H'] < feh_bin[1])]
+        mdf, bin_edges = apogee_mdf(subset_slice, col='O_FE', 
+                                    smoothing=SMOOTH_WIDTH, 
+                                    bins=np.arange(OFE_LIM[0], OFE_LIM[1]+0.01, 0.01))
+        mdf /= mdf.max()
+        bin_centers = get_bin_centers(bin_edges)
+        peaks, _ = find_peaks(mdf, prominence=PROMINENCE)
+        axs[1].plot(bin_centers, mdf, ls=LINESTYLES[i], c=COLORS[i], 
+                    label=feh_bin)
+        axs[1].plot(bin_centers[peaks], mdf[peaks], 'rx')
+    
+    axs[0].set_xlabel('[O/Fe]')
+    axs[1].set_xlabel('[O/Fe]')
+    axs[0].set_ylabel('Normalized PDF')
+    fig.suptitle(mzs.name)
+    axs[0].set_xlim(OFE_LIM)
+    axs[0].set_ylim((0, None))
+    axs[0].legend(loc='best', frameon=False, title='[Fe/H] bin')
     # Save
-    fname = output_name.replace('diskmodel', 'ofe_bimodality.png')
+    fname = mzs.name.replace('diskmodel', 'ofe_bimodality.png')
     fullpath = paths.figures / 'supplementary' / fname
     if not fullpath.parents[0].exists():
         fullpath.parents[0].mkdir(parents=True)
@@ -61,8 +78,8 @@ def main(output_name, smoothing=SMOOTH_WIDTH, uncertainties=True, resample=True)
     plt.close()
 
 
-def plot_bimodality(ax, output_name, feh_bins=FEH_BINS, smoothing=SMOOTH_WIDTH, 
-                    uncertainties=True, resample=True,  apogee_data=None, 
+def plot_bimodality(ax, mzs, feh_bins=FEH_BINS, smoothing=SMOOTH_WIDTH, 
+                    resample=True,  apogee_data=None, 
                     nsamples=100000, ofe_lim=OFE_LIM, galr_lim=GALR_LIM,
                     absz_lim=ABSZ_LIM, linestyles=LINESTYLES, colors=COLORS,
                     show_peaks=True, prominence=0.1, **kwargs):
@@ -73,16 +90,13 @@ def plot_bimodality(ax, output_name, feh_bins=FEH_BINS, smoothing=SMOOTH_WIDTH,
     ----------
     ax : matplotlib.axes.Axes
         Axes object on which to plot the distributions.
-    output_name : str
-        Name of multi-zone output.
+    mzs : MultizoneStars object
+        Instance with VICE multi-zone star output
     feh_bins : list of tuples, optional
         Bins in [Fe/H] which define the slices for the [O/Fe] distributions.
         The default is [(-0.6, -0.4), (-0.4, -0.2)].
     smoothing : float, optional
         Smoothing width for the [O/Fe] distribution. The default is 0.05.
-    uncertainties : bool, optional
-        If True, simulate APOGEE uncertainties in model outputs. The default
-        is True.
     resample : bool, optional
         If True, resample the |z| distribution of stars to match APOGEE. If
         False, all model stellar populations are counted. The default is True.
@@ -116,13 +130,10 @@ def plot_bimodality(ax, output_name, feh_bins=FEH_BINS, smoothing=SMOOTH_WIDTH,
     -------
     list of matplotlib.line.Line2D
     """
-    mzs = MultizoneStars.from_output(output_name)
     # Import APOGEE data if needed
-    if (uncertainties or resample) and apogee_data is None:
+    if resample and apogee_data is None:
         apogee_data = import_apogee()
-    if uncertainties:
-        mzs.model_uncertainty(inplace=True, apogee_data=apogee_data)
-    subset = mzs.region(galr_lim=GALR_LIM, absz_lim=ABSZ_LIM)
+    subset = mzs.region(galr_lim=galr_lim, absz_lim=absz_lim)
     if resample:
         apogee_subset = apogee_region(apogee_data, galr_lim=galr_lim, 
                                       absz_lim=absz_lim)
