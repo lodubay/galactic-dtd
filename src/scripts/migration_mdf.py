@@ -50,7 +50,7 @@ def main():
     
     for ax in axs[:,0]:
         ax.set_ylim((0, None))
-    plt.savefig(paths.figures / 'migration_mdf.png', dpi=300)
+    plt.savefig(paths.extra / 'migration_mdf.png', dpi=300)
     plt.close()
 
 if __name__ == '__main__':

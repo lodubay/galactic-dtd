@@ -27,7 +27,7 @@ def main(cmap='winter', verbose=True):
     if verbose:
         print('Plotting contours...')
     plot_contours_grid(axs, data, cmap=cmap, colors=None)
-    output = paths.figures / 'ofe_feh_apogee.png'
+    output = paths.extra / 'ofe_feh_apogee.png'
     plt.savefig(output, dpi=300)
     plt.close()
     if verbose:

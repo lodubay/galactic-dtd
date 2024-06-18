@@ -110,7 +110,7 @@ def main(style='paper'):
     axs[0, 0].legend(custom_lines, legend_labels, frameon=False, 
                      loc='upper left', handlelength=0.6, handletextpad=0.4)
     
-    plt.savefig(paths.figures / 'ofe_feh_dtd_Rgal')
+    plt.savefig(paths.extra / 'ofe_feh_dtd_Rgal')
     plt.close()    
 
 

@@ -92,7 +92,7 @@ def main(style='paper'):
     #                 bbox_to_anchor=(0.02, 0.89), handlelength=0.7)
     axs[0,-1].legend(loc='upper left', frameon=False, handlelength=0.7)
     
-    fig.savefig(paths.figures / 'age_ofe_dtd_outer')
+    fig.savefig(paths.extra / 'age_ofe_dtd_outer')
     plt.close()
 
 

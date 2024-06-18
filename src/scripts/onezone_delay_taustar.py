@@ -75,7 +75,7 @@ def main():
     axs[2].set_xlim(left=0)
 
     axs[0].legend(frameon=False, loc='lower left', handlelength=1.2)
-    fig.savefig(paths.figures / 'onezone_delay_taustar.pdf', dpi=300)
+    fig.savefig(paths.extra / 'onezone_delay_taustar.pdf', dpi=300)
     plt.close()
 
 

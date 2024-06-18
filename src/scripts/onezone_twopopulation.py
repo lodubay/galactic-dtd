@@ -73,7 +73,7 @@ def main():
     axs[2].set_xlim(left=0)
 
     axs[0].legend(frameon=False, loc='lower left')
-    fig.savefig(paths.figures / 'onezone_twopopulation.pdf', dpi=300)
+    fig.savefig(paths.extra / 'onezone_twopopulation.pdf', dpi=300)
     plt.close()
 
 
