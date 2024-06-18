@@ -107,7 +107,7 @@ def main(contours=False):
     fname = 'presentation/ofe_feh_dtd'
     if not contours:
         fname += '_nocontours'
-    plt.savefig(paths.figures / fname)
+    plt.savefig(paths.extra / fname)
     plt.close()
     print('Done!')
 

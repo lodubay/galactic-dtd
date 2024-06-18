@@ -54,7 +54,7 @@ def main():
     # Replace y-axis label
     ax.set_ylabel('Relative supernova rate', labelpad=-6)
     ax.legend(frameon=False, loc='upper right', handlelength=1.2)
-    fig.savefig(paths.figures / 'presentation' / 'dtd_models')
+    fig.savefig(paths.extra / 'presentation' / 'dtd_models')
     plt.close()
 
 

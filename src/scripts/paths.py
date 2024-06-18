@@ -19,9 +19,9 @@ data = src / "data"
 # Absolute path to the folder containing multizone simulation outputs
 simulation_outputs = data / "multizone"
 
-# Absolute path to the `src/debug` folder (contains log files and plots which
-# won't be included in the manuscript)
-debug = src / "debug"
+# Absolute path to the `src/extra` folder (contains log files and plots
+# which won't be included in the manuscript)
+extra = src / "extra"
 
 # Absolute path to the `src/static` folder (contains static images)
 static = src / "static"

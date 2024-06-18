@@ -55,7 +55,7 @@ def main():
     # axs[2].set_xlabel(r'$P$([$\alpha$/Fe])', size=small_label_size)
 
     axs[0].legend(frameon=False, loc='lower left', handlelength=1.8)
-    fig.savefig(paths.figures / 'presentation/onezone_dtd', dpi=300)
+    fig.savefig(paths.extra / 'presentation/onezone_dtd', dpi=300)
     plt.close()
 
 

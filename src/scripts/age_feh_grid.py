@@ -61,7 +61,7 @@ def main(output_name, cmap='winter', uncertainties=True, tracks=True):
     
     # Save
     fname = output_name.replace('diskmodel', 'age_feh_grid.png')
-    fullpath = paths.figures / 'supplementary' / fname
+    fullpath = paths.extra / fname
     if not fullpath.parents[0].exists():
         fullpath.parents[0].mkdir(parents=True)
     plt.savefig(fullpath, dpi=300)

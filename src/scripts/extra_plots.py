@@ -46,7 +46,7 @@ def main():
         output_name = 'diffusion/insideout/powerlaw_slope11/diskmodel'
         make_all_plots(output_name, apogee_data)
         t.update()
-    print('Done! Plots are located at %s' % str(paths.figures / 'supplementary'))
+    print('Done! Plots are located at %s' % str(paths.extra))
 
 
 def make_all_plots(output_name, apogee_data, uncertainties=True):

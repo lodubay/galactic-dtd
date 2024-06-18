@@ -88,7 +88,6 @@ def plot_age_ofe(vice_stars, apogee_data, fname='age_ofe.png', style='paper',
     cbar = setup_colorbar(fig, cmap=cmap, vmin=0, vmax=15.5, 
                           label=r'Birth $R_{\rm{Gal}}$ [kpc]', pad=0.02)
     cbar.ax.yaxis.set_minor_locator(MultipleLocator(0.5))
-    fig.subplots_adjust(bottom=0.1)
     
     scores = []
     weights = []
@@ -136,7 +135,7 @@ def plot_age_ofe(vice_stars, apogee_data, fname='age_ofe.png', style='paper',
     axs[0,0].yaxis.set_minor_locator(MultipleLocator(0.05))
     
     # Output figure
-    save_dir = paths.figures / 'supplementary' / vice_stars.name.split('/diskmodel')[0]
+    save_dir = paths.extra / vice_stars.name.split('/diskmodel')[0]
     if not save_dir.exists():
         save_dir.mkdir(parents=True)
     fig.savefig(save_dir / fname, dpi=300)

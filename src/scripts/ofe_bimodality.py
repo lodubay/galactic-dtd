@@ -71,7 +71,7 @@ def plot_bimodality_comparison(mzs, apogee_data, style='paper', **kwargs):
     axs[0].legend(loc='best', frameon=False, title='[Fe/H] bin')
     # Save
     fname = mzs.name.replace('diskmodel', 'ofe_bimodality.png')
-    fullpath = paths.figures / 'supplementary' / fname
+    fullpath = paths.extra / fname
     if not fullpath.parents[0].exists():
         fullpath.parents[0].mkdir(parents=True)
     plt.savefig(fullpath, dpi=300)

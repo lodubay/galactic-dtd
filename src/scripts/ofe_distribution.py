@@ -42,7 +42,7 @@ def plot_ofe_distribution(mzs, apogee_data, nbins=NBINS, xlim=OFE_LIM,
     plt.subplots_adjust(top=0.85)
     # Save
     fname = mzs.name.replace('diskmodel', 'ofe_df.png')
-    fullpath = paths.figures / 'supplementary' / fname
+    fullpath = paths.extra / fname
     if not fullpath.parents[0].exists():
         fullpath.parents[0].mkdir(parents=True)
     plt.savefig(fullpath, dpi=300)
