@@ -53,3 +53,14 @@ $ python -m multizone [OPTIONS...]
 In particular, code for the stellar migration prescription is contained within the `gaussian_migration` class
 located at
 [src/scripts/multizone/src/migration.py](/src/scripts/multizone/src/migration.py).
+
+The figures in the paper do not cover every possible combination of SFH + DTD. The following script
+generates supplementary plots for every multi-zone model available:
+```
+$ cd src/scripts
+$ python extra_plots.py
+```
+The multi-panel plots show age vs [O/Fe], [O/Fe] vs [Fe/H], MDFs, and [O/Fe] DFs for each Galactic region,
+plus a plot showing the [O/Fe] bimodality. Plots are located in the [src/extra](/src/extra/) directory with the 
+following structure:
+`<migration scheme>/<sfh model>/<dtd model>/`.
