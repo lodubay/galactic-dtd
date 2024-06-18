@@ -25,7 +25,6 @@ DTD_LIST = ['prompt',
             'plateau_width03',
             'plateau_width10',
             'triple']
-AGE_SOURCE = 'L23' # Use Leung et al (2023) "latent-space" ages
 
 def main():    
     apogee_data = import_apogee()
@@ -36,8 +35,6 @@ def main():
         # temporary column names
         columns=['feh_df', 'ofe_df', 'bimodality', 'ofe_feh', 'age_ofe'],
     )
-    
-    age_col = {'L23': 'LATENT_AGE', 'M19': 'ASTRONN_AGE'}[AGE_SOURCE]
     
     with tqdm(total=len(SFH_LIST) * len(DTD_LIST)) as t:
         for dtd in DTD_LIST:
@@ -66,11 +63,10 @@ def main():
                         scores['ofe_feh'].append(
                             score_ofe_feh(vice_subset, apogee_subset))
                         scores['age_ofe'].append(
-                            score_age_ofe(vice_subset, apogee_subset, 
-                                          age_col=age_col))
+                            score_age_ofe(vice_subset, apogee_subset))
                         weights.append(apogee_subset.shape[0])
                         age_weights.append(apogee_subset.dropna(
-                            subset=age_col).shape[0])
+                            subset='LATENT_AGE').shape[0])
                 # Append weighted mean scores
                 weighted_sums = {col: np.average(scores[col], weights=weights) 
                                  for col in ['feh_df', 'ofe_df', 'ofe_feh']}
@@ -161,7 +157,7 @@ def score_ofe_feh(mzs, apogee_data):
                      mzs(['[fe/h]', '[o/fe]']).copy())
 
 
-def score_age_ofe(mzs, apogee_data, age_col='LATENT_AGE', 
+def score_age_ofe(mzs, apogee_data, 
                   ofe_range=(-0.15, 0.55), bin_width=0.05):
     """
     Calculate the RMS of the difference in medians between VICE and data ages.
@@ -185,13 +181,9 @@ def score_age_ofe(mzs, apogee_data, age_col='LATENT_AGE',
     float
         Root-mean-square of the difference in median ages in each [O/Fe] bin.
     """
-    # Error handling
-    age_col_options = ['LATENT_AGE', 'ASTRONN_AGE']
-    if age_col not in age_col_options:
-        raise ValueError('Parameter "age_col" must be one of', age_col_options)
     ofe_bins = np.arange(ofe_range[0], ofe_range[1] + bin_width, bin_width)
     # bin APOGEE ages by [O/Fe]
-    apogee_grouped = group_by_bins(apogee_data, 'O_FE', ofe_bins)[age_col]
+    apogee_grouped = group_by_bins(apogee_data, 'O_FE', ofe_bins)['LATENT_AGE']
     apogee_medians = apogee_grouped.median()
     # count all APOGEE stars in each bin
     apogee_counts = apogee_grouped.count()

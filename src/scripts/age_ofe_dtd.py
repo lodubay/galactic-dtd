@@ -26,7 +26,6 @@ LABEL_LIST = ['Two-population',
               'Exponential\n($\\tau=1.5$ Gyr)',
               'Plateau\n($W=1.0$ Gyr)', 
               'Triple-system']
-AGE_SOURCE = 'L23'
 AGE_COL = 'LATENT_AGE'
 AGE_LABEL = 'L23'#'Leung et al.\n(2023)'
 AGE_LIM = (0.3, 20)

@@ -19,7 +19,6 @@ SFH_LIST = ['insideout', 'lateburst', 'earlyburst', 'twoinfall']
 DTD_MODEL = 'exponential_timescale15'
 DTD_LABEL = 'Exponential ($\\tau=1.5$ Gyr) DTD'
 LABEL_LIST = ['Inside-out', 'Late-burst', 'Early-burst', 'Two-infall']
-AGE_SOURCE = 'L23'
 AGE_COL = 'LATENT_AGE'
 AGE_LABEL = 'L23'#'Leung et al.\n(2023)'
 AGE_LIM = (0.3, 20)
@@ -57,8 +56,7 @@ def main(style='paper'):
         output_name = '/'.join(['gaussian', sfh, DTD_MODEL, 'diskmodel'])
         # Import multioutput stars data
         mzs = MultizoneStars.from_output(output_name)
-        mzs.model_uncertainty(apogee_data=apogee_data, inplace=True, 
-                              age_source=AGE_SOURCE)
+        mzs.model_uncertainty(apogee_data=apogee_data, inplace=True)
         mzs.region(GALR_LIM, ABSZ_LIM, inplace=True)
         # Plot sample of star particle abundances
         mzs.scatter_plot(ax, 'age', '[o/fe]', color='[fe/h]',
