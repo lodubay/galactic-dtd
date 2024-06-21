@@ -19,7 +19,7 @@ SAMPLE_COLS = ['APOGEE_ID', 'RA', 'DEC', 'GALR', 'GALPHI', 'GALZ', 'SNREV',
                'TEFF', 'TEFF_ERR', 'LOGG', 'LOGG_ERR', 'FE_H', 'FE_H_ERR',
                'O_FE', 'O_FE_ERR', 'LATENT_AGE', 'LATENT_AGE_ERR', 
                'LOG_LATENT_AGE', 'LOG_LATENT_AGE_ERR',
-               'GAIAEDR3_R_LO_PHOTOGEO', 'GAIAEDR3_R_MED_PHOTOGEO', 'GAIAEDR3_R_HI_PHOTOGEO']
+               'DISTANCE', 'DISTANCE_ERR']
 
 def main():
     apogee_data = import_apogee(overwrite=True, verbose=True)
@@ -250,9 +250,16 @@ def gen_apogee_sample(parent_dir=paths.data/'APOGEE', verbose=False):
     full_catalog = join_latent_ages(apogee_catalog, leung23_catalog)
     if verbose: print('Implementing quality cuts...')
     sample = apogee_quality_cuts(full_catalog)
+    # Add columns for Gaia distance and RMS distance error
+    sample['DISTANCE'] = sample['GAIAEDR3_R_MED_PHOTOGEO'].copy()/1000
+    dist_errs = np.array(
+        [sample['GAIAEDR3_R_HI_PHOTOGEO'] - sample['GAIAEDR3_R_MED_PHOTOGEO'],
+        sample['GAIAEDR3_R_LO_PHOTOGEO'] - sample['GAIAEDR3_R_MED_PHOTOGEO']]
+    )/1000
+    sample['DISTANCE_ERR'] = np.sqrt(np.mean(dist_errs**2, axis=0))
     # Calculate galactocentric coordinates based on galactic l, b and Gaia dist
     galr, galphi, galz = galactic_to_galactocentric(
-        sample['GLON'], sample['GLAT'], sample['GAIAEDR3_R_MED_PHOTOGEO']/1000
+        sample['GLON'], sample['GLAT'], sample['DISTANCE']
     )
     sample['GALR'] = galr # kpc
     sample['GALPHI'] = galphi # deg
