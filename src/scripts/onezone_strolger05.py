@@ -30,7 +30,7 @@ def main(style='paper'):
     delay = ONEZONE_DEFAULTS['delay']
     distributions = [styles.gauss_narrow, styles.gauss_wide, styles.triple, 
                      styles.plateau_long, styles.exp, 
-                     styles.plaw, styles.prompt, styles.gauss_narrow, styles.gauss_wide]
+                     styles.plaw, styles.prompt]
 
     for i, dtd in enumerate(distributions):
         sz = vice.singlezone(name=str(output_dir / dtd['func'].name),
@@ -52,7 +52,7 @@ def main(style='paper'):
     axs[2].set_xlim(left=0)
 
     axs[0].legend(frameon=False, loc='lower left', handlelength=1.8)
-    fig.savefig(paths.figures / 'onezone_strolger05', dpi=300)
+    fig.savefig(paths.extra / 'onezone_strolger05', dpi=300)
     plt.close()
 
 

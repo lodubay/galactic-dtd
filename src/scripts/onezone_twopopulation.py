@@ -13,7 +13,6 @@ from multizone.src import models, dtds
 from _globals import END_TIME, ONEZONE_DEFAULTS, DT
 from colormaps import paultol
 from track_and_mdf import setup_figure, plot_vice_onezone
-from utils import run_singlezone
 
 # Set color cycle from Paul Tol colorscheme
 plt.rcParams['axes.prop_cycle'] = plt.cycler('color', paultol.bright.colors)
