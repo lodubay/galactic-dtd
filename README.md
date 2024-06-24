@@ -16,6 +16,9 @@
 <a href="https://github.com/lodubay/galactic-dtd/raw/main-pdf/ms.pdf">
 <img src="https://img.shields.io/badge/article-pdf-blue.svg?style=flat" alt="Read the article"/>
 </a>
+<a href="https://doi.org/10.5281/zenodo.12207380">
+<img src="https://zenodo.org/badge/DOI/10.5281/zenodo.12207380.svg" alt="DOI">
+</a>
 </p>
 
 Welcome to the repository for **Dubay et al. (2024), "Galactic Chemical 
