@@ -129,8 +129,7 @@ rule multizone_scores:
 
 rule summary_table:
     input:
-        "src/tex/output/scores.csv",
-        "src/scripts/summary_table_header.txt"
+        "src/tex/output/scores.csv"
     output:
         "src/tex/output/summary_table.tex"
     script:
@@ -138,8 +137,7 @@ rule summary_table:
 
 rule scores_table:
     input:
-        "src/tex/output/scores.csv",
-        "src/scripts/scores_table_header.txt"
+        "src/tex/output/scores.csv"
     output:
         "src/tex/output/scores_table.tex"
     script:

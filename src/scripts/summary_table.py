@@ -43,18 +43,20 @@ def main():
     df.reset_index(drop=False, inplace=True)
     df['DTD'] = dtd_labels
     df['SFH'] = sfh_labels * len(DTD_LIST)
-    latex_table = df.style.hide(axis=0).to_latex()
-    # Remove tabular environment & add horizontal lines
-    rows = latex_table.split('\n')[2:-2]
+    # New column labels
+    df.columns = ['DTD', 'SFH', 'MDF', '[O/Fe] DF', '[O/Fe] Bimodality', 
+                  '[Fe/H]--[O/Fe]', 'Age--[O/Fe]']
+    latex_table = df.to_latex(column_format='ll|ccccc', index=False)
+    # Replace \toprule, \midrule, \bottomrule with \hline
+    latex_table = latex_table.replace('\\toprule', '\\hline\\hline')
+    latex_table = latex_table.replace('\\midrule', '\\hline')
+    latex_table = latex_table.replace('\\bottomrule', '\\hline')
+    # Add horizontal lines in between DTD sections
+    rows = latex_table.split('\n')
     for i in range(3, len(rows)-4, 4):
         rows[i] = rows[i].replace('\\\\', '\\\\ \n\\hline')
     latex_table = '\n'.join(rows)
-    # Import table header and footer
-    with open(paths.scripts / 'summary_table_header.txt', 'r') as f:
-        header_footer = f.read()
-        header, footer = header_footer.split('===')
-    # Replace tabular environment with deluxetable
-    latex_table = header + latex_table + footer
+    # Write to output
     with open(paths.output / 'summary_table.tex', 'w') as f:
         f.write(latex_table)
 
