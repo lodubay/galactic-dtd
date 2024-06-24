@@ -107,7 +107,7 @@ def main(style='paper'):
                                                    OFE_LIM[1]+0.01, 0.01))
         mdf /= mdf.max()
         bin_centers = get_bin_centers(bin_edges)
-        axs[1,-1].plot(bin_centers, mdf, ls=LINESTYLES[i], label=feh_bin, 
+        axs[1,-1].plot(bin_centers, mdf, ls=LINESTYLES[i], label=str(feh_bin), 
                        c=COLORS[i])
     axs[1,-1].set_title('APOGEE', pad=8, size=title_size)
     
