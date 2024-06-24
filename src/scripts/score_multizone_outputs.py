@@ -26,7 +26,7 @@ DTD_LIST = ['prompt',
             'plateau_width10',
             'triple']
 
-def main():    
+def main():
     apogee_data = import_apogee()
     
     summary_table = pd.DataFrame([], 
