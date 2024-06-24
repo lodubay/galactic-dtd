@@ -27,8 +27,8 @@ directory:
 ```
 $ showyourwork build
 ```
-The data and model outputs will automatically be downloaded from the 
-[Zenodo deposit](https://doi.org/10.5281/zenodo.10961091).
+The data and model outputs will automatically be downloaded from Zenodo deposit
+[10.5281/zenodo.10961090](https://zenodo.org/doi/10.5281/zenodo.10961090).
 
 To re-create the APOGEE sample with Leung et al. (2023) age estimates,
 run the following:
